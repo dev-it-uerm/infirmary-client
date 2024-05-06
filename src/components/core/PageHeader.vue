@@ -1,11 +1,9 @@
 <template>
-  <div class="row justify-center q-pa-md bg-accent">
-    <div class="row items-center">
-      <q-icon :name="icon" size="md" class="col-auto q-mr-md" />
-      <div class="col text-h5 text-weight-bold">
-        {{ text }}
-      </div>
-    </div>
+  <div
+    class="row items-center justify-center text-weight-bold text-h6 q-pa-md bg-accent text-black text-center text-uppercase"
+  >
+    <q-icon size="sm" :name="icon" style="margin-right: 12px" />
+    <span>{{ text }}</span>
   </div>
 </template>
 

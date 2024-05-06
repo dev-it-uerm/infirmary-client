@@ -22,7 +22,7 @@
           </q-avatar>
         </q-toolbar-title> -->
         <AppLogo version="2" size="xs" :showTitle="false" />
-        <div><b>UERM</b> Patient Portal</div>
+        <div><b>UERM</b> INFIRMARY</div>
       </q-toolbar>
     </q-header>
 

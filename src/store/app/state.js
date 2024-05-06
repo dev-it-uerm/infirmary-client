@@ -15,7 +15,7 @@ export default function () {
 
   return {
     config: {
-      name: "UERM Infirmary Portal",
+      name: "UERM Infirmary",
       version: "1.0.0",
       url: "https://uermhospital.com.ph/apps/infirmary-portal",
     },
@@ -31,12 +31,38 @@ export default function () {
       LAB,
       RAD,
     ],
-    visitStatusesMap: {
-      0: { code: "REG", name: "Registered" },
-      1: { code: "INF", name: "Infirmary" },
-      2: { code: "LAB", name: "Laboratory" },
-      3: { code: "RAD", name: "Radiology" },
-      9: { code: "FIN", name: "Completed" },
+    visitStatusMap: {
+      0: { code: 0, name: "Registered" },
+      1: { code: 1, name: "Admitted" },
+      2: { code: 2, name: "Laboratory" },
+      3: { code: 3, name: "Radiology" },
+      9: { code: 9, name: "Discharged" },
+    },
+    visitSectionsMap: {
+      ADM: {
+        code: "ADM",
+        name: "Admitting",
+        icon: "fa-solid fa-bandage",
+        statusCode: 1,
+      },
+      LAB: {
+        code: "LAB",
+        name: "Laboratory",
+        icon: "fa-solid fa-flask-vial",
+        statusCode: 2,
+      },
+      RAD: {
+        code: "RAD",
+        name: "Radiology",
+        icon: "fa-solid fa-x-ray",
+        statusCode: 3,
+      },
+      DSCH: {
+        code: "DSCH",
+        name: "Discharging",
+        icon: "fa-solid fa-flag-checkered",
+        statusCode: 9,
+      },
     },
     diagFieldTypesMap: {
       1: "Text",

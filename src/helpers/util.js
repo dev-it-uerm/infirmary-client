@@ -229,9 +229,8 @@ export const request = async (
   vuexContext
 ) => {
   if (!method) method = "get";
+  if (!url) throw "`url` is required.";
   if (!accessToken) accessToken = null;
-
-  if (!url || !vuexContext) throw "`url` and `vuexContext` are required.";
 
   const opts = {
     timeout: 30000,
@@ -249,7 +248,7 @@ export const request = async (
     //     ? payload
     //     : JSON.stringify(payload)
     //   : null,
-    data: payload ?? null,
+    ...(payload ? { data: payload } : {}),
   };
 
   try {
@@ -257,7 +256,10 @@ export const request = async (
       body: (await axios(opts)).data,
     };
   } catch (error) {
-    if (error.response?.status === httpResponseStatusCodesMap.FORBIDDEN.code) {
+    if (
+      vuexContext &&
+      error.response?.status === httpResponseStatusCodesMap.FORBIDDEN.code
+    ) {
       // await vuexContext.dispatch("app/clearUser", null, { root: true });
     }
 

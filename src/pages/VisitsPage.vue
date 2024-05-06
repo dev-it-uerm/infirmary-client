@@ -62,7 +62,7 @@
                     }`.trim()
                   }}</q-item-label>
                 </q-item-section>
-                <q-item-section v-if="visitStatusesMap" side>
+                <q-item-section v-if="visitStatusMap" side>
                   <q-btn
                     unelevated
                     outline
@@ -195,7 +195,7 @@ export default defineComponent({
     ...mapGetters({
       user: "app/user",
       apiHost: "app/apiHost",
-      visitStatusesMap: "app/visitStatusesMap",
+      visitStatusMap: "app/visitStatusMap",
     }),
   },
   async mounted() {
@@ -208,7 +208,7 @@ export default defineComponent({
         if (acc.id < s.id) return s;
       }, null);
 
-      if (latestStatus) return this.visitStatusesMap[latestStatus.status].name;
+      if (latestStatus) return this.visitStatusMap[latestStatus.status].name;
       return "N/A";
     },
     async getVisits() {

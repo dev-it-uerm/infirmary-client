@@ -18,6 +18,10 @@ export function config(state) {
   return state.config;
 }
 
-export function visitStatusesMap(state) {
-  return state.visitStatusesMap;
+export function visitStatusMap(state) {
+  return state.visitStatusMap;
+}
+
+export function visitSectionsMap(state) {
+  return state.visitSectionsMap;
 }

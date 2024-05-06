@@ -7,7 +7,7 @@
     <q-img
       no-native-menu
       :src="source"
-      alt="UERM PxPortal Logo"
+      alt="UERM Infirmary Logo"
       class="img-fluid"
       :style="dimension"
     />

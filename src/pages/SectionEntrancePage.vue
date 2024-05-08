@@ -7,26 +7,52 @@
         "
         :icon="visitSectionsMap[$route.params.sectionCode].icon"
       />
-      <div style="padding: 32px; width: 450px">
+      <div style="padding: 32px; width: 400px">
         <ReminderCard :exitable="false" class="q-mb-md">
           <template v-slot:body>
-            <div>
-              Enter the <b>Patient Number</b> to accept the patient to the
+            <div v-if="qrMode">
+              Scan the <b>Visit QR Code</b> to mark the patient as SEEN in the
               <b class="text-uppercase"
-                >{{ visitSectionsMap[$route.params.sectionCode].name }}.</b
+                >{{
+                  visitSectionsMap[$route.params.sectionCode].name
+                }}
+                section.</b
               >
+            </div>
+            <div v-else>
+              Enter the <strong>Visit Reference Number</strong> to mark the
+              patient as SEEN in the
+              <b class="text-uppercase">
+                {{ visitSectionsMap[$route.params.sectionCode].name }} section.
+              </b>
             </div>
           </template>
         </ReminderCard>
-        <q-input
-          debounce="750"
-          :disable="loading"
-          outlined
-          stack-label
-          label="Patient Number"
-          v-model.trim="patientCode"
-        />
-        <div class="q-mt-md">
+        <div
+          class="q-pa-xs q-mb-md"
+          style="border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 4px"
+        >
+          <q-toggle
+            class="text-overline"
+            v-model="qrMode"
+            :label="qrMode ? 'QR CODE MODE' : 'MANUAL MODE'"
+          />
+        </div>
+
+        <div v-show="qrMode" id="divQRCodeScanner" width="600px"></div>
+
+        <div v-if="!qrMode" class="q-mb-md">
+          <q-input
+            debounce="750"
+            :loading="loading"
+            :disable="loading"
+            outlined
+            stack-label
+            label="Visit Code"
+            v-model.trim="visitCode"
+          />
+        </div>
+        <!-- <div class="q-mt-md">
           <div class="text-primary text-weight-medium q-mb-sm">
             Recent entries:
           </div>
@@ -43,7 +69,7 @@
               <template v-for="(entry, idx) in recentEntries" :key="idx">
                 <q-item>
                   <q-item-section>
-                    <q-item-label>{{ entry.patientCode }}</q-item-label>
+                    <q-item-label>{{ entry.visitCode }}</q-item-label>
                     <q-item-label caption>{{ entry.message }}</q-item-label>
                   </q-item-section>
                   <q-item-section side top>
@@ -66,7 +92,7 @@
               </q-item-label>
             </div>
           </q-list>
-        </div>
+        </div> -->
       </div>
     </q-card>
   </q-page>
@@ -76,6 +102,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default defineComponent({
   name: "SectionEntrancePage",
@@ -92,9 +119,10 @@ export default defineComponent({
   },
   data() {
     return {
-      patientCode: null,
+      qrMode: true,
+      visitCode: null,
       loading: false,
-      recentEntries: [],
+      // recentEntries: [],
     };
   },
   computed: {
@@ -113,27 +141,49 @@ export default defineComponent({
       },
       immediate: true,
     },
-    patientCode(val) {
+    visitCode(val) {
       if (this.ready && val && val.length > 3) this.changeVisitStatus();
     },
   },
+  mounted() {
+    this.initQRScanner();
+  },
   methods: {
     clear() {
-      this.patientCode = "";
-      this.recentEntries = [];
+      this.visitCode = "";
+      // this.recentEntries = [];
+    },
+    initQRScanner() {
+      const html5QrcodeScanner = new Html5QrcodeScanner(
+        "divQRCodeScanner",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
+      );
+
+      const thisSFC = this;
+
+      html5QrcodeScanner.render(
+        function (decodedText, decodedResult) {
+          thisSFC.visitCode = decodedText;
+        },
+        function (error) {
+          // handle scan failure, usually better to ignore and keep scanning.
+          console.warn("Code scan error:", error);
+        }
+      );
     },
     async changeVisitStatus() {
-      const patientCode = this.patientCode.replace(/ /g, "");
+      const visitCode = this.visitCode.replace(/ /g, "");
       let success = true;
-      let message = `Patient has entered ${this.visitSectionsMap[
+      let message = `Patient has been marked as SEEN in ${this.visitSectionsMap[
         this.$route.params.sectionCode
-      ].name.toUpperCase()} successfully.`;
+      ].name.toUpperCase()}.`;
 
       this.loading = true;
       await delay(2000);
 
       const response = await this.$store.dispatch("visit/changeStatus", {
-        patientCode,
+        visitCode,
         statusCode:
           this.visitSectionsMap[this.$route.params.sectionCode].statusCode,
       });
@@ -146,15 +196,15 @@ export default defineComponent({
       showMessage(this.$q, success, message);
 
       // MAX 10 ITEMS
-      if (this.recentEntries.length === 10) this.recentEntries.pop();
+      // if (this.recentEntries.length === 10) this.recentEntries.pop();
 
-      this.recentEntries.unshift({
-        success,
-        patientCode,
-        message,
-      });
+      // this.recentEntries.unshift({
+      //   success,
+      //   visitCode,
+      //   message,
+      // });
 
-      this.patientCode = "";
+      this.visitCode = "";
       this.loading = false;
     },
   },

@@ -18,6 +18,14 @@ export function config(state) {
   return state.config;
 }
 
+export function pxTypesMap(state) {
+  return state.pxTypesMap;
+}
+
+export function campusesMap(state) {
+  return state.campusesMap;
+}
+
 export function visitStatusMap(state) {
   return state.visitStatusMap;
 }

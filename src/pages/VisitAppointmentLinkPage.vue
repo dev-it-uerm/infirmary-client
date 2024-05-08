@@ -1,13 +1,13 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
     <q-card borderless class="shadow-0">
-      <PageHeader text="REGISTRATION" icon="fa-regular fa-id-card" />
+      <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
       <div style="padding: 32px; width: 450px">
         <ReminderCard :exitable="false" class="q-mb-md">
           <template v-slot:body>
             <div>
-              After clicking the <b>GET LINK</b> button, you will receive an
-              email to confirm your registration.
+              After clicking the <b>SCHEDULE A VISIT</b> button, you will
+              receive an email to confirm your visit.
             </div>
           </template>
         </ReminderCard>
@@ -32,7 +32,7 @@
               :loading="loading"
               unelevated
               class="bg-accent text-black"
-              label="SEND LINK"
+              label="SCHEDULE A VISIT"
             />
           </div>
         </q-form>
@@ -46,7 +46,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, showMessage } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "RegistrationLinkPage",
+  name: "VisitAppointmentLinkPage",
   components: {
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")
@@ -70,7 +70,7 @@ export default defineComponent({
       await delay(2000);
 
       const response = await this.$store.dispatch(
-        "visit/sendRegistrationLink",
+        "visit/sendVisitAppointmentLink",
         this.patientCode
       );
 
@@ -80,7 +80,11 @@ export default defineComponent({
         return;
       }
 
-      showMessage(this.$q, true, "Email has been sent successfully.");
+      showMessage(
+        this.$q,
+        true,
+        "A Link to schedule a visit has been sent to your email."
+      );
       this.loading = false;
     },
   },

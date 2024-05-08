@@ -25,14 +25,14 @@ const routes = [
         component: () => import("pages/VisitsPage.vue"),
       },
       {
-        name: "REGISTRATION_LINK",
-        path: "/registration-link",
-        component: () => import("pages/RegistrationLinkPage.vue"),
+        name: "VISIT_APPOINTMENT_LINK",
+        path: "/visit-appointment-link",
+        component: () => import("pages/VisitAppointmentLinkPage.vue"),
       },
       {
-        name: "REGISTRATION",
-        path: "/registration",
-        component: () => import("pages/RegistrationPage.vue"),
+        name: "VISIT_APPOINTMENT",
+        path: "/visit-appointment",
+        component: () => import("pages/VisitAppointmentPage.vue"),
       },
       {
         name: "LAB_SECTION",

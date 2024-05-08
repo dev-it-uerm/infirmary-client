@@ -14,14 +14,15 @@
       "
       class="column shadow-0 relative-position"
     >
-      <PageHeader icon="visits" text="VISITS" />
+      <PageHeader icon="info" text="VISITS" />
       <div class="full-width q-pa-xl">
-        <ReminderCard
+        <!-- <ReminderCard
           v-if="reminderVisible"
           title="REMINDER"
-          :paragraphs="['test', 'test 2']"
           @close="reminderVisible = false"
-        />
+        >
+          <template v-slot:body> hello </template>
+        </ReminderCard> -->
         <template v-if="loading">
           <div>LOADING...</div>
         </template>
@@ -44,11 +45,15 @@
             <q-virtual-scroll
               bordered
               style="max-height: 100%; height: auto"
-              separator
               :items="visits"
               v-slot="{ item, index }"
             >
-              <q-item class="full-width" :key="index">
+              <q-item
+                class="full-width"
+                :key="index"
+                clickable
+                @click="showPxVisitInfo(item.id, item.patientCode)"
+              >
                 <q-item-section>
                   <q-item-label caption class="ellipsis">{{
                     formatDate(item.dateTimeCreated)
@@ -61,6 +66,16 @@
                       item.middleName ? item.middleName[0].concat(".") : ""
                     }`.trim()
                   }}</q-item-label>
+                  <q-item-label caption>
+                    <div class="row" style="gap: 6px">
+                      <q-badge v-if="item.type" class="bg-grey">{{
+                        pxTypesMap[item.type].name
+                      }}</q-badge>
+                      <q-badge v-if="item.campus" class="bg-grey">{{
+                        campusesMap[item.campus].name
+                      }}</q-badge>
+                    </div>
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section v-if="visitStatusMap" side>
                   <q-btn
@@ -73,15 +88,27 @@
               <q-item-label caption>{{ formatDate(item.date, { dateOnly: true }) }}</q-item-label>
             </q-item-section> -->
               </q-item>
+              <q-separator />
             </q-virtual-scroll>
           </div>
           <div v-else style="height: 150px" class="flex flex-center bg-white">
             <NoResult :bordered="false" message="No diagnostic found." />
           </div>
         </template>
-        <q-separator class="q-my-xl" />
       </div>
     </q-card>
+    <MaximizedDialog
+      v-if="visitInfoVisible"
+      title="Visit Details"
+      @close="visitInfoVisible = false"
+    >
+      <template v-slot:body>
+        <VisitDetails
+          :visitId="currentVisitId"
+          :patientCode="currentPatientCode"
+        />
+      </template>
+    </MaximizedDialog>
   </q-page>
 </template>
 
@@ -89,6 +116,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, formatDate, showMessage } from "src/helpers/util.js";
+import MaximizedDialog from "src/components/core/MaximizedDialog.vue";
 
 export default defineComponent({
   name: "VisitsPage",
@@ -96,14 +124,20 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
-    ReminderCard: defineAsyncComponent(() =>
-      import("src/components/core/ReminderCard.vue")
-    ),
+    // ReminderCard: defineAsyncComponent(() =>
+    //   import("src/components/core/ReminderCard.vue")
+    // ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")
+    ),
+    MaximizedDialog: defineAsyncComponent(() =>
+      import("src/components/core/MaximizedDialog.vue")
+    ),
+    VisitDetails: defineAsyncComponent(() =>
+      import("src/components/VisitDetails.vue")
     ),
     NoResult: defineAsyncComponent(() =>
       import("src/components/core/NoResult.vue")
@@ -119,82 +153,21 @@ export default defineComponent({
   },
   data() {
     return {
-      filters: { createdBy: "8225" },
+      filters: { patientCode: "px456" },
       loading: false,
-      uploading: false,
       visits: [],
-      columns: [
-        {
-          name: "paymentChannel",
-          field: "paymentChannel",
-          required: true,
-          label: "Payment Channel",
-          align: "center",
-          sortable: false,
-          style: "width: 150px; max-width: 150px;",
-          format: (val) => (!val ? "-" : val),
-        },
-        {
-          name: "dateTimeUploaded",
-          field: "dateTimeUploaded",
-          required: true,
-          label: "Date & Time Uploaded",
-          align: "center",
-          sortable: false,
-          format: (val) => formatDate(val),
-        },
-        {
-          name: "referenceNo",
-          field: "referenceNo",
-          label: "Reference Number",
-          align: "center",
-          sortable: false,
-          style: "text-align: left; width: 150px; max-width: 150px;",
-        },
-        {
-          name: "transactionDate",
-          field: "transactionDate",
-          label: "Transaction Date",
-          align: "center",
-          sortable: false,
-          style: "width: 150px; max-width: 150px;",
-          format: (val) => (!val ? "-" : formatDate(val, { dateOnly: true })),
-        },
-        {
-          name: "amount",
-          field: "amount",
-          required: true,
-          label: "Amount",
-          align: "center",
-          sortable: false,
-          style: "text-align: right; width: 150px; max-width: 150px;",
-          format: (val) =>
-            val == null || val === 0 ? "-" : String(new Money(val)),
-        },
-        {
-          name: "orNo",
-          field: "orNo",
-          label: "OR Number",
-          align: "center",
-          sortable: false,
-          style: "width: 150px; max-width: 150px;",
-          format: (val) => (!val ? "-" : val),
-        },
-        {
-          name: "remarks",
-          field: "remarks",
-          label: "Remarks",
-          align: "center",
-          sortable: false,
-          style: "width: 200px; max-width: 200px;",
-        },
-      ],
+
+      visitInfoVisible: false,
+      currentVisitId: 0,
+      currentPatientCode: "",
     };
   },
   computed: {
     ...mapGetters({
       user: "app/user",
       apiHost: "app/apiHost",
+      pxTypesMap: "app/pxTypesMap",
+      campusesMap: "app/campusesMap",
       visitStatusMap: "app/visitStatusMap",
     }),
   },
@@ -233,6 +206,11 @@ export default defineComponent({
       });
 
       this.loading = false;
+    },
+    async showPxVisitInfo(visitId, patientCode) {
+      this.visitInfoVisible = true;
+      this.currentVisitId = visitId;
+      this.currentPatientCode = patientCode;
     },
   },
 });

@@ -12,11 +12,5 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "FetchingData",
-  // props: {
-  //   loading: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  // },
 });
 </script>

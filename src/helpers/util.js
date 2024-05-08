@@ -268,8 +268,8 @@ export const request = async (
       status: error.response?.status ?? 0,
       body:
         error.response?.data ??
-        // httpResponseStatusCodesMap[error.response.status].name ??
-        error.response?.statusText,
+        error.response?.statusText ??
+        "Unable to connect to the REST API server.",
     };
   }
 };

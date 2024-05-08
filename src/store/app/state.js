@@ -31,6 +31,16 @@ export default function () {
       LAB,
       RAD,
     ],
+    campusesMap: {
+      MNL: { code: "MNL", name: "Manila" },
+      CAL: { code: "CAL", name: "Caloocan" },
+      UERM: { code: "UERM", name: "UERM" },
+    },
+    pxTypesMap: {
+      EMP: { code: "EMP", name: "UERM Employee" },
+      STU: { code: "CAL", name: "UERM Student" },
+      PRVT: { code: "PRVT", name: "Private" },
+    },
     visitStatusMap: {
       0: { code: 0, name: "Registered" },
       1: { code: 1, name: "Admitted" },

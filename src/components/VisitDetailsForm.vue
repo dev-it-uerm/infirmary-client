@@ -23,6 +23,16 @@
           v-model.trim="value[field.code]"
           hint=""
         />
+        <DiagTest
+          v-if="field.type === 'DIAGTEST'"
+          :disable="loading"
+          :label="field.name"
+          :diagCenterCode="field.diagCenterCode"
+          :diagCode="field.diagCode"
+          :diagParamCode="field.code"
+          :initialValue="value[field.code]"
+          @valueChanged="(val) => (value[field.code] = val)"
+        />
       </div>
     </template>
     <q-input
@@ -62,6 +72,9 @@ export default defineComponent({
   components: {
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
+    ),
+    DiagTest: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/DiagTest.vue")
     ),
   },
   props: {

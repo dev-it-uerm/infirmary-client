@@ -6,23 +6,11 @@
   >
     <template v-slot:before>
       <q-tabs v-model="tab" vertical>
-        <q-tab
-          :disable="loading"
-          name="medicalHistory"
-          label="Medical History"
-        />
-        <q-tab :disable="loading" name="physicalExam" label="Physical Exam" />
-        <q-tab
-          :disable="loading"
-          name="laboratoryTests"
-          label="Laboratory Test"
-        />
-        <q-tab
-          :disable="loading"
-          name="radiologyTests"
-          label="Radiology Test"
-        />
-        <q-tab :disable="loading" name="fecalysis" label="Fecalysis" />
+        <q-tab :disable="loading" name="medHist" label="Medical History" />
+        <q-tab :disable="loading" name="pe" label="Physical Exam" />
+        <q-tab :disable="loading" name="labCbc" label="Lab - CBC" />
+        <q-tab :disable="loading" name="radio" label="Radiology Test" />
+        <q-tab :disable="loading" name="feca" label="Fecalysis" />
       </q-tabs>
     </template>
     <template v-slot:after>
@@ -41,7 +29,7 @@
           <VisitDetailsForm
             :visitId="visitId"
             :patientCode="patientCode"
-            :tableName="tab"
+            :tableName="tableNamesMap[tab]"
             :initialValue="visitDetails"
             :fields="fieldGroupsMap[tab]"
           />
@@ -84,8 +72,13 @@ export default defineComponent({
     return {
       showMessage,
       formatDate,
+      tableNamesMap: {
+        medHist: "medicalHistory",
+        pe: "physicalExam",
+        labCbc: "diagResults",
+      },
       fieldGroupsMap: {
-        medicalHistory: [
+        medHist: [
           {
             code: "PRESENTSYMPTOMS",
             name: "Present Symptoms",
@@ -117,7 +110,7 @@ export default defineComponent({
             type: "TEXTAREA",
           },
         ],
-        physicalExam: [
+        pe: [
           {
             code: "VSIGNBP",
             name: "Blood Pressure",
@@ -226,9 +219,34 @@ export default defineComponent({
             required: true,
           },
         ],
-        laboratoryTests: [],
-        radiologyTests: [],
-        fecalysis: [],
+        labCbc: [
+          {
+            code: "HGB",
+            name: "HGB",
+            type: "DIAGTEST",
+            diagCenterCode: "LAB",
+            diagCode: "CBC",
+            default: {
+              value: null,
+              unit: "g/L",
+              normalRange: "140-160m / 120-140f",
+            },
+          },
+          {
+            code: "HCT",
+            name: "HCT",
+            type: "DIAGTEST",
+            diagCenterCode: "LAB",
+            diagCode: "CBC",
+            default: {
+              value: null,
+              unit: "%",
+              normalRange: "0.40-0.54m / 0.37-0.47f",
+            },
+          },
+        ],
+        radio: [],
+        feca: [],
       },
       // inputRule: (val) =>
       //   val == null || val === "" ? "Field is required." : undefined,
@@ -252,7 +270,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.tab = "medicalHistory";
+    this.tab = "medHist";
   },
   methods: {
     async getDetails() {

@@ -103,7 +103,6 @@ export default defineComponent({
   created() {
     if (this.initialValue) {
       this.value = {
-        diagCenterCode: this.diagCenterCode,
         diagCode: this.diagCode,
         code: this.diagParamCode,
         ...this.initialValue,
@@ -112,7 +111,6 @@ export default defineComponent({
     }
 
     this.value = {
-      diagCenterCode: this.diagCenterCode,
       diagCode: this.diagCode,
       code: this.diagParamCode,
       value: null,

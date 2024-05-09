@@ -18,6 +18,10 @@ export function config(state) {
   return state.config;
 }
 
+export function navMenus(state) {
+  return state.navMenus;
+}
+
 export function pxTypesMap(state) {
   return state.pxTypesMap;
 }
@@ -26,10 +30,6 @@ export function campusesMap(state) {
   return state.campusesMap;
 }
 
-export function visitStatusMap(state) {
-  return state.visitStatusMap;
-}
-
-export function visitSectionsMap(state) {
-  return state.visitSectionsMap;
+export function visitPhasesMap(state) {
+  return state.visitPhasesMap;
 }

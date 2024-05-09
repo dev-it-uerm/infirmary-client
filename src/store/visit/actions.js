@@ -28,10 +28,10 @@ export const schedule = async (context, accessToken) => {
   );
 };
 
-export const changeStatus = async (context, payload) => {
+export const changePhase = async (context, payload) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/visit-status`,
+    `${context.rootState.app.apiHost}/visit-phase`,
     null,
     context.rootState.app?.user?.accessToken,
     payload,

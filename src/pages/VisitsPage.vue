@@ -52,7 +52,7 @@
                 class="full-width"
                 :key="index"
                 clickable
-                @click="showPxVisitInfo(item.id, item.patientCode)"
+                @click="showPxVisitInfo(item)"
               >
                 <q-item-section>
                   <q-item-label caption class="ellipsis">{{
@@ -62,26 +62,35 @@
                     item.patientCode
                   }}</q-item-label>
                   <q-item-label class="text-weight-medium">{{
-                    `${item.lastName}, ${item.firstName} ${
-                      item.middleName ? item.middleName[0].concat(".") : ""
+                    `${item.patientLastName}, ${item.patientFirstName} ${
+                      item.patientMiddleName
+                        ? item.patientMiddleName[0].concat(".")
+                        : ""
                     }`.trim()
                   }}</q-item-label>
                   <q-item-label caption>
                     <div class="row" style="gap: 6px">
-                      <q-badge v-if="item.type" class="bg-grey">{{
-                        pxTypesMap[item.type].name
+                      <q-badge v-if="item.patientCampusCode" class="bg-grey">{{
+                        campusesMap[item.patientCampusCode].name
                       }}</q-badge>
-                      <q-badge v-if="item.campus" class="bg-grey">{{
-                        campusesMap[item.campus].name
+                      <q-badge v-if="item.patientTypeCode" class="bg-grey">{{
+                        pxTypesMap[item.patientTypeCode].name
                       }}</q-badge>
                     </div>
                   </q-item-label>
                 </q-item-section>
-                <q-item-section v-if="visitStatusMap" side>
+                <q-item-section v-if="visitPhasesMap" side>
                   <q-btn
+                    class="bg-white"
                     unelevated
                     outline
-                    :label="getLatestStatus(item.statuses)"
+                    @click.stop="
+                      () => {
+                        currentVisit = item;
+                        statusHistoryVisible = true;
+                      }
+                    "
+                    :label="getLatestPhase(item.phases)"
                   />
                 </q-item-section>
                 <!-- <q-item-section side top>
@@ -97,18 +106,61 @@
         </template>
       </div>
     </q-card>
-    <MaximizedDialog
+    <MinimizedDialog
+      v-if="statusHistoryVisible"
+      title="PHASES HISTORY"
+      widthOnDesktop="500px"
+      @close="statusHistoryVisible = false"
+    >
+      <template v-slot:body>
+        <div class="q-pa-lg">
+          <q-table
+            class="fit"
+            hide-bottom
+            flat
+            bordered
+            separator="cell"
+            :rows-per-page-options="[0]"
+            :rows="currentVisit.phases"
+            :columns="[
+              {
+                name: 'phaseCode',
+                label: 'Phase',
+                field: 'phaseCode',
+                align: 'left',
+                format: getPhaseName,
+              },
+              {
+                name: 'createdBy',
+                label: 'Assigned By',
+                field: 'createdBy',
+                align: 'left',
+              },
+              {
+                name: 'dateTimeCreated',
+                label: 'Date & Time Assigned',
+                field: 'dateTimeCreated',
+                format: formatDate,
+                align: 'left',
+              },
+            ]"
+          />
+        </div>
+      </template>
+    </MinimizedDialog>
+    <MinimizedDialog
       v-if="visitInfoVisible"
       title="Visit Details"
+      widthOnDesktop="720px"
       @close="visitInfoVisible = false"
     >
       <template v-slot:body>
         <VisitDetails
-          :visitId="currentVisitId"
-          :patientCode="currentPatientCode"
+          :visitId="currentVisit.id"
+          :patientId="currentVisit.patientId"
         />
       </template>
-    </MaximizedDialog>
+    </MinimizedDialog>
   </q-page>
 </template>
 
@@ -116,7 +168,6 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, formatDate, showMessage } from "src/helpers/util.js";
-import MaximizedDialog from "src/components/core/MaximizedDialog.vue";
 
 export default defineComponent({
   name: "VisitsPage",
@@ -132,9 +183,6 @@ export default defineComponent({
     ),
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")
-    ),
-    MaximizedDialog: defineAsyncComponent(() =>
-      import("src/components/core/MaximizedDialog.vue")
     ),
     VisitDetails: defineAsyncComponent(() =>
       import("src/components/VisitDetails.vue")
@@ -153,35 +201,38 @@ export default defineComponent({
   },
   data() {
     return {
-      filters: { patientCode: "px456" },
+      filters: { patientCode: "px123" },
       loading: false,
       visits: [],
 
+      statusHistoryVisible: false,
       visitInfoVisible: false,
-      currentVisitId: 0,
-      currentPatientCode: "",
+
+      currentVisit: null,
     };
   },
   computed: {
     ...mapGetters({
       user: "app/user",
-      apiHost: "app/apiHost",
       pxTypesMap: "app/pxTypesMap",
       campusesMap: "app/campusesMap",
-      visitStatusMap: "app/visitStatusMap",
+      visitPhasesMap: "app/visitPhasesMap",
     }),
   },
   async mounted() {
     this.getVisits();
   },
   methods: {
-    getLatestStatus(statuses) {
-      const latestStatus = statuses.reduce((acc, s) => {
+    getPhaseName(phaseCode) {
+      return this.visitPhasesMap[phaseCode].name;
+    },
+    getLatestPhase(phases) {
+      const latestPhase = phases.reduce((acc, s) => {
         if (!acc) return s;
         if (acc.id < s.id) return s;
       }, null);
 
-      if (latestStatus) return this.visitStatusMap[latestStatus.status].name;
+      if (latestPhase) return this.visitPhasesMap[latestPhase.phaseCode].name;
       return "N/A";
     },
     async getVisits() {
@@ -196,21 +247,21 @@ export default defineComponent({
       }
 
       const visits = response.body[0];
-      const visitStatuses = response.body[1];
+      const visitPhases = response.body[1];
 
       this.visits = visits.map((row) => {
         return {
           ...row,
-          statuses: visitStatuses.filter((s) => s.visitId === row.id),
+          phases: visitPhases.filter((s) => s.visitId === row.id),
         };
       });
 
       this.loading = false;
     },
-    async showPxVisitInfo(visitId, patientCode) {
+    async showPxVisitInfo(visit) {
       this.visitInfoVisible = true;
-      this.currentVisitId = visitId;
-      this.currentPatientCode = patientCode;
+      this.currentVisit = visit;
+      this.currentPatientId = visit.patientId;
     },
   },
 });

@@ -82,8 +82,8 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    patientCode: {
-      type: String,
+    patientId: {
+      type: Number,
       required: true,
     },
     tableName: {
@@ -163,7 +163,7 @@ export default defineComponent({
 
       const response = await this.$store.dispatch("visit/saveDetails", {
         visitId: this.visitId,
-        patientCode: this.patientCode,
+        patientId: this.patientId,
         tableName: this.tableName,
         details: this.formatValue(this.value),
       });

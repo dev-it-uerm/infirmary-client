@@ -51,7 +51,9 @@ export const httpResponseStatusCodesMap = {
   [INTERNAL_SERVER_ERROR.code]: INTERNAL_SERVER_ERROR,
 };
 
-export const formatDate = (date, options = {}) => {
+export const formatDate = (date, options) => {
+  if (!options) options = {};
+
   // `date` can be a JS date or an ISO date string
   if (!date) return "";
 
@@ -75,7 +77,7 @@ export const formatDate = (date, options = {}) => {
     hour -= 12;
   }
 
-  const time = `${hour}:${minute}${ampm}`;
+  const time = `${hour}:${minute} ${ampm}`;
   const dayName = days[dt.getDay()];
 
   if (options.withDayName)

@@ -1,42 +1,39 @@
 <template>
-  <q-splitter
-    class="bg-white fit"
-    style="height: 250px"
-    v-model="splitterModel"
-  >
-    <template v-slot:before>
-      <q-tabs v-model="tab" vertical>
-        <q-tab :disable="loading" name="medHist" label="Medical History" />
-        <q-tab :disable="loading" name="pe" label="Physical Exam" />
-        <q-tab :disable="loading" name="labCbc" label="Lab - CBC" />
-        <q-tab :disable="loading" name="radio" label="Radiology Test" />
-        <q-tab :disable="loading" name="feca" label="Fecalysis" />
-      </q-tabs>
-    </template>
-    <template v-slot:after>
-      <FetchingData v-if="loading" />
-      <q-tab-panels
-        v-else
-        class="fit"
-        v-model="tab"
-        animated
-        swipeable
-        vertical
-        transition-prev="jump-up"
-        transition-next="jump-up"
-      >
-        <q-tab-panel class="q-pa-lg" :name="tab">
-          <VisitDetailsForm
-            :visitId="visitId"
-            :patientCode="patientCode"
-            :tableName="tableNamesMap[tab]"
-            :initialValue="visitDetails"
-            :fields="fieldGroupsMap[tab]"
-          />
-        </q-tab-panel>
-      </q-tab-panels>
-    </template>
-  </q-splitter>
+  <div style="max-height: 500px">
+    <q-tabs dense class="text-primary full-width" v-model="tab">
+      <q-tab :disable="loading" name="medHist" label="Medical History" />
+      <q-tab :disable="loading" name="pe" label="Physical Exam" />
+      <q-tab :disable="loading" name="labCbc" label="Lab - CBC" />
+      <q-tab :disable="loading" name="labUri" label="Lab - Urinalysis" />
+      <q-tab :disable="loading" name="labFcl" label="Lab Fecalysis" />
+      <q-tab
+        :disable="loading"
+        name="imgXrChst"
+        label="Imaging - X-ray (Chest)"
+      />
+    </q-tabs>
+    <FetchingData v-if="loading" style="min-height: 100px" />
+    <q-tab-panels
+      v-else
+      class="fit"
+      v-model="tab"
+      animated
+      swipeable
+      vertical
+      transition-prev="jump-up"
+      transition-next="jump-up"
+    >
+      <q-tab-panel class="q-pa-lg" :name="tab">
+        <VisitDetailsForm
+          :visitId="visitId"
+          :patientId="patientId"
+          :tableName="tableNamesMap[tab]"
+          :initialValue="visitDetails"
+          :fields="fieldGroupsMap[tab]"
+        />
+      </q-tab-panel>
+    </q-tab-panels>
+  </div>
 </template>
 
 <script>
@@ -63,8 +60,8 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    patientCode: {
-      type: String,
+    patientId: {
+      type: Number,
       required: true,
     },
   },
@@ -76,6 +73,9 @@ export default defineComponent({
         medHist: "medicalHistory",
         pe: "physicalExam",
         labCbc: "diagResults",
+        labUri: "diagResults",
+        labFeca: "diagResults",
+        radXray: "diagResults",
       },
       fieldGroupsMap: {
         medHist: [
@@ -279,8 +279,8 @@ export default defineComponent({
 
       const response = await this.$store.dispatch("visit/getDetails", {
         visitId: this.visitId,
-        patientCode: this.patientCode,
-        tableName: this.tab,
+        patientId: this.patientId,
+        tableName: this.tableNamesMap[this.tab],
       });
 
       if (response.error) {

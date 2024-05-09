@@ -56,7 +56,7 @@
             <div class="text-center">
               <span class="text-h6 text-weight-bold">{{ userFullName }}</span>
               <div class="row justify-center text-grey-6">
-                <span>PATIENT NO:&nbsp;</span>
+                <span>EMPLOYEE NO:&nbsp;</span>
                 <span class="text-weight-bold">{{ user.code }}</span>
               </div>
             </div>

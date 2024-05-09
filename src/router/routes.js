@@ -35,9 +35,9 @@ const routes = [
         component: () => import("pages/VisitAppointmentPage.vue"),
       },
       {
-        name: "LAB_SECTION",
-        path: "/section-entrance/:sectionCode",
-        component: () => import("pages/SectionEntrancePage.vue"),
+        name: "PHASE_ASSIGNMENT",
+        path: "/phase-assignment",
+        component: () => import("pages/PhaseAssignmentPage.vue"),
       },
       // {
       //   path: "/test-page",

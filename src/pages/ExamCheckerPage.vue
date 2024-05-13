@@ -26,7 +26,9 @@
             <q-toggle
               class="text-overline"
               v-model="qrMode"
-              :label="qrMode ? 'QR CODE MODE' : 'MANUAL MODE'"
+              :label="
+                qrMode ? 'SCAN VISIT QR CODE' : 'ENTER VISIT CODE MANUALLY'
+              "
             />
           </div>
           <q-select

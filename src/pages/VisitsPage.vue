@@ -16,94 +16,121 @@
     >
       <PageHeader icon="info" text="VISITS" />
       <div class="full-width q-pa-xl">
-        <!-- <ReminderCard
-          v-if="reminderVisible"
-          title="REMINDER"
-          @close="reminderVisible = false"
-        >
-          <template v-slot:body> hello </template>
-        </ReminderCard> -->
-        <template v-if="loading">
-          <div>LOADING...</div>
-        </template>
-        <template v-else>
+        <div class="row" style="gap: 16px">
           <div
-            v-if="visits && visits.length > 0"
-            class="fit relative-position q-pa-md bg-white"
+            class="col-auto q-pa-md"
             style="
-              overflow-y: auto;
-              display: grid;
-              grid-template-rows: min-content auto;
+              border: solid 1px rgba(0, 0, 0, 0.15);
+              border-radius: 4px;
+              width: 150px;
             "
           >
-            <div class="q-pb-sm">
-              <q-badge color="accent" class="text-black q-pa-sm">
-                <span class="text-weight-bold">{{ visits.length }}</span
-                >&nbsp;items found.
-              </q-badge>
-            </div>
-            <q-virtual-scroll
-              bordered
-              style="max-height: 100%; height: auto"
-              :items="visits"
-              v-slot="{ item, index }"
+            <div class="text-primary text-weight-medium q-mb-sm">FILTER:</div>
+            <DateRange stack-label outlined label="Date Range" />
+          </div>
+          <div class="col">
+            <!-- <ReminderCard
+              v-if="reminderVisible"
+              title="REMINDER"
+              @close="reminderVisible = false"
             >
-              <q-item
-                class="full-width"
-                :key="index"
-                clickable
-                @click="showPxVisitInfo(item)"
+              <template v-slot:body> hello </template>
+            </ReminderCard> -->
+            <template v-if="loading">
+              <div>LOADING...</div>
+            </template>
+            <template v-else>
+              <div
+                v-if="visits && visits.length > 0"
+                class="fit relative-position bg-white"
+                style="
+                  overflow-y: auto;
+                  display: grid;
+                  grid-template-rows: min-content auto;
+                "
               >
-                <q-item-section>
-                  <q-item-label caption class="ellipsis">{{
-                    formatDate(item.dateTimeCreated)
-                  }}</q-item-label>
-                  <q-item-label overline class="q-mb-sm">{{
-                    item.patientCode
-                  }}</q-item-label>
-                  <q-item-label class="text-weight-medium">{{
-                    `${item.patientLastName}, ${item.patientFirstName} ${
-                      item.patientMiddleName
-                        ? item.patientMiddleName[0].concat(".")
-                        : ""
-                    }`.trim()
-                  }}</q-item-label>
-                  <q-item-label caption>
-                    <div class="row" style="gap: 6px">
-                      <q-badge v-if="item.patientCampusCode" class="bg-grey">{{
-                        campusesMap[item.patientCampusCode].name
-                      }}</q-badge>
-                      <q-badge v-if="item.patientTypeCode" class="bg-grey">{{
-                        pxTypesMap[item.patientTypeCode].name
-                      }}</q-badge>
-                    </div>
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section v-if="visitPhasesMap" side>
-                  <q-btn
-                    class="bg-white"
-                    unelevated
-                    outline
-                    @click.stop="
-                      () => {
-                        currentVisit = item;
-                        statusHistoryVisible = true;
-                      }
-                    "
-                    :label="getLatestPhase(item.phases)"
-                  />
-                </q-item-section>
-                <!-- <q-item-section side top>
-              <q-item-label caption>{{ formatDate(item.date, { dateOnly: true }) }}</q-item-label>
-            </q-item-section> -->
-              </q-item>
-              <q-separator />
-            </q-virtual-scroll>
+                <div class="q-pb-sm">
+                  <q-badge color="accent" class="text-black q-pa-sm">
+                    <span class="text-weight-bold">{{ visits.length }}</span
+                    >&nbsp;items found.
+                  </q-badge>
+                </div>
+                <q-virtual-scroll
+                  bordered
+                  style="max-height: 100%; height: auto"
+                  :items="visits"
+                  v-slot="{ item, index }"
+                >
+                  <q-item
+                    class="full-width"
+                    :key="index"
+                    clickable
+                    @click="showPxVisitInfo(item)"
+                  >
+                    <q-item-section>
+                      <q-item-label caption class="ellipsis">{{
+                        formatDate(item.dateTimeCreated)
+                      }}</q-item-label>
+                      <q-item-label overline class="q-mb-sm">{{
+                        item.patientCode
+                      }}</q-item-label>
+                      <q-item-label class="text-weight-medium">{{
+                        `${item.patientLastName}, ${item.patientFirstName} ${
+                          item.patientMiddleName
+                            ? item.patientMiddleName[0].concat(".")
+                            : ""
+                        }`.trim()
+                      }}</q-item-label>
+                      <q-item-label caption>
+                        <div class="row" style="gap: 6px">
+                          <q-badge
+                            v-if="item.patientCampusCode"
+                            class="bg-grey"
+                            >{{
+                              campusesMap[item.patientCampusCode].name
+                            }}</q-badge
+                          >
+                          <q-badge
+                            v-if="item.patientTypeCode"
+                            class="bg-grey"
+                            >{{
+                              pxTypesMap[item.patientTypeCode].name
+                            }}</q-badge
+                          >
+                        </div>
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section v-if="visitPhasesMap" side>
+                      <q-btn
+                        class="bg-white"
+                        unelevated
+                        outline
+                        @click.stop="
+                          () => {
+                            currentVisit = item;
+                            statusHistoryVisible = true;
+                          }
+                        "
+                        :label="getLatestPhase(item.phases)"
+                      />
+                    </q-item-section>
+                    <!-- <q-item-section side top>
+                  <q-item-label caption>{{ formatDate(item.date, { dateOnly: true }) }}</q-item-label>
+                </q-item-section> -->
+                  </q-item>
+                  <q-separator />
+                </q-virtual-scroll>
+              </div>
+              <div
+                v-else
+                style="height: 150px"
+                class="flex flex-center bg-white"
+              >
+                <NoResult :bordered="false" message="No diagnostic found." />
+              </div>
+            </template>
           </div>
-          <div v-else style="height: 150px" class="flex flex-center bg-white">
-            <NoResult :bordered="false" message="No diagnostic found." />
-          </div>
-        </template>
+        </div>
       </div>
     </q-card>
     <MinimizedDialog
@@ -132,13 +159,13 @@
               },
               {
                 name: 'createdBy',
-                label: 'Assigned By',
+                label: 'Added By',
                 field: 'createdBy',
                 align: 'left',
               },
               {
                 name: 'dateTimeCreated',
-                label: 'Date & Time Assigned',
+                label: 'Date & Time Added',
                 field: 'dateTimeCreated',
                 format: formatDate,
                 align: 'left',
@@ -171,6 +198,9 @@ export default defineComponent({
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
+    DateRange: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/DateRange.vue")
+    ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),

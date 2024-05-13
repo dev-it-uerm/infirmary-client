@@ -30,6 +30,10 @@ export function campusesMap(state) {
   return state.campusesMap;
 }
 
+export function examsMap(state) {
+  return state.examsMap;
+}
+
 export function visitPhasesMap(state) {
   return state.visitPhasesMap;
 }

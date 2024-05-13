@@ -1,11 +1,11 @@
 <template>
   <div class="column full-width">
-    <div style="color: rgba(0, 0, 0, 0.75)">{{ label }}</div>
+    <div style="color: rgba(0, 0, 0, 0.65)">{{ label }}</div>
     <div class="row items-center full-width" style="gap: 12px">
       <q-input
         class="col"
         dense
-        :disable="disable"
+        :disable="disabled"
         stack-label
         outlined
         label="Result"
@@ -15,7 +15,7 @@
       <q-input
         class="col"
         dense
-        :disable="disable"
+        :disable="disabled"
         stack-label
         outlined
         :rules="rules"
@@ -26,7 +26,7 @@
       <q-input
         class="col"
         dense
-        :disable="disable"
+        :disable="disabled"
         stack-label
         outlined
         :rules="rules"
@@ -40,32 +40,17 @@
 
 <script>
 import { defineComponent } from "vue";
-import {
-  empty,
-  isStr,
-  isObj,
-  jsDateToISOString,
-  subtractDay,
-} from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "DiagTest",
+  name: "FormFieldDiagTest",
   props: {
     label: {
       type: String,
       required: true,
     },
-    disable: {
+    disabled: {
       type: Boolean,
       default: false,
-    },
-    diagCenterCode: {
-      type: String,
-      required: true,
-    },
-    diagCode: {
-      type: String,
-      required: true,
     },
     diagParamCode: {
       type: String,
@@ -103,7 +88,6 @@ export default defineComponent({
   created() {
     if (this.initialValue) {
       this.value = {
-        diagCode: this.diagCode,
         code: this.diagParamCode,
         ...this.initialValue,
       };
@@ -111,7 +95,6 @@ export default defineComponent({
     }
 
     this.value = {
-      diagCode: this.diagCode,
       code: this.diagParamCode,
       value: null,
       unit: null,

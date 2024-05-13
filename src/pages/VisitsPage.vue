@@ -108,7 +108,7 @@
     </q-card>
     <MinimizedDialog
       v-if="statusHistoryVisible"
-      title="PHASES HISTORY"
+      title="HISTORY"
       widthOnDesktop="500px"
       @close="statusHistoryVisible = false"
     >
@@ -148,19 +148,12 @@
         </div>
       </template>
     </MinimizedDialog>
-    <MinimizedDialog
+    <VisitDetails
       v-if="visitInfoVisible"
-      title="Visit Details"
-      widthOnDesktop="720px"
+      :visitId="currentVisit.id"
+      :patientId="currentVisit.patientId"
       @close="visitInfoVisible = false"
-    >
-      <template v-slot:body>
-        <VisitDetails
-          :visitId="currentVisit.id"
-          :patientId="currentVisit.patientId"
-        />
-      </template>
-    </MinimizedDialog>
+    />
   </q-page>
 </template>
 

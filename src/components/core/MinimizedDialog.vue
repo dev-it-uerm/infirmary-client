@@ -6,7 +6,11 @@
         style="gap: 20px"
         class="row items-center text-uppercase text-weight-medium text-h6 q-py-md q-pl-lg q-pr-md"
       >
-        <span class="col ellipsis">{{ title }}</span>
+        <span class="col ellipsis">
+          <slot name="title">
+            <div>{{ title }}</div>
+          </slot>
+        </span>
         <div v-if="!hideExitButton" class="col-auto cursor-pointer">
           <q-btn
             :disable="loading"

@@ -1,26 +1,21 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
     <q-card borderless class="shadow-0" style="width: 500px">
-      <PageHeader text="PHASE ASSIGNMENT" icon="fa-solid fa-user-tag" />
+      <PageHeader text="EXAM CHECKER" icon="fa-solid fa-list-check" />
       <div style="padding: 32px">
         <div v-if="forbidden">FORBIDDEN</div>
         <div v-else>
-          <ReminderCard v-if="procedurePhase" :exitable="false" class="q-mb-md">
+          <ReminderCard v-if="exam" :exitable="false" class="q-mb-md">
             <template v-slot:body>
               <div v-if="qrMode">
-                Scan the <b>Visit QR Code</b> to mark the patient as DONE in the
-                <b class="text-uppercase">
-                  {{ procedurePhase.name.toUpperCase() }}
-                </b>
-                phase.
+                Scan the <strong>Visit QR Code</strong> to mark the patient as
+                DONE in the
+                <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
               </div>
               <div v-else>
                 Enter the <strong>Visit Reference Number</strong> to mark the
                 patient as DONE in the
-                <b class="text-uppercase">
-                  {{ procedurePhase.name.toUpperCase() }}
-                </b>
-                phase.
+                <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
               </div>
             </template>
           </ReminderCard>
@@ -37,11 +32,11 @@
           <q-select
             outlined
             stack-label
-            :options="procedurePhases"
+            :options="exams"
             option-value="code"
             option-label="name"
-            label="Phases"
-            v-model="procedurePhase"
+            label="Examinations"
+            v-model="exam"
             hint=""
           />
           <div v-show="qrMode" id="divQRCodeScanner" width="600px"></div>
@@ -110,7 +105,7 @@ import { delay, showMessage } from "src/helpers/util.js";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default defineComponent({
-  name: "PhaseAssignmentPage",
+  name: "ExamCheckerPage",
   components: {
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")
@@ -124,8 +119,8 @@ export default defineComponent({
   },
   data() {
     return {
-      procedurePhases: [],
-      procedurePhase: null,
+      exams: [],
+      exam: null,
       qrMode: true,
       visitCode: null,
       loading: false,
@@ -148,21 +143,21 @@ export default defineComponent({
     //   immediate: true,
     // },
     visitCode(val) {
-      if (val && val.length > 3) this.changeVisitPhase();
+      if (val && val.length === 22) this.changeVisitPhase();
     },
   },
   mounted() {
-    this.procedurePhases = Object.values(this.visitPhasesMap).filter(
+    this.exams = Object.values(this.visitPhasesMap).filter(
       (v) =>
         !["REG", "FIN"].includes(v.code) &&
         (this.user.allowedPhases ?? []).includes(v.code)
     );
 
-    if (this.procedurePhases.length === 0) {
+    if (this.exams.length === 0) {
       this.forbidden = true;
       return;
     }
-    this.procedurePhase = this.procedurePhases[0];
+    this.exam = this.exams[0];
     this.initQRScanner();
   },
   methods: {
@@ -192,14 +187,14 @@ export default defineComponent({
     async changeVisitPhase() {
       const visitCode = this.visitCode.replace(/ /g, "");
       let success = true;
-      let message = `Patient has been marked as done in the ${this.procedurePhase.name.toUpperCase()} phase.`;
+      let message = `Patient has been marked as done in the ${this.exam.name.toUpperCase()} phase.`;
 
       this.loading = true;
       await delay(2000);
 
       const response = await this.$store.dispatch("visit/changePhase", {
         visitCode,
-        phaseCode: this.procedurePhase.code,
+        phaseCode: this.exam.code,
       });
 
       if (response.error) {

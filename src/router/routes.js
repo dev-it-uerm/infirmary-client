@@ -20,6 +20,11 @@ const routes = [
         component: () => import("pages/Main.vue"),
       },
       {
+        name: "USER_REGISTRATION",
+        path: "/user-registration",
+        component: () => import("pages/UserRegistration.vue"),
+      },
+      {
         name: "VISITS",
         path: "/visits",
         component: () => import("pages/VisitsPage.vue"),
@@ -27,12 +32,12 @@ const routes = [
       {
         name: "VISIT_APPOINTMENT_LINK",
         path: "/visit-appointment-link",
-        component: () => import("pages/VisitAppointmentLinkPage.vue"),
+        component: () => import("pages/VisitAppointmentLink.vue"),
       },
       {
         name: "VISIT_APPOINTMENT",
         path: "/visit-appointment",
-        component: () => import("pages/VisitAppointmentPage.vue"),
+        component: () => import("pages/VisitAppointment.vue"),
       },
       {
         name: "EXAM_CHECKER",

@@ -1,5 +1,5 @@
 <template>
-  <q-input :model-value="dateRangeStr">
+  <q-input :model-value="dateRangeStr" hint="">
     <template v-slot:append>
       <q-icon name="event" class="cursor-pointer">
         <q-popup-proxy cover :breakpoint="600" ref="qPopUpProxy">
@@ -33,18 +33,21 @@
 import { defineComponent } from "vue";
 import {
   empty,
-  isStr,
   isObj,
-  jsDateToISOString,
-  subtractDay,
+  // jsDateToISOString,
+  // subtractDay,
 } from "src/helpers/util.js";
 
 export default defineComponent({
   name: "DateRange",
   props: {
-    subtractDaysCount: {
-      type: Number,
-      default: 0,
+    // subtractDaysCount: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    initialValue: {
+      type: Object,
+      default: null,
     },
   },
   emits: ["valueChanged"],
@@ -75,18 +78,21 @@ export default defineComponent({
     },
   },
   created() {
-    if (this.subtractDaysCount === 0) {
-      this.dateRange = jsDateToISOString(new Date(), true).replace(/-/g, "/");
-      return;
-    }
-
-    this.dateRange = {
-      from: jsDateToISOString(
-        subtractDay(new Date(), this.subtractDaysCount),
-        true
-      ).replace(/-/g, "/"),
-      to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
-    };
+    if (this.initialValue) this.dateRange = this.initialValue;
   },
+  // created() {
+  //   if (this.subtractDaysCount === 0) {
+  //     this.dateRange = jsDateToISOString(new Date(), true).replace(/-/g, "/");
+  //     return;
+  //   }
+
+  //   this.dateRange = {
+  //     from: jsDateToISOString(
+  //       subtractDay(new Date(), this.subtractDaysCount),
+  //       true
+  //     ).replace(/-/g, "/"),
+  //     to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
+  //   };
+  // },
 });
 </script>

@@ -37,7 +37,7 @@ export default function () {
     config: {
       name: "UERM Infirmary",
       version: "1.0.0",
-      url: "https://uermhospital.com.ph/apps/infirmary-portal",
+      url: "https://uermhospital.com.ph/apps/infirmary",
     },
     apiHost: process.env.DEV ? process.env.apiHost__DEV : process.env.apiHost,
     user: {
@@ -46,9 +46,15 @@ export default function () {
       lastName: "Pascua",
       roleCode: "ADMIN",
       accessToken: "abc",
-      allowedPhases: ["PE", "LABCBC", "LABURI", "LABFCL", "IMGXRCHST"],
+      examsHandled: ["PE", "LABCBC", "LABURI", "LABFCL", "IMGXRCHST"],
     },
     navMenus: [
+      {
+        code: "USER_REGISTRATION",
+        name: "User Registration",
+        url: "/user-registration",
+        icon: "fa-solid fa-user-plus",
+      },
       {
         code: "VISIT_APPOINTMENT_LINK",
         name: "Visit Appointment",

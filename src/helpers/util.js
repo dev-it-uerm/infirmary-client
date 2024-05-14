@@ -498,3 +498,7 @@ export const log = (val, prefix) => {
   if (prefix != null && prefix !== "") arr.unshift(prefix + ":");
   console.log(...arr);
 };
+
+export const allPropsEmpty = (obj) => {
+  return !Object.values(obj).some((val) => !empty(val));
+};

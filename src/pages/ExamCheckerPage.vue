@@ -152,13 +152,14 @@ export default defineComponent({
     this.exams = Object.values(this.visitPhasesMap).filter(
       (v) =>
         !["REG", "FIN"].includes(v.code) &&
-        (this.user.allowedPhases ?? []).includes(v.code)
+        (this.user.examsHandled ?? []).includes(v.code)
     );
 
     if (this.exams.length === 0) {
       this.forbidden = true;
       return;
     }
+
     this.exam = this.exams[0];
     this.initQRScanner();
   },

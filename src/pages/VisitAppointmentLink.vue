@@ -46,7 +46,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, showMessage } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "VisitAppointmentLinkPage",
+  name: "VisitAppointmentLink",
   components: {
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")

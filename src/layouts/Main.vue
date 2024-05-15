@@ -249,7 +249,7 @@ export default defineComponent({
       const response = await this.$store.dispatch("app/logout");
 
       if (response.error) {
-        showMessage(this.$q, false, response.body);
+        showMessage(this.$q, false, "Unable to log out. Please try again.");
         this.loading = false;
         return;
       }

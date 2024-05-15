@@ -11,6 +11,17 @@ const routes = [
     ],
   },
   {
+    path: "/password-reset",
+    component: () => import("layouts/Blank.vue"),
+    children: [
+      {
+        name: "PASSWORD_RESET",
+        path: "/password-reset",
+        component: () => import("pages/PasswordReset.vue"),
+      },
+    ],
+  },
+  {
     path: "/",
     component: () => import("layouts/Main.vue"),
     children: [
@@ -42,7 +53,12 @@ const routes = [
       {
         name: "EXAM_CHECKER",
         path: "/exam-checker",
-        component: () => import("pages/ExamCheckerPage.vue"),
+        component: () => import("pages/ExamChecker.vue"),
+      },
+      {
+        name: "PASSWORD_CHANGE",
+        path: "/password-change",
+        component: () => import("pages/PasswordChange.vue"),
       },
       // {
       //   path: "/test-page",

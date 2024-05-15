@@ -3,7 +3,11 @@
     <q-card borderless class="shadow-0" style="width: 500px">
       <PageHeader text="EXAM CHECKER" icon="fa-solid fa-list-check" />
       <div style="padding: 32px">
-        <div v-if="forbidden">FORBIDDEN</div>
+        <MessageBanner v-if="forbidden" :success="false">
+          <template v-slot:error-body>
+            <div>You are not allowed to access this page.</div>
+          </template>
+        </MessageBanner>
         <div v-else>
           <ReminderCard v-if="exam" :exitable="false" class="q-mb-md">
             <template v-slot:body>
@@ -107,7 +111,7 @@ import { delay, showMessage } from "src/helpers/util.js";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default defineComponent({
-  name: "ExamCheckerPage",
+  name: "ExamChecker",
   components: {
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")
@@ -117,6 +121,9 @@ export default defineComponent({
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
+    ),
+    MessageBanner: defineAsyncComponent(() =>
+      import("src/components/core/MessageBanner.vue")
     ),
   },
   data() {
@@ -149,18 +156,21 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.exams = Object.values(this.visitPhasesMap).filter(
+    const examsHandled = Object.values(this.visitPhasesMap).filter(
       (v) =>
         !["REG", "FIN"].includes(v.code) &&
         (this.user.examsHandled ?? []).includes(v.code)
     );
 
-    if (this.exams.length === 0) {
+    if (examsHandled.length === 0) {
       this.forbidden = true;
       return;
     }
 
-    this.exam = this.exams[0];
+    console.log(this.user);
+    this.exams = examsHandled;
+    this.exam = examsHandled[0];
+
     this.initQRScanner();
   },
   methods: {

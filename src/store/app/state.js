@@ -40,14 +40,7 @@ export default function () {
       url: "https://uermhospital.com.ph/apps/infirmary",
     },
     apiHost: process.env.DEV ? process.env.apiHost__DEV : process.env.apiHost,
-    user: {
-      code: "8225",
-      firstName: "JP",
-      lastName: "Pascua",
-      roleCode: "ADMIN",
-      accessToken: "abc",
-      examsHandled: ["PE", "LABCBC", "LABURI", "LABFCL", "IMGXRCHST"],
-    },
+    user: null,
     navMenus: [
       {
         code: "USER_REGISTRATION",

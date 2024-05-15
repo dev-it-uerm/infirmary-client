@@ -1,6 +1,5 @@
 import { request } from "src/helpers/util";
 import { Cookies } from "quasar";
-import qs from "qs";
 
 export const add = async (context, payload) => {
   return await request(
@@ -28,6 +27,7 @@ export const login = async (context, payload) => {
     "post",
     `${context.rootState.app.apiHost}/user/login`,
     null,
+    null,
     payload,
     context
   );
@@ -37,8 +37,9 @@ export const logout = async (context, payload) => {
   return await request(
     "post",
     `${context.rootState.app.apiHost}/user/logout`,
+    null,
     context.rootState.app?.user?.accessToken,
-    payload,
+    null,
     context
   );
 };

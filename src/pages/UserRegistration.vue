@@ -87,7 +87,7 @@
                 :disable="loading"
                 unelevated
                 color="accent"
-                label="ADD"
+                label="SAVE"
                 type="submit"
                 class="text-black"
               />
@@ -97,7 +97,7 @@
       </q-card>
       <ConfirmationDialog
         v-if="yesNoDialogVisible"
-        question="Are you sure you want to update your information?"
+        question="Are you sure you want to add/update this user?"
         @cancel="(evt) => (yesNoDialogVisible = false)"
         @ok="save"
       />

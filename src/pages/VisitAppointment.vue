@@ -3,33 +3,20 @@
     <q-card borderless class="shadow-0">
       <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
       <div
+        v-if="loading"
+        style="min-height: 100px; width: 400px; max-width: 400px"
+      >
+        <FetchingData />
+      </div>
+      <div
+        v-show="!loading"
         class="q-pa-md"
         style="padding: 32px; width: 400px; max-width: 400px"
       >
-        <div
-          class="column q-pa-lg"
-          :class="textColorsMap[status]"
-          style="border-radius: 4px"
-          :style="{
-            border: textBordersMap[status],
-          }"
-        >
-          <div class="row justify-center q-mb-md">
-            <q-icon
-              size="md"
-              :name="textIconsMap[status]"
-              :color="textColorsMap[status]"
-            />
-          </div>
-          <div class="text-center">
-            <div v-if="status === 'LOADING'">
-              Scheduling your visit... Please wait.
-            </div>
-            <div
-              v-else-if="status === 'SUCCESS'"
-              class="column items-center"
-              style="gap: 12px"
-            >
+        <MessageBanner :success="!error">
+          <template v-slot:body>
+            <div v-show="error">{{ errorMsg }}</div>
+            <div v-show="!error">
               <div>You have successfully scheduled a visit.</div>
               <div>
                 For your reference, below is your
@@ -43,23 +30,16 @@
                   width: 200px;
                 "
               />
+              <div class="column items-center q-mt-md" style="gap: 12px">
+                <img
+                  id="imgVisitQrCode"
+                  style="border: 1px solid rgba(0, 0, 0, 0.2)"
+                />
+                <div class="text-black text-weight-medium">{{ visitCode }}</div>
+              </div>
             </div>
-            <div v-else-if="status === 'ERROR'">
-              {{ errorMsg }}
-            </div>
-          </div>
-          <div
-            v-show="status === 'SUCCESS'"
-            class="fit column items-center q-mt-md"
-            style="gap: 12px"
-          >
-            <img
-              id="imgVisitQrCode"
-              style="border: 1px solid rgba(0, 0, 0, 0.2)"
-            />
-            <div class="text-black text-weight-medium">{{ visitCode }}</div>
-          </div>
-        </div>
+          </template>
+        </MessageBanner>
       </div>
     </q-card>
   </q-page>
@@ -76,30 +56,19 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
-    // FetchingData: defineAsyncComponent(() =>
-    //   import("src/components/core/FetchingData.vue")
-    // ),
+    MessageBanner: defineAsyncComponent(() =>
+      import("src/components/core/MessageBanner.vue")
+    ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
+    ),
   },
   data() {
     return {
-      textColorsMap: {
-        LOADING: "text-black",
-        ERROR: "text-negative",
-        SUCCESS: "text-positive",
-      },
-      textIconsMap: {
-        LOADING: "fa-solid fa-spinner",
-        ERROR: "fa-solid fa-circle-xmark",
-        SUCCESS: "fa-solid fa-circle-check",
-      },
-      textBordersMap: {
-        LOADING: "1px solid rgba(0, 0, 0, 0.2)",
-        ERROR: "1px solid rgba(210, 43, 43, 0.4)",
-        SUCCESS: "1px solid rgba(0, 128, 0, 0.2)",
-      },
       visitCode: "",
+
+      error: true,
       errorMsg: "",
-      status: "LOADING",
       loading: true,
     };
   },
@@ -134,12 +103,11 @@ export default defineComponent({
 
       if (response.error) {
         this.errorMsg = response.body;
-        this.status = "ERROR";
         this.loading = false;
         return;
       }
 
-      this.status = "SUCCESS";
+      this.error = false;
       this.loading = false;
       this.visitCode = response.body.code;
       this.renderVisitQRCode(response.body.code);

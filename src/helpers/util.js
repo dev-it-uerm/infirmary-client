@@ -262,7 +262,7 @@ export const request = async (
       vuexContext &&
       error.response?.status === httpResponseStatusCodesMap.FORBIDDEN.code
     ) {
-      // await vuexContext.dispatch("app/clearUser", null, { root: true });
+      await vuexContext.dispatch("app/clearUser", null, { root: true });
     }
 
     return {

@@ -18,11 +18,6 @@ export default defineComponent({
       return this.$route.name && this.initialized;
     },
   },
-  setup() {
-    return {
-      publicRouteNames: ["COOKIE_POLICY", "PRIVACY_POLICY", "LOGIN"],
-    };
-  },
   data() {
     return {
       initialized: false,
@@ -31,45 +26,42 @@ export default defineComponent({
   watch: {
     user: {
       handler(val) {
-        if (this.ready && val == null && !this.currentRouteIsPublic())
-          this.$router.push("/login");
-
-        if (this.ready && val && this.$route.name === "LOGIN")
-          this.$router.push("/");
+        this.redirectPage(val, this.$route.name);
       },
       immediate: true,
     },
     "$route.name": {
       handler(val) {
-        // if (this.ready && this.user == null && !this.currentRouteIsPublic())
-        //   this.$router.push("/login");
-        // if (this.ready && this.user != null) {
-        //   if (this.user.requirePasswordChange) {
-        //     this.$router.push("/change-password");
-        //     return;
-        //   }
-        //   if (val === "LOGIN") this.$router.push("/");
-        // }
+        this.redirectPage(this.user, val);
       },
       immediate: true,
     },
   },
   async created() {
-    const userCookie = Cookies.get("px_portal__user");
+    const userCookie = Cookies.get("uerm_infirmary__user");
     if (userCookie) this.$store.dispatch("app/setUser", userCookie);
     this.initialized = true;
   },
   methods: {
-    currentRouteIsPublic() {
-      if (this.publicRouteNames.includes(this.$route.name)) return true;
-
+    routeIsPublic(routeName) {
       if (
-        this.$route.name === "CHANGE_PASSWORD" &&
-        this.$route.query.accessToken
+        [
+          "COOKIE_POLICY",
+          "PRIVACY_POLICY",
+          "LOGIN",
+          "PASSWORD_RESET",
+          "VISIT_APPOINTMENT_LINK",
+        ].includes(routeName)
       )
         return true;
 
       return false;
+    },
+    redirectPage(user, routeName) {
+      if (this.ready && user == null && !this.routeIsPublic(routeName))
+        this.$router.push("/login");
+
+      if (this.ready && user && routeName === "LOGIN") this.$router.push("/");
     },
   },
 });

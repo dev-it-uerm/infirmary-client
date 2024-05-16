@@ -1,14 +1,10 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 12px">
+    <div class="column" style="gap: 16px">
       <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div
-          style="gap: 20px"
-          class="row items-center text-weight-medium text-h6 q-pa-md bg-primary text-white"
-        >
-          <span class="col">ADD/UPDATE USER</span>
-        </div>
-
+        <PageHeader text="ADD/UPDATE USER" icon="fa-solid fa-user" />
+      </q-card>
+      <q-card borderless class="shadow-0" style="overflow: hidden">
         <div class="relative-position">
           <FetchingData v-if="loading" />
           <q-form
@@ -20,6 +16,7 @@
           >
             <div style="padding: 32px">
               <q-input
+                stack-label
                 outlined
                 maxlength="255"
                 label="Employee Number"
@@ -28,20 +25,20 @@
                 hint=""
               />
               <q-select
+                stack-label
                 outlined
-                :options="[
-                  { value: 'RADTECH', label: 'Radiology Technician' },
-                  { value: 'LABTECH', label: 'Laboratory Technician' },
-                  { value: 'ADMIN', label: 'Admiministrator' },
-                ]"
+                :options="Object.values(userRolesMap)"
                 label="Role"
                 emit-value
                 map-options
+                option-label="name"
+                option-value="code"
                 :rules="[requiredRule]"
                 v-model="roleCode"
                 hint=""
               />
               <q-input
+                stack-label
                 outlined
                 maxlength="255"
                 label="First Name"
@@ -50,6 +47,7 @@
                 hint=""
               />
               <q-input
+                stack-label
                 outlined
                 maxlength="255"
                 label="Middle Name"
@@ -57,6 +55,7 @@
                 hint=""
               />
               <q-input
+                stack-label
                 outlined
                 maxlength="255"
                 label="Last Name"
@@ -65,6 +64,7 @@
                 hint=""
               />
               <q-input
+                stack-label
                 outlined
                 maxlength="255"
                 label="Email Address"
@@ -73,6 +73,7 @@
                 hint=""
               />
               <q-input
+                stack-label
                 outlined
                 maxlength="255"
                 label="Mobile Phone Number"
@@ -80,28 +81,26 @@
                 v-model.trim="mobileNo"
                 hint=""
               />
+              <div class="row justify-end">
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  color="primary"
+                  label="SAVE"
+                  type="submit"
+                />
+              </div>
             </div>
-            <q-separator />
-            <q-card-section class="row justify-end">
-              <q-btn
-                :disable="loading"
-                unelevated
-                color="accent"
-                label="SAVE"
-                type="submit"
-                class="text-black"
-              />
-            </q-card-section>
           </q-form>
         </div>
       </q-card>
-      <ConfirmationDialog
-        v-if="yesNoDialogVisible"
-        question="Are you sure you want to add/update this user?"
-        @cancel="(evt) => (yesNoDialogVisible = false)"
-        @ok="save"
-      />
     </div>
+    <ConfirmationDialog
+      v-if="yesNoDialogVisible"
+      question="Are you sure you want to add/update this user?"
+      @cancel="(evt) => (yesNoDialogVisible = false)"
+      @ok="save"
+    />
   </q-page>
 </template>
 
@@ -113,6 +112,9 @@ import { delay, showMessage, empty } from "src/helpers/util.js";
 export default defineComponent({
   name: "UserRegistration",
   components: {
+    PageHeader: defineAsyncComponent(() =>
+      import("src/components/core/PageHeader.vue")
+    ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
@@ -145,6 +147,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
+      userRolesMap: "app/userRolesMap",
     }),
   },
   methods: {

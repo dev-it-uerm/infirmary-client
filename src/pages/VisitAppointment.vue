@@ -1,47 +1,53 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
-    <q-card borderless class="shadow-0">
-      <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
-      <div
-        v-if="loading"
-        style="min-height: 100px; width: 400px; max-width: 400px"
-      >
-        <FetchingData />
-      </div>
-      <div
-        v-show="!loading"
-        class="q-pa-md"
-        style="padding: 32px; width: 400px; max-width: 400px"
-      >
-        <MessageBanner :success="!error">
-          <template v-slot:body>
-            <div v-show="error">{{ errorMsg }}</div>
-            <div v-show="!error">
-              <div>You have successfully scheduled a visit.</div>
-              <div>
-                For your reference, below is your
-                <strong>Visit Reference Number</strong> which is also sent to
-                your email.
-              </div>
-              <q-separator
-                style="
-                  background-color: rgba(0, 128, 0, 0.2);
-                  margin: 20px 0;
-                  width: 200px;
-                "
-              />
-              <div class="column items-center q-mt-md" style="gap: 12px">
-                <img
-                  id="imgVisitQrCode"
-                  style="border: 1px solid rgba(0, 0, 0, 0.2)"
+    <div class="column" style="gap: 16px">
+      <q-card borderless class="shadow-0">
+        <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
+      </q-card>
+      <q-card borderless class="shadow-0">
+        <div
+          v-if="loading"
+          style="min-height: 100px; width: 400px; max-width: 400px"
+        >
+          <FetchingData />
+        </div>
+        <div
+          v-show="!loading"
+          class="q-pa-md"
+          style="padding: 32px; width: 400px; max-width: 400px"
+        >
+          <MessageBanner :success="!error">
+            <template v-slot:body>
+              <div v-show="error">{{ errorMsg }}</div>
+              <div v-show="!error" class="row justify-center">
+                <div>You have successfully scheduled a visit.</div>
+                <div>
+                  For your reference, below is your
+                  <strong>Visit Reference Number</strong> which is also sent to
+                  your email.
+                </div>
+                <q-separator
+                  style="
+                    background-color: rgba(0, 128, 0, 0.2);
+                    margin: 20px 0;
+                    width: 200px;
+                  "
                 />
-                <div class="text-black text-weight-medium">{{ visitCode }}</div>
+                <div class="column items-center q-mt-md" style="gap: 12px">
+                  <img
+                    id="imgVisitQrCode"
+                    style="border: 1px solid rgba(0, 0, 0, 0.2)"
+                  />
+                  <div class="text-black text-weight-medium">
+                    {{ visitCode }}
+                  </div>
+                </div>
               </div>
-            </div>
-          </template>
-        </MessageBanner>
-      </div>
-    </q-card>
+            </template>
+          </MessageBanner>
+        </div></q-card
+      >
+    </div>
   </q-page>
 </template>
 

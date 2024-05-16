@@ -26,13 +26,13 @@ export default defineComponent({
   watch: {
     user: {
       handler(val) {
-        this.redirectPage(val, this.$route.name);
+        if (this.ready) this.redirectPage(val, this.$route.name);
       },
       immediate: true,
     },
     "$route.name": {
       handler(val) {
-        this.redirectPage(this.user, val);
+        if (this.ready) this.redirectPage(this.user, val);
       },
       immediate: true,
     },
@@ -44,12 +44,14 @@ export default defineComponent({
   },
   methods: {
     routeIsPublic(routeName) {
+      console.log("routeName:", routeName);
       if (
         [
           "COOKIE_POLICY",
           "PRIVACY_POLICY",
           "LOGIN",
           "PASSWORD_RESET",
+          "VISIT_APPOINTMENT",
           "VISIT_APPOINTMENT_LINK",
         ].includes(routeName)
       )
@@ -58,10 +60,19 @@ export default defineComponent({
       return false;
     },
     redirectPage(user, routeName) {
-      if (this.ready && user == null && !this.routeIsPublic(routeName))
-        this.$router.push("/login");
+      // console.log(this.ready);
+      // console.log(user);
+      // console.log(this.routeIsPublic(routeName));
 
-      if (this.ready && user && routeName === "LOGIN") this.$router.push("/");
+      if (user == null && !this.routeIsPublic(routeName)) {
+        console.log("Redirecting page...");
+        this.$router.push("/login");
+      }
+
+      if (user && routeName === "LOGIN") {
+        console.log("Redirecting page...");
+        this.$router.push("/");
+      }
     },
   },
 });

@@ -19,7 +19,9 @@
     <!-- <q-dialog :model-value="true" persistent> -->
     <div class="column" style="gap: 12px">
       <q-card borderless style="overflow: hidden">
-        <AppLogo version="2" class="bg-primary" />
+        <div class="bg-primary">
+          <AppLogo size="sm" />
+        </div>
         <q-separator />
         <div class="relative-position">
           <FetchingData v-if="loading" />
@@ -63,14 +65,14 @@
                 </template>
               </q-input>
               <FormFieldPassword outlined v-model="password" label="Password" />
-              <div
+              <!-- <div
                 style="color: rgba(0, 0, 0, 0.75)"
                 class="text-center bordered-grey q-pa-md"
               >
                 By logging in, you give consent for cookies to be used.
                 <a href="/apps/patient-portal/#/cookie-policy">Click here</a>
                 to view the {{ appConfig.name }} cookie policy.
-              </div>
+              </div> -->
             </div>
             <q-separator />
             <q-card-section class="row justify-end">
@@ -93,13 +95,12 @@
           </q-form>
         </div>
       </q-card>
-      <q-card borderless>
+      <!-- <q-card borderless>
         <q-card-section>
           <UermCopyright />
         </q-card-section>
-      </q-card>
+      </q-card> -->
     </div>
-    <!-- </q-dialog> -->
     <MinimizedDialog
       v-if="forgotPasswordDialogVisible"
       title="SEND PASSWORD RESET LINK"
@@ -123,7 +124,7 @@
                 outlined
                 v-model="forgotPasswordUsername"
                 maxlength="255"
-                label="Username or Patient No."
+                label="Username or Employee Number"
                 :rules="[
                   (val) =>
                     val == null || val === ''
@@ -149,39 +150,6 @@
             </div>
           </q-form>
         </div>
-      </template>
-    </MinimizedDialog>
-    <MinimizedDialog
-      v-if="cookieConsentFormVisible"
-      title="COOKIE CONSENT"
-      widthOnDesktop="500px"
-      :hideExitButton="true"
-    >
-      <template v-slot:body>
-        <div style="font-size: 17px" class="text-black q-pt-lg q-px-lg">
-          <div class="text-weight-bold q-mb-md">This website uses cookies.</div>
-          <div class="text-weight-light">
-            Necessary cookies help make this website usable by enabling basic
-            functions like page navigation and access to secure areas. This
-            website cannot function properly without cookies.
-          </div>
-        </div>
-        <div class="text-weight-light q-mt-md q-px-lg q-pb-lg">
-          Please<a class="q-mx-xs" href="/apps/patient-portal/#/cookie-policy"
-            >Click here</a
-          >
-          to view the {{ appConfig.name }} cookie policy.
-        </div>
-        <q-separator />
-        <q-card-section class="row justify-end">
-          <q-btn
-            unelevated
-            color="accent"
-            label="ALLOW COOKIES"
-            class="text-black"
-            @click="(evt) => (cookieConsentFormVisible = false)"
-          />
-        </q-card-section>
       </template>
     </MinimizedDialog>
   </q-page>
@@ -224,8 +192,6 @@ export default defineComponent({
       forgotPasswordDialogVisible: false,
       forgotPasswordUsername: "",
       forgotPasswordLoading: false,
-
-      cookieConsentFormVisible: true,
     };
   },
   computed: {

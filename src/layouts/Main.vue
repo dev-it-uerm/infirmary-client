@@ -21,11 +21,10 @@
             />
           </q-avatar>
         </q-toolbar-title> -->
-        <AppLogo version="2" size="xs" :showTitle="false" />
+        <AppLogo size="xs" :showTitle="false" />
         <div><b>UERM</b> INFIRMARY</div>
       </q-toolbar>
     </q-header>
-
     <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered overlay>
       <q-scroll-area style="height: 100%">
         <div
@@ -60,7 +59,6 @@
                 <span class="text-weight-bold">{{ user.code }}</span>
               </div>
             </div>
-
             <div class="row items-start" style="gap: 12px">
               <q-btn
                 class="col-12"
@@ -70,7 +68,7 @@
                 color="primary"
                 @click="
                   (evt) => {
-                    $router.push('/change-password');
+                    $router.push('/password-change');
                   }
                 "
               />
@@ -78,7 +76,7 @@
                 class="col-12"
                 :disable="loading"
                 outline
-                label="Update Information"
+                label="Update Account Info."
                 color="primary"
                 @click="
                   (evt) => {
@@ -145,9 +143,6 @@
               </q-btn-dropdown>
               <q-btn
                 v-else
-                :disable="loading"
-                unelevated
-                align="left"
                 :class="
                   activeMenu === navMenu.code
                     ? 'bg-accent text-black'
@@ -155,6 +150,9 @@
                 "
                 :icon="navMenu.icon"
                 :label="navMenu.name"
+                :disable="loading"
+                unelevated
+                align="left"
                 style="padding: 12px 24px"
                 @click="
                   (evt) => {
@@ -164,12 +162,12 @@
               />
             </template>
           </div>
-          <q-separator class="q-my-md" />
+          <!-- <q-separator class="q-my-md" />
           <div class="bordered-grey q-pa-lg">
             <UermCopyright />
             <q-separator class="q-my-md full-width" />
             <TermsAndConditions />
-          </div>
+          </div> -->
         </div>
       </q-scroll-area>
       <ConfirmationDialog
@@ -205,12 +203,12 @@ export default defineComponent({
     AppLogo: defineAsyncComponent(() =>
       import("src/components/core/AppLogo.vue")
     ),
-    UermCopyright: defineAsyncComponent(() =>
-      import("src/components/UermCopyright.vue")
-    ),
-    TermsAndConditions: defineAsyncComponent(() =>
-      import("src/components/TermsAndConditions.vue")
-    ),
+    // UermCopyright: defineAsyncComponent(() =>
+    //   import("src/components/UermCopyright.vue")
+    // ),
+    // TermsAndConditions: defineAsyncComponent(() =>
+    //   import("src/components/TermsAndConditions.vue")
+    // ),
   },
   data() {
     return {

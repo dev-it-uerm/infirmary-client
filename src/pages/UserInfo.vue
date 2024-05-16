@@ -1,14 +1,10 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 12px">
+    <div class="column" style="gap: 16px">
       <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div
-          style="gap: 20px"
-          class="row items-center text-weight-medium text-h6 q-pa-md bg-primary text-white"
-        >
-          <span class="col">CHANGE INFORMATION</span>
-        </div>
-
+        <PageHeader text="ACCOUNT INFORMATION" icon="fa-solid fa-user-pen" />
+      </q-card>
+      <q-card borderless class="shadow-0" style="overflow: hidden">
         <div class="relative-position">
           <FetchingData v-if="loading" />
           <q-form
@@ -38,28 +34,26 @@
                       : undefined,
                 ]"
               />
+              <div class="row justify-end">
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  color="primary"
+                  label="UPDATE"
+                  type="submit"
+                />
+              </div>
             </div>
-            <q-separator />
-            <q-card-section class="row justify-end">
-              <q-btn
-                :disable="loading"
-                unelevated
-                color="accent"
-                label="UPDATE"
-                type="submit"
-                class="text-black"
-              />
-            </q-card-section>
           </q-form>
         </div>
       </q-card>
-      <ConfirmationDialog
-        v-if="yesNoDialogVisible"
-        question="Are you sure you want to update your information?"
-        @cancel="(evt) => (yesNoDialogVisible = false)"
-        @ok="save"
-      />
     </div>
+    <ConfirmationDialog
+      v-if="yesNoDialogVisible"
+      question="Are you sure you want to update your information?"
+      @cancel="(evt) => (yesNoDialogVisible = false)"
+      @ok="save"
+    />
   </q-page>
 </template>
 
@@ -71,6 +65,9 @@ import { delay, showMessage, empty } from "src/helpers/util.js";
 export default defineComponent({
   name: "UserInfoPage",
   components: {
+    PageHeader: defineAsyncComponent(() =>
+      import("src/components/core/PageHeader.vue")
+    ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),

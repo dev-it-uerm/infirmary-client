@@ -1,8 +1,8 @@
 <template>
   <q-page class="flex flex-center">
     <div class="column">
-      <AppLogo version="1" size="lg" />
-      <UermCopyright class="q-mt-xl" />
+      <AppLogo :inverted="true" size="lg" />
+      <!-- <UermCopyright class="q-mt-xl" /> -->
     </div>
   </q-page>
 </template>
@@ -16,9 +16,9 @@ export default defineComponent({
     AppLogo: defineAsyncComponent(() =>
       import("src/components/core/AppLogo.vue")
     ),
-    UermCopyright: defineAsyncComponent(() =>
-      import("src/components/UermCopyright.vue")
-    ),
+    // UermCopyright: defineAsyncComponent(() =>
+    //   import("src/components/UermCopyright.vue")
+    // ),
   },
 });
 </script>

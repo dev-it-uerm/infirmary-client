@@ -4,17 +4,47 @@
     style="padding-top: 16px; padding-bottom: 12px"
     @click="$router.push('/')"
   >
-    <q-img
-      no-native-menu
-      :src="source"
-      alt="UERM Infirmary Logo"
-      class="img-fluid"
-      :style="dimension"
-    />
+    <div
+      class="column"
+      :class="inverted ? 'bg-primary' : 'bg-white'"
+      :style="{
+        borderRadius: dimension.borderRadius,
+        padding: dimension.outerPadding,
+        gap: dimension.innerPadding,
+      }"
+    >
+      <div class="row" :style="{ gap: dimension.innerPadding }">
+        <q-icon
+          name="fa-solid fa-heart-pulse"
+          :size="dimension.iconSize"
+          :color="inverted ? 'white' : 'primary'"
+        />
+        <q-icon
+          name="fa-solid fa-weight-scale"
+          :size="dimension.iconSize"
+          color="accent"
+        />
+      </div>
+      <div class="row" :style="{ gap: dimension.innerPadding }">
+        <q-icon
+          name="fa-solid fa-x-ray"
+          :size="dimension.iconSize"
+          color="accent"
+        />
+        <q-icon
+          name="fa-solid fa-flask"
+          :size="dimension.iconSize"
+          :color="inverted ? 'white' : 'primary'"
+        />
+      </div>
+    </div>
     <span
       v-if="showTitle"
-      class="q-mt-sm"
-      :class="titleClass"
+      :class="
+        inverted
+          ? 'text-primary ' + 'q-mt-'.concat(size)
+          : 'text-white ' + 'q-mt-'.concat(size)
+      "
       style="line-height: 1em"
       :style="titleStyle"
     >
@@ -38,14 +68,13 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    version: {
-      type: String,
-      default: "1",
+    inverted: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
-      source: "",
       titleClass: "",
       titleStyle: null,
     };
@@ -57,15 +86,30 @@ export default defineComponent({
   },
   created() {
     const sizeToDimensionMap = {
-      xs: { height: "30px", width: "53px" },
-      sm: { height: "50px", width: "88px" },
-      md: { height: "100px", width: "173px" },
-      lg: { height: "200px", width: "350px" },
-    };
-
-    const versionToTitleClassMap = {
-      1: "text-primary",
-      2: "text-white",
+      xs: {
+        borderRadius: "2px",
+        outerPadding: "4px 6px",
+        innerPadding: "4px",
+        iconSize: "14px",
+      },
+      sm: {
+        borderRadius: "4px",
+        outerPadding: "8px 8px",
+        innerPadding: "6px",
+        iconSize: "20px",
+      },
+      md: {
+        borderRadius: "4px",
+        outerPadding: "4px 8px",
+        innerPadding: "4px",
+        iconSize: "20px",
+      },
+      lg: {
+        borderRadius: "8px",
+        outerPadding: "16px 18px",
+        innerPadding: "8px",
+        iconSize: "24px",
+      },
     };
 
     const sizeToTitleStyleMap = {
@@ -74,9 +118,7 @@ export default defineComponent({
       lg: { fontSize: "24px", textTransform: "uppercase", fontWeight: "bold" },
     };
 
-    this.source = `logo-v${this.version}-${this.size}.png`;
     this.dimension = sizeToDimensionMap[this.size];
-    this.titleClass = versionToTitleClassMap[this.version];
     this.titleStyle = sizeToTitleStyleMap[this.size];
   },
 });

@@ -1,65 +1,68 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 12px">
-      <!-- <AppLogo version="1" size="md" /> -->
+    <div class="column" style="gap: 16px; min-width: 400px">
+      <AppLogo :inverted="true" size="sm" />
       <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div
-          style="gap: 20px"
-          class="row items-center text-weight-medium text-h6 q-pa-md bg-primary text-white"
-        >
-          <span class="col">RESET PASSWORD</span>
-        </div>
-
+        <PageHeader text="RESET PASSWORD" icon="fa-solid fa-user" />
+      </q-card>
+      <q-card borderless class="shadow-0" style="overflow: hidden">
         <div class="relative-position">
-          <FetchingData v-if="loading" />
-          <q-form
-            style="min-height: 200px"
-            :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
-            ref="qForm"
-            @submit="submit"
-            @reset="reset"
-          >
-            <div style="padding: 32px">
-              <q-banner
-                v-if="messageText"
-                class="q-pa-md"
-                :class="'bg-' + messageBgColor + ' q-mb-lg'"
-              >
-                <div class="row items-center">
-                  <q-icon
-                    :name="messageIcon"
-                    size="sm"
-                    :color="messageTextColor"
-                    class="q-mr-sm col-auto"
+          <div v-if="!$route.query.accessToken" class="q-pa-lg">
+            <MessageBanner :success="false">
+              <template v-slot:body class="q-pa-lg">
+                <div>Access token in URL query is required.</div>
+              </template>
+            </MessageBanner>
+          </div>
+          <template v-else>
+            <FetchingData v-if="loading" />
+            <q-form
+              style="min-height: 200px"
+              :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
+              ref="qForm"
+              @submit="submit"
+              @reset="reset"
+            >
+              <div style="padding: 32px">
+                <q-banner
+                  v-if="messageText"
+                  class="q-pa-md"
+                  :class="'bg-' + messageBgColor + ' q-mb-lg'"
+                >
+                  <div class="row items-center">
+                    <q-icon
+                      :name="messageIcon"
+                      size="sm"
+                      :color="messageTextColor"
+                      class="q-mr-sm col-auto"
+                    />
+                    <span class="col" :class="'text-' + messageTextColor">{{
+                      messageText
+                    }}</span>
+                  </div>
+                </q-banner>
+                <FormFieldPassword
+                  outlined
+                  v-model="newPassword1"
+                  label="New Password"
+                />
+                <FormFieldPassword
+                  outlined
+                  v-model="newPassword2"
+                  label="New Password Confirmation"
+                />
+                <div class="row justify-end">
+                  <q-btn
+                    :disable="loading"
+                    unelevated
+                    color="primary"
+                    label="CHANGE"
+                    type="submit"
                   />
-                  <span class="col" :class="'text-' + messageTextColor">{{
-                    messageText
-                  }}</span>
                 </div>
-              </q-banner>
-              <FormFieldPassword
-                outlined
-                v-model="newPassword1"
-                label="New Password"
-              />
-              <FormFieldPassword
-                outlined
-                v-model="newPassword2"
-                label="New Password Confirmation"
-              />
-            </div>
-            <q-separator />
-            <q-card-section class="row justify-end">
-              <q-btn
-                :disable="loading"
-                unelevated
-                color="accent"
-                label="CHANGE"
-                type="submit"
-                class="text-black"
-              />
-            </q-card-section>
-          </q-form>
+              </div>
+            </q-form>
+          </template>
         </div>
       </q-card>
     </div>
@@ -74,18 +77,26 @@ import { delay, showMessage } from "src/helpers/util.js";
 export default defineComponent({
   name: "PasswordReset",
   components: {
-    // AppLogo: defineAsyncComponent(() => import("src/components/core/AppLogo.vue")),
+    AppLogo: defineAsyncComponent(() =>
+      import("src/components/core/AppLogo.vue")
+    ),
+    PageHeader: defineAsyncComponent(() =>
+      import("src/components/core/PageHeader.vue")
+    ),
     FormFieldPassword: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Password.vue")
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
+    MessageBanner: defineAsyncComponent(() =>
+      import("src/components/core/MessageBanner.vue")
+    ),
   },
   data() {
     return {
       loading: false,
-      messageBgColor: "accent",
+      messageBgColor: "grey-3",
       messageTextColor: "black",
       messageIcon: "error",
       messageText:
@@ -143,7 +154,7 @@ export default defineComponent({
       await delay(2000);
 
       const payload = {
-        accessToken: $route.query.accessToken,
+        accessToken: this.$route.query.accessToken,
         newPassword: this.newPassword1,
       };
 
@@ -161,10 +172,7 @@ export default defineComponent({
       this.loading = false;
       this.$refs.qForm.reset();
 
-      this.showBanner(
-        true,
-        response.body ?? "Password has been reset successfully."
-      );
+      this.showBanner(true, "Password has been reset successfully.");
       return;
     },
   },

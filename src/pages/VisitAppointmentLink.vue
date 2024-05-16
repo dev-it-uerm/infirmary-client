@@ -1,8 +1,10 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
-    <q-card borderless class="shadow-0">
-      <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
-      <div style="padding: 32px; width: 450px">
+    <div class="column" style="gap: 16px">
+      <q-card borderless class="shadow-0">
+        <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
+      </q-card>
+      <q-card borderless class="shadow-0" style="padding: 32px; width: 450px">
         <ReminderCard :exitable="false" class="q-mb-md">
           <template v-slot:body>
             <div>
@@ -16,7 +18,7 @@
             :disable="loading"
             outlined
             stack-label
-            label="Student ID / Employee No. / Patient No."
+            label="Student No. / Employee No. / Patient No."
             v-model.trim="patientCode"
             :rules="[
               (val) =>
@@ -31,13 +33,13 @@
               type="submit"
               :loading="loading"
               unelevated
-              class="bg-accent text-black"
+              color="primary"
               label="SCHEDULE A VISIT"
             />
           </div>
         </q-form>
-      </div>
-    </q-card>
+      </q-card>
+    </div>
   </q-page>
 </template>
 

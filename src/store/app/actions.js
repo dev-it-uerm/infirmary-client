@@ -48,6 +48,7 @@ export const changeUserInfo = async (context, payload) => {
   return await request(
     "put",
     `${context.rootState.app.apiHost}/user/change-info`,
+    null,
     context.rootState.app?.user?.accessToken,
     payload,
     context
@@ -59,6 +60,18 @@ export const changePassword = async (context, payload) => {
     "put",
     `${context.rootState.app.apiHost}/user/change-pw`,
     null,
+    context.rootState.app?.user?.accessToken,
+    payload,
+    context
+  );
+};
+
+export const resetPassword = async (context, payload) => {
+  return await request(
+    "put",
+    `${context.rootState.app.apiHost}/user/reset-pw`,
+    null,
+    null,
     payload,
     context
   );
@@ -68,6 +81,7 @@ export const sendPasswordResetLink = async (context, payload) => {
   return await request(
     "post",
     `${context.rootState.app.apiHost}/user/send-pw-reset-link`,
+    null,
     null,
     payload,
     context

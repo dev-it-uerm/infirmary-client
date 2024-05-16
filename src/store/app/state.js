@@ -44,7 +44,7 @@ export default function () {
     navMenus: [
       {
         code: "USER_REGISTRATION",
-        name: "User Registration",
+        name: "Add/Update User",
         url: "/user-registration",
         icon: "fa-solid fa-user-plus",
       },
@@ -61,9 +61,9 @@ export default function () {
         icon: "fa-solid fa-stethoscope",
       },
       {
-        code: "EXAM_CHECKER",
-        name: "Exam Checker",
-        url: "/exam-checker",
+        code: "EXAM_STATUS_ASSIGNMENT",
+        name: "Assign Exam Status",
+        url: "/exam-status-assignment",
         icon: "fa-solid fa-user-tag",
       },
     ],
@@ -71,6 +71,12 @@ export default function () {
       MNL: { code: "MNL", name: "Manila" },
       CAL: { code: "CAL", name: "Caloocan" },
       UERM: { code: "UERM", name: "UERM" },
+    },
+    userRolesMap: {
+      MED: { code: "MED", name: "Medical Staff" },
+      RAD: { code: "RAD", name: "Radiology Staff" },
+      LAB: { code: "LAB", name: "Laboratory Staff" },
+      ADM: { code: "ADM", name: "Administrator" },
     },
     pxTypesMap: {
       EMP: { code: "EMP", name: "Employee/Faculty" },

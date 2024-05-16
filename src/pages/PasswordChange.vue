@@ -1,15 +1,10 @@
 <template>
   <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 12px">
-      <!-- <AppLogo version="1" size="md" /> -->
+    <div class="column" style="gap: 16px">
       <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div
-          style="gap: 20px"
-          class="row items-center text-weight-medium text-h6 q-pa-md bg-primary text-white"
-        >
-          <span class="col">CHANGE PASSWORD</span>
-        </div>
-
+        <PageHeader text="CHANGE PASSWORD" icon="fa-solid fa-user-pen" />
+      </q-card>
+      <q-card borderless class="shadow-0" style="overflow: hidden">
         <div class="relative-position">
           <FetchingData v-if="loading" />
           <q-form
@@ -38,7 +33,6 @@
                 </div>
               </q-banner>
               <FormFieldPassword
-                v-if="user && !token"
                 outlined
                 v-model="oldPassword"
                 label="Old Password"
@@ -53,18 +47,16 @@
                 v-model="newPassword2"
                 label="New Password Confirmation"
               />
+              <div class="row justify-end">
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  color="primary"
+                  label="CHANGE"
+                  type="submit"
+                />
+              </div>
             </div>
-            <q-separator />
-            <q-card-section class="row justify-end">
-              <q-btn
-                :disable="loading"
-                unelevated
-                color="accent"
-                label="CHANGE"
-                type="submit"
-                class="text-black"
-              />
-            </q-card-section>
           </q-form>
         </div>
       </q-card>
@@ -80,7 +72,9 @@ import { delay, showMessage } from "src/helpers/util.js";
 export default defineComponent({
   name: "PasswordChange",
   components: {
-    // AppLogo: defineAsyncComponent(() => import("src/components/core/AppLogo.vue")),
+    PageHeader: defineAsyncComponent(() =>
+      import("src/components/core/PageHeader.vue")
+    ),
     FormFieldPassword: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Password.vue")
     ),
@@ -97,28 +91,9 @@ export default defineComponent({
       messageText: "",
 
       oldPassword: "",
-      token: "",
-
       newPassword1: "",
       newPassword2: "",
     };
-  },
-  watch: {
-    "$route.query": {
-      handler(val) {
-        if (val && val.accessToken) this.token = val.accessToken;
-        this.$refs.qForm?.reset();
-        this.clearBanner();
-      },
-      immediate: true,
-    },
-    token: {
-      handler(val) {
-        if (val && this.user) return this.$store.dispatch("app/clearUser");
-        if (!val && !this.user) this.$router.push("/login");
-      },
-      immediate: true,
-    },
   },
   computed: {
     ...mapGetters({
@@ -178,15 +153,9 @@ export default defineComponent({
       await delay(2000);
 
       const payload = {
+        oldPassword: this.oldPassword,
         newPassword: this.newPassword1,
       };
-
-      if (this.oldPassword) {
-        payload.userCode = this.user.code;
-        payload.oldPassword = this.oldPassword;
-      }
-
-      if (this.token) payload.token = this.token;
 
       const response = await this.$store.dispatch(
         "app/changePassword",
@@ -205,15 +174,6 @@ export default defineComponent({
       // px-portal/user/change-pw route also logs out the user. Clear the user data from the client.
       await this.$store.dispatch("app/clearUser");
       this.loading = false;
-      this.$refs.qForm.reset();
-
-      if (this.token) {
-        this.showBanner(
-          true,
-          response.body ?? "Password has been changed successfully"
-        );
-        return;
-      }
 
       this.$router.push("/login");
       showMessage(

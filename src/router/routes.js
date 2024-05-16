@@ -28,7 +28,7 @@ const routes = [
       {
         name: "MAIN",
         path: "/",
-        component: () => import("pages/Main.vue"),
+        component: () => import("pages/MainPage.vue"),
       },
       {
         name: "USER_REGISTRATION",
@@ -51,14 +51,19 @@ const routes = [
         component: () => import("pages/VisitAppointment.vue"),
       },
       {
-        name: "EXAM_CHECKER",
-        path: "/exam-checker",
-        component: () => import("pages/ExamChecker.vue"),
+        name: "EXAM_STATUS_ASSIGNMENT",
+        path: "/exam-status-assignment",
+        component: () => import("pages/ExamStatusAssignment.vue"),
       },
       {
         name: "PASSWORD_CHANGE",
         path: "/password-change",
         component: () => import("pages/PasswordChange.vue"),
+      },
+      {
+        name: "USER_INFO",
+        path: "/user-info",
+        component: () => import("pages/UserInfo.vue"),
       },
       // {
       //   path: "/test-page",

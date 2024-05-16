@@ -37,3 +37,7 @@ export function examsMap(state) {
 export function visitPhasesMap(state) {
   return state.visitPhasesMap;
 }
+
+export function userRolesMap(state) {
+  return state.userRolesMap;
+}

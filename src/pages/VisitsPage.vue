@@ -24,40 +24,6 @@
           style="border-radius: 4px; width: 200px"
         >
           <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
-          <q-input
-            :disable="loading"
-            debounce="750"
-            stack-label
-            outlined
-            label="Patient Name"
-            v-model="filters.patientName"
-            hint=""
-          />
-          <DateRange
-            :disable="loading"
-            stack-label
-            outlined
-            :subtractDaysCount="7"
-            label="Date Range"
-            :initialValue="filters.visitDateRange"
-            @valueChanged="(val) => (filters.visitDateRange = val)"
-          />
-          <q-select
-            :disable="loading"
-            stack-label
-            outlined
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :options="[
-              { code: null, name: 'All' },
-              ...Object.values(pxTypesMap),
-            ]"
-            label="Patient Type"
-            v-model="filters.patientTypeCode"
-            hint=""
-          />
           <q-select
             :disable="loading"
             stack-label
@@ -71,7 +37,41 @@
               ...Object.values(campusesMap),
             ]"
             label="Campus"
-            v-model="filters.campusCode"
+            v-model="filters.patientCampusCode"
+            hint=""
+          />
+          <q-select
+            :disable="loading"
+            stack-label
+            outlined
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            :options="[
+              { code: null, name: 'All' },
+              ...Object.values(affiliationsMap),
+            ]"
+            label="Patient Type"
+            v-model="filters.patientAffiliationCode"
+            hint=""
+          />
+          <DateRange
+            :disable="loading"
+            stack-label
+            outlined
+            :subtractDaysCount="7"
+            label="Visit Date Range"
+            :initialValue="filters.visitDateRange"
+            @valueChanged="(val) => (filters.visitDateRange = val)"
+          />
+          <q-input
+            :disable="loading"
+            debounce="750"
+            stack-label
+            outlined
+            label="Patient Name"
+            v-model="filters.patientName"
             hint=""
           />
           <div class="row justify-end">
@@ -139,7 +139,7 @@
                         formatDate(item.dateTimeCreated)
                       }}</q-item-label>
                       <q-item-label overline class="q-mb-sm">{{
-                        item.patientCode
+                        item.patientIdentificationCode
                       }}</q-item-label>
                       <q-item-label class="text-weight-medium">{{
                         `${item.patientLastName}, ${item.patientFirstName} ${
@@ -158,10 +158,10 @@
                             }}</q-badge
                           >
                           <q-badge
-                            v-if="item.patientTypeCode"
+                            v-if="item.patientAffiliationCode"
                             class="bg-grey"
                             >{{
-                              pxTypesMap[item.patientTypeCode].name
+                              affiliationsMap[item.patientAffiliationCode].name
                             }}</q-badge
                           >
                         </div>
@@ -314,8 +314,8 @@ export default defineComponent({
           ),
           to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
         },
-        patientTypeCode: null,
-        campusCode: null,
+        patientAffiliationCode: null,
+        patientCampusCode: null,
       },
       loading: false,
       visits: [],
@@ -329,7 +329,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      pxTypesMap: "app/pxTypesMap",
+      affiliationsMap: "app/affiliationsMap",
       campusesMap: "app/campusesMap",
       visitPhasesMap: "app/visitPhasesMap",
     }),

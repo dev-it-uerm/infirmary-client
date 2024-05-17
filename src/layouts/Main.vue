@@ -55,8 +55,9 @@
             <div class="text-center">
               <span class="text-h6 text-weight-bold">{{ userFullName }}</span>
               <div class="row justify-center text-grey-6">
-                <span>EMPLOYEE NO:&nbsp;</span>
-                <span class="text-weight-bold">{{ user.code }}</span>
+                <span class="text-weight-bold"
+                  >{{ user.code }} &#8226; {{ user.roleCode }}</span
+                >
               </div>
             </div>
             <div class="row items-start" style="gap: 12px">

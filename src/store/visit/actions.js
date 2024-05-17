@@ -11,13 +11,13 @@ export const get = async (context, urlQuery) => {
   );
 };
 
-export const sendVisitAppointmentLink = async (context, patientCode) => {
+export const sendVisitAppointmentLink = async (context, payload) => {
   return await request(
     "post",
     `${context.rootState.app.apiHost}/send-visit-appointment-link`,
     null,
     null,
-    { code: patientCode }
+    payload
   );
 };
 

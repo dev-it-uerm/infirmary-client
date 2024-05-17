@@ -78,7 +78,7 @@ export default function () {
       LAB: { code: "LAB", name: "Laboratory Staff" },
       ADM: { code: "ADM", name: "Administrator" },
     },
-    pxTypesMap: {
+    affiliationsMap: {
       EMP: { code: "EMP", name: "Employee/Faculty" },
       STU: { code: "STU", name: "Student" },
     },

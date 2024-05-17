@@ -22,8 +22,8 @@ export function navMenus(state) {
   return state.navMenus;
 }
 
-export function pxTypesMap(state) {
-  return state.pxTypesMap;
+export function affiliationsMap(state) {
+  return state.affiliationsMap;
 }
 
 export function campusesMap(state) {

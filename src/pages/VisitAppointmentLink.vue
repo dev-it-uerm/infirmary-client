@@ -14,18 +14,39 @@
           </template>
         </ReminderCard>
         <q-form @submit="sendLink">
+          <q-select
+            stack-label
+            outlined
+            :options="Object.values(campusesMap)"
+            label="Campus"
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            :rules="[requiredRule]"
+            v-model="campusCode"
+            hint=""
+          />
+          <q-select
+            stack-label
+            outlined
+            :options="Object.values(affiliationsMap)"
+            label="Affiliation"
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            :rules="[requiredRule]"
+            v-model="affiliationCode"
+            hint=""
+          />
           <q-input
             :disable="loading"
             outlined
             stack-label
-            label="Student No. / Employee No. / Patient No."
-            v-model.trim="patientCode"
-            :rules="[
-              (val) =>
-                val == null || val === ''
-                  ? 'This field is required.'
-                  : undefined,
-            ]"
+            label="Student No. / Employee No."
+            v-model.trim="identificationCode"
+            :rules="[requiredRule]"
             hint=""
           />
           <div :disable="loading" :loading="loading" class="row justify-end">
@@ -46,6 +67,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, showMessage } from "src/helpers/util.js";
+import { mapGetters } from "vuex";
 
 export default defineComponent({
   name: "VisitAppointmentLink",
@@ -60,11 +82,26 @@ export default defineComponent({
       import("src/components/core/FetchingData.vue")
     ),
   },
+  setup() {
+    return {
+      requiredRule: (val) =>
+        val == null || val === "" ? "This field is required." : undefined,
+    };
+  },
   data() {
     return {
-      patientCode: null,
+      affiliationCode: "STU",
+      campusCode: "MNL",
+      identificationCode: null,
       loading: false,
     };
+  },
+  computed: {
+    ...mapGetters({
+      user: "app/user",
+      campusesMap: "app/campusesMap",
+      affiliationsMap: "app/affiliationsMap",
+    }),
   },
   methods: {
     async sendLink() {
@@ -73,7 +110,11 @@ export default defineComponent({
 
       const response = await this.$store.dispatch(
         "visit/sendVisitAppointmentLink",
-        this.patientCode
+        {
+          campusCode: this.campusCode,
+          affiliationCode: this.affiliationCode,
+          identificationCode: this.identificationCode,
+        }
       );
 
       if (response.error) {

@@ -69,7 +69,7 @@ export const formatDate = (date, options) => {
 
   const ampm = hour > 11 ? "PM" : "AM";
 
-  if (minute < 10) minute = "0" + minute;
+  if (minute < 10) minute = `0${minute}`;
 
   if (hour === 0) {
     hour = 12;

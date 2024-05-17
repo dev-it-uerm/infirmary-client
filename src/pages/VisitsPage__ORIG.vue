@@ -54,7 +54,7 @@
               option-value="code"
               :options="[
                 { code: null, name: 'All' },
-                ...Object.values(pxTypesMap),
+                ...Object.values(affiliationsMap),
               ]"
               label="Patient Type"
               v-model="filters.patientTypeCode"
@@ -164,7 +164,7 @@
                               v-if="item.patientTypeCode"
                               class="bg-grey"
                               >{{
-                                pxTypesMap[item.patientTypeCode].name
+                                affiliationsMap[item.patientTypeCode].name
                               }}</q-badge
                             >
                           </div>
@@ -337,7 +337,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      pxTypesMap: "app/pxTypesMap",
+      affiliationsMap: "app/affiliationsMap",
       campusesMap: "app/campusesMap",
       visitPhasesMap: "app/visitPhasesMap",
     }),

@@ -1,26 +1,32 @@
 <template>
   <q-page
     class="row justify-center bg-grey-3"
-    :class="$q.screen.lt.sm ? 'q-pa-md' : 'q-pa-lg'"
+    :class="$q.screen.lt.sm ? 'q-pa-md fit' : 'q-pa-lg'"
   >
-    <div class="column justify-start" style="gap: 16px">
-      <q-card
-        :style="
-          $q.screen.lt.md
-            ? { width: '100%' }
-            : {
-                width: '900px',
-                maxWidth: '900px',
-              }
-        "
-        class="column shadow-0 relative-position bg-transparent"
-      >
+    <div
+      class="column justify-start"
+      style="gap: 16px"
+      :style="
+        $q.screen.lt.md
+          ? { width: '100%' }
+          : {
+              width: '900px',
+              maxWidth: '900px',
+            }
+      "
+    >
+      <q-card class="column shadow-0 relative-position bg-transparent">
         <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
       </q-card>
-      <div class="row bg-transparent" style="gap: 16px">
+      <div
+        class="bg-transparent"
+        :class="$q.screen.lt.md ? 'column' : 'row items-start'"
+        style="gap: 16px"
+      >
         <!-- border: solid 1px rgba(0, 0, 0, 0.15); -->
         <div
-          class="col-auto q-pa-lg bg-white"
+          class="q-pa-lg bg-white"
+          :class="$q.screen.lt.md ? 'full-width' : 'col-auto column'"
           style="border-radius: 4px; width: 200px"
         >
           <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
@@ -88,7 +94,7 @@
             />
           </div>
         </div>
-        <div class="col">
+        <div class="" :class="$q.screen.lt.md ? 'full-width' : 'col'">
           <!-- <ReminderCard
               v-if="reminderVisible"
               title="REMINDER"
@@ -129,7 +135,7 @@
                   v-slot="{ item, index }"
                 >
                   <q-item
-                    class="full-width"
+                    class="full-width q-pa-md"
                     :key="index"
                     clickable
                     @click="showPxVisitInfo(item)"
@@ -139,15 +145,17 @@
                         formatDate(item.dateTimeCreated)
                       }}</q-item-label>
                       <q-item-label overline class="q-mb-sm">{{
-                        item.patientIdentificationCode
+                        `${item.patientCampusCode}-${item.patientAffiliationCode}-${item.patientIdentificationCode}`
                       }}</q-item-label>
-                      <q-item-label class="text-weight-medium">{{
-                        `${item.patientLastName}, ${item.patientFirstName} ${
-                          item.patientMiddleName
-                            ? item.patientMiddleName[0].concat(".")
-                            : ""
-                        }`.trim()
-                      }}</q-item-label>
+                      <q-item-label class="text-weight-medium">
+                        {{
+                          `${item.patientLastName}, ${item.patientFirstName} ${
+                            item.patientMiddleName
+                              ? item.patientMiddleName[0].concat(".")
+                              : ""
+                          }`.trim()
+                        }}</q-item-label
+                      >
                       <q-item-label caption>
                         <div class="row" style="gap: 6px">
                           <q-badge
@@ -192,9 +200,6 @@
                         @click.stop="showPxVisitInfo(item)"
                       />
                     </q-item-section>
-                    <!-- <q-item-section side top>
-    <q-item-label caption>{{ formatDate(item.date, { dateOnly: true }) }}</q-item-label>
-  </q-item-section> -->
                   </q-item>
                   <q-separator />
                 </q-virtual-scroll>

@@ -9,11 +9,44 @@
       </q-card>
       <q-card borderless class="shadow-0" style="width: 500px">
         <div style="padding: 32px">
-          <VisitCodeScanner
-            ref="visitCodeScanner"
-            :loading="loading"
-            @valueChanged="(val) => (value = val)"
-          />
+          <MessageBanner v-if="forbidden" :success="false">
+            <template v-slot:error-body>
+              <div>You are not allowed to access this page.</div>
+            </template>
+          </MessageBanner>
+          <div v-else>
+            <ReminderCard v-if="exam" :exitable="false" class="q-mb-md">
+              <template v-slot:body>
+                <div v-if="qrCodeMode">
+                  Scan the <strong>Visit QR Code</strong> to mark the patient as
+                  DONE in the
+                  <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
+                </div>
+                <div v-else>
+                  Enter the <strong>Visit Reference Number</strong> to mark the
+                  patient as DONE in the
+                  <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
+                </div>
+              </template>
+            </ReminderCard>
+            <q-select
+              :disable="loading"
+              outlined
+              stack-label
+              :options="exams"
+              option-value="code"
+              option-label="name"
+              label="Examinations"
+              v-model="exam"
+              hint=""
+            />
+            <VisitCodeScanner
+              ref="visitCodeScanner"
+              :loading="loading"
+              @visitCodeChanged="(val) => (visitCode = val)"
+              @inputModeChanged="(val) => (inputMode = val)"
+            />
+          </div>
           <!-- <div class="q-mt-md">
             <div class="text-primary text-weight-medium q-mb-sm">
               Recent entries:
@@ -63,6 +96,7 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
 
 export default defineComponent({
@@ -71,6 +105,12 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
+    ReminderCard: defineAsyncComponent(() =>
+      import("src/components/core/ReminderCard.vue")
+    ),
+    MessageBanner: defineAsyncComponent(() =>
+      import("src/components/core/MessageBanner.vue")
+    ),
     VisitCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/VisitCodeScanner.vue")
     ),
@@ -78,22 +118,57 @@ export default defineComponent({
   data() {
     return {
       // recentEntries: [],
+      inputMode: null,
+      forbidden: false,
+      exams: [],
+      exam: null,
       loading: false,
-      value: null,
+      visitCode: null,
     };
+  },
+  computed: {
+    ...mapGetters({
+      user: "app/user",
+      visitPhasesMap: "app/visitPhasesMap",
+    }),
+    qrCodeMode() {
+      return this.inputMode === "QR";
+    },
+    value() {
+      if (this.exam && this.visitCode) {
+        return {
+          visitCode: this.visitCode,
+          examCode: this.exam.code,
+        };
+      }
+
+      return null;
+    },
   },
   watch: {
     value(val) {
-      if (val && val.examCode && val.visitCode && val.visitCode.length === 22) {
-        this.changeVisitPhase();
+      if (val) {
+        this.changeVisitPhase(val.visitCode, val.examCode);
       }
     },
   },
-  methods: {
-    async changeVisitPhase() {
-      const visitCode = this.value.visitCode.replace(/ /g, "");
-      const examCode = this.value.examCode;
+  mounted() {
+    const examsHandled = Object.values(this.visitPhasesMap).filter(
+      (v) =>
+        !["REG", "FIN"].includes(v.code) &&
+        (this.user.examsHandled ?? []).includes(v.code)
+    );
 
+    if (examsHandled.length === 0) {
+      this.forbidden = true;
+      return;
+    }
+
+    this.exams = examsHandled;
+    this.exam = examsHandled[0];
+  },
+  methods: {
+    async changeVisitPhase(visitCode, examCode) {
       let success = true;
       let message = `Patient has been marked as done in the ${examCode} exam.`;
 

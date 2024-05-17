@@ -44,7 +44,6 @@ export default defineComponent({
   },
   methods: {
     routeIsPublic(routeName) {
-      console.log("routeName:", routeName);
       if (
         [
           "COOKIE_POLICY",
@@ -52,6 +51,7 @@ export default defineComponent({
           "LOGIN",
           "PASSWORD_RESET",
           "VISIT_APPOINTMENT",
+          "VISIT_TRACKER",
           "VISIT_APPOINTMENT_LINK",
         ].includes(routeName)
       )
@@ -60,17 +60,11 @@ export default defineComponent({
       return false;
     },
     redirectPage(user, routeName) {
-      // console.log(this.ready);
-      // console.log(user);
-      // console.log(this.routeIsPublic(routeName));
-
       if (user == null && !this.routeIsPublic(routeName)) {
-        console.log("Redirecting page...");
         this.$router.push("/login");
       }
 
       if (user && routeName === "LOGIN") {
-        console.log("Redirecting page...");
         this.$router.push("/");
       }
     },

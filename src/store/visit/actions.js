@@ -39,6 +39,17 @@ export const completeExam = async (context, payload) => {
   );
 };
 
+export const track = async (context, visitCode) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/track-visit/${visitCode}`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
 export const getDetails = async (context, urlQuery) => {
   return await request(
     "get",

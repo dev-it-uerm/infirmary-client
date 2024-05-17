@@ -56,6 +56,11 @@ const routes = [
         component: () => import("pages/ExamStatusAssignment.vue"),
       },
       {
+        name: "VISIT_TRACKER",
+        path: "/visit-tracker",
+        component: () => import("pages/VisitTracker.vue"),
+      },
+      {
         name: "PASSWORD_CHANGE",
         path: "/password-change",
         component: () => import("pages/PasswordChange.vue"),

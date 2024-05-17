@@ -66,6 +66,12 @@ export default function () {
         url: "/exam-status-assignment",
         icon: "fa-solid fa-user-tag",
       },
+      {
+        code: "VISIT_TRACKER",
+        name: "Visit Tracker",
+        url: "/visit-tracker",
+        icon: "fa-solid fa-user-tag",
+      },
     ],
     campusesMap: {
       MNL: { code: "MNL", name: "Manila" },

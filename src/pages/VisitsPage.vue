@@ -58,7 +58,7 @@
               { code: null, name: 'All' },
               ...Object.values(affiliationsMap),
             ]"
-            label="Patient Type"
+            label="Affiliation"
             v-model="filters.patientAffiliationCode"
             hint=""
           />
@@ -145,7 +145,7 @@
                         formatDate(item.dateTimeCreated)
                       }}</q-item-label>
                       <q-item-label overline class="q-mb-sm">{{
-                        `${item.patientCampusCode}-${item.patientAffiliationCode}-${item.patientIdentificationCode}`
+                        item.patientIdentificationCode
                       }}</q-item-label>
                       <q-item-label class="text-weight-medium">
                         {{
@@ -179,7 +179,7 @@
                       <q-btn
                         dense
                         style="padding-left: 10px; padding-right: 10px"
-                        class="q-mb-sm"
+                        class="q-mb-sm bg-white"
                         unelevated
                         outline
                         color="primary"
@@ -351,16 +351,6 @@ export default defineComponent({
       visitPhasesMap: "app/visitPhasesMap",
     }),
   },
-  // watch: {
-  //   filters: {
-  //     handler(val) {
-  //       console.log(val);
-  //       if (!allPropsEmpty(val)) this.getVisits();
-  //     },
-  //     immediate: true,
-  //     deep: true,
-  //   },
-  // },
   mounted() {
     if (this.user) this.getVisits();
   },

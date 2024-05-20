@@ -79,10 +79,10 @@ export default function () {
       UERM: { code: "UERM", name: "UERM" },
     },
     userRolesMap: {
+      ADM: { code: "ADM", name: "Administrator" },
       MED: { code: "MED", name: "Medical Staff" },
       RAD: { code: "RAD", name: "Radiology Staff" },
       LAB: { code: "LAB", name: "Laboratory Staff" },
-      ADM: { code: "ADM", name: "Administrator" },
     },
     affiliationsMap: {
       EMP: { code: "EMP", name: "Employee/Faculty" },

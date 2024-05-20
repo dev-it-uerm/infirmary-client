@@ -98,7 +98,9 @@
                 </template>
               </q-btn>
             </div>
-            <q-separator class="q-my-md" />
+            <div class="row justify-center">
+              <q-separator class="q-my-md" style="width: 80px" />
+            </div>
             <template v-for="navMenu in navMenus" :key="navMenu.code">
               <q-btn-dropdown
                 v-if="navMenu.children"

@@ -13,22 +13,35 @@
       >
         <q-card
           borderless
-          class="shadow-0"
+          class="shadow-0 flex flex-center"
+          style="padding: 32px"
           :style="{
             width: $q.screen.lt.md ? '100%' : '400px',
             maxWidth: $q.screen.lt.md ? '100%' : '400px',
+            height: inputMode === 'QR' ? '310px' : '200px',
           }"
         >
-          <div style="padding: 32px">
-            <VisitCodeScanner
-              ref="visitCodeScanner"
-              :loading="loading"
-              @visitCodeChanged="(val) => (visitCode = val)"
-            />
-          </div>
+          <VisitCodeScanner
+            class="full-width"
+            ref="visitCodeScanner"
+            :loading="loading"
+            @visitCodeChanged="(val) => (visitCode = val)"
+            @inputModeChanged="(val) => (inputMode = val)"
+          />
         </q-card>
-        <q-card borderless class="shadow-0 col q-pa-lg">
-          <q-list separator="" v-if="phases && phases.length > 0">
+        <q-card
+          borderless
+          class="shadow-0 col q-pa-lg flex flex-center"
+          style="padding: 32px"
+          :style="{
+            minHeight: inputMode === 'QR' ? '310px' : '200px',
+          }"
+        >
+          <q-list
+            class="full-width"
+            separator
+            v-if="phases && phases.length > 0"
+          >
             <template v-for="(phase, idx) in phases" :key="idx">
               <q-item>
                 <q-item-section>
@@ -59,7 +72,12 @@
               <!-- <q-separator spaced inset /> -->
             </template>
           </q-list>
-          <NoResult v-else :bordered="true" message="Visit not found." />
+          <div v-else class="column items-center">
+            <q-icon class="q-mb-sm" name="info" size="sm" />
+            <div class="text-center">
+              Scan/enter the visit code to see its status.
+            </div>
+          </div>
         </q-card>
       </div>
     </div>
@@ -82,9 +100,6 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
-    NoResult: defineAsyncComponent(() =>
-      import("src/components/core/NoResult.vue")
-    ),
     VisitCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/VisitCodeScanner.vue")
     ),
@@ -98,6 +113,7 @@ export default defineComponent({
     return {
       // recentEntries: [],
       loading: false,
+      inputMode: null,
       visitCode: null,
       phases: [],
     };
@@ -122,6 +138,7 @@ export default defineComponent({
 
       if (response.error) {
         showMessage(this.$q, false, response.body.error ?? response.body);
+        this.loading = false;
         return;
       }
 

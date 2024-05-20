@@ -2,10 +2,7 @@
   <q-page class="flex flex-center bg-grey-3">
     <div class="column" style="gap: 16px">
       <q-card borderless class="shadow-0" style="width: 500px">
-        <PageHeader
-          text="EXAM STATUS ASSIGNMENT"
-          icon="fa-solid fa-list-check"
-        />
+        <PageHeader text="COMPLETE EXAM" icon="fa-solid fa-list-check" />
       </q-card>
       <q-card borderless class="shadow-0" style="width: 500px">
         <div style="padding: 32px">
@@ -100,7 +97,7 @@ import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "ExamStatusAssignment",
+  name: "CompleteExam",
   components: {
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
@@ -153,6 +150,8 @@ export default defineComponent({
     },
   },
   mounted() {
+    if (!this.user) return;
+
     const examsHandled = Object.values(this.visitPhasesMap).filter(
       (v) =>
         !["REG", "FIN"].includes(v.code) &&

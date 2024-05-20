@@ -61,16 +61,16 @@ export default function () {
         icon: "fa-solid fa-stethoscope",
       },
       {
-        code: "EXAM_STATUS_ASSIGNMENT",
-        name: "Assign Exam Status",
-        url: "/exam-status-assignment",
+        code: "COMPLETE_EXAM",
+        name: "Complete Exam",
+        url: "/complete-exam",
         icon: "fa-solid fa-user-tag",
       },
       {
         code: "VISIT_TRACKER",
         name: "Visit Tracker",
-        url: "/visit-tracker",
-        icon: "fa-solid fa-user-tag",
+        url: "/track-visit",
+        icon: "fa-solid fa-magnifying-glass",
       },
     ],
     campusesMap: {

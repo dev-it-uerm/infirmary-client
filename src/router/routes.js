@@ -51,13 +51,13 @@ const routes = [
         component: () => import("pages/VisitAppointment.vue"),
       },
       {
-        name: "EXAM_STATUS_ASSIGNMENT",
-        path: "/exam-status-assignment",
-        component: () => import("pages/ExamStatusAssignment.vue"),
+        name: "COMPLETE_EXAM",
+        path: "/complete-exam",
+        component: () => import("pages/CompleteExam.vue"),
       },
       {
         name: "VISIT_TRACKER",
-        path: "/visit-tracker",
+        path: "/track-visit",
         component: () => import("pages/VisitTracker.vue"),
       },
       {

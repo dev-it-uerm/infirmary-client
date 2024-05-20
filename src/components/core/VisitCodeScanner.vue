@@ -37,7 +37,7 @@ import { defineComponent } from "vue";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default defineComponent({
-  name: "ExamStatusAssignment",
+  name: "VisitCodeScanner",
 
   props: {
     loading: {

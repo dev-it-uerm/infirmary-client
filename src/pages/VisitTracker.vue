@@ -2,7 +2,10 @@
   <q-page class="flex flex-center bg-grey-3">
     <div class="column q-pa-md" style="gap: 16px; width: 1020px">
       <q-card borderless class="shadow-0">
-        <PageHeader text="VISIT TRACKER" icon="fa-solid fa-list-check" />
+        <PageHeader
+          text="VISIT TRACKER"
+          icon="fa-solid fa-solid fa-magnifying-glass"
+        />
       </q-card>
       <div
         :class="$q.screen.lt.md ? 'column justify-start' : 'row items-start'"

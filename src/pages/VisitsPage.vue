@@ -149,11 +149,11 @@
                       }}</q-item-label>
                       <q-item-label class="text-weight-medium">
                         {{
-                          `${item.patientLastName}, ${item.patientFirstName} ${
-                            item.patientMiddleName
-                              ? item.patientMiddleName[0].concat(".")
-                              : ""
-                          }`.trim()
+                          formatName(
+                            item.patientFirstName,
+                            item.patientMiddleName,
+                            item.patientLastName
+                          )
                         }}</q-item-label
                       >
                       <q-item-label caption>
@@ -258,6 +258,13 @@
       v-if="visitInfoVisible"
       :visitId="currentVisit.id"
       :patientId="currentVisit.patientId"
+      :patientName="
+        formatName(
+          currentVisit.patientFirstName,
+          currentVisit.patientMiddleName,
+          currentVisit.patientLastName
+        )
+      "
       @close="visitInfoVisible = false"
     />
   </q-page>
@@ -304,6 +311,11 @@ export default defineComponent({
     return {
       showMessage,
       formatDate,
+      formatName: (patientFirstName, patientMiddleName, patientLastName) => {
+        return `${patientLastName}, ${patientFirstName} ${
+          patientMiddleName ? patientMiddleName[0].concat(".") : ""
+        }`.trim();
+      },
       // inputRule: (val) =>
       //   val == null || val === "" ? "Field is required." : undefined,
     };
@@ -350,7 +362,7 @@ export default defineComponent({
   //   },
   // },
   mounted() {
-    this.getVisits();
+    if (this.user) this.getVisits();
   },
   methods: {
     getPhaseName(phaseCode) {

@@ -78,7 +78,7 @@
                 maxlength="255"
                 label="Mobile Phone Number"
                 :rules="[requiredRule]"
-                v-model.trim="mobileNo"
+                v-model.trim="mobileNumber"
                 hint=""
               />
               <div class="row justify-end">
@@ -141,7 +141,7 @@ export default defineComponent({
       lastName: null,
 
       email: null,
-      mobileNo: null,
+      mobileNumber: null,
     };
   },
   computed: {
@@ -160,7 +160,7 @@ export default defineComponent({
       this.lastName = null;
 
       this.email = null;
-      this.mobileNo = null;
+      this.mobileNumber = null;
     },
     async save() {
       this.yesNoDialogVisible = false;
@@ -176,7 +176,7 @@ export default defineComponent({
         roleCode: this.roleCode,
 
         email: this.email,
-        mobileNo: this.mobileNo,
+        mobileNumber: this.mobileNumber,
       });
 
       if (response.error) {

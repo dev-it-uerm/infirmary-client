@@ -1,61 +1,86 @@
 <template>
-  <div class="fit">
-    <FetchingData v-if="loading" style="min-height: 100px" />
-    <div v-else class="fit q-pa-lg scroll">
-      <q-form ref="qFormVisitDetails" @submit="save">
-        <template v-for="field in fieldGroupsMap[tab.code]" :key="field.code">
-          <div>
-            <q-input
-              v-if="field.type === 'TEXT'"
-              :disable="loading"
-              stack-label
-              outlined
-              :rules="generateRules(field.required)"
-              :label="field.name"
-              v-model.trim="value[field.code]"
-              hint=""
-            />
-            <q-input
-              v-if="field.type === 'TEXTAREA'"
-              :disable="loading"
-              type="textarea"
-              stack-label
-              outlined
-              :rules="generateRules(field.required)"
-              :label="field.name"
-              v-model.trim="value[field.code]"
-              hint=""
-            />
-            <DiagTestSelect
-              v-if="field.type === 'DIAGTESTSELECT'"
-              :disabled="loading"
-              :options="field.options"
-              :required="field.required"
-              :label="field.name"
-              :diagParamCode="field.code"
-              :initialValue="value[field.code]"
-              @valueChanged="(val) => (value[field.code] = val)"
-            />
-            <DiagTest
-              v-if="field.type === 'DIAGTEST'"
-              :disabled="loading"
-              :label="field.name"
-              :diagParamCode="field.code"
-              :initialValue="value[field.code]"
-              @valueChanged="(val) => (value[field.code] = val)"
-            />
-          </div>
-        </template>
-        <q-input
-          :disable="loading"
-          type="textarea"
-          stack-label
-          outlined
-          label="Remarks"
-          v-model.trim="value.REMARKS"
-          hint=""
-        />
-        <div class="row justify-end">
+  <div>
+    <div
+      v-if="loading"
+      class="bg-white flex flex-center"
+      style="height: 200px; opacity: 0.8"
+    >
+      <q-spinner-cube color="black" size="md" />
+    </div>
+
+    <q-form v-else ref="qFormVisitDetails" @submit="save">
+      <div
+        class="fit"
+        style="display: grid; grid-template-rows: auto min-content"
+      >
+        <div
+          class="q-pa-lg scroll"
+          style="height: auto; max-height: 70vh; min-height: 100px"
+        >
+          <template v-for="field in fieldGroupsMap[tab.code]" :key="field.code">
+            <div>
+              <q-input
+                v-if="field.type === 'TEXT'"
+                :disable="loading"
+                stack-label
+                outlined
+                :rules="generateRules(field.required)"
+                :label="field.name"
+                v-model.trim="value[field.code]"
+                hint=""
+              />
+              <q-input
+                v-if="field.type === 'TEXTAREA'"
+                :disable="loading"
+                type="textarea"
+                stack-label
+                outlined
+                :rules="generateRules(field.required)"
+                :label="field.name"
+                v-model.trim="value[field.code]"
+                hint=""
+              />
+              <DiagTest
+                v-if="field.type === 'DIAGTEST'"
+                :disabled="loading"
+                :label="field.name"
+                :diagParamCode="field.code"
+                :initialValue="value[field.code]"
+                @valueChanged="(val) => (value[field.code] = val)"
+              />
+              <DiagTestTextArea
+                v-if="field.type === 'DIAGTESTTEXTAREA'"
+                :disabled="loading"
+                :required="field.required"
+                :label="field.name"
+                :diagParamCode="field.code"
+                :initialValue="value[field.code]"
+                @valueChanged="(val) => (value[field.code] = val)"
+              />
+              <DiagTestSelect
+                v-if="field.type === 'DIAGTESTSELECT'"
+                :disabled="loading"
+                :options="field.options"
+                :required="field.required"
+                :label="field.name"
+                :diagParamCode="field.code"
+                :initialValue="value[field.code]"
+                @valueChanged="(val) => (value[field.code] = val)"
+              />
+            </div>
+          </template>
+          <q-input
+            :disable="loading"
+            type="textarea"
+            stack-label
+            outlined
+            label="Remarks"
+            v-model.trim="value.REMARKS"
+            hint=""
+          />
+        </div>
+        <q-separator />
+        <div class="row q-pa-lg justify-end">
           <q-btn
             unelevated
             class="text-black bg-accent"
@@ -64,8 +89,8 @@
             @click="submitForm"
           />
         </div>
-      </q-form>
-    </div>
+      </div>
+    </q-form>
     <ConfirmationDialog
       v-if="confDialogVisible"
       question="Are you sure you want to save visit details?"
@@ -77,20 +102,19 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { mapGetters } from "vuex";
 import { delay, formatDate, showMessage } from "src/helpers/util.js";
 
 export default defineComponent({
   name: "VisitDetailsForm",
   components: {
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
-    ),
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
     ),
     DiagTest: defineAsyncComponent(() =>
       import("src/components/core/form-fields/DiagTest.vue")
+    ),
+    DiagTestTextArea: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/DiagTestTextArea.vue")
     ),
     DiagTestSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/DiagTestSelect.vue")
@@ -502,8 +526,22 @@ export default defineComponent({
             default: { value: null },
           },
         ],
-        LABFCL: [],
-        RADXRCHST: [],
+        LABFCL: [
+          {
+            code: "IMPRESSION",
+            name: "Impression",
+            type: "DIAGTESTTEXTAREA",
+            default: { value: null },
+          },
+        ],
+        RADXRCHST: [
+          {
+            code: "IMPRESSION",
+            name: "Impression",
+            type: "DIAGTESTTEXTAREA",
+            default: { value: null },
+          },
+        ],
       },
       // inputRule: (val) =>
       //   val == null || val === "" ? "Field is required." : undefined,
@@ -516,11 +554,6 @@ export default defineComponent({
       confDialogVisible: false,
     };
   },
-  // computed: {
-  //   ...mapGetters({
-  //     user: "app/user",
-  //   }),
-  // },
   mounted() {
     this.value = {
       ...this.fieldGroupsMap[this.tab.code].reduce((acc, f) => {

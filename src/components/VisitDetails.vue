@@ -5,9 +5,11 @@
     @close="$emit('close')"
   >
     <template v-slot:title>
-      <div style="min-width: 1000px">
+      <div class="row items-center justify-between" style="gap: 16px">
+        <div class="col text-weight-medium ellipsis">{{ patientName }}</div>
         <q-btn-dropdown
           v-if="tab"
+          class="col-auto"
           unelevated
           split
           color="accent"
@@ -40,18 +42,16 @@
       </div>
     </template>
     <template v-slot:body>
-      <div style="height: 70vh">
-        <template v-if="tabs && tab">
-          <template v-for="item in tabs" :key="item.code">
-            <VisitDetailsForm
-              v-if="item.code === tab.code"
-              :visitId="visitId"
-              :patientId="patientId"
-              :tab="tab"
-            />
-          </template>
+      <template v-if="tabs && tab">
+        <template v-for="item in tabs" :key="item.code">
+          <VisitDetailsForm
+            v-if="item.code === tab.code"
+            :visitId="visitId"
+            :patientId="patientId"
+            :tab="tab"
+          />
         </template>
-      </div>
+      </template>
     </template>
   </MinimizedDialog>
 </template>
@@ -80,6 +80,10 @@ export default defineComponent({
     },
     patientId: {
       type: Number,
+      required: true,
+    },
+    patientName: {
+      type: String,
       required: true,
     },
   },

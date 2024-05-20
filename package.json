@@ -1,8 +1,8 @@
 {
-  "name": "infirmary-portal",
+  "name": "uerm-infirmary",
   "version": "0.0.1",
-  "description": "Infirmary Portal",
-  "productName": "Infirmary Portal",
+  "description": "UERM Infirmary",
+  "productName": "UERM Infirmary",
   "author": "JP Pascua <jmpascua@uerm.edu.ph>",
   "private": true,
   "scripts": {

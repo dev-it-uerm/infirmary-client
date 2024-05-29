@@ -69,7 +69,7 @@
                 maxlength="255"
                 label="Email Address"
                 :rules="[requiredRule]"
-                v-model.trim="email"
+                v-model.trim="emailAddress"
                 hint=""
               />
               <q-input
@@ -140,7 +140,7 @@ export default defineComponent({
       middleName: null,
       lastName: null,
 
-      email: null,
+      emailAddress: null,
       mobileNumber: null,
     };
   },
@@ -159,7 +159,7 @@ export default defineComponent({
       this.middleName = null;
       this.lastName = null;
 
-      this.email = null;
+      this.emailAddress = null;
       this.mobileNumber = null;
     },
     async save() {
@@ -175,7 +175,7 @@ export default defineComponent({
 
         roleCode: this.roleCode,
 
-        email: this.email,
+        emailAddress: this.emailAddress,
         mobileNumber: this.mobileNumber,
       });
 

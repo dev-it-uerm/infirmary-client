@@ -21,10 +21,22 @@ export const sendVisitAppointmentLink = async (context, payload) => {
   );
 };
 
-export const schedule = async (context, accessToken) => {
+export const scheduleSelf = async (context, accessToken) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/schedule-visit?accessToken=${accessToken}`
+    `${context.rootState.app.apiHost}/schedule-visit-self`,
+    { accessToken }
+  );
+};
+
+export const schedule = async (context, payload) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/schedule-visit`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
+    context
   );
 };
 

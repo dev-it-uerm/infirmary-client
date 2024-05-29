@@ -48,10 +48,16 @@ export default function () {
         url: "/user-registration",
         icon: "fa-solid fa-user-plus",
       },
+      // {
+      //   code: "VISIT_APPOINTMENT_LINK",
+      //   name: "Visit Appointment",
+      //   url: "/visit-appointment-link",
+      //   icon: "fa-regular fa-id-card",
+      // },
       {
-        code: "VISIT_APPOINTMENT_LINK",
+        code: "VISIT_APPOINTMENT_BULK",
         name: "Visit Appointment",
-        url: "/visit-appointment-link",
+        url: "/visit-appointment-bulk",
         icon: "fa-regular fa-id-card",
       },
       {

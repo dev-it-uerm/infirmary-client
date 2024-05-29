@@ -254,9 +254,7 @@ export const request = async (
   };
 
   try {
-    return {
-      body: (await axios(opts)).data,
-    };
+    return { body: (await axios(opts)).data };
   } catch (error) {
     // if (
     //   vuexContext &&

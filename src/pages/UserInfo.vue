@@ -17,7 +17,7 @@
             <div style="padding: 32px">
               <q-input
                 outlined
-                v-model="email"
+                v-model="emailAddress"
                 maxlength="255"
                 label="Email Address"
                 hint=""
@@ -79,7 +79,7 @@ export default defineComponent({
     return {
       loading: false,
       yesNoDialogVisible: false,
-      email: "",
+      emailAddress: "",
       mobileNo: "",
     };
   },
@@ -89,12 +89,12 @@ export default defineComponent({
     }),
   },
   created() {
-    this.email = this.user.email;
+    this.emailAddress = this.user.emailAddress;
     this.mobileNo = this.user.mobileNo;
   },
   methods: {
     reset() {
-      this.email = "";
+      this.emailAddress = "";
       this.mobileNo = "";
     },
     async save() {
@@ -103,7 +103,7 @@ export default defineComponent({
       await delay(2000);
 
       const response = await this.$store.dispatch("app/changeUserInfo", {
-        email: this.email,
+        emailAddress: this.emailAddress,
         mobileNo: this.mobileNo,
       });
 
@@ -119,7 +119,7 @@ export default defineComponent({
 
       await this.$store.dispatch("app/setUser", {
         ...this.user,
-        email: this.email,
+        emailAddress: this.emailAddress,
         mobileNo: this.mobileNo,
       });
 

@@ -51,6 +51,11 @@ const routes = [
         component: () => import("pages/VisitAppointment.vue"),
       },
       {
+        name: "VISIT_APPOINTMENT_BULK",
+        path: "/visit-appointment-bulk",
+        component: () => import("pages/VisitAppointmentBulk.vue"),
+      },
+      {
         name: "COMPLETE_EXAM",
         path: "/complete-exam",
         component: () => import("pages/CompleteExam.vue"),

@@ -1,5 +1,5 @@
 <template>
-  <q-input :model-value="dateRangeStr" hint="">
+  <q-input :model-value="dateRangeStr">
     <template v-slot:append>
       <q-icon name="event" class="cursor-pointer">
         <q-popup-proxy cover :breakpoint="600" ref="qPopUpProxy">

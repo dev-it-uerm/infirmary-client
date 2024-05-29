@@ -102,7 +102,7 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { delay, formatDate, showMessage } from "src/helpers/util.js";
+import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
 
 export default defineComponent({
   name: "VisitDetailsForm",
@@ -567,9 +567,18 @@ export default defineComponent({
   },
   methods: {
     formatValue(val) {
+      // CONVERT "" PROPS TO null
       return Object.entries(val).reduce((acc, e) => {
-        if (e[1] === "") e[1] = null;
-        acc[e[0].toUpperCase()] = e[1];
+        const key = e[0].toUpperCase();
+        const val = e[1];
+
+        acc[key] = isObj(val)
+          ? Object.entries(val).reduce((acc, e) => {
+              acc[e[0]] = e[1] === "" ? null : e[1];
+              return acc;
+            }, {})
+          : e[1];
+
         return acc;
       }, {});
     },

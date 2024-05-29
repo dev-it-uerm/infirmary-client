@@ -87,3 +87,14 @@ export const sendPasswordResetLink = async (context, payload) => {
     context
   );
 };
+
+export const getStudemps = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/studemps`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};

@@ -103,7 +103,7 @@ export default defineComponent({
       }
 
       const response = await this.$store.dispatch(
-        "visit/schedule",
+        "visit/scheduleSelf",
         this.$route.query.accessToken
       );
 

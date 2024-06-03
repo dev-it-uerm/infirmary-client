@@ -237,22 +237,27 @@
                       </div>
                     </q-td>
                     <q-td v-else-if="column.name === 'patientCampusCode'">
-                      <q-badge
-                        v-if="props.row.patientCampusCode"
-                        class="bg-grey"
-                      >
-                        {{ campusesMap[props.row.patientCampusCode].name }}
-                      </q-badge>
+                      <div class="row justify-center">
+                        <q-badge
+                          v-if="props.row.patientCampusCode"
+                          class="bg-grey"
+                        >
+                          {{ campusesMap[props.row.patientCampusCode].name }}
+                        </q-badge>
+                      </div>
                     </q-td>
                     <q-td v-else-if="column.name === 'patientAffiliationCode'">
-                      <q-badge
-                        v-if="props.row.patientCampusCode"
-                        class="bg-grey"
-                      >
-                        {{
-                          affiliationsMap[props.row.patientAffiliationCode].name
-                        }}
-                      </q-badge>
+                      <div class="row justify-center">
+                        <q-badge
+                          v-if="props.row.patientCampusCode"
+                          class="bg-grey"
+                        >
+                          {{
+                            affiliationsMap[props.row.patientAffiliationCode]
+                              .name
+                          }}
+                        </q-badge>
+                      </div>
                     </q-td>
                     <q-td
                       v-else-if="column.name === 'patientFullName'"

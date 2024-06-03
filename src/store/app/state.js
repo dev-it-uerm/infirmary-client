@@ -58,7 +58,7 @@ export default function () {
         code: "VISIT_APPOINTMENT_BULK",
         name: "Visit Appointment",
         url: "/visit-appointment-bulk",
-        icon: "fa-regular fa-id-card",
+        icon: "fa-solid fa-calendar-days",
       },
       {
         code: "VISITS",

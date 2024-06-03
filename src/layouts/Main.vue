@@ -46,7 +46,6 @@
                 style="height: 120px; width: 120px; border-radius: 50%"
                 class="flex flex-center bg-secondary"
               >
-                <!-- <q-icon name="fa-solid fa-user" size="xl" /> -->
                 <span class="text-h4">{{
                   user.firstName[0] + user.lastName[0]
                 }}</span>
@@ -185,7 +184,6 @@
         "
       />
     </q-drawer>
-
     <q-page-container class="bg-grey-3">
       <router-view />
     </q-page-container>
@@ -234,7 +232,6 @@ export default defineComponent({
   watch: {
     "$route.name": {
       handler(val) {
-        this.leftDrawerOpen = true;
         this.activeMenu = val;
       },
       immediate: true,

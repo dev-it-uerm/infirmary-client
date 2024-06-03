@@ -14,7 +14,7 @@
             }
       "
     >
-      <PageHeader icon="fa-solid fa-calendar-days" text="VISITS APPOINTMENT" />
+      <PageHeader icon="fa-solid fa-calendar-days" text="VISIT APPOINTMENT" />
       <CardComponent>
         <template v-slot:body>
           <div class="column" style="gap: 16px">
@@ -49,7 +49,7 @@
                 v-model="filters.affiliationCode"
               />
               <q-input
-                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :class="$q.screen.lt.md ? 'col-12' : 'col'"
                 :dense="$q.screen.gt.sm"
                 :disable="filtering || scheduling"
                 debounce="750"
@@ -296,7 +296,7 @@ export default defineComponent({
         {
           name: "visitCode",
           field: "visitCode",
-          label: "VISIT REF. NO.",
+          label: "VISIT CODE",
           align: "center",
         },
       ],

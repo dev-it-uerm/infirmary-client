@@ -1,188 +1,207 @@
 <template>
   <q-page
-    class="row justify-center bg-grey-3"
-    :class="$q.screen.lt.sm ? 'q-pa-md fit' : 'q-pa-lg'"
+    class="row justify-center"
+    :class="$q.screen.lt.sm ? 'q-pa-md' : 'q-pa-lg'"
   >
     <div
       class="column justify-start"
       style="gap: 16px"
       :style="
         $q.screen.lt.md
-          ? { width: '100%' }
+          ? { minWidth: '100%' }
           : {
-              width: '1200px',
-              maxWidth: '1200px',
+              minWidth: '1024px',
             }
       "
     >
-      <q-card class="column shadow-0 relative-position bg-transparent">
-        <PageHeader
-          icon="fa-solid fa-calendar-days"
-          text="VISITS APPOINTMENT"
-        />
-      </q-card>
-      <q-card
-        class="column shadow-0 q-pa-lg bg-white items-start"
-        style="gap: 16px"
-      >
-        <div class="text-primary text-weight-medium">FILTER:</div>
-        <div class="row items-center" style="gap: 16px">
-          <q-select
-            :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-            :dense="$q.screen.gt.sm"
-            :disable="filtering || scheduling"
-            stack-label
-            outlined
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :options="Object.values(campusesMap)"
-            label="Campus"
-            v-model="filters.campusCode"
-          />
-          <q-select
-            :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-            :dense="$q.screen.gt.sm"
-            :disable="filtering || scheduling"
-            stack-label
-            outlined
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :options="Object.values(affiliationsMap)"
-            label="Affiliation"
-            v-model="filters.affiliationCode"
-          />
-          <q-input
-            :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-            :dense="$q.screen.gt.sm"
-            :disable="filtering || scheduling"
-            debounce="750"
-            stack-label
-            outlined
-            label="Patient Name"
-            v-model="filters.fullName"
-          />
-          <div class="row items-start justify-end">
-            <q-btn
-              style="height: 40px"
-              color="primary"
-              class="q-px-md q-py-xs"
-              :disable="filtering || scheduling"
-              unelevated
-              stack-label
-              label="GO"
-              @click="getStudEmps"
-            />
+      <PageHeader icon="fa-solid fa-calendar-days" text="VISITS APPOINTMENT" />
+      <CardComponent>
+        <template v-slot:body>
+          <div class="column" style="gap: 16px">
+            <div class="text-primary text-weight-medium">FILTER:</div>
+            <div class="row items-center" style="gap: 16px">
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="Object.values(campusesMap)"
+                label="Campus"
+                v-model="filters.campusCode"
+              />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="Object.values(affiliationsMap)"
+                label="Affiliation"
+                v-model="filters.affiliationCode"
+              />
+              <q-input
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                debounce="750"
+                stack-label
+                outlined
+                label="Patient Name"
+                v-model="filters.fullName"
+              />
+              <div class="row items-start justify-end">
+                <q-btn
+                  style="height: 40px"
+                  color="primary"
+                  class="q-px-md q-py-xs"
+                  :disable="filtering || scheduling"
+                  unelevated
+                  stack-label
+                  label="GO"
+                  @click="getStudEmps"
+                />
+              </div>
+            </div>
+            <div>
+              <!-- Extra div parent is a visual bug workaround -->
+              <q-badge color="accent" class="text-black q-pa-sm">
+                <span class="text-weight-bold">
+                  {{ studemps.length }}
+                </span>
+                <span>&nbsp;items found.</span>
+              </q-badge>
+            </div>
           </div>
-        </div>
-        <div>
-          <!-- Extra div parent is a visual bug workaround -->
-          <q-badge color="accent" class="text-black q-pa-sm">
-            <span class="text-weight-bold">
-              {{ studemps.length }}
-            </span>
-            <span>&nbsp;items found.</span>
-          </q-badge>
-        </div>
-      </q-card>
-      <q-card class="shadow-0 bg-white q-pa-lg">
-        <div v-if="filtering" class="flex flex-center" style="height: 100px">
-          <q-spinner size="md" color="primary" />
-        </div>
-        <div v-else>
-          <q-table
-            class="shadow-0"
-            selection="multiple"
-            v-model:selected="selected"
-            :rows="studemps"
-            row-key="id"
-            :columns="columns"
-            hide-bottom
-          >
-            <template v-slot:header-selection="scope">
-              <q-checkbox :disable="scheduling" v-model="scope.selected" />
-            </template>
-            <template v-slot:body="props">
-              <q-tr class="cursor-pointer">
-                <q-td>
-                  <q-checkbox :disable="scheduling" v-model="props.selected" />
-                </q-td>
-                <q-td v-for="column of props.cols">
-                  <span
-                    v-if="column.name === 'identificationCode'"
-                    class="text-grey-7"
-                  >
-                    {{ props.row.identificationCode }}
-                  </span>
-                  <div v-else-if="column.name === 'campusCode'">
-                    <q-badge v-if="props.row.campusCode" class="bg-grey">
-                      {{ campusesMap[props.row.campusCode].name }}
-                    </q-badge>
-                  </div>
-                  <div v-else-if="column.name === 'affiliationCode'">
-                    <q-badge v-if="props.row.campusCode" class="bg-grey">
-                      {{ affiliationsMap[props.row.affiliationCode].name }}
-                    </q-badge>
-                  </div>
-                  <span
-                    v-else-if="column.name === 'patientFullName'"
-                    class="text-weight-bold"
-                  >
-                    {{
-                      formatName(
-                        props.row.firstName,
-                        props.row.middleName,
-                        props.row.lastName
-                      )
-                    }}
-                  </span>
-                  <div
-                    v-else-if="column.name === 'status'"
-                    class="row justify-center"
-                  >
-                    <q-spinner v-if="props.row.loading" size="xs" />
+        </template>
+      </CardComponent>
+      <CardComponent>
+        <template v-slot:body>
+          <!-- <div v-if="filtering" class="full-width flex flex-center" style="height: 100px">
+            <q-spinner-dots size="md" color="primary" />
+          </div> -->
+          <FetchingData v-if="filtering" />
+          <div v-else>
+            <div class="text-primary text-weight-medium q-mb-md">
+              STUDENT/EMPLOYEE LIST:
+            </div>
+            <q-separator />
+            <q-table
+              class="shadow-0"
+              selection="multiple"
+              v-model:selected="selected"
+              :rows="studemps"
+              row-key="id"
+              :columns="columns"
+              hide-bottom
+            >
+              <template v-slot:header-selection="scope">
+                <q-checkbox :disable="scheduling" v-model="scope.selected" />
+              </template>
+              <template v-slot:body="props">
+                <q-tr class="cursor-pointer">
+                  <q-td>
+                    <q-checkbox
+                      :disable="scheduling"
+                      v-model="props.selected"
+                    />
+                  </q-td>
+                  <q-td v-for="column of props.cols">
                     <span
-                      v-else
-                      :class="
-                        props.row.status.code === 200
-                          ? 'text-positive'
-                          : props.row.status.code > 200
-                          ? 'text-negative'
-                          : ''
-                      "
+                      v-if="column.name === 'identificationCode'"
+                      class="text-grey-7"
                     >
-                      {{ props.row.status.name }}
+                      {{ props.row.identificationCode }}
                     </span>
-                  </div>
-                  <div
-                    v-else-if="column.name === 'visitCode'"
-                    class="text-center"
-                  >
-                    {{ props.row[column.name] }}
-                  </div>
-                </q-td>
-              </q-tr>
-            </template>
-          </q-table>
-          <q-separator spaced />
-          <div class="row items-start justify-end q-mt-md">
-            <q-btn
-              style="height: 40px"
-              color="primary"
-              class="q-px-md q-py-xs"
-              :disable="!selected || selected.length === 0 || scheduling"
-              unelevated
-              stack-label
-              label="SCHEDULE VISIT"
-              @click="scheduleVisits"
-            />
+                    <div v-else-if="column.name === 'campusCode'">
+                      <q-badge v-if="props.row.campusCode" class="bg-grey">
+                        {{ campusesMap[props.row.campusCode].name }}
+                      </q-badge>
+                    </div>
+                    <div v-else-if="column.name === 'affiliationCode'">
+                      <q-badge v-if="props.row.campusCode" class="bg-grey">
+                        {{ affiliationsMap[props.row.affiliationCode].name }}
+                      </q-badge>
+                    </div>
+                    <span
+                      v-else-if="column.name === 'patientFullName'"
+                      class="text-weight-bold text-uppercase"
+                    >
+                      {{
+                        formatName(
+                          props.row.firstName,
+                          props.row.middleName,
+                          props.row.lastName
+                        )
+                      }}
+                    </span>
+                    <div
+                      v-else-if="column.name === 'status'"
+                      class="row justify-center"
+                    >
+                      <q-spinner v-if="props.row.loading" size="xs" />
+                      <template v-else>
+                        <span
+                          v-if="props.row.status"
+                          :class="
+                            props.row.status.code === 200
+                              ? 'text-positive'
+                              : props.row.status.code > 200
+                              ? 'text-negative'
+                              : ''
+                          "
+                        >
+                          {{ props.row.status.name ?? "-" }}
+                        </span>
+                        <span v-else>-</span>
+                      </template>
+                    </div>
+                    <div
+                      v-else-if="column.name === 'visitCode'"
+                      class="text-center"
+                    >
+                      {{ props.row[column.name] ?? "-" }}
+                    </div>
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+            <q-separator />
+            <div class="row items-start justify-end q-mt-md">
+              <q-btn
+                style="height: 40px"
+                color="primary"
+                class="q-px-md q-py-xs"
+                :disable="!selected || selected.length === 0 || scheduling"
+                unelevated
+                stack-label
+                label="SCHEDULE VISIT"
+                @click="confirmationDialogVisible = true"
+              />
+            </div>
           </div>
-        </div>
-      </q-card>
+        </template>
+      </CardComponent>
     </div>
+    <ConfirmationDialog
+      v-if="confirmationDialogVisible"
+      question="Schedule visit for the selected students/employees?"
+      @cancel="(evt) => (confirmationDialogVisible = false)"
+      @ok="
+        (evt) => {
+          confirmationDialogVisible = false;
+          scheduleVisits();
+        }
+      "
+    />
   </q-page>
 </template>
 
@@ -215,6 +234,15 @@ export default defineComponent({
     ),
     NoResult: defineAsyncComponent(() =>
       import("src/components/core/NoResult.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
+    ),
+    ConfirmationDialog: defineAsyncComponent(() =>
+      import("src/components/core/ConfirmationDialog.vue")
+    ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
     ),
   },
   setup() {
@@ -251,7 +279,7 @@ export default defineComponent({
         {
           name: "identificationCode",
           field: "identificationCode",
-          label: "STUDENT NO./EMPLOYEE NO.",
+          label: "STU/EMP NO.",
           align: "left",
         },
         {
@@ -281,13 +309,15 @@ export default defineComponent({
       filters: {
         campusCode: "CAL",
         affiliationCode: "EMP",
-        fullName: "JP",
+        fullName: "",
       },
 
       filtering: false,
       scheduling: false,
       selected: [],
       studemps: [],
+
+      confirmationDialogVisible: false,
     };
   },
   computed: {
@@ -303,6 +333,7 @@ export default defineComponent({
   methods: {
     async getStudEmps() {
       this.filtering = true;
+      this.selected = [];
 
       const sanitizedFilters = Object.entries(this.filters).reduce((acc, e) => {
         if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
@@ -333,7 +364,7 @@ export default defineComponent({
               return {
                 ...row,
                 id: `${row.campusCode}${row.affiliationCode}${row.identificationCode}`,
-                visitCode: "-",
+                visitCode: null,
                 loading: false,
                 status: { code: null, name: "-" },
               };
@@ -348,6 +379,7 @@ export default defineComponent({
       for (const row of this.selected) {
         row.loading = true;
         row.status = { code: null, name: "-" };
+        row.visitCode = null;
 
         const response = await this.$store.dispatch("visit/schedule", {
           campusCode: row.campusCode,
@@ -357,7 +389,6 @@ export default defineComponent({
 
         await delay(1000);
 
-        console.log(response);
         if (response.error) {
           row.status = { code: response.status, name: response.body };
           row.loading = false;
@@ -369,6 +400,7 @@ export default defineComponent({
         row.loading = false;
       }
 
+      this.selected = [];
       this.scheduling = false;
     },
   },

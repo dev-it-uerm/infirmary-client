@@ -1,11 +1,9 @@
 <template>
-  <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 16px">
-      <q-card borderless class="shadow-0" style="width: 500px">
-        <PageHeader text="COMPLETE EXAM" icon="fa-solid fa-list-check" />
-      </q-card>
-      <q-card borderless class="shadow-0" style="width: 500px">
-        <div style="padding: 32px">
+  <q-page class="flex flex-center q-pa-md">
+    <div class="column" style="gap: 16px; width: 500px">
+      <PageHeader text="COMPLETE EXAM" icon="fa-solid fa-list-check" />
+      <CardComponent>
+        <template v-slot:body>
           <MessageBanner v-if="forbidden" :success="false">
             <template v-slot:error-body>
               <div>You are not allowed to access this page.</div>
@@ -85,8 +83,8 @@
               </div>
             </q-list>
           </div> -->
-        </div>
-      </q-card>
+        </template>
+      </CardComponent>
     </div>
   </q-page>
 </template>
@@ -110,6 +108,9 @@ export default defineComponent({
     ),
     VisitCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/VisitCodeScanner.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   data() {

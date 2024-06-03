@@ -100,15 +100,15 @@ export default defineComponent({
       },
       md: {
         borderRadius: "4px",
-        outerPadding: "4px 8px",
-        innerPadding: "4px",
-        iconSize: "20px",
+        outerPadding: "10px 12px",
+        innerPadding: "6px",
+        iconSize: "24px",
       },
       lg: {
         borderRadius: "8px",
         outerPadding: "16px 18px",
         innerPadding: "8px",
-        iconSize: "24px",
+        iconSize: "26px",
       },
     };
 

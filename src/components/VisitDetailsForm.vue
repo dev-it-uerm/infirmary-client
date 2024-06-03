@@ -1,13 +1,9 @@
 <template>
   <div>
-    <div
-      v-if="loading"
-      class="bg-white flex flex-center"
-      style="height: 200px; opacity: 0.8"
-    >
+    <!-- <div class="bg-white flex flex-center" style="height: 200px; opacity: 0.8">
       <q-spinner-cube color="black" size="md" />
-    </div>
-
+    </div> -->
+    <FetchingData v-if="loading" />
     <q-form v-else ref="qFormVisitDetails" @submit="save">
       <div
         class="fit"
@@ -83,7 +79,7 @@
         <div class="row q-pa-lg justify-end">
           <q-btn
             unelevated
-            class="text-black bg-accent"
+            class="text-white bg-primary"
             :loading="loading"
             label="SAVE"
             @click="submitForm"
@@ -118,6 +114,9 @@ export default defineComponent({
     ),
     DiagTestSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/DiagTestSelect.vue")
+    ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
     ),
   },
   props: {

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center q-pa-lg bg-grey-3">
+  <q-page class="flex flex-center q-pa-lg">
     <q-card
       style="width: 720px; max-width: 720px; line-height: 1.75em"
       class="column shadow-0"

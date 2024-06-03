@@ -1,6 +1,6 @@
 <template>
   <q-page
-    class="flex flex-center"
+    class="flex flex-center q-pa-md"
     style="
       background-image: url('bg-uerm.jpg');
       background-repeat: no-repeat;
@@ -17,20 +17,19 @@
       "
     />
     <!-- <q-dialog :model-value="true" persistent> -->
-    <div class="column" style="gap: 12px">
-      <q-card borderless style="overflow: hidden">
-        <div class="bg-primary">
-          <AppLogo size="sm" />
-        </div>
-        <q-separator />
-        <div class="relative-position">
+
+    <div
+      class="column"
+      style="gap: 16px; z-index: 999"
+      :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
+    >
+      <AppLogo size="sm" :inverted="true" />
+      <PageHeader icon="fa-solid fa-unlock-keyhole" text="LOG IN" />
+      <CardComponent>
+        <template v-slot:body>
           <FetchingData v-if="loading" />
-          <q-form
-            style="min-height: 200px"
-            :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
-            @submit="submit"
-          >
-            <div style="padding: 32px">
+          <q-form v-else @submit="submit">
+            <div>
               <q-banner
                 v-if="messageText"
                 :class="'bg-' + messageBgColor + ' q-mb-lg'"
@@ -58,7 +57,7 @@
                       ? 'Username is required.'
                       : undefined,
                 ]"
-                class="q-mb-xs"
+                class="q-mb-xs q-mt-sm"
               >
                 <template v-slot:prepend>
                   <q-icon name="person" />
@@ -66,16 +65,15 @@
               </q-input>
               <FormFieldPassword outlined v-model="password" label="Password" />
               <!-- <div
-                style="color: rgba(0, 0, 0, 0.75)"
-                class="text-center bordered-grey q-pa-md"
-              >
-                By logging in, you give consent for cookies to be used.
-                <a href="/apps/patient-portal/#/cookie-policy">Click here</a>
-                to view the {{ appConfig.name }} cookie policy.
-              </div> -->
+                  style="color: rgba(0, 0, 0, 0.75)"
+                  class="text-center bordered-grey q-pa-md"
+                >
+                  By logging in, you give consent for cookies to be used.
+                  <a href="/apps/patient-portal/#/cookie-policy">Click here</a>
+                  to view the {{ appConfig.name }} cookie policy.
+                </div> -->
             </div>
-            <q-separator />
-            <q-card-section class="row justify-end">
+            <div class="row justify-end">
               <q-btn
                 :disable="loading"
                 flat
@@ -86,15 +84,14 @@
               <q-btn
                 :disable="loading"
                 unelevated
-                color="accent"
+                color="primary"
                 label="LOGIN"
                 type="submit"
-                class="text-black"
               />
-            </q-card-section>
+            </div>
           </q-form>
-        </div>
-      </q-card>
+        </template>
+      </CardComponent>
       <!-- <q-card borderless>
         <q-card-section>
           <UermCopyright />
@@ -115,6 +112,7 @@
         >
           <FetchingData v-if="forgotPasswordLoading" />
           <q-form
+            v-else
             ref="pwResetQForm"
             @submit="submitForgotPasswordForm"
             @reset="resetForgotPasswordForm"
@@ -122,7 +120,7 @@
             <div class="q-pa-lg">
               <q-input
                 outlined
-                v-model="forgotPasswordUsername"
+                v-model.trim="forgotPasswordUsername"
                 maxlength="255"
                 label="Username or Employee Number"
                 :rules="[
@@ -163,6 +161,9 @@ import { delay, decodeUserJWT, showMessage } from "src/helpers/util.js";
 export default defineComponent({
   name: "LoginPage",
   components: {
+    PageHeader: defineAsyncComponent(() =>
+      import("src/components/core/PageHeader.vue")
+    ),
     FormFieldPassword: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Password.vue")
     ),
@@ -177,6 +178,9 @@ export default defineComponent({
     ),
     UermCopyright: defineAsyncComponent(() =>
       import("src/components/UermCopyright.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   data() {
@@ -206,12 +210,12 @@ export default defineComponent({
     async submit() {
       this.loading = true;
 
-      await delay(1000);
-
       const response = await this.$store.dispatch("app/login", {
         username: this.username,
         password: this.password,
       });
+
+      await delay(1000);
 
       if (response.error) {
         this.messageBgColor = "negative";

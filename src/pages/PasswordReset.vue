@@ -1,12 +1,14 @@
 <template>
-  <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 16px; min-width: 400px">
+  <q-page class="flex flex-center q-pa-md">
+    <div
+      class="column"
+      style="gap: 16px"
+      :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
+    >
       <AppLogo :inverted="true" size="sm" />
-      <q-card borderless class="shadow-0" style="overflow: hidden">
-        <PageHeader text="RESET PASSWORD" icon="fa-solid fa-user" />
-      </q-card>
-      <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div class="relative-position">
+      <PageHeader text="RESET PASSWORD" icon="fa-solid fa-user" />
+      <CardComponent>
+        <template v-slot:body>
           <div v-if="!$route.query.accessToken" class="q-pa-lg">
             <MessageBanner :success="false">
               <template v-slot:body class="q-pa-lg">
@@ -16,55 +18,47 @@
           </div>
           <template v-else>
             <FetchingData v-if="loading" />
-            <q-form
-              style="min-height: 200px"
-              :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
-              ref="qForm"
-              @submit="submit"
-              @reset="reset"
-            >
-              <div style="padding: 32px">
-                <q-banner
-                  v-if="messageText"
-                  class="q-pa-md"
-                  :class="'bg-' + messageBgColor + ' q-mb-lg'"
-                >
-                  <div class="row items-center">
-                    <q-icon
-                      :name="messageIcon"
-                      size="sm"
-                      :color="messageTextColor"
-                      class="q-mr-sm col-auto"
-                    />
-                    <span class="col" :class="'text-' + messageTextColor">{{
-                      messageText
-                    }}</span>
-                  </div>
-                </q-banner>
-                <FormFieldPassword
-                  outlined
-                  v-model="newPassword1"
-                  label="New Password"
-                />
-                <FormFieldPassword
-                  outlined
-                  v-model="newPassword2"
-                  label="New Password Confirmation"
-                />
-                <div class="row justify-end">
-                  <q-btn
-                    :disable="loading"
-                    unelevated
-                    color="primary"
-                    label="CHANGE"
-                    type="submit"
+            <q-form ref="qForm" @submit="submit" @reset="reset">
+              <q-banner
+                v-if="messageText"
+                class="q-pa-md"
+                :class="'bg-' + messageBgColor + ' q-mb-lg'"
+              >
+                <div class="row items-center">
+                  <q-icon
+                    :name="messageIcon"
+                    size="sm"
+                    :color="messageTextColor"
+                    class="q-mr-sm col-auto"
                   />
+                  <span class="col" :class="'text-' + messageTextColor">{{
+                    messageText
+                  }}</span>
                 </div>
+              </q-banner>
+              <FormFieldPassword
+                outlined
+                v-model="newPassword1"
+                label="New Password"
+              />
+              <FormFieldPassword
+                outlined
+                v-model="newPassword2"
+                label="New Password Confirmation"
+              />
+              <div class="row justify-end">
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  color="primary"
+                  label="CHANGE"
+                  type="submit"
+                />
               </div>
             </q-form>
           </template>
-        </div>
-      </q-card>
+        </template>
+      </CardComponent>
     </div>
   </q-page>
 </template>
@@ -91,6 +85,9 @@ export default defineComponent({
     ),
     MessageBanner: defineAsyncComponent(() =>
       import("src/components/core/MessageBanner.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   data() {

@@ -1,84 +1,73 @@
 <template>
-  <q-page class="flex flex-center bg-grey-3">
+  <q-page class="flex flex-center q-pa-md">
     <div class="column q-pa-md" style="gap: 16px; width: 1020px">
-      <q-card borderless class="shadow-0">
-        <PageHeader
-          text="VISIT TRACKER"
-          icon="fa-solid fa-solid fa-magnifying-glass"
-        />
-      </q-card>
+      <PageHeader
+        text="VISIT TRACKER"
+        icon="fa-solid fa-solid fa-magnifying-glass"
+      />
       <div
-        :class="$q.screen.lt.md ? 'column justify-start' : 'row items-start'"
+        :class="$q.screen.lt.md ? 'column justify-start' : 'row'"
         style="gap: 16px"
       >
-        <q-card
-          borderless
-          class="shadow-0 flex flex-center"
-          style="padding: 32px"
-          :style="{
-            width: $q.screen.lt.md ? '100%' : '400px',
-            maxWidth: $q.screen.lt.md ? '100%' : '400px',
-            height: inputMode === 'QR' ? '310px' : '200px',
-          }"
-        >
-          <VisitCodeScanner
-            class="full-width"
-            ref="visitCodeScanner"
-            :loading="loading"
-            @visitCodeChanged="(val) => (visitCode = val)"
-            @inputModeChanged="(val) => (inputMode = val)"
-          />
-        </q-card>
-        <q-card
-          borderless
-          class="shadow-0 col q-pa-lg flex flex-center"
-          style="padding: 32px"
-          :style="{
-            minHeight: inputMode === 'QR' ? '310px' : '200px',
-          }"
-        >
-          <q-list
-            class="full-width"
-            separator
-            v-if="phases && phases.length > 0"
-          >
-            <template v-for="(phase, idx) in phases" :key="idx">
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>
-                    {{
-                      phase.dateTimeCreated
-                        ? formatDate(phase.dateTimeCreated)
-                        : "NOT YET COMPLETED"
-                    }}
-                  </q-item-label>
-                  <q-item-label>
-                    {{ visitPhasesMap[phase.code].name }}
-                  </q-item-label>
-                </q-item-section>
+        <!-- height: inputMode === 'QR' ? '310px' : '200px', -->
+        <CardComponent class="col flex flex-center">
+          <template v-slot:body>
+            <VisitCodeScanner
+              class="full-width"
+              ref="visitCodeScanner"
+              :loading="loading"
+              @visitCodeChanged="(val) => (visitCode = val)"
+              @inputModeChanged="(val) => (inputMode = val)"
+            />
+          </template>
+        </CardComponent>
+        <CardComponent class="col">
+          <template v-slot:body>
+            <div class="fit flex flex-center">
+              <q-list
+                class="full-width"
+                separator
+                v-if="phases && phases.length > 0"
+              >
+                <template v-for="(phase, idx) in phases" :key="idx">
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label caption>
+                        {{
+                          phase.dateTimeCreated
+                            ? formatDate(phase.dateTimeCreated)
+                            : "NOT YET COMPLETED"
+                        }}
+                      </q-item-label>
+                      <q-item-label>
+                        {{ visitPhasesMap[phase.code].name }}
+                      </q-item-label>
+                    </q-item-section>
 
-                <q-item-section side>
-                  <q-icon
-                    :name="
-                      phase.dateTimeCreated
-                        ? 'fa-solid fa-circle-check'
-                        : 'fa-solid fa-circle-xmark'
-                    "
-                    :color="phase.dateTimeCreated ? 'positive' : 'negative'"
-                    size="xs"
-                  />
-                </q-item-section>
-              </q-item>
-              <!-- <q-separator spaced inset /> -->
-            </template>
-          </q-list>
-          <div v-else class="column items-center">
-            <q-icon class="q-mb-sm" name="info" size="sm" />
-            <div class="text-center">
-              Scan/enter the visit code to see its status.
+                    <q-item-section side>
+                      <q-icon
+                        :name="
+                          phase.dateTimeCreated
+                            ? 'fa-solid fa-circle-check'
+                            : 'fa-solid fa-circle-xmark'
+                        "
+                        :color="phase.dateTimeCreated ? 'positive' : 'negative'"
+                        size="xs"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <!-- <q-separator spaced inset /> -->
+                </template>
+              </q-list>
+              <div v-else class="column items-center">
+                <q-icon class="q-mb-sm" name="info" size="sm" />
+                <div class="text-center">
+                  Scan/enter the visit code to see its status.
+                </div>
+              </div>
             </div>
-          </div>
-        </q-card>
+          </template>
+        </CardComponent>
       </div>
     </div>
   </q-page>
@@ -102,6 +91,9 @@ export default defineComponent({
     ),
     VisitCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/VisitCodeScanner.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   setup() {
@@ -138,6 +130,7 @@ export default defineComponent({
 
       if (response.error) {
         showMessage(this.$q, false, response.body.error ?? response.body);
+        this.$refs.visitCodeScanner.reset();
         this.loading = false;
         return;
       }

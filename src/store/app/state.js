@@ -7,22 +7,22 @@ export default function () {
     },
     LABCBC: {
       code: "LABCBC",
-      name: "Laboratory - CBC",
+      name: "Lab - CBC",
       icon: "fa-solid fa-droplet",
     },
     LABURI: {
       code: "LABURI",
-      name: "Laboratory - Urinalysis",
+      name: "Lab - Urinalysis",
       icon: "fa-solid fa-flask-vial",
     },
     LABFCL: {
       code: "LABFCL",
-      name: "Laboratory - Fecalysis",
+      name: "Lab - Fecalysis",
       icon: "fa-solid fa-poop",
     },
     RADXRCHST: {
       code: "RADXRCHST",
-      name: "Radiology - X-Ray (Chest)",
+      name: "Rad - X-Ray (Chest)",
       icon: "fa-solid fa-x-ray",
     },
   };

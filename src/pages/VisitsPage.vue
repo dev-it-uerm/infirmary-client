@@ -1,268 +1,281 @@
 <template>
   <q-page
-    class="row justify-center bg-grey-3"
-    :class="$q.screen.lt.sm ? 'q-pa-md fit' : 'q-pa-lg'"
+    class="row justify-center"
+    :class="$q.screen.lt.sm ? 'q-pa-md' : 'q-pa-lg'"
   >
     <div
       class="column justify-start"
       style="gap: 16px"
-      :style="$q.screen.lt.md ? { width: '100%' } : {}"
+      :style="$q.screen.lt.md ? { minWidth: '100%' } : { minWidth: '1024px' }"
     >
-      <q-card class="column shadow-0 relative-position bg-transparent">
-        <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
-      </q-card>
-      <q-card class="shadow-0 q-pa-lg bg-white">
-        <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
-        <div class="row item-center" style="gap: 16px">
-          <q-select
-            :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-            :dense="$q.screen.gt.sm"
-            :disable="loading"
-            stack-label
-            outlined
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :options="[
-              { code: null, name: 'All' },
-              ...Object.values(campusesMap),
-            ]"
-            label="Campus"
-            v-model="filters.patientCampusCode"
-          />
-          <q-select
-            :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-            :dense="$q.screen.gt.sm"
-            :disable="loading"
-            stack-label
-            outlined
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :options="[
-              { code: null, name: 'All' },
-              ...Object.values(affiliationsMap),
-            ]"
-            label="Affiliation"
-            v-model="filters.patientAffiliationCode"
-          />
-          <DateRange
-            :class="$q.screen.lt.md ? 'col-12' : 'col'"
-            :dense="$q.screen.gt.sm"
-            :disable="loading"
-            stack-label
-            outlined
-            :subtractDaysCount="7"
-            label="Visit Date Range"
-            :initialValue="filters.visitDateRange"
-            @valueChanged="(val) => (filters.visitDateRange = val)"
-          />
-          <q-input
-            :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-            :dense="$q.screen.gt.sm"
-            :disable="loading"
-            debounce="750"
-            stack-label
-            outlined
-            label="Patient Name"
-            v-model="filters.patientName"
-          />
-          <div class="row items-start justify-end">
-            <q-btn
-              style="height: 40px"
-              color="primary"
-              class="q-px-md q-py-xs"
+      <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
+      <CardComponent>
+        <template v-slot:body>
+          <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
+          <div class="row item-center" style="gap: 16px">
+            <q-select
+              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+              :dense="$q.screen.gt.sm"
               :disable="loading"
-              :loading="loading"
-              unelevated
               stack-label
-              label="GO"
-              @click="getVisits"
+              outlined
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :options="[
+                { code: null, name: 'All' },
+                ...Object.values(campusesMap),
+              ]"
+              label="Campus"
+              v-model="filters.patientCampusCode"
             />
-          </div>
-        </div>
-        <div>
-          <q-badge color="accent" class="text-black q-pa-sm q-mt-md">
-            <span class="text-weight-bold">{{ visits.length }}</span
-            >&nbsp;items found.
-          </q-badge>
-        </div>
-      </q-card>
-
-      <q-card class="shadow-0 bg-white q-pa-lg">
-        <div
-          v-if="$q.screen.lt.md"
-          class="relative-position bg-white"
-          style="
-            overflow-y: auto;
-            display: grid;
-            grid-template-rows: min-content auto;
-          "
-        >
-          <div v-if="loading" style="height: 150px">
-            <FetchingData />
-          </div>
-          <div v-else>
-            <q-virtual-scroll
-              v-if="visits && visits.length > 0"
-              style="
-                max-height: 100%;
-                height: auto;
-                border-top: 1px solid rgba(0, 0, 0, 0.1);
-                border-left: 1px solid rgba(0, 0, 0, 0.1);
-                border-right: 1px solid rgba(0, 0, 0, 0.1);
-              "
-              :items="visits"
-              v-slot="{ item, index }"
-            >
-              <q-item
-                class="full-width q-pa-md"
-                :key="index"
-                clickable
-                @click="showPxVisitInfo(item)"
-              >
-                <q-item-section>
-                  <q-item-label caption class="ellipsis">{{
-                    formatDate(item.dateTimeCreated)
-                  }}</q-item-label>
-                  <q-item-label overline class="q-mb-sm">{{
-                    item.patientIdentificationCode
-                  }}</q-item-label>
-                  <q-item-label class="text-weight-medium">
-                    {{
-                      formatName(
-                        item.patientFirstName,
-                        item.patientMiddleName,
-                        item.patientLastName
-                      )
-                    }}</q-item-label
-                  >
-                  <q-item-label caption>
-                    <div class="row" style="gap: 6px">
-                      <q-badge v-if="item.patientCampusCode" class="bg-grey">{{
-                        campusesMap[item.patientCampusCode].name
-                      }}</q-badge>
-                      <q-badge
-                        v-if="item.patientAffiliationCode"
-                        class="bg-grey"
-                        >{{
-                          affiliationsMap[item.patientAffiliationCode].name
-                        }}</q-badge
-                      >
-                    </div>
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section v-if="visitPhasesMap" side>
-                  <q-btn
-                    dense
-                    style="padding-left: 10px; padding-right: 10px"
-                    class="q-mb-sm bg-white"
-                    unelevated
-                    outline
-                    color="primary"
-                    @click.stop="
-                      () => {
-                        currentVisit = item;
-                        statusHistoryVisible = true;
-                      }
-                    "
-                    :label="getLatestPhase(item.phases).name"
-                  />
-                  <q-btn
-                    dense
-                    style="padding-left: 10px; padding-right: 10px"
-                    unelevated
-                    color="primary"
-                    label="DETAILS"
-                    @click.stop="showPxVisitInfo(item)"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-separator />
-            </q-virtual-scroll>
-            <div v-else style="height: 150px" class="flex flex-center">
-              <NoResult :bordered="false" message="No patient found." />
+            <q-select
+              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+              :dense="$q.screen.gt.sm"
+              :disable="loading"
+              stack-label
+              outlined
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :options="[
+                { code: null, name: 'All' },
+                ...Object.values(affiliationsMap),
+              ]"
+              label="Affiliation"
+              v-model="filters.patientAffiliationCode"
+            />
+            <DateRange
+              :class="$q.screen.lt.md ? 'col-12' : 'col'"
+              :dense="$q.screen.gt.sm"
+              :disable="loading"
+              stack-label
+              outlined
+              :subtractDaysCount="7"
+              label="Visit Date Range"
+              :initialValue="filters.visitDateRange"
+              @valueChanged="(val) => (filters.visitDateRange = val)"
+            />
+            <q-input
+              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+              :dense="$q.screen.gt.sm"
+              :disable="loading"
+              debounce="750"
+              stack-label
+              outlined
+              label="Patient Name"
+              v-model="filters.patientName"
+            />
+            <div class="row items-start justify-end">
+              <q-btn
+                style="height: 40px"
+                color="primary"
+                class="q-px-md q-py-xs"
+                :disable="loading"
+                :loading="loading"
+                unelevated
+                stack-label
+                label="GO"
+                @click="getVisits"
+              />
             </div>
           </div>
-        </div>
-        <q-table v-else :rows="visits" :columns="columns" hide-bottom>
-          <template v-slot:body="props">
-            <q-tr
-              class="cursor-pointer"
-              @click.stop="showPxVisitInfo(props.row)"
+          <div>
+            <q-badge color="accent" class="text-black q-pa-sm q-mt-md">
+              <span class="text-weight-bold">{{ visits.length }}</span
+              >&nbsp;items found.
+            </q-badge>
+          </div>
+        </template>
+      </CardComponent>
+      <CardComponent>
+        <template v-slot:body>
+          <FetchingData v-if="loading" />
+          <template v-else>
+            <div
+              v-if="$q.screen.lt.md"
+              class="relative-position bg-white"
+              style="
+                overflow-y: auto;
+                display: grid;
+                grid-template-rows: min-content auto;
+              "
             >
-              <template v-for="column of columns">
-                <q-td
-                  v-if="column.name === 'phases'"
-                  class="row justify-center"
+              <q-virtual-scroll
+                v-if="visits && visits.length > 0"
+                style="
+                  max-height: 100%;
+                  height: auto;
+                  border-top: 1px solid rgba(0, 0, 0, 0.1);
+                  border-left: 1px solid rgba(0, 0, 0, 0.1);
+                  border-right: 1px solid rgba(0, 0, 0, 0.1);
+                "
+                :items="visits"
+                v-slot="{ item, index }"
+              >
+                <q-item
+                  class="full-width q-pa-md"
+                  :key="index"
+                  clickable
+                  @click="showPxVisitInfo(item)"
                 >
-                  <!-- {{ getLatestPhase(props.row.phases).name.toUpperCase() }} -->
-                  <q-btn
-                    dense
-                    style="padding-left: 10px; padding-right: 10px"
-                    :class="
-                      phaseClassesMap[getLatestPhase(props.row.phases).code]
-                    "
-                    unelevated
-                    outline
-                    @click.stop="
-                      () => {
-                        currentVisit = props.row;
-                        statusHistoryVisible = true;
-                      }
-                    "
-                    :label="getLatestPhase(props.row.phases).name.toUpperCase()"
-                  />
-                </q-td>
-                <q-td v-else-if="column.name === 'dateTimeCreated'">
-                  <span class="text-grey-7">
-                    {{ formatDate(props.row.dateTimeCreated) }}
-                  </span>
-                </q-td>
-                <q-td v-else-if="column.name === 'action'">
-                  <div class="row justify-center">
+                  <q-item-section>
+                    <q-item-label caption class="ellipsis">{{
+                      formatDate(item.dateTimeCreated)
+                    }}</q-item-label>
+                    <q-item-label overline class="q-mb-sm">{{
+                      item.patientIdentificationCode
+                    }}</q-item-label>
+                    <q-item-label class="text-weight-medium text-uppercase">
+                      {{
+                        formatName(
+                          item.patientFirstName,
+                          item.patientMiddleName,
+                          item.patientLastName
+                        )
+                      }}
+                    </q-item-label>
+                    <q-item-label caption>
+                      <div class="row" style="gap: 6px">
+                        <q-badge
+                          v-if="item.patientCampusCode"
+                          class="bg-grey"
+                          >{{
+                            campusesMap[item.patientCampusCode].name
+                          }}</q-badge
+                        >
+                        <q-badge
+                          v-if="item.patientAffiliationCode"
+                          class="bg-grey"
+                          >{{
+                            affiliationsMap[item.patientAffiliationCode].name
+                          }}</q-badge
+                        >
+                      </div>
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="visitPhasesMap" side>
+                    <q-btn
+                      dense
+                      style="padding-left: 10px; padding-right: 10px"
+                      class="q-mb-sm bg-white"
+                      unelevated
+                      outline
+                      color="primary"
+                      @click.stop="
+                        () => {
+                          currentVisit = item;
+                          statusHistoryVisible = true;
+                        }
+                      "
+                      :label="getLatestPhase(item.phases).name"
+                    />
                     <q-btn
                       dense
                       style="padding-left: 10px; padding-right: 10px"
                       unelevated
                       color="primary"
                       label="DETAILS"
-                      @click.stop="showPxVisitInfo(props.row)"
+                      @click.stop="showPxVisitInfo(item)"
                     />
-                  </div>
-                </q-td>
-                <q-td v-else-if="column.name === 'patientCampusCode'">
-                  <q-badge v-if="props.row.patientCampusCode" class="bg-grey">
-                    {{ campusesMap[props.row.patientCampusCode].name }}
-                  </q-badge>
-                </q-td>
-                <q-td v-else-if="column.name === 'patientAffiliationCode'">
-                  <q-badge v-if="props.row.patientCampusCode" class="bg-grey">
-                    {{ affiliationsMap[props.row.patientAffiliationCode].name }}
-                  </q-badge>
-                </q-td>
-                <q-td
-                  v-else-if="column.name === 'patientFullName'"
-                  class="text-weight-bold"
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+              </q-virtual-scroll>
+              <div v-else style="height: 150px" class="flex flex-center">
+                <NoResult :bordered="false" message="No patient found." />
+              </div>
+            </div>
+            <q-table v-else :rows="visits" :columns="columns" hide-bottom>
+              <template v-slot:body="props">
+                <q-tr
+                  class="cursor-pointer"
+                  @click.stop="showPxVisitInfo(props.row)"
                 >
-                  {{
-                    formatName(
-                      props.row.patientFirstName,
-                      props.row.patientMiddleName,
-                      props.row.patientLastName
-                    )
-                  }}
-                </q-td>
-                <q-td v-else>
-                  {{ props.row[column.name] }}
-                </q-td>
+                  <template v-for="column of columns">
+                    <q-td
+                      v-if="column.name === 'phases'"
+                      class="row justify-center"
+                    >
+                      <!-- {{ getLatestPhase(props.row.phases).name.toUpperCase() }} -->
+                      <q-btn
+                        dense
+                        style="padding-left: 10px; padding-right: 10px"
+                        :class="
+                          phaseClassesMap[getLatestPhase(props.row.phases).code]
+                        "
+                        unelevated
+                        outline
+                        @click.stop="
+                          () => {
+                            currentVisit = props.row;
+                            statusHistoryVisible = true;
+                          }
+                        "
+                        :label="
+                          getLatestPhase(props.row.phases).name.toUpperCase()
+                        "
+                      />
+                    </q-td>
+                    <q-td v-else-if="column.name === 'dateTimeCreated'">
+                      <span class="text-grey-7">
+                        {{ formatDate(props.row.dateTimeCreated) }}
+                      </span>
+                    </q-td>
+                    <q-td v-else-if="column.name === 'action'">
+                      <div class="row justify-center">
+                        <q-btn
+                          dense
+                          style="padding-left: 10px; padding-right: 10px"
+                          unelevated
+                          color="primary"
+                          label="DETAILS"
+                          @click.stop="showPxVisitInfo(props.row)"
+                        />
+                      </div>
+                    </q-td>
+                    <q-td v-else-if="column.name === 'patientCampusCode'">
+                      <q-badge
+                        v-if="props.row.patientCampusCode"
+                        class="bg-grey"
+                      >
+                        {{ campusesMap[props.row.patientCampusCode].name }}
+                      </q-badge>
+                    </q-td>
+                    <q-td v-else-if="column.name === 'patientAffiliationCode'">
+                      <q-badge
+                        v-if="props.row.patientCampusCode"
+                        class="bg-grey"
+                      >
+                        {{
+                          affiliationsMap[props.row.patientAffiliationCode].name
+                        }}
+                      </q-badge>
+                    </q-td>
+                    <q-td
+                      v-else-if="column.name === 'patientFullName'"
+                      class="text-weight-bold text-uppercase"
+                    >
+                      {{
+                        formatName(
+                          props.row.patientFirstName,
+                          props.row.patientMiddleName,
+                          props.row.patientLastName
+                        )
+                      }}
+                    </q-td>
+                    <q-td v-else>
+                      {{ props.row[column.name] }}
+                    </q-td>
+                  </template>
+                </q-tr>
               </template>
-            </q-tr>
+            </q-table>
           </template>
-        </q-table>
-      </q-card>
+        </template>
+      </CardComponent>
     </div>
     <MinimizedDialog
       v-if="statusHistoryVisible"
@@ -358,6 +371,9 @@ export default defineComponent({
     NoResult: defineAsyncComponent(() =>
       import("src/components/core/NoResult.vue")
     ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
+    ),
   },
   setup() {
     return {
@@ -382,25 +398,19 @@ export default defineComponent({
           name: "dateTimeCreated",
           field: "dateTimeCreated",
           label: "DATE/TIME REGISTERED",
-          align: "left",
+          align: "center",
         },
-        // {
-        //   name: "code",
-        //   field: "code",
-        //   label: "VISIT CODE",
-        //   align: "left",
-        // },
         {
           name: "patientIdentificationCode",
           field: "patientIdentificationCode",
-          label: "STUDENT NO./EMPLOYEE NO.",
+          label: "STU/EMP NO.",
           align: "left",
         },
         {
           name: "patientCampusCode",
           field: "patientCampusCode",
           label: "CAMPUS",
-          align: "left",
+          align: "center",
           // format: (val) => `${val}`,
           // sortable: true,
         },
@@ -408,12 +418,12 @@ export default defineComponent({
           name: "patientAffiliationCode",
           field: "patientAffiliationCode",
           label: "AFFILIATION",
-          align: "left",
+          align: "center",
         },
         {
           name: "patientFullName",
           label: "PATIENT NAME",
-          align: "left",
+          align: "center",
         },
         {
           name: "phases",

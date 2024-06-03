@@ -1,99 +1,97 @@
 <template>
-  <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 16px">
-      <q-card borderless class="shadow-0" style="overflow: hidden">
-        <PageHeader text="ADD/UPDATE USER" icon="fa-solid fa-user" />
-      </q-card>
-      <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div class="relative-position">
+  <q-page class="flex flex-center q-pa-md">
+    <div
+      class="column"
+      style="gap: 16px"
+      :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
+    >
+      <PageHeader text="ADD/UPDATE USER" icon="fa-solid fa-user" />
+      <CardComponent>
+        <template v-slot:body>
           <FetchingData v-if="loading" />
           <q-form
             ref="qForm"
-            style="min-height: 200px"
-            :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
             @submit="(evt) => (yesNoDialogVisible = true)"
             @reset="reset"
           >
-            <div style="padding: 32px">
-              <q-input
-                stack-label
-                outlined
-                maxlength="255"
-                label="Employee Number"
-                :rules="[requiredRule]"
-                v-model.trim="code"
-                hint=""
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
+              label="Employee Number"
+              :rules="[requiredRule]"
+              v-model.trim="code"
+              hint=""
+            />
+            <q-select
+              stack-label
+              outlined
+              :options="Object.values(userRolesMap)"
+              label="Role"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :rules="[requiredRule]"
+              v-model="roleCode"
+              hint=""
+            />
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
+              label="First Name"
+              :rules="[requiredRule]"
+              v-model.trim="firstName"
+              hint=""
+            />
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
+              label="Middle Name"
+              v-model.trim="middleName"
+              hint=""
+            />
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
+              label="Last Name"
+              :rules="[requiredRule]"
+              v-model.trim="lastName"
+              hint=""
+            />
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
+              label="Email Address"
+              :rules="[requiredRule]"
+              v-model.trim="emailAddress"
+              hint=""
+            />
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
+              label="Mobile Phone Number"
+              :rules="[requiredRule]"
+              v-model.trim="mobileNumber"
+              hint=""
+            />
+            <div class="row justify-end">
+              <q-btn
+                :disable="loading"
+                unelevated
+                color="primary"
+                label="SAVE"
+                type="submit"
               />
-              <q-select
-                stack-label
-                outlined
-                :options="Object.values(userRolesMap)"
-                label="Role"
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :rules="[requiredRule]"
-                v-model="roleCode"
-                hint=""
-              />
-              <q-input
-                stack-label
-                outlined
-                maxlength="255"
-                label="First Name"
-                :rules="[requiredRule]"
-                v-model.trim="firstName"
-                hint=""
-              />
-              <q-input
-                stack-label
-                outlined
-                maxlength="255"
-                label="Middle Name"
-                v-model.trim="middleName"
-                hint=""
-              />
-              <q-input
-                stack-label
-                outlined
-                maxlength="255"
-                label="Last Name"
-                :rules="[requiredRule]"
-                v-model.trim="lastName"
-                hint=""
-              />
-              <q-input
-                stack-label
-                outlined
-                maxlength="255"
-                label="Email Address"
-                :rules="[requiredRule]"
-                v-model.trim="emailAddress"
-                hint=""
-              />
-              <q-input
-                stack-label
-                outlined
-                maxlength="255"
-                label="Mobile Phone Number"
-                :rules="[requiredRule]"
-                v-model.trim="mobileNumber"
-                hint=""
-              />
-              <div class="row justify-end">
-                <q-btn
-                  :disable="loading"
-                  unelevated
-                  color="primary"
-                  label="SAVE"
-                  type="submit"
-                />
-              </div>
             </div>
           </q-form>
-        </div>
-      </q-card>
+        </template>
+      </CardComponent>
     </div>
     <ConfirmationDialog
       v-if="yesNoDialogVisible"
@@ -120,6 +118,9 @@ export default defineComponent({
     ),
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   setup() {

@@ -1,65 +1,67 @@
 <template>
-  <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 16px">
-      <q-card borderless class="shadow-0">
-        <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
-      </q-card>
-      <q-card borderless class="shadow-0" style="padding: 32px; width: 450px">
-        <ReminderCard :exitable="false" class="q-mb-md">
-          <template v-slot:body>
-            <div>
-              After clicking the <b>SCHEDULE A VISIT</b> button, you will
-              receive an email to confirm your visit.
-            </div>
-          </template>
-        </ReminderCard>
-        <q-form @submit="sendLink">
-          <q-select
-            stack-label
-            outlined
-            :options="Object.values(campusesMap)"
-            label="Campus"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :rules="[requiredRule]"
-            v-model="campusCode"
-            hint=""
-          />
-          <q-select
-            stack-label
-            outlined
-            :options="Object.values(affiliationsMap)"
-            label="Affiliation"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :rules="[requiredRule]"
-            v-model="affiliationCode"
-            hint=""
-          />
-          <q-input
-            :disable="loading"
-            outlined
-            stack-label
-            label="Student No. / Employee No."
-            v-model.trim="identificationCode"
-            :rules="[requiredRule]"
-            hint=""
-          />
-          <div :disable="loading" :loading="loading" class="row justify-end">
-            <q-btn
-              type="submit"
-              :loading="loading"
-              unelevated
-              color="primary"
-              label="SCHEDULE A VISIT"
+  <q-page class="flex flex-center q-pa-md">
+    <div class="column" style="gap: 16px; width: 400px">
+      <PageHeader text="VISIT APPOINTMENT" icon="fa-regular fa-id-card" />
+      <CardComponent>
+        <template v-slot:body>
+          <ReminderCard :exitable="false" class="q-mb-md">
+            <template v-slot:body>
+              <div>
+                After clicking the <b>SCHEDULE A VISIT</b> button, you will
+                receive an email to confirm your visit.
+              </div>
+            </template>
+          </ReminderCard>
+          <q-form @submit="sendLink">
+            <q-select
+              :disable="loading"
+              stack-label
+              outlined
+              :options="Object.values(campusesMap)"
+              label="Campus"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :rules="[requiredRule]"
+              v-model="campusCode"
+              hint=""
             />
-          </div>
-        </q-form>
-      </q-card>
+            <q-select
+              :disable="loading"
+              stack-label
+              outlined
+              :options="Object.values(affiliationsMap)"
+              label="Affiliation"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :rules="[requiredRule]"
+              v-model="affiliationCode"
+              hint=""
+            />
+            <q-input
+              :disable="loading"
+              outlined
+              stack-label
+              label="Student No. / Employee No."
+              v-model.trim="identificationCode"
+              :rules="[requiredRule]"
+              hint=""
+            />
+            <div :disable="loading" :loading="loading" class="row justify-end">
+              <q-btn
+                type="submit"
+                :loading="loading"
+                unelevated
+                color="primary"
+                label="SCHEDULE A VISIT"
+              />
+            </div>
+          </q-form>
+        </template>
+      </CardComponent>
     </div>
   </q-page>
 </template>
@@ -80,6 +82,9 @@ export default defineComponent({
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   setup() {

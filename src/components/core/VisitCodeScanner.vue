@@ -1,20 +1,19 @@
 <template>
   <div>
-    <div
-      class="q-pa-xs q-mb-md"
-      style="border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 4px"
-    >
+    <div class="row items-center q-mb-sm">
+      <div class="text-overline">
+        {{
+          inputMode === "QR"
+            ? "SCAN VISIT QR CODE"
+            : "ENTER VISIT CODE MANUALLY"
+        }}
+      </div>
       <q-toggle
         :disable="loading"
         true-value="QR"
         false-value="MANUAL"
         class="text-overline"
         v-model="inputMode"
-        :label="
-          inputMode === 'QR'
-            ? 'SCAN VISIT QR CODE'
-            : 'ENTER VISIT CODE MANUALLY'
-        "
       />
     </div>
     <div v-show="inputMode === 'QR'" id="divQRCodeScanner" width="600px"></div>
@@ -38,7 +37,6 @@ import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default defineComponent({
   name: "VisitCodeScanner",
-
   props: {
     loading: {
       type: Boolean,

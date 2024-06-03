@@ -1,52 +1,50 @@
 <template>
-  <q-page class="flex flex-center bg-grey-3">
-    <div class="column" style="gap: 16px">
-      <q-card borderless class="shadow-0" style="overflow: hidden">
-        <PageHeader text="ACCOUNT INFORMATION" icon="fa-solid fa-user-pen" />
-      </q-card>
-      <q-card borderless class="shadow-0" style="overflow: hidden">
-        <div class="relative-position">
+  <q-page class="flex flex-center q-pa-md">
+    <div
+      class="column"
+      style="gap: 16px"
+      :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
+    >
+      <PageHeader text="ACCOUNT INFORMATION" icon="fa-solid fa-user-pen" />
+      <CardComponent>
+        <template v-slot:body>
           <FetchingData v-if="loading" />
           <q-form
             ref="qForm"
-            style="min-height: 200px"
-            :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
             @submit="(evt) => (yesNoDialogVisible = true)"
             @reset="reset"
           >
-            <div style="padding: 32px">
-              <q-input
-                outlined
-                v-model="emailAddress"
-                maxlength="255"
-                label="Email Address"
-                hint=""
+            <q-input
+              outlined
+              v-model="emailAddress"
+              maxlength="255"
+              label="Email Address"
+              hint=""
+            />
+            <q-input
+              outlined
+              v-model="mobileNo"
+              maxlength="255"
+              label="Mobile Phone Number"
+              :rules="[
+                (val) =>
+                  val == null || val === ''
+                    ? 'This field is required.'
+                    : undefined,
+              ]"
+            />
+            <div class="row justify-end">
+              <q-btn
+                :disable="loading"
+                unelevated
+                color="primary"
+                label="UPDATE"
+                type="submit"
               />
-              <q-input
-                outlined
-                v-model="mobileNo"
-                maxlength="255"
-                label="Mobile Phone Number"
-                :rules="[
-                  (val) =>
-                    val == null || val === ''
-                      ? 'This field is required.'
-                      : undefined,
-                ]"
-              />
-              <div class="row justify-end">
-                <q-btn
-                  :disable="loading"
-                  unelevated
-                  color="primary"
-                  label="UPDATE"
-                  type="submit"
-                />
-              </div>
             </div>
           </q-form>
-        </div>
-      </q-card>
+        </template>
+      </CardComponent>
     </div>
     <ConfirmationDialog
       v-if="yesNoDialogVisible"
@@ -73,6 +71,9 @@ export default defineComponent({
     ),
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
+    ),
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
     ),
   },
   data() {

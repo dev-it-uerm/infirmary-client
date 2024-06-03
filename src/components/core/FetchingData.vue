@@ -1,9 +1,6 @@
 <template>
-  <div
-    class="absolute fit bg-white flex flex-center"
-    style="z-index: 999; opacity: 0.8"
-  >
-    <q-spinner-cube color="black" size="md" />
+  <div class="fit flex flex-center" style="min-width: 100px; min-height: 100px">
+    <q-spinner-dots size="md" color="black" />
   </div>
 </template>
 

@@ -17,7 +17,7 @@
               :disable="loading"
               stack-label
               outlined
-              :options="Object.values(campusesMap)"
+              :options="campuses"
               label="Campus"
               emit-value
               map-options
@@ -31,7 +31,7 @@
               :disable="loading"
               stack-label
               outlined
-              :options="Object.values(affiliationsMap)"
+              :options="affiliations"
               label="Affiliation"
               emit-value
               map-options
@@ -71,6 +71,13 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, showMessage } from "src/helpers/util.js";
 import { mapGetters } from "vuex";
 
+import {
+  campuses,
+  campusesMap,
+  affiliations,
+  affiliationsMap,
+} from "src/helpers/constants.js";
+
 export default defineComponent({
   name: "VisitAppointmentLink",
   components: {
@@ -89,6 +96,10 @@ export default defineComponent({
   },
   setup() {
     return {
+      campuses,
+      campusesMap,
+      affiliations,
+      affiliationsMap,
       requiredRule: (val) =>
         val == null || val === "" ? "This field is required." : undefined,
     };
@@ -104,8 +115,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      campusesMap: "app/campusesMap",
-      affiliationsMap: "app/affiliationsMap",
     }),
   },
   methods: {

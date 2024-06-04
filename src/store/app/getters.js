@@ -13,31 +13,3 @@ export function uermLogo(state) {
 export function uermMedLogo(state) {
   return state.uermMedLogo;
 }
-
-export function config(state) {
-  return state.config;
-}
-
-export function navMenus(state) {
-  return state.navMenus;
-}
-
-export function affiliationsMap(state) {
-  return state.affiliationsMap;
-}
-
-export function campusesMap(state) {
-  return state.campusesMap;
-}
-
-export function examsMap(state) {
-  return state.examsMap;
-}
-
-export function visitPhasesMap(state) {
-  return state.visitPhasesMap;
-}
-
-export function userRolesMap(state) {
-  return state.userRolesMap;
-}

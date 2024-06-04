@@ -93,6 +93,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
+import { visitPhasesMap } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "CompleteExam",
@@ -113,6 +114,11 @@ export default defineComponent({
       import("src/components/core/Card.vue")
     ),
   },
+  setup() {
+    return {
+      visitPhasesMap,
+    };
+  },
   data() {
     return {
       // recentEntries: [],
@@ -127,7 +133,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      visitPhasesMap: "app/visitPhasesMap",
     }),
     qrCodeMode() {
       return this.inputMode === "QR";

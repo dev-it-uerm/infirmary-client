@@ -500,3 +500,10 @@ export const log = (val, prefix) => {
 export const allPropsEmpty = (obj) => {
   return !Object.values(obj).some((val) => !empty(val));
 };
+
+// Returns a new obj NOT containing the props given
+export const sliceObj = (obj, ...props) => {
+  const copy = { ...obj };
+  for (const prop of props) delete copy[prop];
+  return copy;
+};

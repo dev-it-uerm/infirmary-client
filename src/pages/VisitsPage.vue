@@ -6,7 +6,7 @@
     <div
       class="column justify-start"
       style="gap: 16px"
-      :style="$q.screen.lt.md ? { minWidth: '100%' } : { minWidth: '1024px' }"
+      :style="$q.screen.gt.md ? { minWidth: '1440px' } : { minWidth: '100%' }"
     >
       <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
       <CardComponent>
@@ -23,10 +23,7 @@
               map-options
               option-label="name"
               option-value="code"
-              :options="[
-                { code: null, name: 'All' },
-                ...Object.values(campusesMap),
-              ]"
+              :options="[{ code: null, name: 'All' }, ...campuses]"
               label="Campus"
               v-model="filters.patientCampusCode"
             />
@@ -40,10 +37,7 @@
               map-options
               option-label="name"
               option-value="code"
-              :options="[
-                { code: null, name: 'All' },
-                ...Object.values(affiliationsMap),
-              ]"
+              :options="[{ code: null, name: 'All' }, ...affiliations]"
               label="Affiliation"
               v-model="filters.patientAffiliationCode"
             />
@@ -352,6 +346,15 @@ import {
   allPropsEmpty,
 } from "src/helpers/util.js";
 
+import {
+  affiliations,
+  affiliationsMap,
+  campuses,
+  campusesMap,
+  visitPhases,
+  visitPhasesMap,
+} from "src/helpers/constants.js";
+
 export default defineComponent({
   name: "VisitsPage",
   components: {
@@ -382,6 +385,12 @@ export default defineComponent({
   },
   setup() {
     return {
+      affiliations,
+      affiliationsMap,
+      campuses,
+      campusesMap,
+      visitPhases,
+      visitPhasesMap,
       showMessage,
       formatDate,
       formatName: (patientFirstName, patientMiddleName, patientLastName) => {
@@ -403,7 +412,7 @@ export default defineComponent({
           name: "dateTimeCreated",
           field: "dateTimeCreated",
           label: "DATE/TIME REGISTERED",
-          align: "center",
+          align: "left",
         },
         {
           name: "patientIdentificationCode",
@@ -428,6 +437,24 @@ export default defineComponent({
         {
           name: "patientFullName",
           label: "PATIENT NAME",
+          align: "center",
+        },
+        {
+          name: "patientCollege",
+          field: "patientCollege",
+          label: "COLLEGE",
+          align: "center",
+        },
+        {
+          name: "patientSchoolYear",
+          field: "patientSchoolYear",
+          label: "SCHOOL YEAR",
+          align: "center",
+        },
+        {
+          name: "patientYearLevel",
+          field: "patientYearLevel",
+          label: "YEAR LEVEL",
           align: "center",
         },
         {
@@ -473,9 +500,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      affiliationsMap: "app/affiliationsMap",
-      campusesMap: "app/campusesMap",
-      visitPhasesMap: "app/visitPhasesMap",
     }),
   },
   mounted() {

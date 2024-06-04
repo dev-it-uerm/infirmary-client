@@ -194,6 +194,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
+import { navMenus } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "MainLayout",
@@ -211,6 +212,11 @@ export default defineComponent({
     //   import("src/components/TermsAndConditions.vue")
     // ),
   },
+  setup() {
+    return {
+      navMenus,
+    };
+  },
   data() {
     return {
       loading: false,
@@ -222,7 +228,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      navMenus: "app/navMenus",
     }),
     userFullName() {
       if (this.user) return `${this.user.firstName} ${this.user.lastName}`;

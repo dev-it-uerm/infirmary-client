@@ -80,6 +80,8 @@ import {
   formatDate,
 } from "src/helpers/util.js";
 
+import { visitPhasesMap } from "src/helpers/constants.js";
+
 export default defineComponent({
   name: "VisitTracker",
   components: {
@@ -95,6 +97,7 @@ export default defineComponent({
   },
   setup() {
     return {
+      visitPhasesMap,
       formatDate,
     };
   },
@@ -110,7 +113,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      visitPhasesMap: "app/visitPhasesMap",
     }),
   },
   watch: {

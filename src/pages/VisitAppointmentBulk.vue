@@ -6,13 +6,7 @@
     <div
       class="column justify-start"
       style="gap: 16px"
-      :style="
-        $q.screen.lt.md
-          ? { minWidth: '100%' }
-          : {
-              minWidth: '1024px',
-            }
-      "
+      :style="$q.screen.gt.md ? { minWidth: '1440px' } : { minWidth: '100%' }"
     >
       <PageHeader icon="fa-solid fa-calendar-days" text="VISIT APPOINTMENT" />
       <CardComponent>
@@ -30,7 +24,7 @@
                 map-options
                 option-label="name"
                 option-value="code"
-                :options="Object.values(campusesMap)"
+                :options="campuses"
                 label="Campus"
                 v-model="filters.campusCode"
               />
@@ -44,7 +38,7 @@
                 map-options
                 option-label="name"
                 option-value="code"
-                :options="Object.values(affiliationsMap)"
+                :options="affiliations"
                 label="Affiliation"
                 v-model="filters.affiliationCode"
               />
@@ -165,11 +159,37 @@
                           <span v-else>-</span>
                         </template>
                       </div>
-                      <div
+                      <!-- <div
                         v-else-if="column.name === 'visitCode'"
                         class="text-center"
                       >
                         {{ props.row[column.name] ?? "-" }}
+                      </div>
+                      <div
+                        v-else-if="column.name === 'dateHired'"
+                        class="text-center"
+                      >
+                        {{
+                          props.row[column.name]
+                            ? formatDate(props.row[column.name], {
+                                dateOnly: true,
+                              })
+                            : "-"
+                        }}
+                      </div> -->
+                      <div v-else class="text-center">
+                        <span v-if="column.name === 'dateHired'">
+                          {{
+                            props.row[column.name]
+                              ? formatDate(props.row[column.name], {
+                                  dateOnly: true,
+                                })
+                              : "-"
+                          }}
+                        </span>
+                        <span v-else>
+                          {{ props.row[column.name] ?? "-" }}
+                        </span>
                       </div>
                     </q-td>
                   </q-tr>
@@ -218,7 +238,15 @@ import {
   subtractDay,
   jsDateToISOString,
   allPropsEmpty,
+  sliceObj,
 } from "src/helpers/util.js";
+
+import {
+  campuses,
+  campusesMap,
+  affiliations,
+  affiliationsMap,
+} from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitAppointmentBulk",
@@ -250,6 +278,10 @@ export default defineComponent({
   },
   setup() {
     return {
+      campuses,
+      campusesMap,
+      affiliations,
+      affiliationsMap,
       showMessage,
       formatDate,
       formatName: (patientFirstName, patientMiddleName, patientLastName) => {
@@ -266,7 +298,41 @@ export default defineComponent({
         RADXRCHST: "text-grey-8",
         FIN: "text-positive",
       },
-      columns: [
+      // inputRule: (val) =>
+      //   val == null || val === "" ? "Field is required." : undefined,
+    };
+  },
+  data() {
+    return {
+      filters: {
+        campusCode: campusesMap.UERM.code,
+        affiliationCode: affiliationsMap.EMP.code,
+        fullName: "",
+      },
+
+      columns: [],
+
+      filtering: false,
+      scheduling: false,
+      selected: [],
+      studemps: [],
+
+      confirmationDialogVisible: false,
+    };
+  },
+  computed: {
+    ...mapGetters({
+      user: "app/user",
+      // affiliationsMap: "app/affiliationsMap",
+      // campusesMap: "app/campusesMap",
+    }),
+  },
+  mounted() {
+    this.getStudEmps();
+  },
+  methods: {
+    updateColumns() {
+      this.columns = [
         {
           name: "campusCode",
           field: "campusCode",
@@ -282,9 +348,34 @@ export default defineComponent({
         {
           name: "identificationCode",
           field: "identificationCode",
-          label: "STU/EMP NO.",
+          label:
+            this.filters.affiliationCode === this.affiliationsMap.STU.code
+              ? "STUDENT NO."
+              : "EMPLOYEE NO.",
           align: "left",
         },
+        ...(this.filters.affiliationCode === this.affiliationsMap.STU.code
+          ? [
+              {
+                name: "schoolYear",
+                field: "schoolYear",
+                label: "SCHOOL YEAR",
+                align: "center",
+              },
+              {
+                name: "college",
+                field: "college",
+                label: "COLLEGE",
+                align: "center",
+              },
+              {
+                name: "yearLevel",
+                field: "yearLevel",
+                label: "YEAR LEVEL",
+                align: "center",
+              },
+            ]
+          : []),
         {
           name: "patientFullName",
           label: "PATIENT NAME",
@@ -302,38 +393,8 @@ export default defineComponent({
           label: "VISIT CODE",
           align: "center",
         },
-      ],
-      // inputRule: (val) =>
-      //   val == null || val === "" ? "Field is required." : undefined,
-    };
-  },
-  data() {
-    return {
-      filters: {
-        campusCode: "CAL",
-        affiliationCode: "EMP",
-        fullName: "",
-      },
-
-      filtering: false,
-      scheduling: false,
-      selected: [],
-      studemps: [],
-
-      confirmationDialogVisible: false,
-    };
-  },
-  computed: {
-    ...mapGetters({
-      user: "app/user",
-      affiliationsMap: "app/affiliationsMap",
-      campusesMap: "app/campusesMap",
-    }),
-  },
-  mounted() {
-    this.getStudEmps();
-  },
-  methods: {
+      ];
+    },
     async getStudEmps() {
       this.filtering = true;
       this.selected = [];
@@ -361,15 +422,17 @@ export default defineComponent({
 
       await delay(2000);
 
+      this.updateColumns();
+
       this.studemps =
         response.body && response.body.length > 0
-          ? response.body.map((row) => {
+          ? response.body.map((row, idx) => {
               return {
                 ...row,
-                id: `${row.campusCode}${row.affiliationCode}${row.identificationCode}`,
+                id: idx,
+                status: { code: null, name: "-" },
                 visitCode: null,
                 loading: false,
-                status: { code: null, name: "-" },
               };
             })
           : [];
@@ -384,11 +447,10 @@ export default defineComponent({
         row.status = { code: null, name: "-" };
         row.visitCode = null;
 
-        const response = await this.$store.dispatch("visit/schedule", {
-          campusCode: row.campusCode,
-          affiliationCode: row.affiliationCode,
-          identificationCode: row.identificationCode,
-        });
+        const response = await this.$store.dispatch(
+          "visit/schedule",
+          sliceObj(row, "id", "status", "visitCode", "loading")
+        );
 
         await delay(1000);
 

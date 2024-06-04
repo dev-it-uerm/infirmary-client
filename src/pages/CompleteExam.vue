@@ -31,7 +31,7 @@
               :options="exams"
               option-value="code"
               option-label="name"
-              label="Examinations"
+              label="Examination"
               v-model="exam"
               hint=""
             />

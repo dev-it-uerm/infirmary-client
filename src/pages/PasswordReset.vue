@@ -38,13 +38,13 @@
               </q-banner>
               <FormFieldPassword
                 outlined
-                v-model="newPassword1"
                 label="New Password"
+                v-model="newPassword1"
               />
               <FormFieldPassword
                 outlined
-                v-model="newPassword2"
                 label="New Password Confirmation"
+                v-model="newPassword2"
               />
               <div class="row justify-end">
                 <q-btn

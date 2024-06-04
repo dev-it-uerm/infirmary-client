@@ -48,7 +48,7 @@
               v-model="filters.patientAffiliationCode"
             />
             <DateRange
-              :class="$q.screen.lt.md ? 'col-12' : 'col'"
+              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
               :dense="$q.screen.gt.sm"
               :disable="loading"
               stack-label
@@ -59,7 +59,7 @@
               @valueChanged="(val) => (filters.visitDateRange = val)"
             />
             <q-input
-              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+              :class="$q.screen.lt.md ? 'col-12' : 'col'"
               :dense="$q.screen.gt.sm"
               :disable="loading"
               debounce="750"

@@ -6,7 +6,7 @@
     :type="isPwdMasked ? 'password' : 'text'"
     :rules="[
       (val) =>
-        val == null || val === '' ? 'Password is required.' : undefined,
+        val == null || val === '' ? 'This field is required.' : undefined,
     ]"
   >
     <template v-if="showIcon" v-slot:prepend>

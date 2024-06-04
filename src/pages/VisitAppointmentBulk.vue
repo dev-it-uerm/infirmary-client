@@ -93,88 +93,91 @@
             <div class="text-primary text-weight-medium q-mb-md">
               STUDENT/EMPLOYEE LIST:
             </div>
-            <q-separator />
-            <q-table
-              class="shadow-0"
-              selection="multiple"
-              v-model:selected="selected"
-              :rows="studemps"
-              row-key="id"
-              :columns="columns"
-              hide-bottom
-            >
-              <template v-slot:header-selection="scope">
-                <q-checkbox :disable="scheduling" v-model="scope.selected" />
-              </template>
-              <template v-slot:body="props">
-                <q-tr class="cursor-pointer">
-                  <q-td>
-                    <q-checkbox
-                      :disable="scheduling"
-                      v-model="props.selected"
-                    />
-                  </q-td>
-                  <q-td v-for="column of props.cols">
-                    <span
-                      v-if="column.name === 'identificationCode'"
-                      class="text-grey-7"
-                    >
-                      {{ props.row.identificationCode }}
-                    </span>
-                    <div v-else-if="column.name === 'campusCode'">
-                      <q-badge v-if="props.row.campusCode" class="bg-grey">
-                        {{ campusesMap[props.row.campusCode].name }}
-                      </q-badge>
-                    </div>
-                    <div v-else-if="column.name === 'affiliationCode'">
-                      <q-badge v-if="props.row.campusCode" class="bg-grey">
-                        {{ affiliationsMap[props.row.affiliationCode].name }}
-                      </q-badge>
-                    </div>
-                    <span
-                      v-else-if="column.name === 'patientFullName'"
-                      class="text-weight-bold text-uppercase"
-                    >
-                      {{
-                        formatName(
-                          props.row.firstName,
-                          props.row.middleName,
-                          props.row.lastName
-                        )
-                      }}
-                    </span>
-                    <div
-                      v-else-if="column.name === 'status'"
-                      class="row justify-center"
-                    >
-                      <q-spinner v-if="props.row.loading" size="xs" />
-                      <template v-else>
-                        <span
-                          v-if="props.row.status"
-                          :class="
-                            props.row.status.code === 200
-                              ? 'text-positive'
-                              : props.row.status.code > 200
-                              ? 'text-negative'
-                              : ''
-                          "
-                        >
-                          {{ props.row.status.name ?? "-" }}
-                        </span>
-                        <span v-else>-</span>
-                      </template>
-                    </div>
-                    <div
-                      v-else-if="column.name === 'visitCode'"
-                      class="text-center"
-                    >
-                      {{ props.row[column.name] ?? "-" }}
-                    </div>
-                  </q-td>
-                </q-tr>
-              </template>
-            </q-table>
-            <q-separator />
+            <template v-if="studemps && studemps.length > 0">
+              <q-separator />
+              <q-table
+                class="shadow-0"
+                selection="multiple"
+                v-model:selected="selected"
+                :rows="studemps"
+                row-key="id"
+                :columns="columns"
+                hide-bottom
+              >
+                <template v-slot:header-selection="scope">
+                  <q-checkbox :disable="scheduling" v-model="scope.selected" />
+                </template>
+                <template v-slot:body="props">
+                  <q-tr class="cursor-pointer">
+                    <q-td>
+                      <q-checkbox
+                        :disable="scheduling"
+                        v-model="props.selected"
+                      />
+                    </q-td>
+                    <q-td v-for="column of props.cols">
+                      <span
+                        v-if="column.name === 'identificationCode'"
+                        class="text-grey-7"
+                      >
+                        {{ props.row.identificationCode }}
+                      </span>
+                      <div v-else-if="column.name === 'campusCode'">
+                        <q-badge v-if="props.row.campusCode" class="bg-grey">
+                          {{ campusesMap[props.row.campusCode].name }}
+                        </q-badge>
+                      </div>
+                      <div v-else-if="column.name === 'affiliationCode'">
+                        <q-badge v-if="props.row.campusCode" class="bg-grey">
+                          {{ affiliationsMap[props.row.affiliationCode].name }}
+                        </q-badge>
+                      </div>
+                      <span
+                        v-else-if="column.name === 'patientFullName'"
+                        class="text-weight-bold text-uppercase"
+                      >
+                        {{
+                          formatName(
+                            props.row.firstName,
+                            props.row.middleName,
+                            props.row.lastName
+                          )
+                        }}
+                      </span>
+                      <div
+                        v-else-if="column.name === 'status'"
+                        class="row justify-center"
+                      >
+                        <q-spinner v-if="props.row.loading" size="xs" />
+                        <template v-else>
+                          <span
+                            v-if="props.row.status"
+                            :class="
+                              props.row.status.code === 200
+                                ? 'text-positive'
+                                : props.row.status.code > 200
+                                ? 'text-negative'
+                                : ''
+                            "
+                          >
+                            {{ props.row.status.name ?? "-" }}
+                          </span>
+                          <span v-else>-</span>
+                        </template>
+                      </div>
+                      <div
+                        v-else-if="column.name === 'visitCode'"
+                        class="text-center"
+                      >
+                        {{ props.row[column.name] ?? "-" }}
+                      </div>
+                    </q-td>
+                  </q-tr>
+                </template>
+              </q-table>
+              <q-separator />
+            </template>
+            <NoResult v-else message="No student/employee found." />
             <div class="row items-start justify-end q-mt-md">
               <q-btn
                 style="height: 40px"

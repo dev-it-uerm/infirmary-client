@@ -11,106 +11,129 @@
       <PageHeader icon="fa-solid fa-calendar-days" text="VISIT APPOINTMENT" />
       <CardComponent>
         <template v-slot:body>
-          <div class="column" style="gap: 16px">
-            <div class="text-primary text-weight-medium">FILTER:</div>
-            <q-form @submit="getPatients">
-              <div class="row items-center" style="gap: 16px">
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="filtering || scheduling"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="campuses"
-                  label="Campus"
-                  v-model="filters.campusCode"
-                  hint=""
-                />
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="filtering || scheduling"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="affiliations"
-                  label="Affiliation"
-                  v-model="filters.affiliationCode"
-                  hint=""
-                />
-                <template
-                  v-if="filters.affiliationCode === affiliationsMap.STU.code"
-                >
-                  <q-input
-                    dense
-                    class="col-auto"
-                    :disable="filtering || scheduling"
-                    stack-label
-                    outlined
-                    maxlength="4"
-                    label="School Year"
-                    :rules="[yearRule]"
-                    v-model.trim="filters.schoolYear"
-                  />
-                  <CollegeSelect
-                    :disable="filtering || scheduling"
-                    class="col-auto"
-                    dense
-                    v-model="filters.collegeCode"
-                    hint=""
-                  />
-                  <YearLevelSelect
-                    :disable="filtering || scheduling"
-                    class="col-auto"
-                    dense
-                    v-model="filters.yearLevel"
-                    hint=""
-                  />
-                </template>
+          <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
+          <q-form @submit="getPatients">
+            <div
+              class="row items-center"
+              :style="$q.screen.lt.md ? {} : { gap: '16px' }"
+            >
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="campuses"
+                label="Campus"
+                v-model="filters.campusCode"
+                hint=""
+              />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="affiliations"
+                label="Affiliation"
+                v-model="filters.affiliationCode"
+                hint=""
+              />
+              <template
+                v-if="filters.affiliationCode === affiliationsMap.STU.code"
+              >
                 <q-input
-                  :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
                   :dense="$q.screen.gt.sm"
+                  class="col-auto"
                   :disable="filtering || scheduling"
-                  debounce="750"
                   stack-label
                   outlined
-                  label="Patient Name"
-                  v-model="filters.fullName"
+                  maxlength="4"
+                  label="School Year"
+                  :rules="[yearRule]"
+                  v-model.trim="filters.schoolYear"
+                />
+                <q-select
+                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                  :dense="$q.screen.gt.sm"
+                  :disable="filtering || scheduling"
+                  stack-label
+                  outlined
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
+                  :options="colleges"
+                  label="College"
+                  v-model="filters.collegeCode"
                   hint=""
                 />
-                <div
-                  class="row items-start justify-end"
-                  style="margin-bottom: 20px"
-                >
-                  <q-btn
-                    style="height: 40px"
-                    color="primary"
-                    class="q-px-md q-py-xs"
-                    :disable="filtering || scheduling"
-                    unelevated
-                    stack-label
-                    label="GO"
-                    type="submit"
-                  />
-                </div>
+                <q-select
+                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                  :dense="$q.screen.gt.sm"
+                  :disable="filtering || scheduling"
+                  stack-label
+                  outlined
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
+                  :options="yearLevels"
+                  label="Year Level"
+                  v-model="filters.yearLevel"
+                  hint=""
+                />
+              </template>
+              <q-input
+                :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                debounce="750"
+                stack-label
+                outlined
+                label="Patient Name"
+                v-model="filters.fullName"
+                hint=""
+              />
+              <div
+                class="row items-start justify-end"
+                :class="$q.screen.lt.md ? 'full-width' : ''"
+                style="margin-bottom: 20px"
+              >
+                <q-btn
+                  style="height: 40px"
+                  color="primary"
+                  class="q-px-md q-py-xs"
+                  :disable="filtering || scheduling"
+                  unelevated
+                  stack-label
+                  label="GO"
+                  type="submit"
+                />
               </div>
-            </q-form>
-            <div>
-              <!-- Extra div parent is a visual bug workaround -->
-              <q-badge color="accent" class="text-black q-pa-sm">
-                <span class="text-weight-bold">
-                  {{ patients.length }}
-                </span>
-                <span>&nbsp;items found.</span>
-              </q-badge>
             </div>
+          </q-form>
+          <div>
+            <!-- Extra div parent is a visual bug workaround -->
+            <q-badge
+              color="accent"
+              class="text-black q-pa-sm"
+              :class="$q.screen.lt.md ? 'q-mt-md' : ''"
+            >
+              <span class="text-weight-bold">
+                {{ patients.length }}
+              </span>
+              <span>&nbsp;items found.</span>
+            </q-badge>
           </div>
         </template>
       </CardComponent>
@@ -271,10 +294,14 @@ import { mapGetters } from "vuex";
 import { delay, formatDate, showMessage, sliceObj } from "src/helpers/util.js";
 
 import {
-  campuses,
   campusesMap,
-  affiliations,
+  campuses,
   affiliationsMap,
+  affiliations,
+  collegesMap,
+  colleges,
+  yearLevelsMap,
+  yearLevels,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -306,12 +333,6 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
-    CollegeSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/CollegeSelect.vue")
-    ),
-    YearLevelSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/YearLevelSelect.vue")
-    ),
   },
   setup() {
     return {
@@ -319,6 +340,10 @@ export default defineComponent({
       campusesMap,
       affiliations,
       affiliationsMap,
+      collegesMap,
+      colleges,
+      yearLevelsMap,
+      yearLevels,
       showMessage,
       formatDate,
       formatName: (patientFirstName, patientMiddleName, patientLastName) => {
@@ -343,7 +368,7 @@ export default defineComponent({
     return {
       filters: {
         campusCode: campusesMap.UERM.code,
-        affiliationCode: affiliationsMap.EMP.code,
+        affiliationCode: affiliationsMap.STU.code,
         fullName: "",
 
         collegeCode: null,
@@ -369,13 +394,19 @@ export default defineComponent({
   watch: {
     "filters.affiliationCode": {
       handler(val) {
+        this.filters.schoolYear = null;
+
         if (val === affiliationsMap.STU.code) {
-          this.filters.collegeCode = "MED";
+          this.filters.collegeCode = collegesMap.MED.code;
+          this.filters.yearLevel = yearLevelsMap.FIRST.code;
+          this.filters.schoolYear = new Date().getFullYear();
           return;
         }
 
         this.filters.collegeCode = null;
+        this.filters.yearLevel = null;
       },
+      immediate: true,
     },
   },
   mounted() {

@@ -38,6 +38,19 @@ export const campusesMap = {
   UERM: { code: "UERM", name: "UERM" },
 };
 
+export const collegesMap = {
+  MED: { code: "MED", name: "Medicine" },
+  NST: { code: "NST", name: "Nursing" },
+  MEDTECH: { code: "MEDTECH", name: "Medical Technology" },
+};
+
+export const yearLevelsMap = {
+  FIRST: { code: 1, name: "First Year" },
+  SECOND: { code: 2, name: "Second Year" },
+  THIRD: { code: 3, name: "Third Year" },
+  FOURTH: { code: 4, name: "Fourth Year" },
+};
+
 export const userRolesMap = {
   ADM: { code: "ADM", name: "Administrator" },
   MED: { code: "MED", name: "Medical Staff" },
@@ -52,6 +65,8 @@ export const affiliationsMap = {
 
 export const exams = Object.values(examsMap);
 export const campuses = Object.values(campusesMap);
+export const colleges = Object.values(collegesMap);
+export const yearLevels = Object.values(yearLevelsMap);
 export const affiliations = Object.values(affiliationsMap);
 export const userRoles = Object.values(userRolesMap);
 export const visitPhases = Object.values(visitPhasesMap);

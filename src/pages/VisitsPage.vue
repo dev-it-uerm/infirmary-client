@@ -12,7 +12,11 @@
       <CardComponent>
         <template v-slot:body>
           <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
-          <div class="row item-center" style="gap: 16px">
+          <div
+            class="row item-center"
+            :style="$q.screen.lt.md ? {} : { gap: '16px' }"
+          >
+            <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
             <q-select
               :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
               :dense="$q.screen.gt.sm"
@@ -23,8 +27,9 @@
               map-options
               option-label="name"
               option-value="code"
-              :options="[{ code: null, name: 'All' }, ...campuses]"
+              :options="campuses"
               label="Campus"
+              hint=""
               v-model="filters.patientCampusCode"
             />
             <q-select
@@ -37,10 +42,57 @@
               map-options
               option-label="name"
               option-value="code"
-              :options="[{ code: null, name: 'All' }, ...affiliations]"
+              :options="affiliations"
               label="Affiliation"
+              hint=""
               v-model="filters.patientAffiliationCode"
             />
+            <template
+              v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
+            >
+              <q-input
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                class="col-auto"
+                :disable="loading"
+                stack-label
+                outlined
+                maxlength="4"
+                label="School Year"
+                :rules="[yearRule]"
+                v-model.trim="filters.patientSchoolYear"
+              />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="colleges"
+                label="Year Level"
+                v-model="filters.patientCollegeCode"
+                hint=""
+              />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="yearLevels"
+                label="Year Level"
+                v-model="filters.patientYearLevel"
+                hint=""
+              />
+            </template>
             <DateRange
               :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
               :dense="$q.screen.gt.sm"
@@ -49,6 +101,7 @@
               outlined
               :subtractDaysCount="7"
               label="Visit Date Range"
+              hint=""
               :initialValue="filters.visitDateRange"
               @valueChanged="(val) => (filters.visitDateRange = val)"
             />
@@ -60,9 +113,13 @@
               stack-label
               outlined
               label="Patient Name"
+              hint=""
               v-model="filters.patientName"
             />
-            <div class="row items-start justify-end">
+            <div
+              class="row items-start justify-end"
+              :class="$q.screen.lt.md ? 'full-width' : ''"
+            >
               <q-btn
                 style="height: 40px"
                 color="primary"
@@ -77,7 +134,11 @@
             </div>
           </div>
           <div>
-            <q-badge color="accent" class="text-black q-pa-sm q-mt-md">
+            <q-badge
+              color="accent"
+              class="text-black q-pa-sm"
+              :class="$q.screen.lt.md ? 'q-mt-md' : ''"
+            >
               <span class="text-weight-bold">{{ visits.length }}</span
               >&nbsp;items found.
             </q-badge>
@@ -347,13 +408,19 @@ import {
 } from "src/helpers/util.js";
 
 import {
-  affiliations,
   affiliationsMap,
-  campuses,
+  affiliations,
   campusesMap,
-  visitPhases,
+  campuses,
   visitPhasesMap,
+  visitPhases,
+  collegesMap,
+  colleges,
+  yearLevelsMap,
+  yearLevels,
 } from "src/helpers/constants.js";
+
+import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "VisitsPage",
@@ -391,8 +458,13 @@ export default defineComponent({
       campusesMap,
       visitPhases,
       visitPhasesMap,
+      collegesMap,
+      colleges,
+      yearLevelsMap,
+      yearLevels,
       showMessage,
       formatDate,
+      yearRule: inputRules.year,
       formatName: (patientFirstName, patientMiddleName, patientLastName) => {
         return `${patientLastName}, ${patientFirstName} ${
           patientMiddleName ? patientMiddleName[0].concat(".") : ""
@@ -440,8 +512,8 @@ export default defineComponent({
           align: "center",
         },
         {
-          name: "patientCollege",
-          field: "patientCollege",
+          name: "patientCollegeCode",
+          field: "patientCollegeCode",
           label: "COLLEGE",
           align: "center",
         },
@@ -484,9 +556,13 @@ export default defineComponent({
           ),
           to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
         },
+        patientCampusCode: campusesMap.UERM.code,
+        patientAffiliationCode: affiliationsMap.STU.code,
         patientName: null,
-        patientAffiliationCode: null,
-        patientCampusCode: null,
+
+        patientCollegeCode: null,
+        patientSchoolYear: null,
+        patientYearLevel: null,
       },
       loading: false,
       visits: [],
@@ -501,6 +577,22 @@ export default defineComponent({
     ...mapGetters({
       user: "app/user",
     }),
+  },
+  watch: {
+    "filters.patientAffiliationCode": {
+      handler(val) {
+        if (val === affiliationsMap.STU.code) {
+          this.filters.patientCollegeCode = collegesMap.MED.code;
+          this.filters.patientYearLevel = yearLevelsMap.FIRST.code;
+          this.filters.patientSchoolYear = new Date().getFullYear();
+          return;
+        }
+
+        this.filters.patientCollegeCode = null;
+        this.filters.patientYearLevel = null;
+      },
+      immediate: true,
+    },
   },
   mounted() {
     if (this.user) this.getVisits();

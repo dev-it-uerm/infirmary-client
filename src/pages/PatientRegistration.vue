@@ -57,7 +57,18 @@
               />
               <template v-if="affiliationCode === affiliationsMap.STU.code">
                 <q-separator style="width: 50px; margin: 8px 0 24px 0" />
-                <div class="row full-width" style="gap: 16px">
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="4"
+                  label="School Year"
+                  :rules="[requiredRule, yearRule]"
+                  v-model.trim="schoolYearFrom"
+                  hint=""
+                />
+                <!-- <div class="row full-width" style="gap: 16px">
                   <q-input
                     class="col"
                     :disable="loading"
@@ -80,17 +91,33 @@
                     v-model.trim="schoolYearTo"
                     hint=""
                   />
-                </div>
-                <CollegeSelect
+                </div> -->
+                <q-select
                   class="full-width"
                   :disable="loading"
+                  stack-label
+                  outlined
+                  :options="colleges"
+                  label="College"
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
                   :rules="[requiredRule]"
                   v-model="collegeCode"
                   hint=""
                 />
-                <YearLevelSelect
+                <q-select
                   class="full-width"
                   :disable="loading"
+                  stack-label
+                  outlined
+                  :options="yearLevels"
+                  label="Year Level"
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
                   :rules="[requiredRule]"
                   v-model="yearLevel"
                   hint=""
@@ -218,10 +245,14 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage, empty } from "src/helpers/util.js";
 import {
-  campuses,
   campusesMap,
-  affiliations,
+  campuses,
+  collegesMap,
+  colleges,
+  yearLevelsMap,
+  yearLevels,
   affiliationsMap,
+  affiliations,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -241,19 +272,17 @@ export default defineComponent({
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")
     ),
-    CollegeSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/CollegeSelect.vue")
-    ),
-    YearLevelSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/YearLevelSelect.vue")
-    ),
   },
   setup() {
     return {
-      campuses,
       campusesMap,
-      affiliations,
+      campuses,
       affiliationsMap,
+      affiliations,
+      collegesMap,
+      colleges,
+      yearLevelsMap,
+      yearLevels,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };
@@ -268,7 +297,7 @@ export default defineComponent({
       code: null,
 
       schoolYearFrom: null,
-      schoolYearTo: null,
+      // schoolYearTo: null,
       collegeCode: null,
       yearLevel: null,
 
@@ -291,19 +320,19 @@ export default defineComponent({
     affiliationCode(val) {
       if (val === affiliationsMap.EMP.code) {
         this.schoolYearFrom = null;
-        this.schoolYearTo = null;
+        // this.schoolYearTo = null;
         this.collegeCode = null;
         this.yearLevel = null;
       }
     },
-    schoolYearFrom(val) {
-      if (!val) {
-        this.schoolYearTo = null;
-        return;
-      }
+    // schoolYearFrom(val) {
+    //   if (!val) {
+    //     this.schoolYearTo = null;
+    //     return;
+    //   }
 
-      this.schoolYearTo = Number(this.schoolYearFrom) + 1;
-    },
+    //   this.schoolYearTo = Number(this.schoolYearFrom) + 1;
+    // },
   },
   methods: {
     reset() {

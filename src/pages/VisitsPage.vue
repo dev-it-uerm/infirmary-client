@@ -218,7 +218,6 @@
                       class="q-mb-sm bg-white"
                       unelevated
                       outline
-                      color="primary"
                       @click.stop="
                         () => {
                           currentVisit = item;
@@ -254,25 +253,26 @@
                       v-if="column.name === 'phases'"
                       class="row justify-center"
                     >
-                      <!-- {{ getLatestPhase(props.row.phases).name.toUpperCase() }} -->
-                      <q-btn
-                        dense
-                        style="padding-left: 10px; padding-right: 10px"
-                        :class="
-                          phaseClassesMap[getLatestPhase(props.row.phases).code]
-                        "
-                        unelevated
-                        outline
-                        @click.stop="
-                          () => {
-                            currentVisit = props.row;
-                            statusHistoryVisible = true;
-                          }
-                        "
-                        :label="
-                          getLatestPhase(props.row.phases).name.toUpperCase()
-                        "
-                      />
+                      <template
+                        v-for="latestPhase in [
+                          getLatestPhase(props.row.phases),
+                        ]"
+                      >
+                        <q-btn
+                          dense
+                          style="padding-left: 10px; padding-right: 10px"
+                          :class="phaseClassesMap[latestPhase.code]"
+                          unelevated
+                          outline
+                          @click.stop="
+                            () => {
+                              currentVisit = props.row;
+                              statusHistoryVisible = true;
+                            }
+                          "
+                          :label="latestPhase.name.toUpperCase()"
+                        />
+                      </template>
                     </q-td>
                     <q-td v-else-if="column.name === 'dateTimeCreated'">
                       <span class="text-grey-7">
@@ -324,6 +324,16 @@
                           props.row.patientMiddleName,
                           props.row.patientLastName
                         )
+                      }}
+                    </q-td>
+                    <q-td v-else-if="column.name === 'patientCollegeCode'">
+                      {{ collegesMap[props.row[column.name]].name }}
+                    </q-td>
+                    <q-td v-else-if="column.name === 'patientYearLevel'">
+                      {{
+                        Object.values(yearLevelsMap).find(
+                          (y) => y.code === Number(props.row[column.name])
+                        )?.name
                       }}
                     </q-td>
                     <q-td v-else>
@@ -532,7 +542,7 @@ export default defineComponent({
         {
           name: "phases",
           field: "phases",
-          label: "STATUS",
+          label: "LAST EXAM COMPLETED",
           align: "center",
         },
         {
@@ -590,6 +600,7 @@ export default defineComponent({
 
         this.filters.patientCollegeCode = null;
         this.filters.patientYearLevel = null;
+        this.filters.patientSchoolYear = null;
       },
       immediate: true,
     },

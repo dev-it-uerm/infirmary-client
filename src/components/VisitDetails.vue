@@ -59,6 +59,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+import { examsMap } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitDetails",
@@ -88,6 +89,9 @@ export default defineComponent({
     },
   },
   emits: ["close"],
+  setup() {
+    return { examsMap };
+  },
   data() {
     return {
       tab: null,
@@ -96,7 +100,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      examsMap: "app/examsMap",
     }),
     tabs() {
       if (this.examsMap) {

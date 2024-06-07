@@ -1,7 +1,7 @@
 import { request } from "src/helpers/util";
 import { Cookies } from "quasar";
 
-export const add = async (context, payload) => {
+export const addUser = async (context, payload) => {
   return await request(
     "post",
     `${context.rootState.app.apiHost}/user`,
@@ -88,13 +88,24 @@ export const sendPasswordResetLink = async (context, payload) => {
   );
 };
 
-export const getStudemps = async (context, payload) => {
+export const getPatients = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/studemps`,
+    `${context.rootState.app.apiHost}/patient`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
+    context
+  );
+};
+
+export const addPatient = async (context, payload) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/patient`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
     context
   );
 };

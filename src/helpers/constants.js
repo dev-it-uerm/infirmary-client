@@ -69,6 +69,12 @@ export const navMenus = [
     url: "/user-registration",
     icon: "fa-solid fa-user-plus",
   },
+  {
+    code: "PATIENT_REGISTRATION",
+    name: "Add Patient",
+    url: "/patient-registration",
+    icon: "fa-solid fa-user-plus",
+  },
   // {
   //   code: "VISIT_APPOINTMENT_LINK",
   //   name: "Visit Appointment",

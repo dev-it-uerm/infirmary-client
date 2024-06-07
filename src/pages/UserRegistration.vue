@@ -26,7 +26,7 @@
             <q-select
               stack-label
               outlined
-              :options="Object.values(userRolesMap)"
+              :options="userRoles"
               label="Role"
               emit-value
               map-options
@@ -106,6 +106,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage, empty } from "src/helpers/util.js";
+import { userRoles } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "UserRegistration",
@@ -125,6 +126,7 @@ export default defineComponent({
   },
   setup() {
     return {
+      userRoles,
       requiredRule: (val) =>
         val == null || val === "" ? "This field is required." : undefined,
     };
@@ -148,7 +150,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      userRolesMap: "app/userRolesMap",
     }),
   },
   methods: {
@@ -168,7 +169,7 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("app/add", {
+      const response = await this.$store.dispatch("app/addUser", {
         code: this.code,
         firstName: this.firstName,
         middleName: this.middleName,

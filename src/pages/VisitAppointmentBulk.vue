@@ -13,63 +13,100 @@
         <template v-slot:body>
           <div class="column" style="gap: 16px">
             <div class="text-primary text-weight-medium">FILTER:</div>
-            <div class="row items-center" style="gap: 16px">
-              <q-select
-                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                :dense="$q.screen.gt.sm"
-                :disable="filtering || scheduling"
-                stack-label
-                outlined
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :options="campuses"
-                label="Campus"
-                v-model="filters.campusCode"
-              />
-              <q-select
-                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                :dense="$q.screen.gt.sm"
-                :disable="filtering || scheduling"
-                stack-label
-                outlined
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :options="affiliations"
-                label="Affiliation"
-                v-model="filters.affiliationCode"
-              />
-              <q-input
-                :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                :dense="$q.screen.gt.sm"
-                :disable="filtering || scheduling"
-                debounce="750"
-                stack-label
-                outlined
-                label="Patient Name"
-                v-model="filters.fullName"
-              />
-              <div class="row items-start justify-end">
-                <q-btn
-                  style="height: 40px"
-                  color="primary"
-                  class="q-px-md q-py-xs"
+            <q-form @submit="getPatients">
+              <div class="row items-center" style="gap: 16px">
+                <q-select
+                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                  :dense="$q.screen.gt.sm"
                   :disable="filtering || scheduling"
-                  unelevated
                   stack-label
-                  label="GO"
-                  @click="getStudEmps"
+                  outlined
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
+                  :options="campuses"
+                  label="Campus"
+                  v-model="filters.campusCode"
+                  hint=""
                 />
+                <q-select
+                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                  :dense="$q.screen.gt.sm"
+                  :disable="filtering || scheduling"
+                  stack-label
+                  outlined
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
+                  :options="affiliations"
+                  label="Affiliation"
+                  v-model="filters.affiliationCode"
+                  hint=""
+                />
+                <template
+                  v-if="filters.affiliationCode === affiliationsMap.STU.code"
+                >
+                  <q-input
+                    dense
+                    class="col-auto"
+                    :disable="filtering || scheduling"
+                    stack-label
+                    outlined
+                    maxlength="4"
+                    label="School Year"
+                    :rules="[yearRule]"
+                    v-model.trim="filters.schoolYear"
+                  />
+                  <CollegeSelect
+                    :disable="filtering || scheduling"
+                    class="col-auto"
+                    dense
+                    v-model="filters.collegeCode"
+                    hint=""
+                  />
+                  <YearLevelSelect
+                    :disable="filtering || scheduling"
+                    class="col-auto"
+                    dense
+                    v-model="filters.yearLevel"
+                    hint=""
+                  />
+                </template>
+                <q-input
+                  :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                  :dense="$q.screen.gt.sm"
+                  :disable="filtering || scheduling"
+                  debounce="750"
+                  stack-label
+                  outlined
+                  label="Patient Name"
+                  v-model="filters.fullName"
+                  hint=""
+                />
+                <div
+                  class="row items-start justify-end"
+                  style="margin-bottom: 20px"
+                >
+                  <q-btn
+                    style="height: 40px"
+                    color="primary"
+                    class="q-px-md q-py-xs"
+                    :disable="filtering || scheduling"
+                    unelevated
+                    stack-label
+                    label="GO"
+                    type="submit"
+                  />
+                </div>
               </div>
-            </div>
+            </q-form>
             <div>
               <!-- Extra div parent is a visual bug workaround -->
               <q-badge color="accent" class="text-black q-pa-sm">
                 <span class="text-weight-bold">
-                  {{ studemps.length }}
+                  {{ patients.length }}
                 </span>
                 <span>&nbsp;items found.</span>
               </q-badge>
@@ -85,15 +122,15 @@
           <FetchingData v-if="filtering" />
           <div v-else>
             <div class="text-primary text-weight-medium q-mb-md">
-              STUDENT/EMPLOYEE LIST:
+              PATIENT LIST:
             </div>
-            <template v-if="studemps && studemps.length > 0">
+            <template v-if="patients && patients.length > 0">
               <q-separator />
               <q-table
                 class="shadow-0"
                 selection="multiple"
                 v-model:selected="selected"
-                :rows="studemps"
+                :rows="patients"
                 row-key="id"
                 :columns="columns"
                 hide-bottom
@@ -231,15 +268,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import {
-  delay,
-  formatDate,
-  showMessage,
-  subtractDay,
-  jsDateToISOString,
-  allPropsEmpty,
-  sliceObj,
-} from "src/helpers/util.js";
+import { delay, formatDate, showMessage, sliceObj } from "src/helpers/util.js";
 
 import {
   campuses,
@@ -247,6 +276,8 @@ import {
   affiliations,
   affiliationsMap,
 } from "src/helpers/constants.js";
+
+import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "VisitAppointmentBulk",
@@ -275,6 +306,12 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
+    CollegeSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/CollegeSelect.vue")
+    ),
+    YearLevelSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/YearLevelSelect.vue")
+    ),
   },
   setup() {
     return {
@@ -298,8 +335,8 @@ export default defineComponent({
         RADXRCHST: "text-grey-8",
         FIN: "text-positive",
       },
-      // inputRule: (val) =>
-      //   val == null || val === "" ? "Field is required." : undefined,
+      requiredRule: inputRules.required,
+      yearRule: inputRules.year,
     };
   },
   data() {
@@ -308,6 +345,10 @@ export default defineComponent({
         campusCode: campusesMap.UERM.code,
         affiliationCode: affiliationsMap.EMP.code,
         fullName: "",
+
+        collegeCode: null,
+        schoolYear: null,
+        yearLevel: null,
       },
 
       columns: [],
@@ -315,7 +356,7 @@ export default defineComponent({
       filtering: false,
       scheduling: false,
       selected: [],
-      studemps: [],
+      patients: [],
 
       confirmationDialogVisible: false,
     };
@@ -323,12 +364,22 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
-      // affiliationsMap: "app/affiliationsMap",
-      // campusesMap: "app/campusesMap",
     }),
   },
+  watch: {
+    "filters.affiliationCode": {
+      handler(val) {
+        if (val === affiliationsMap.STU.code) {
+          this.filters.collegeCode = "MED";
+          return;
+        }
+
+        this.filters.collegeCode = null;
+      },
+    },
+  },
   mounted() {
-    this.getStudEmps();
+    this.getPatients();
   },
   methods: {
     updateColumns() {
@@ -363,8 +414,8 @@ export default defineComponent({
                 align: "center",
               },
               {
-                name: "college",
-                field: "college",
+                name: "collegeCode",
+                field: "collegeCode",
                 label: "COLLEGE",
                 align: "center",
               },
@@ -395,7 +446,7 @@ export default defineComponent({
         },
       ];
     },
-    async getStudEmps() {
+    async getPatients() {
       this.filtering = true;
       this.selected = [];
 
@@ -405,7 +456,7 @@ export default defineComponent({
       }, {});
 
       const response = await this.$store.dispatch(
-        "app/getStudemps",
+        "app/getPatients",
         sanitizedFilters
       );
 
@@ -424,7 +475,7 @@ export default defineComponent({
 
       this.updateColumns();
 
-      this.studemps =
+      this.patients =
         response.body && response.body.length > 0
           ? response.body.map((row, idx) => {
               return {

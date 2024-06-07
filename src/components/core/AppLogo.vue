@@ -48,14 +48,14 @@
       style="line-height: 1em"
       :style="titleStyle"
     >
-      {{ appConfig.name }}
+      {{ app.name }}
     </span>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { mapGetters } from "vuex";
+import { app } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "AppLogo",
@@ -73,16 +73,14 @@ export default defineComponent({
       default: false,
     },
   },
+  setup() {
+    return { app };
+  },
   data() {
     return {
       titleClass: "",
       titleStyle: null,
     };
-  },
-  computed: {
-    ...mapGetters({
-      appConfig: "app/config",
-    }),
   },
   created() {
     const sizeToDimensionMap = {

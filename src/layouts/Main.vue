@@ -21,7 +21,7 @@
             />
           </q-avatar>
         </q-toolbar-title> -->
-        <AppLogo size="xs" :showTitle="false" />
+        <AppLogo :inverted="true" size="xs" :showTitle="false" />
         <div><b>UERM</b> INFIRMARY</div>
       </q-toolbar>
     </q-header>

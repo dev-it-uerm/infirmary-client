@@ -23,7 +23,7 @@
       style="gap: 16px; z-index: 999"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <AppLogo size="sm" :inverted="true" />
+      <AppLogo size="md" :inverted="true" />
       <PageHeader icon="fa-solid fa-unlock-keyhole" text="LOG IN" />
       <CardComponent>
         <template v-slot:body>

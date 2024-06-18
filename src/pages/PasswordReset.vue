@@ -5,7 +5,7 @@
       style="gap: 16px"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <AppLogo :inverted="true" size="sm" />
+      <AppLogo :inverted="true" size="md" />
       <PageHeader text="RESET PASSWORD" icon="fa-solid fa-user" />
       <CardComponent>
         <template v-slot:body>

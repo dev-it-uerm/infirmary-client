@@ -188,7 +188,8 @@
                         formatName(
                           item.patientFirstName,
                           item.patientMiddleName,
-                          item.patientLastName
+                          item.patientLastName,
+                          item.patientExtName
                         )
                       }}
                     </q-item-label>
@@ -322,7 +323,8 @@
                         formatName(
                           props.row.patientFirstName,
                           props.row.patientMiddleName,
-                          props.row.patientLastName
+                          props.row.patientLastName,
+                          props.row.patientExtName
                         )
                       }}
                     </q-td>
@@ -403,7 +405,8 @@
         formatName(
           currentVisit.patientFirstName,
           currentVisit.patientMiddleName,
-          currentVisit.patientLastName
+          currentVisit.patientLastName,
+          currentVisit.patientExtName
         )
       "
       @close="visitInfoVisible = false"
@@ -421,6 +424,7 @@ import {
   subtractDay,
   jsDateToISOString,
   allPropsEmpty,
+  formatName,
 } from "src/helpers/util.js";
 
 import {
@@ -481,11 +485,7 @@ export default defineComponent({
       showMessage,
       formatDate,
       yearRule: inputRules.year,
-      formatName: (patientFirstName, patientMiddleName, patientLastName) => {
-        return `${patientLastName}, ${patientFirstName} ${
-          patientMiddleName ? patientMiddleName[0].concat(".") : ""
-        }`.trim();
-      },
+      formatName,
       phaseClassesMap: {
         REG: "text-grey-8",
         PE: "text-grey-8",

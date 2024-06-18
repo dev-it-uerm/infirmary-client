@@ -93,7 +93,7 @@
                 @click="(evt) => (logoutDialogVisible = true)"
               >
                 <template v-slot:loading>
-                  <q-spinner-cube size="xs" />
+                  <q-spinner-dots size="xs" />
                 </template>
               </q-btn>
             </div>

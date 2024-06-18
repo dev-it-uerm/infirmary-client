@@ -16,7 +16,12 @@
         v-model="inputMode"
       />
     </div>
-    <div v-show="inputMode === 'QR'" id="divQRCodeScanner" width="600px"></div>
+    <div
+      v-show="inputMode === 'QR'"
+      :disable="loading"
+      id="divQRCodeScanner"
+      width="600px"
+    ></div>
     <q-input
       v-if="inputMode !== 'QR'"
       debounce="750"

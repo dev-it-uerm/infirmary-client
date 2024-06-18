@@ -194,7 +194,8 @@
                           formatName(
                             props.row.firstName,
                             props.row.middleName,
-                            props.row.lastName
+                            props.row.lastName,
+                            props.row.extName
                           )
                         }}
                       </span>
@@ -291,7 +292,13 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import { delay, formatDate, showMessage, sliceObj } from "src/helpers/util.js";
+import {
+  delay,
+  formatDate,
+  showMessage,
+  sliceObj,
+  formatName,
+} from "src/helpers/util.js";
 
 import {
   campusesMap,
@@ -346,11 +353,7 @@ export default defineComponent({
       yearLevels,
       showMessage,
       formatDate,
-      formatName: (patientFirstName, patientMiddleName, patientLastName) => {
-        return `${patientLastName}, ${patientFirstName} ${
-          patientMiddleName ? patientMiddleName[0].concat(".") : ""
-        }`.trim();
-      },
+      formatName,
       phaseClassesMap: {
         REG: "text-grey-8",
         PE: "text-grey-8",

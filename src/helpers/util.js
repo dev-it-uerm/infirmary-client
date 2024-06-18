@@ -507,3 +507,9 @@ export const sliceObj = (obj, ...props) => {
   for (const prop of props) delete copy[prop];
   return copy;
 };
+
+export const formatName = (firstName, middleName, lastName, extName) => {
+  return `${lastName}, ${firstName}${extName ? " ".concat(extName) : ""}${
+    middleName ? " ".concat(middleName[0]).concat(".") : ""
+  }`;
+};

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <div class="bg-white flex flex-center" style="height: 200px; opacity: 0.8">
-      <q-spinner-cube color="black" size="md" />
+      <q-spinner-dots color="black" size="md" />
     </div> -->
     <FetchingData v-if="loading" />
     <q-form v-else ref="qFormVisitDetails" @submit="save">

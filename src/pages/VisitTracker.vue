@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center q-pa-md">
+  <q-page class="flex flex-center q-pa-lg">
     <div
       class="column"
       style="gap: 16px"
@@ -22,7 +22,69 @@
       </CardComponent>
       <CardComponent>
         <template v-slot:body>
-          <div class="fit flex flex-center">
+          <div
+            v-if="loading"
+            class="full-width flex flex-center"
+            style="height: 100px"
+          >
+            <q-spinner-dots size="lg" />
+          </div>
+          <div v-else class="fit flex flex-center">
+            <div
+              v-if="patient && visit"
+              class="full-width column q-pa-lg q-mb-md"
+              style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
+            >
+              <div class="q-mb-sm">
+                <span class="text-grey-7">Visit Code:</span>
+                <span class="q-ml-sm">{{ visit.code }}</span>
+              </div>
+              <div>
+                <span class="text-grey-7">Patient Name:</span>
+                <span class="q-ml-sm">{{
+                  formatName(
+                    patient.firstName,
+                    patient.middleName,
+                    patient.lastName,
+                    patient.extName
+                  )
+                }}</span>
+              </div>
+              <div>
+                <span class="text-grey-7">Patient Campus:</span>
+                <span class="q-ml-sm">{{
+                  campusesMap[patient.campusCode].name
+                }}</span>
+              </div>
+              <div>
+                <span class="text-grey-7">Patient Affiliation:</span>
+                <span class="q-ml-sm">{{
+                  affiliationsMap[patient.affiliationCode].name
+                }}</span>
+              </div>
+              <div v-if="patient.collegeCode" class="q-mt-sm">
+                <div>
+                  <span class="text-grey-7">College:</span>
+                  <span class="q-ml-sm">{{
+                    collegesMap[patient.collegeCode].name
+                  }}</span>
+                </div>
+                <div v-if="patient.schoolYear">
+                  <span class="text-grey-7">School Year:</span>
+                  <span class="q-ml-sm">{{ patient.schoolYear }}</span>
+                </div>
+                <div v-if="patient.yearLevel">
+                  <span class="text-grey-7">Year Level:</span>
+                  <span class="q-ml-sm">{{
+                    yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                      .name ?? ""
+                  }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="row justify-center q-py-md">
+              <q-separator style="width: 100px" spaced />
+            </div> -->
             <q-list
               class="full-width"
               separator
@@ -78,9 +140,16 @@ import {
   showMessage,
   sortStringArr,
   formatDate,
+  formatName,
 } from "src/helpers/util.js";
 
-import { visitPhasesMap } from "src/helpers/constants.js";
+import {
+  visitPhasesMap,
+  affiliationsMap,
+  campusesMap,
+  collegesMap,
+  yearLevels,
+} from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitTracker",
@@ -98,7 +167,12 @@ export default defineComponent({
   setup() {
     return {
       visitPhasesMap,
+      affiliationsMap,
+      campusesMap,
+      collegesMap,
+      yearLevels,
       formatDate,
+      formatName,
     };
   },
   data() {
@@ -108,6 +182,9 @@ export default defineComponent({
       inputMode: null,
       visitCode: null,
       phases: [],
+
+      patient: null,
+      visit: null,
     };
   },
   computed: {
@@ -123,9 +200,11 @@ export default defineComponent({
   methods: {
     async track(visitCode) {
       this.loading = true;
-      await delay(2000);
+      this.patient = null;
+      this.visit = null;
 
       const response = await this.$store.dispatch("visit/track", visitCode);
+      await delay(2000);
 
       if (response.error) {
         showMessage(this.$q, false, response.body.error ?? response.body);
@@ -149,6 +228,9 @@ export default defineComponent({
         },
         {}
       );
+
+      this.patient = response.body.patient;
+      this.visit = response.body.visit;
 
       const phasesMap = {
         ...examsToCompleteMap,

@@ -2,7 +2,7 @@
   <q-page
     class="flex flex-center q-pa-md"
     style="
-      background-image: url('bg-uerm.jpg');
+      background-image: url('src/assets/bg-uerm.jpg');
       background-repeat: no-repeat;
       background-size: cover;
     "

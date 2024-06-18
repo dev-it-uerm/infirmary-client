@@ -28,7 +28,7 @@ const routes = [
       {
         name: "MAIN",
         path: "/",
-        component: () => import("pages/MainPage.vue"),
+        component: () => import("pages/Main.vue"),
       },
       {
         name: "USER_REGISTRATION",
@@ -43,7 +43,7 @@ const routes = [
       {
         name: "VISITS",
         path: "/visits",
-        component: () => import("pages/VisitsPage.vue"),
+        component: () => import("pages/Visits.vue"),
       },
       {
         name: "VISIT_APPOINTMENT_LINK",
@@ -79,6 +79,11 @@ const routes = [
         name: "USER_INFO",
         path: "/user-info",
         component: () => import("pages/UserInfo.vue"),
+      },
+      {
+        name: "ANALYTICS",
+        path: "/analytics",
+        component: () => import("pages/Analytics.vue"),
       },
       // {
       //   path: "/test-page",

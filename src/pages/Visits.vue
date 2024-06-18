@@ -326,17 +326,23 @@
                         )
                       }}
                     </q-td>
-                    <q-td v-else-if="column.name === 'patientCollegeCode'">
+                    <q-td
+                      v-else-if="column.name === 'patientCollegeCode'"
+                      class="text-center"
+                    >
                       {{ collegesMap[props.row[column.name]].name }}
                     </q-td>
-                    <q-td v-else-if="column.name === 'patientYearLevel'">
+                    <q-td
+                      v-else-if="column.name === 'patientYearLevel'"
+                      class="text-center"
+                    >
                       {{
                         Object.values(yearLevelsMap).find(
                           (y) => y.code === Number(props.row[column.name])
                         )?.name
                       }}
                     </q-td>
-                    <q-td v-else>
+                    <q-td v-else class="text-center">
                       {{ props.row[column.name] }}
                     </q-td>
                   </template>

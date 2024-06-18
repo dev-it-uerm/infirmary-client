@@ -58,6 +58,7 @@
               <template v-if="affiliationCode === affiliationsMap.STU.code">
                 <q-separator style="width: 50px; margin: 8px 0 24px 0" />
                 <q-input
+                  debounce="700"
                   class="full-width"
                   :disable="loading"
                   stack-label
@@ -154,6 +155,16 @@
                 label="Last Name"
                 :rules="[requiredRule]"
                 v-model.trim="lastName"
+                hint=""
+              />
+              <q-input
+                class="full-width"
+                :disable="loading"
+                stack-label
+                outlined
+                maxlength="255"
+                label="Extension Name (Jr., II, etc.)"
+                v-model.trim="extName"
                 hint=""
               />
               <q-input
@@ -390,6 +401,7 @@ export default defineComponent({
 
       showMessage(this.$q, true, "Patient has been saved successfully.");
       this.loading = false;
+      this.$refs.qForm.reset();
     },
   },
 });

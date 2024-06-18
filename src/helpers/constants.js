@@ -79,16 +79,10 @@ export const app = {
 
 export const navMenus = [
   {
-    code: "USER_REGISTRATION",
-    name: "Add/Update User",
-    url: "/user-registration",
-    icon: "fa-solid fa-user-plus",
-  },
-  {
     code: "PATIENT_REGISTRATION",
     name: "Add Patient",
     url: "/patient-registration",
-    icon: "fa-solid fa-user-plus",
+    icon: "fa-solid fa-person-circle-plus",
   },
   // {
   //   code: "VISIT_APPOINTMENT_LINK",
@@ -109,15 +103,27 @@ export const navMenus = [
     icon: "fa-solid fa-stethoscope",
   },
   {
+    code: "VISIT_TRACKER",
+    name: "Visit Tracker",
+    url: "/track-visit",
+    icon: "fa-solid fa-magnifying-glass",
+  },
+  {
     code: "COMPLETE_EXAM",
     name: "Complete Exam",
     url: "/complete-exam",
     icon: "fa-solid fa-user-tag",
   },
   {
-    code: "VISIT_TRACKER",
-    name: "Visit Tracker",
-    url: "/track-visit",
-    icon: "fa-solid fa-magnifying-glass",
+    code: "USER_REGISTRATION",
+    name: "Add/Update User",
+    url: "/user-registration",
+    icon: "fa-solid fa-user-plus",
+  },
+  {
+    code: "ANALYTICS",
+    name: "Analytics",
+    url: "/analytics",
+    icon: "fa-solid fa-chart-pie",
   },
 ];

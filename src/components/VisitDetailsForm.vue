@@ -598,7 +598,7 @@ export default defineComponent({
       this.loading = true;
       await delay(1000);
 
-      const response = await this.$store.dispatch("visit/getDetails", {
+      const response = await this.$store.dispatch("ape/getDetails", {
         visitId: this.visitId,
         patientId: this.patientId,
         tabCode: this.tab.code,
@@ -642,7 +642,7 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("visit/saveDetails", {
+      const response = await this.$store.dispatch("ape/saveDetails", {
         visitId: this.visitId,
         patientId: this.patientId,
         tabCode: this.tab.code,

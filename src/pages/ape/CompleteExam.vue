@@ -180,7 +180,7 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("visit/completeExam", {
+      const response = await this.$store.dispatch("ape/completeExam", {
         visitCode,
         examCode,
       });

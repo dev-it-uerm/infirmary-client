@@ -167,6 +167,22 @@
                 v-model.trim="extName"
                 hint=""
               />
+              <q-select
+                class="full-width"
+                :disable="loading"
+                stack-label
+                outlined
+                :options="[
+                  { value: 'M', label: 'MALE' },
+                  { value: 'F', label: 'FEMALE' },
+                ]"
+                label="Gender"
+                emit-value
+                map-options
+                :rules="[requiredRule]"
+                v-model="gender"
+                hint=""
+              />
               <q-input
                 class="full-width"
                 :disable="loading"
@@ -317,6 +333,7 @@ export default defineComponent({
       lastName: null,
       extName: null,
       birthDate: null,
+      gender: null,
 
       emailAddress: null,
       mobileNumber: null,
@@ -360,6 +377,7 @@ export default defineComponent({
       this.lastName = null;
       this.extName = null;
       this.birthDate = null;
+      this.gender = null;
 
       this.emailAddress = null;
       this.mobileNumber = null;
@@ -369,7 +387,7 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("app/addPatient", {
+      const response = await this.$store.dispatch("ape/addPatient", {
         campusCode: this.campusCode,
         affiliationCode: this.affiliationCode,
         identificationCode: this.code,
@@ -383,6 +401,7 @@ export default defineComponent({
         lastName: this.lastName,
         extName: this.extName,
         birthDate: this.birthDate,
+        gender: this.gender,
 
         emailAddress: this.emailAddress,
         mobileNumber: this.mobileNumber,

@@ -203,7 +203,7 @@ export default defineComponent({
       this.patient = null;
       this.visit = null;
 
-      const response = await this.$store.dispatch("visit/track", visitCode);
+      const response = await this.$store.dispatch("ape/track", visitCode);
       await delay(2000);
 
       if (response.error) {

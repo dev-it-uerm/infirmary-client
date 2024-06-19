@@ -123,7 +123,7 @@ export default defineComponent({
       await delay(2000);
 
       const response = await this.$store.dispatch(
-        "visit/sendVisitAppointmentLink",
+        "ape/sendVisitAppointmentLink",
         {
           campusCode: this.campusCode,
           affiliationCode: this.affiliationCode,

@@ -106,7 +106,7 @@ export default defineComponent({
       }
 
       const response = await this.$store.dispatch(
-        "visit/scheduleSelf",
+        "ape/scheduleSelf",
         this.$route.query.accessToken
       );
 

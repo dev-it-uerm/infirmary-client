@@ -10,6 +10,7 @@
         <template v-slot:body>
           <FetchingData v-if="loading" />
           <q-form
+            v-show="!loading"
             ref="qForm"
             @submit="(evt) => (yesNoDialogVisible = true)"
             @reset="reset"

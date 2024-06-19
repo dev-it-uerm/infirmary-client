@@ -490,7 +490,7 @@ export default defineComponent({
       }, {});
 
       const response = await this.$store.dispatch(
-        "app/getPatients",
+        "ape/getPatients",
         sanitizedFilters
       );
 
@@ -533,7 +533,7 @@ export default defineComponent({
         row.visitCode = null;
 
         const response = await this.$store.dispatch(
-          "visit/schedule",
+          "ape/schedule",
           sliceObj(row, "id", "status", "visitCode", "loading")
         );
 

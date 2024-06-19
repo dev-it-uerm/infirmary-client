@@ -343,16 +343,23 @@
                           v-else-if="column.name === 'patientCollegeCode'"
                           class="text-center"
                         >
-                          {{ collegesMap[props.row[column.name]].name }}
+                          {{
+                            props.row[column.name]
+                              ? collegesMap[props.row[column.name]].name
+                              : ""
+                          }}
                         </q-td>
                         <q-td
                           v-else-if="column.name === 'patientYearLevel'"
                           class="text-center"
                         >
                           {{
-                            Object.values(yearLevelsMap).find(
-                              (y) => y.code === Number(props.row[column.name])
-                            )?.name
+                            props.row[column.name]
+                              ? Object.values(yearLevelsMap).find(
+                                  (y) =>
+                                    y.code === Number(props.row[column.name])
+                                ).name
+                              : ""
                           }}
                         </q-td>
                         <q-td v-else class="text-center">
@@ -543,6 +550,11 @@ export default defineComponent({
           align: "center",
         },
         {
+          name: "patientGender",
+          label: "PATIENT GENDER",
+          align: "center",
+        },
+        {
           name: "patientCollegeCode",
           field: "patientCollegeCode",
           label: "COLLEGE",
@@ -650,10 +662,7 @@ export default defineComponent({
         return acc;
       }, {});
 
-      const response = await this.$store.dispatch(
-        "visit/get",
-        sanitizedFilters
-      );
+      const response = await this.$store.dispatch("ape/get", sanitizedFilters);
 
       if (response.error) {
         showMessage(this.$q, false, "Unable to fetch visits. Please try again");

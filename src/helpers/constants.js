@@ -77,53 +77,82 @@ export const app = {
   url: "https://uermhospital.com.ph/apps/infirmary",
 };
 
+const navMenuAPEPxRegistration = {
+  code: "APE_PATIENT_REGISTRATION",
+  name: "Add Patient",
+  url: "/annual-physical-exam/patient-registration",
+  icon: "fa-solid fa-person-circle-plus",
+};
+
+const navMenuAPEVisitAppointmentBulk = {
+  code: "APE_VISIT_APPOINTMENT_BULK",
+  name: "Visit Appointment",
+  url: "/annual-physical-exam/visit-appointment-bulk",
+  icon: "fa-solid fa-calendar-days",
+};
+
+const navMenuAPEVisits = {
+  code: "APE_VISITS",
+  name: "Visits",
+  url: "/annual-physical-exam/visits",
+  icon: "fa-solid fa-stethoscope",
+};
+
+const navMenuAPEVisitTracker = {
+  code: "APE_VISIT_TRACKER",
+  name: "Visit Tracker",
+  url: "/annual-physical-exam/track-visit",
+  icon: "fa-solid fa-magnifying-glass",
+};
+
+const navMenuAPECompleteExam = {
+  code: "APE_COMPLETE_EXAM",
+  name: "Complete Exam",
+  url: "/annual-physical-exam/complete-exam",
+  icon: "fa-solid fa-user-tag",
+};
+
+const navMenuAPEAnalytics = {
+  code: "APE_ANALYTICS",
+  name: "Analytics",
+  url: "/annual-physical-exam/analytics",
+  icon: "fa-solid fa-chart-pie",
+};
+
+// FOR INFIRMARY DIAGNOSTIC PROCEDURE
+const navMenuPxRegistration = {
+  code: "DIAG_EXAM_PATIENT_REGISTRATION",
+  name: "Add Patient",
+  url: "/diag-exam/patient-registration",
+  icon: "fa-solid fa-person-circle-plus",
+};
+
 export const navMenus = [
   {
-    code: "PATIENT_REGISTRATION",
-    name: "Add Patient",
-    url: "/patient-registration",
-    icon: "fa-solid fa-person-circle-plus",
-  },
-  // {
-  //   code: "VISIT_APPOINTMENT_LINK",
-  //   name: "Visit Appointment",
-  //   url: "/visit-appointment-link",
-  //   icon: "fa-regular fa-id-card",
-  // },
-  {
-    code: "VISIT_APPOINTMENT_BULK",
-    name: "Visit Appointment",
-    url: "/visit-appointment-bulk",
-    icon: "fa-solid fa-calendar-days",
-  },
-  {
-    code: "VISITS",
-    name: "Visits",
-    url: "/visits",
-    icon: "fa-solid fa-stethoscope",
+    code: "ANNUAL_PHYSICAL_EXAM",
+    name: "Annual Exam",
+    url: "/annual-physical-exam",
+    icon: "fa-solid fa-heart-pulse",
+    children: [
+      navMenuAPEPxRegistration,
+      // {
+      //   code: "VISIT_APPOINTMENT_LINK",
+      //   name: "Visit Appointment",
+      //   url: "/visit-appointment-link",
+      //   icon: "fa-regular fa-id-card",
+      // },
+      navMenuAPEVisitAppointmentBulk,
+      navMenuAPEVisits,
+      navMenuAPEVisitTracker,
+      navMenuAPECompleteExam,
+      navMenuAPEAnalytics,
+    ],
   },
   {
-    code: "VISIT_TRACKER",
-    name: "Visit Tracker",
-    url: "/track-visit",
-    icon: "fa-solid fa-magnifying-glass",
-  },
-  {
-    code: "COMPLETE_EXAM",
-    name: "Complete Exam",
-    url: "/complete-exam",
-    icon: "fa-solid fa-user-tag",
-  },
-  {
-    code: "USER_REGISTRATION",
-    name: "Add/Update User",
-    url: "/user-registration",
-    icon: "fa-solid fa-user-plus",
-  },
-  {
-    code: "ANALYTICS",
-    name: "Analytics",
-    url: "/analytics",
-    icon: "fa-solid fa-chart-pie",
+    code: "DIAG_EXAM",
+    name: "Procedure",
+    url: "/diag-exam",
+    icon: "fa-solid fa-flask-vial",
+    children: [navMenuPxRegistration],
   },
 ];

@@ -100,6 +100,25 @@
             <div class="row justify-center">
               <q-separator class="q-my-md" style="width: 80px" />
             </div>
+            <q-btn
+              v-if="user.roleCode === 'ADM'"
+              :class="
+                activeMenu === 'USER_REGISTRATION'
+                  ? 'bg-accent text-black'
+                  : 'text-black text-weight-bold bordered-grey'
+              "
+              icon="fa-solid fa-user-plus"
+              label="Add/Update User"
+              :disable="loading"
+              unelevated
+              align="left"
+              style="padding: 12px 24px"
+              @click="
+                (evt) => {
+                  $router.push('/user-registration');
+                }
+              "
+            />
             <template v-for="navMenu in navMenus" :key="navMenu.code">
               <q-btn-dropdown
                 v-if="navMenu.children"

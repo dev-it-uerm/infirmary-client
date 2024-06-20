@@ -23,7 +23,7 @@
             />
             <q-input
               outlined
-              v-model="mobileNo"
+              v-model="mobileNumber"
               maxlength="255"
               label="Mobile Phone Number"
               :rules="[
@@ -81,7 +81,7 @@ export default defineComponent({
       loading: false,
       yesNoDialogVisible: false,
       emailAddress: "",
-      mobileNo: "",
+      mobileNumber: "",
     };
   },
   computed: {
@@ -91,12 +91,12 @@ export default defineComponent({
   },
   created() {
     this.emailAddress = this.user.emailAddress;
-    this.mobileNo = this.user.mobileNo;
+    this.mobileNumber = this.user.mobileNumber;
   },
   methods: {
     reset() {
       this.emailAddress = "";
-      this.mobileNo = "";
+      this.mobileNumber = "";
     },
     async save() {
       this.yesNoDialogVisible = false;
@@ -105,7 +105,7 @@ export default defineComponent({
 
       const response = await this.$store.dispatch("app/changeUserInfo", {
         emailAddress: this.emailAddress,
-        mobileNo: this.mobileNo,
+        mobileNumber: this.mobileNumber,
       });
 
       if (response.error) {
@@ -121,7 +121,7 @@ export default defineComponent({
       await this.$store.dispatch("app/setUser", {
         ...this.user,
         emailAddress: this.emailAddress,
-        mobileNo: this.mobileNo,
+        mobileNumber: this.mobileNumber,
       });
 
       showMessage(this.$q, true, "Information has been updated successfully.");

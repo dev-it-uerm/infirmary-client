@@ -249,7 +249,7 @@
                   :disable="loading"
                   unelevated
                   color="primary"
-                  label="SAVE"
+                  label="REGISTER"
                   type="submit"
                 />
               </div>

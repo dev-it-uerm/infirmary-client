@@ -17,9 +17,16 @@
       />
     </div>
     <div
-      v-show="inputMode === 'QR'"
+      v-if="loading"
+      class="full-width flex flex-center"
+      style="height: 100px"
+    >
+      <q-spinner-dots size="lg" />
+    </div>
+    <div
+      v-show="inputMode === 'QR' && !loading"
       :disable="loading"
-      id="divQRCodeScanner"
+      id="divQrCodeScanner"
       width="600px"
     ></div>
     <q-input
@@ -31,7 +38,7 @@
       outlined
       stack-label
       label="Visit Code"
-      v-model.trim="visitCode"
+      v-model.trim="patientCode"
     />
   </div>
 </template>
@@ -48,11 +55,12 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ["visitCodeChanged", "inputModeChanged"],
+  emits: ["patientCodeChanged", "inputModeChanged"],
   data() {
     return {
       inputMode: "QR",
-      visitCode: null,
+      patientCode: null,
+      scanner: null,
     };
   },
   watch: {
@@ -62,37 +70,41 @@ export default defineComponent({
       },
       immediate: true,
     },
-    visitCode: {
+    patientCode: {
       handler(val) {
         const v = val?.replace(/ /g, "");
-        this.$emit("visitCodeChanged", v && v.length === 22 ? v : null);
+        // this.$emit("patientCodeChanged", v && v.length === 22 ? v : null);
+        this.$emit("patientCodeChanged", v && v.length > 3 ? v : null);
       },
       immediate: true,
     },
   },
   mounted() {
-    // Initialize QR Code Scanner
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "divQRCodeScanner",
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      false
-    );
-
-    const thisSFC = this;
-
-    html5QrcodeScanner.render(
-      function (decodedText, decodedResult) {
-        thisSFC.visitCode = decodedText;
-      },
-      function (error) {
-        // handle scan failure, usually better to ignore and keep scanning.
-        console.warn("Code scan error:", error);
-      }
-    );
+    this.reset();
   },
   methods: {
     reset() {
-      this.visitCode = null;
+      // this.scanner.clear();
+      this.patientCode = null;
+
+      // Initialize QR Code Scanner
+      this.scanner = new Html5QrcodeScanner(
+        "divQrCodeScanner",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
+      );
+
+      const me = this;
+
+      this.scanner.render(
+        (decodedText, decodedResult) => {
+          me.patientCode = decodedText;
+        },
+        (error) => {
+          // handle scan failure, usually better to ignore and keep scanning.
+          console.warn("Code scan error:", error);
+        }
+      );
     },
   },
 });

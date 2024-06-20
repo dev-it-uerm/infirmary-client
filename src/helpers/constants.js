@@ -84,6 +84,13 @@ const navMenuAPEPxRegistration = {
   icon: "fa-solid fa-person-circle-plus",
 };
 
+const navMenuRegistration = {
+  code: "APE_REGISTRATION",
+  name: "Registration",
+  url: "/annual-physical-exam/registration",
+  icon: "fa-solid fa-list-check",
+};
+
 // const navMenuAPEVisitAppointmentBulk = {
 //   code: "APE_VISIT_APPOINTMENT_BULK",
 //   name: "Visit Appointment",
@@ -134,6 +141,7 @@ export const navMenus = [
     url: "/annual-physical-exam",
     icon: "fa-solid fa-heart-pulse",
     children: [
+      navMenuRegistration,
       navMenuAPEPxRegistration,
       // {
       //   code: "VISIT_APPOINTMENT_LINK",

@@ -105,3 +105,25 @@ export const addPatient = async (context, payload) => {
     context
   );
 };
+
+export const registerPatient = async (context, payload) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/register-and-schedule`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
+    context
+  );
+};
+
+export const register = async (context, payload) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/register`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
+    context
+  );
+};

@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center q-pa-md">
     <div class="column" style="gap: 16px; width: 500px">
-      <PageHeader text="COMPLETE EXAM" icon="fa-solid fa-list-check" />
+      <PageHeader text="REGISTRATION" icon="fa-solid fa-list-check" />
       <CardComponent>
         <template v-slot:body>
           <MessageBanner v-if="forbidden" :success="false">
@@ -10,37 +10,44 @@
             </template>
           </MessageBanner>
           <div>
-            <!-- <ReminderCard v-if="exam" :exitable="false" class="q-mb-md">
-              <template v-slot:body>
-                <div v-if="qrCodeMode">
-                  Scan the <strong>Visit QR Code</strong> to mark the patient as
-                  DONE in the
-                  <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
-                </div>
-                <div v-else>
-                  Enter the <strong>Visit Reference Number</strong> to mark the
-                  patient as DONE in the
-                  <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
-                </div>
-              </template>
-            </ReminderCard> -->
-            <q-select
-              v-if="!forbidden"
-              :disable="loading"
-              outlined
-              stack-label
-              :options="exams"
-              option-value="code"
-              option-label="name"
-              label="Examination"
-              v-model="exam"
-              hint=""
-            />
+            <div
+              class="row justify-center q-mb-md q-pa-sm"
+              style="border: 1px solid rgba(0, 0, 0, 0.15)"
+            >
+              <q-btn
+                unelevated
+                label="FACULTY"
+                :color="registrationMode === 'FAC' ? 'primary' : 'transparent'"
+                :class="
+                  registrationMode === 'FAC' ? 'text-white' : 'text-black'
+                "
+                @click="() => (registrationMode = 'FAC')"
+              />
+              <q-btn
+                unelevated
+                label="STUDENT"
+                :color="registrationMode === 'STU' ? 'primary' : 'transparent'"
+                :class="
+                  registrationMode === 'STU' ? 'text-white' : 'text-black'
+                "
+                @click="() => (registrationMode = 'STU')"
+              />
+              <q-btn
+                unelevated
+                label="EMPLOYEE"
+                :color="registrationMode === 'EMP' ? 'primary' : 'transparent'"
+                :class="
+                  registrationMode === 'EMP' ? 'text-white' : 'text-black'
+                "
+                @click="() => (registrationMode = 'EMP')"
+              />
+            </div>
+            {{ patientCode }}
             <VisitCodeScanner
               v-show="!forbidden"
-              ref="visitCodeScanner"
+              ref="patientCodeScanner"
               :loading="loading"
-              @visitCodeChanged="(val) => (visitCode = val)"
+              @patientCodeChanged="(val) => (patientCode = val)"
               @inputModeChanged="(val) => (inputMode = val)"
             />
           </div>
@@ -61,7 +68,7 @@
                 <template v-for="(entry, idx) in recentEntries" :key="idx">
                   <q-item>
                     <q-item-section>
-                      <q-item-label>{{ entry.visitCode }}</q-item-label>
+                      <q-item-label>{{ entry.patientCode }}</q-item-label>
                       <q-item-label caption>{{ entry.message }}</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
@@ -96,7 +103,7 @@
           >
             <q-spinner-dots size="lg" />
           </div>
-          <div v-else class="fit column">
+          <!-- <div v-else class="fit column">
             <template v-if="patient && visit && phase">
               <span class="text-primary text-weight-medium q-mb-md"
                 >LAST SCAN:</span
@@ -183,7 +190,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </template>
       </CardComponent>
     </div>
@@ -208,7 +215,7 @@ import {
 } from "src/helpers/constants.js";
 
 export default defineComponent({
-  name: "CompleteExam",
+  name: "RegistrationPage",
   components: {
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
@@ -239,17 +246,13 @@ export default defineComponent({
   },
   data() {
     return {
-      // recentEntries: [],
-      inputMode: null,
       forbidden: false,
-      exams: [],
-      exam: null,
-      loading: false,
-      visitCode: null,
 
-      patient: null,
-      visit: null,
-      phase: null,
+      registrationMode: "STU",
+      inputMode: null,
+
+      loading: false,
+      patientCode: null,
     };
   },
   computed: {
@@ -260,10 +263,10 @@ export default defineComponent({
       return this.inputMode === "QR";
     },
     value() {
-      if (this.exam && this.visitCode) {
+      if (this.registrationMode && this.patientCode) {
         return {
-          visitCode: this.visitCode,
-          examCode: this.exam.code,
+          registrationMode: this.registrationMode,
+          patientCode: this.patientCode,
         };
       }
 
@@ -273,38 +276,33 @@ export default defineComponent({
   watch: {
     value(val) {
       if (val) {
-        this.changeVisitPhase(val.visitCode, val.examCode);
+        this.register(val.registrationMode, val.patientCode);
       }
     },
   },
   mounted() {
-    if (!this.user) return;
-
-    const examsHandled = Object.values(this.visitPhasesMap).filter(
-      (v) =>
-        !["REG", "FIN"].includes(v.code) &&
-        (this.user.examsHandled ?? []).includes(v.code)
-    );
-
-    if (examsHandled.length === 0) {
-      this.forbidden = true;
-      return;
-    }
-
-    this.exams = examsHandled;
-    this.exam = examsHandled[0];
+    // if (!this.user) return;
+    // const examsHandled = Object.values(this.visitPhasesMap).filter(
+    //   (v) =>
+    //     !["REG", "FIN"].includes(v.code) &&
+    //     (this.user.examsHandled ?? []).includes(v.code)
+    // );
+    // if (examsHandled.length === 0) {
+    //   this.forbidden = true;
+    //   return;
+    // }
   },
   methods: {
-    async changeVisitPhase(visitCode, examCode) {
+    async register(registrationMode, patientCode) {
       let success = true;
-      let message = `Patient has been marked as done in the ${examCode} exam.`;
+      let message = `Patient has been registered.`;
 
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("ape/completeExam", {
-        visitCode,
-        examCode,
+      const response = await this.$store.dispatch("ape/register", {
+        registrationMode,
+        patientCode,
       });
 
       if (response.error) {
@@ -314,20 +312,7 @@ export default defineComponent({
 
       showMessage(this.$q, success, message);
 
-      // MAX 10 ITEMS
-      // if (this.recentEntries.length === 10) this.recentEntries.pop();
-
-      // this.recentEntries.unshift({
-      //   success,
-      //   visitCode,
-      //   message,
-      // });
-
-      this.patient = response.body.patient;
-      this.visit = response.body.visit;
-      this.phase = response.body.phase;
-
-      this.$refs.visitCodeScanner.reset();
+      this.$refs.patientCodeScanner.reset();
       this.loading = false;
     },
   },

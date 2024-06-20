@@ -12,8 +12,8 @@
       <CardComponent>
         <template v-slot:body>
           <VisitCodeScanner
-            class="full-width"
             ref="visitCodeScanner"
+            class="full-width"
             :loading="loading"
             @visitCodeChanged="(val) => (visitCode = val)"
             @inputModeChanged="(val) => (inputMode = val)"

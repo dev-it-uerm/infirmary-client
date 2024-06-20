@@ -5,7 +5,7 @@
       style="gap: 16px"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <PageHeader text="ADD PATIENT" icon="fa-solid fa-user" />
+      <PageHeader text="REGISTER PATIENT" icon="fa-solid fa-user" />
       <CardComponent>
         <template v-slot:body>
           <q-form
@@ -260,7 +260,7 @@
     </div>
     <ConfirmationDialog
       v-if="yesNoDialogVisible"
-      question="Are you sure you want to add/update this user?"
+      question="Are you sure you want to register this patient?"
       @cancel="(evt) => (yesNoDialogVisible = false)"
       @ok="save"
     />
@@ -387,7 +387,7 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("ape/addPatient", {
+      const response = await this.$store.dispatch("app/registerPatient", {
         campusCode: this.campusCode,
         affiliationCode: this.affiliationCode,
         identificationCode: this.code,
@@ -411,14 +411,14 @@ export default defineComponent({
         showMessage(
           this.$q,
           false,
-          response.body ?? "Unable to save patient. Please try again."
+          response.body ?? "Unable to register patient. Please try again."
         );
 
         this.loading = false;
         return;
       }
 
-      showMessage(this.$q, true, "Patient has been saved successfully.");
+      showMessage(this.$q, true, "Patient has been registered.");
       this.loading = false;
       this.$refs.qForm.reset();
     },

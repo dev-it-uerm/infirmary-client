@@ -79,17 +79,17 @@ export const app = {
 
 const navMenuAPEPxRegistration = {
   code: "APE_PATIENT_REGISTRATION",
-  name: "Add Patient",
+  name: "Register Patient",
   url: "/annual-physical-exam/patient-registration",
   icon: "fa-solid fa-person-circle-plus",
 };
 
-const navMenuAPEVisitAppointmentBulk = {
-  code: "APE_VISIT_APPOINTMENT_BULK",
-  name: "Visit Appointment",
-  url: "/annual-physical-exam/visit-appointment-bulk",
-  icon: "fa-solid fa-calendar-days",
-};
+// const navMenuAPEVisitAppointmentBulk = {
+//   code: "APE_VISIT_APPOINTMENT_BULK",
+//   name: "Visit Appointment",
+//   url: "/annual-physical-exam/visit-appointment-bulk",
+//   icon: "fa-solid fa-calendar-days",
+// };
 
 const navMenuAPEVisits = {
   code: "APE_VISITS",
@@ -141,7 +141,7 @@ export const navMenus = [
       //   url: "/visit-appointment-link",
       //   icon: "fa-regular fa-id-card",
       // },
-      navMenuAPEVisitAppointmentBulk,
+      // navMenuAPEVisitAppointmentBulk,
       navMenuAPEVisits,
       navMenuAPEVisitTracker,
       navMenuAPECompleteExam,

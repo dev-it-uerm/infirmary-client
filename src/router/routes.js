@@ -66,11 +66,11 @@ const routes = [
         path: "/annual-physical-exam/visit-appointment",
         component: () => import("pages/ape/VisitAppointment.vue"),
       },
-      {
-        name: "APE_VISIT_APPOINTMENT_BULK",
-        path: "/annual-physical-exam/visit-appointment-bulk",
-        component: () => import("pages/ape/VisitAppointmentBulk.vue"),
-      },
+      // {
+      //   name: "APE_VISIT_APPOINTMENT_BULK",
+      //   path: "/annual-physical-exam/visit-appointment-bulk",
+      //   component: () => import("pages/ape/VisitAppointmentBulk.vue"),
+      // },
       {
         name: "APE_COMPLETE_EXAM",
         path: "/annual-physical-exam/complete-exam",

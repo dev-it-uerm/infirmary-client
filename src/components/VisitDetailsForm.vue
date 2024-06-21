@@ -76,7 +76,16 @@
           />
         </div>
         <q-separator />
-        <div class="row q-pa-lg justify-end">
+        <div
+          class="row q-pa-lg"
+          :class="isExamTab ? 'justify-between' : 'justify-end'"
+          style="gap: 12px"
+        >
+          <q-checkbox
+            v-if="isExamTab"
+            v-model="markAsCompletedOnSave"
+            label="Mark As Completed On Save"
+          />
           <q-btn
             unelevated
             class="text-white bg-primary"
@@ -99,6 +108,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
+import { exams } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitDetailsForm",
@@ -133,6 +143,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ["busy", "ready"],
   setup() {
     return {
       generateRules(required) {
@@ -550,8 +561,31 @@ export default defineComponent({
     return {
       loading: false,
       value: {},
+      markAsCompletedOnSave: null,
       confDialogVisible: false,
     };
+  },
+  computed: {
+    isExamTab() {
+      return exams.some((e) => e.code === this.tab.code);
+    },
+  },
+  watch: {
+    tab(val) {
+      this.markAsCompletedOnSave = null;
+    },
+    isExamTab: {
+      handler(val) {
+        if (val) this.markAsCompletedOnSave = true;
+      },
+      immediate: true,
+    },
+    loading: {
+      handler(val) {
+        this.$emit(val ? "busy" : "ready");
+      },
+      immediate: true,
+    },
   },
   mounted() {
     this.value = {
@@ -642,12 +676,18 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("ape/saveDetails", {
+      const payload = {
         visitId: this.visitId,
         patientId: this.patientId,
         tabCode: this.tab.code,
         details: this.formatValue(this.value),
-      });
+      };
+
+      if (this.isExamTab && this.markAsCompletedOnSave) {
+        payload.markAsCompletedOnSave = true;
+      }
+
+      const response = await this.$store.dispatch("ape/saveDetails", payload);
 
       if (response.error) {
         showMessage(this.$q, false, response.body);

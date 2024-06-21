@@ -127,3 +127,25 @@ export const register = async (context, payload) => {
     context
   );
 };
+
+export const getVisitExams = async (context, visitId) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/visit-exams/${visitId}`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getVisitsWithXray = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/visit-w-xray`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};

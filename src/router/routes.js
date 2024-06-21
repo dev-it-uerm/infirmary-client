@@ -48,47 +48,52 @@ const routes = [
       // UE ANNUAL DIAGNOSTIC EXAM
       {
         name: "APE_REGISTRATION",
-        path: "/annual-physical-exam/registration",
+        path: "/ape/registration",
         component: () => import("pages/ape/Registration.vue"),
       },
-      {
-        name: "APE_PATIENT_REGISTRATION",
-        path: "/annual-physical-exam/patient-registration",
-        component: () => import("pages/ape/PatientRegistration.vue"),
-      },
-      {
-        name: "APE_VISITS",
-        path: "/annual-physical-exam/visits",
-        component: () => import("pages/ape/Visits.vue"),
-      },
-      {
-        name: "APE_VISIT_APPOINTMENT_LINK",
-        path: "/annual-physical-exam/visit-appointment-link",
-        component: () => import("pages/ape/VisitAppointmentLink.vue"),
-      },
-      {
-        name: "APE_VISIT_APPOINTMENT",
-        path: "/annual-physical-exam/visit-appointment",
-        component: () => import("pages/ape/VisitAppointment.vue"),
-      },
       // {
-      //   name: "APE_VISIT_APPOINTMENT_BULK",
-      //   path: "/annual-physical-exam/visit-appointment-bulk",
-      //   component: () => import("pages/ape/VisitAppointmentBulk.vue"),
+      //   name: "APE_PATIENT_REGISTRATION",
+      //   path: "/ape/patient-registration",
+      //   component: () => import("pages/ape/PatientRegistration.vue"),
       // },
       {
-        name: "APE_COMPLETE_EXAM",
-        path: "/annual-physical-exam/complete-exam",
-        component: () => import("pages/ape/CompleteExam.vue"),
+        name: "APE_VISITS",
+        path: "/ape/visits",
+        component: () => import("pages/ape/Visits.vue"),
       },
+      // {
+      //   name: "APE_VISIT_APPOINTMENT_LINK",
+      //   path: "/ape/visit-appointment-link",
+      //   component: () => import("pages/ape/VisitAppointmentLink.vue"),
+      // },
+      // {
+      //   name: "APE_VISIT_APPOINTMENT",
+      //   path: "/ape/visit-appointment",
+      //   component: () => import("pages/ape/VisitAppointment.vue"),
+      // },
+      // {
+      //   name: "APE_VISIT_APPOINTMENT_BULK",
+      //   path: "/ape/visit-appointment-bulk",
+      //   component: () => import("pages/ape/VisitAppointmentBulk.vue"),
+      // },
+      // {
+      //   name: "APE_COMPLETE_EXAM",
+      //   path: "/ape/complete-exam",
+      //   component: () => import("pages/ape/CompleteExam.vue"),
+      // },
       {
         name: "APE_VISIT_TRACKER",
-        path: "/annual-physical-exam/track-visit",
+        path: "/ape/track-visit",
         component: () => import("pages/ape/VisitTracker.vue"),
       },
       {
+        name: "APE_XRAY_ENCODE_BULK",
+        path: "/ape/xray-encode-bulk",
+        component: () => import("pages/ape/XrayEncodeBulk.vue"),
+      },
+      {
         name: "APE_ANALYTICS",
-        path: "/annual-physical-exam/analytics",
+        path: "/ape/analytics",
         component: () => import("pages/ComingSoon.vue"),
       },
       // UERM DIAGNOSTIC EXAM

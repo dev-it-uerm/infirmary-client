@@ -156,7 +156,7 @@
                   <div>
                     <span class="text-grey-7">Exam:</span>
                     <span class="q-ml-sm">{{
-                      visitPhasesMap[phase.phaseCode].name
+                      examsMap[phase.phaseCode].name
                     }}</span>
                   </div>
                   <div>
@@ -200,7 +200,7 @@ import {
   formatDate,
 } from "src/helpers/util.js";
 import {
-  visitPhasesMap,
+  examsMap,
   affiliationsMap,
   campusesMap,
   collegesMap,
@@ -230,7 +230,7 @@ export default defineComponent({
     return {
       formatName,
       formatDate,
-      visitPhasesMap,
+      examsMap,
       affiliationsMap,
       campusesMap,
       collegesMap,
@@ -280,7 +280,7 @@ export default defineComponent({
   mounted() {
     if (!this.user) return;
 
-    const examsHandled = Object.values(this.visitPhasesMap).filter(
+    const examsHandled = Object.values(this.examsMap).filter(
       (v) =>
         !["REG", "FIN"].includes(v.code) &&
         (this.user.examsHandled ?? []).includes(v.code)

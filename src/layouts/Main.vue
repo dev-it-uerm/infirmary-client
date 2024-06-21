@@ -213,7 +213,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
-import { navMenus } from "src/helpers/constants.js";
+import { apeNavMenus, diagNavMenus } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "MainLayout",
@@ -231,11 +231,6 @@ export default defineComponent({
     //   import("src/components/TermsAndConditions.vue")
     // ),
   },
-  setup() {
-    return {
-      navMenus,
-    };
-  },
   data() {
     return {
       loading: false,
@@ -251,6 +246,40 @@ export default defineComponent({
     userFullName() {
       if (this.user) return `${this.user.firstName} ${this.user.lastName}`;
       return null;
+    },
+    navMenus() {
+      return [
+        {
+          code: "ANNUAL_PHYSICAL_EXAM",
+          name: "Annual Exam",
+          url: "/annual-physical-exam",
+          icon: "fa-solid fa-heart-pulse",
+          children: apeNavMenus.filter((menu) => {
+            if (
+              !["ADM", "CON", "MED"].includes(this.user.roleCode) &&
+              menu.code === "APE_REGISTRATION"
+            ) {
+              return false;
+            }
+
+            if (
+              !["ADM", "CON", "MED", "RAD"].includes(this.user.roleCode) &&
+              menu.code === "APE_XRAY_ENCODE_BULK"
+            ) {
+              return false;
+            }
+
+            return true;
+          }),
+        },
+        {
+          code: "DIAG_EXAM",
+          name: "Procedure",
+          url: "/diag-exam",
+          icon: "fa-solid fa-flask-vial",
+          children: diagNavMenus,
+        },
+      ];
     },
   },
   watch: {

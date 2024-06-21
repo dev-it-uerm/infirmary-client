@@ -15,7 +15,7 @@
             ref="visitCodeScanner"
             class="full-width"
             :loading="loading"
-            @visitCodeChanged="(val) => (visitCode = val)"
+            @patientCodeChanged="(val) => (patientCode = val)"
             @inputModeChanged="(val) => (inputMode = val)"
           />
         </template>
@@ -88,9 +88,9 @@
             <q-list
               class="full-width"
               separator
-              v-if="phases && phases.length > 0"
+              v-if="exams && exams.length > 0"
             >
-              <template v-for="(phase, idx) in phases" :key="idx">
+              <template v-for="(phase, idx) in exams" :key="idx">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>
@@ -101,7 +101,7 @@
                       }}
                     </q-item-label>
                     <q-item-label>
-                      {{ visitPhasesMap[phase.code].name }}
+                      {{ examsMap[phase.code].name }}
                     </q-item-label>
                   </q-item-section>
 
@@ -144,7 +144,7 @@ import {
 } from "src/helpers/util.js";
 
 import {
-  visitPhasesMap,
+  examsMap,
   affiliationsMap,
   campusesMap,
   collegesMap,
@@ -166,7 +166,7 @@ export default defineComponent({
   },
   setup() {
     return {
-      visitPhasesMap,
+      examsMap,
       affiliationsMap,
       campusesMap,
       collegesMap,
@@ -180,8 +180,8 @@ export default defineComponent({
       // recentEntries: [],
       loading: false,
       inputMode: null,
-      visitCode: null,
-      phases: [],
+      patientCode: null,
+      exams: [],
 
       patient: null,
       visit: null,
@@ -193,17 +193,17 @@ export default defineComponent({
     }),
   },
   watch: {
-    visitCode(val) {
+    patientCode(val) {
       if (val) this.track(val);
     },
   },
   methods: {
-    async track(visitCode) {
+    async track(patientCode) {
       this.loading = true;
       this.patient = null;
       this.visit = null;
 
-      const response = await this.$store.dispatch("ape/track", visitCode);
+      const response = await this.$store.dispatch("ape/track", patientCode);
       await delay(2000);
 
       if (response.error) {
@@ -213,38 +213,13 @@ export default defineComponent({
         return;
       }
 
-      const examsToCompleteMap = response.body.examCodesToComplete.reduce(
-        (acc, e) => {
-          acc[e] = null;
-          return acc;
-        },
-        {}
-      );
-
-      const completedPhasesMap = response.body.completedPhases.reduce(
-        (acc, p) => {
-          acc[p.phaseCode] = p.dateTimeCreated;
-          return acc;
-        },
-        {}
-      );
-
       this.patient = response.body.patient;
       this.visit = response.body.visit;
 
-      const phasesMap = {
-        ...examsToCompleteMap,
-        ...completedPhasesMap,
-      };
+      const exams = response.body.exams;
+      sortStringArr(exams, "dateTimeCompleted");
 
-      const phases = Object.entries(phasesMap).map((e) => ({
-        code: e[0],
-        dateTimeCreated: e[1],
-      }));
-
-      sortStringArr(phases, "dateTimeCreated");
-
-      this.phases = phases;
+      this.exams = exams;
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;

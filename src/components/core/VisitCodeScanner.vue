@@ -17,7 +17,7 @@
       />
     </div>
     <div
-      v-if="loading"
+      v-if="inputMode === 'QR' && loading"
       class="full-width flex flex-center"
       style="height: 100px"
     >
@@ -67,6 +67,20 @@ export default defineComponent({
     inputMode: {
       handler(val) {
         this.$emit("inputModeChanged", val);
+
+        if (this.scanner) {
+          if (val === "QR") this.scanner.resume();
+          else this.scanner.pause();
+        }
+      },
+      immediate: true,
+    },
+    loading: {
+      handler(val) {
+        if (this.scanner && this.inputMode === "QR") {
+          if (val) this.scanner.pause();
+          else this.scanner.resume();
+        }
       },
       immediate: true,
     },
@@ -102,7 +116,7 @@ export default defineComponent({
         },
         (error) => {
           // handle scan failure, usually better to ignore and keep scanning.
-          console.warn("Code scan error:", error);
+          // console.warn("Code scan error:", error);
         }
       );
     },

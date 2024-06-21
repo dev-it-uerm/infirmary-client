@@ -9,6 +9,7 @@
         <div class="col text-weight-medium ellipsis">{{ patientName }}</div>
         <q-btn-dropdown
           v-if="tab"
+          :disable="loading"
           class="col-auto"
           unelevated
           split
@@ -49,6 +50,8 @@
             :visitId="visitId"
             :patientId="patientId"
             :tab="tab"
+            @busy="loading = true"
+            @ready="loading = false"
           />
         </template>
       </template>
@@ -59,7 +62,10 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import { examsMap } from "src/helpers/constants.js";
+import {
+  // exams,
+  examsMap,
+} from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitDetails",
@@ -89,34 +95,52 @@ export default defineComponent({
     },
   },
   emits: ["close"],
-  setup() {
-    return { examsMap };
-  },
   data() {
     return {
+      loading: false,
       tab: null,
+      tabs: [
+        {
+          code: "MEDHIST",
+          name: "Medical History",
+          icon: "fa-solid fa-notes-medical",
+        },
+      ],
     };
   },
   computed: {
     ...mapGetters({
       user: "app/user",
     }),
-    tabs() {
-      if (this.examsMap) {
-        return [
-          {
-            code: "MEDHIST",
-            name: "Medical History",
-            icon: "fa-solid fa-notes-medical",
-          },
-          ...Object.values(this.examsMap),
-        ];
-      }
-
-      return [];
-    },
+    // tabs() {
+    //   return [
+    //     {
+    //       code: "MEDHIST",
+    //       name: "Medical History",
+    //       icon: "fa-solid fa-notes-medical",
+    //     },
+    //     ...exams,
+    //   ];
+    // },
   },
-  mounted() {
+  async mounted() {
+    const response = await this.$store.dispatch(
+      "ape/getVisitExams",
+      this.visitId
+    );
+
+    if (!response.error && response.body?.length > 0) {
+      const examsAllowedForPx = response.body.map((e) => {
+        return examsMap[e.examCode];
+      });
+
+      const examsToShow = examsAllowedForPx.filter((e) => {
+        return this.user.examsHandled.includes(e.code);
+      });
+
+      this.tabs = [...this.tabs, ...examsToShow];
+    }
+
     this.tab = this.tabs[0];
   },
 });

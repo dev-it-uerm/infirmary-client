@@ -12,7 +12,7 @@
           <div>
             <div
               class="row justify-center q-mb-md q-pa-sm"
-              style="border: 1px solid rgba(0, 0, 0, 0.15)"
+              style="border: 1px solid rgba(0, 0, 0, 0.15); gap: 4px"
             >
               <q-btn
                 unelevated
@@ -163,7 +163,7 @@
                   <div>
                     <span class="text-grey-7">Exam:</span>
                     <span class="q-ml-sm">{{
-                      visitPhasesMap[phase.phaseCode].name
+                      examsMap[phase.phaseCode].name
                     }}</span>
                   </div>
                   <div>
@@ -207,7 +207,7 @@ import {
   formatDate,
 } from "src/helpers/util.js";
 import {
-  visitPhasesMap,
+  examsMap,
   affiliationsMap,
   campusesMap,
   collegesMap,
@@ -237,7 +237,7 @@ export default defineComponent({
     return {
       formatName,
       formatDate,
-      visitPhasesMap,
+      examsMap,
       affiliationsMap,
       campusesMap,
       collegesMap,
@@ -282,7 +282,7 @@ export default defineComponent({
   },
   mounted() {
     // if (!this.user) return;
-    // const examsHandled = Object.values(this.visitPhasesMap).filter(
+    // const examsHandled = Object.values(this.examsMap).filter(
     //   (v) =>
     //     !["REG", "FIN"].includes(v.code) &&
     //     (this.user.examsHandled ?? []).includes(v.code)

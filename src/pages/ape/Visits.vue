@@ -12,42 +12,76 @@
       <CardComponent>
         <template v-slot:body>
           <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
-          <div
-            class="row item-center"
-            :style="$q.screen.lt.md ? {} : { gap: '16px' }"
-          >
-            <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
-            <q-select
-              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-              :dense="$q.screen.gt.sm"
-              :disable="loading"
-              stack-label
-              outlined
-              emit-value
-              map-options
-              option-label="name"
-              option-value="code"
-              :options="campuses"
-              label="Campus"
-              hint=""
-              v-model="filters.patientCampusCode"
-            />
-            <q-select
-              :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-              :dense="$q.screen.gt.sm"
-              :disable="loading"
-              stack-label
-              outlined
-              emit-value
-              map-options
-              option-label="name"
-              option-value="code"
-              :options="affiliations"
-              label="Affiliation"
-              hint=""
-              v-model="filters.patientAffiliationCode"
-            />
-            <template
+          <q-form @submit="getVisits">
+            <div
+              class="row item-center"
+              :style="$q.screen.lt.md ? {} : { gap: '16px' }"
+            >
+              <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
+                :dense="$q.screen.gt.sm"
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                :options="[
+                  { value: null, label: 'All' },
+                  { value: 'PENDING', label: 'Pending' },
+                  { value: 'COMPLETED', label: 'Completed' },
+                ]"
+                label="Status"
+                hint=""
+                v-model="filters.status"
+              />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
+                :dense="$q.screen.gt.sm"
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="campuses"
+                label="Campus"
+                hint=""
+                v-model="filters.patientCampusCode"
+              />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
+                :dense="$q.screen.gt.sm"
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="affiliations"
+                label="Affiliation"
+                hint=""
+                v-model="filters.patientAffiliationCode"
+              />
+              <q-input
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :style="{ minWidth: $q.screen.lt.md ? '100%' : '100px' }"
+                :dense="$q.screen.gt.sm"
+                :disable="loading"
+                debounce="750"
+                stack-label
+                outlined
+                label="Year"
+                hint=""
+                :rules="[requiredRule, yearRule]"
+                v-model="filters.year"
+              />
+              <!-- <template
               v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
             >
               <q-input
@@ -92,8 +126,8 @@
                 v-model="filters.patientYearLevel"
                 hint=""
               />
-            </template>
-            <DateRange
+            </template> -->
+              <!-- <DateRange
               :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
               :dense="$q.screen.gt.sm"
               :disable="loading"
@@ -104,8 +138,8 @@
               hint=""
               :initialValue="filters.visitDateRange"
               @valueChanged="(val) => (filters.visitDateRange = val)"
-            />
-            <q-input
+            /> -->
+              <!-- <q-input
               :class="$q.screen.lt.md ? 'col-12' : 'col'"
               :dense="$q.screen.gt.sm"
               :disable="loading"
@@ -115,24 +149,36 @@
               label="Patient Name"
               hint=""
               v-model="filters.patientName"
-            />
-            <div
-              class="row items-start justify-end"
-              :class="$q.screen.lt.md ? 'full-width' : ''"
-            >
-              <q-btn
-                style="height: 40px"
-                color="primary"
-                class="q-px-md q-py-xs"
+            /> -->
+              <q-input
+                :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                :dense="$q.screen.gt.sm"
                 :disable="loading"
-                :loading="loading"
-                unelevated
+                debounce="750"
                 stack-label
-                label="GO"
-                @click="getVisits"
+                outlined
+                label="Employee/Student Number"
+                hint=""
+                v-model="filters.identificationCode"
               />
+              <div
+                class="row items-start justify-end"
+                :class="$q.screen.lt.md ? 'full-width' : ''"
+              >
+                <q-btn
+                  style="height: 40px"
+                  color="primary"
+                  class="q-px-md q-py-xs"
+                  :disable="loading"
+                  :loading="loading"
+                  unelevated
+                  stack-label
+                  label="GO"
+                  type="submit"
+                />
+              </div>
             </div>
-          </div>
+          </q-form>
           <div>
             <q-badge
               color="accent"
@@ -187,7 +233,10 @@
                       <q-item-label overline class="q-mb-sm">{{
                         item.patientIdentificationCode
                       }}</q-item-label>
-                      <q-item-label class="text-weight-medium text-uppercase">
+                      <q-item-label
+                        class="text-weight-medium text-uppercase"
+                        style="gap: 8px"
+                      >
                         {{
                           formatName(
                             item.patientFirstName,
@@ -198,7 +247,18 @@
                         }}
                       </q-item-label>
                       <q-item-label caption>
-                        <div class="row" style="gap: 6px">
+                        <div class="row items-center" style="gap: 6px">
+                          <q-icon
+                            size="xs"
+                            :color="
+                              item.patientGender === 'M' ? 'blue-4' : 'pink-4'
+                            "
+                            :name="
+                              item.patientGender === 'M'
+                                ? 'fa-solid fa-mars'
+                                : 'fa-solid fa-venus'
+                            "
+                          />
                           <q-badge
                             v-if="item.patientCampusCode"
                             class="bg-grey"
@@ -216,20 +276,25 @@
                         </div>
                       </q-item-label>
                     </q-item-section>
-                    <q-item-section v-if="visitPhasesMap" side>
+                    <q-item-section v-if="examsMap" side>
                       <q-btn
                         dense
                         style="padding-left: 10px; padding-right: 10px"
                         class="q-mb-sm bg-white"
                         unelevated
                         outline
+                        :color="
+                          item.dateTimeCompleted ? 'positive' : 'text-grey-8'
+                        "
                         @click.stop="
                           () => {
                             currentVisit = item;
                             statusHistoryVisible = true;
                           }
                         "
-                        :label="getLatestPhase(item.phases).name"
+                        :label="
+                          item.dateTimeCompleted ? 'COMPLETED' : 'NOT COMPLETED'
+                        "
                       />
                       <q-btn
                         dense
@@ -257,34 +322,57 @@
                     >
                       <template v-for="column of columns">
                         <q-td
-                          v-if="column.name === 'phases'"
+                          v-if="column.name === 'dateTimeCompleted'"
                           class="row justify-center"
                         >
-                          <template
+                          <!-- <template
                             v-for="latestPhase in [
-                              getLatestPhase(props.row.phases),
+                              getLastExamCompleted(props.row.exams),
                             ]"
-                          >
-                            <q-btn
-                              dense
-                              style="padding-left: 10px; padding-right: 10px"
-                              :class="phaseClassesMap[latestPhase.code]"
-                              unelevated
-                              outline
-                              @click.stop="
-                                () => {
-                                  currentVisit = props.row;
-                                  statusHistoryVisible = true;
-                                }
-                              "
-                              :label="latestPhase.name.toUpperCase()"
-                            />
-                          </template>
+                          > -->
+                          <!-- :label="latestPhase.name.toUpperCase()" -->
+                          <!-- :class="phaseClassesMap[latestPhase.code]" -->
+                          <q-btn
+                            dense
+                            style="padding-left: 10px; padding-right: 10px"
+                            :class="
+                              props.row.dateTimeCompleted
+                                ? 'text-positive'
+                                : 'text-grey-8'
+                            "
+                            unelevated
+                            outline
+                            @click.stop="
+                              () => {
+                                currentVisit = props.row;
+                                statusHistoryVisible = true;
+                              }
+                            "
+                            :label="
+                              props.row.dateTimeCompleted
+                                ? 'COMPLETED'
+                                : 'NOT COMPLETED'
+                            "
+                          />
+                          <!-- </template> -->
                         </q-td>
                         <q-td v-else-if="column.name === 'dateTimeCreated'">
                           <span class="text-grey-7">
                             {{ formatDate(props.row.dateTimeCreated) }}
                           </span>
+                        </q-td>
+                        <q-td v-else-if="column.name === 'visitDetails'">
+                          <div class="row justify-center">
+                            <q-btn
+                              dense
+                              style="padding-left: 10px; padding-right: 10px"
+                              unelevated
+                              outline
+                              color="primary"
+                              label="VIEW"
+                              @click.stop="showPxVisitInfo(props.row)"
+                            />
+                          </div>
                         </q-td>
                         <q-td v-else-if="column.name === 'action'">
                           <div class="row justify-center">
@@ -293,7 +381,7 @@
                               style="padding-left: 10px; padding-right: 10px"
                               unelevated
                               color="primary"
-                              label="DETAILS"
+                              label="PRINT"
                               @click.stop="showPxVisitInfo(props.row)"
                             />
                           </div>
@@ -363,7 +451,11 @@
                           }}
                         </q-td>
                         <q-td v-else class="text-center">
-                          {{ props.row[column.name] }}
+                          {{
+                            column.format
+                              ? column.format(props.row[column.name])
+                              : props.row[column.name]
+                          }}
                         </q-td>
                       </template>
                     </q-tr>
@@ -392,14 +484,14 @@
             bordered
             separator="cell"
             :rows-per-page-options="[0]"
-            :rows="currentVisit.phases"
+            :rows="currentVisit.exams"
             :columns="[
               {
-                name: 'phaseCode',
-                label: 'Phase',
-                field: 'phaseCode',
+                name: 'examCode',
+                label: 'Exam',
+                field: 'examCode',
                 align: 'left',
-                format: getPhaseName,
+                format: getExamName,
               },
               {
                 name: 'createdBy',
@@ -408,10 +500,13 @@
                 align: 'left',
               },
               {
-                name: 'dateTimeCreated',
-                label: 'Date & Time Added',
-                field: 'dateTimeCreated',
-                format: formatDate,
+                name: 'dateTimeCompleted',
+                label: 'Date & Time Completed',
+                field: 'dateTimeCompleted',
+                format: (val) => {
+                  if (!val) return '-';
+                  return formatDate(val);
+                },
                 align: 'left',
               },
             ]"
@@ -454,8 +549,8 @@ import {
   affiliations,
   campusesMap,
   campuses,
-  visitPhasesMap,
-  visitPhases,
+  examsMap,
+  exams,
   collegesMap,
   colleges,
   yearLevelsMap,
@@ -498,25 +593,26 @@ export default defineComponent({
       affiliationsMap,
       campuses,
       campusesMap,
-      visitPhases,
-      visitPhasesMap,
+      exams,
+      examsMap,
       collegesMap,
       colleges,
       yearLevelsMap,
       yearLevels,
       showMessage,
       formatDate,
-      yearRule: inputRules.year,
       formatName,
-      phaseClassesMap: {
-        REG: "text-grey-8",
-        PE: "text-grey-8",
-        LABCBC: "text-grey-8",
-        LABURI: "text-grey-8",
-        LABFCL: "text-grey-8",
-        RADXRCHST: "text-grey-8",
-        FIN: "text-positive",
-      },
+      requiredRule: inputRules.required,
+      yearRule: inputRules.year,
+      // phaseClassesMap: {
+      //   REG: "text-grey-8",
+      //   PE: "text-grey-8",
+      //   LABCBC: "text-grey-8",
+      //   LABURI: "text-grey-8",
+      //   LABFCL: "text-grey-8",
+      //   RADXRCHST: "text-grey-8",
+      //   FIN: "text-positive",
+      // },
       columns: [
         {
           name: "dateTimeCreated",
@@ -573,9 +669,15 @@ export default defineComponent({
           align: "center",
         },
         {
-          name: "phases",
-          field: "phases",
-          label: "LAST EXAM COMPLETED",
+          name: "dateTimeCompleted",
+          field: "dateTimeCompleted",
+          label: "STATUS",
+          align: "center",
+        },
+        {
+          name: "visitDetails",
+          label: "DETAILS",
+          field: "visitDetails",
           align: "center",
         },
         {
@@ -592,20 +694,24 @@ export default defineComponent({
   data() {
     return {
       filters: {
-        visitDateRange: {
-          from: jsDateToISOString(subtractDay(new Date(), 7), true).replace(
-            /-/g,
-            "/"
-          ),
-          to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
-        },
+        status: null,
+        year: new Date().getFullYear(),
+        // visitDateRange: {
+        //   from: jsDateToISOString(subtractDay(new Date(), 7), true).replace(
+        //     /-/g,
+        //     "/"
+        //   ),
+        //   to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
+        // },
+
         patientCampusCode: campusesMap.UERM.code,
         patientAffiliationCode: affiliationsMap.STU.code,
-        patientName: null,
+        // patientName: null,
+        identificationCode: "",
 
-        patientCollegeCode: null,
-        patientSchoolYear: null,
-        patientYearLevel: null,
+        // patientCollegeCode: null,
+        // patientSchoolYear: null,
+        // patientYearLevel: null,
       },
       loading: false,
       visits: [],
@@ -622,38 +728,39 @@ export default defineComponent({
     }),
   },
   watch: {
-    "filters.patientAffiliationCode": {
-      handler(val) {
-        if (val === affiliationsMap.STU.code) {
-          this.filters.patientCollegeCode = collegesMap.MED.code;
-          this.filters.patientYearLevel = yearLevelsMap.FIRST.code;
-          this.filters.patientSchoolYear = new Date().getFullYear();
-          return;
-        }
-
-        this.filters.patientCollegeCode = null;
-        this.filters.patientYearLevel = null;
-        this.filters.patientSchoolYear = null;
-      },
-      immediate: true,
-    },
+    // "filters.patientAffiliationCode": {
+    //   handler(val) {
+    //     if (val === affiliationsMap.STU.code) {
+    //       this.filters.patientCollegeCode = collegesMap.MED.code;
+    //       this.filters.patientYearLevel = yearLevelsMap.FIRST.code;
+    //       this.filters.patientSchoolYear = new Date().getFullYear();
+    //       return;
+    //     }
+    //     this.filters.patientCollegeCode = null;
+    //     this.filters.patientYearLevel = null;
+    //     this.filters.patientSchoolYear = null;
+    //   },
+    //   immediate: true,
+    // },
   },
   mounted() {
     if (this.user) this.getVisits();
   },
   methods: {
-    getPhaseName(phaseCode) {
-      return this.visitPhasesMap[phaseCode].name;
+    getExamName(code) {
+      return this.examsMap[code].name;
     },
-    getLatestPhase(phases) {
-      const latestPhase = phases.reduce((acc, s) => {
-        if (!acc) return s;
-        if (acc.id < s.id) return s;
-      }, null);
+    // getLastExamCompleted(exams) {
+    //   const completedExams = exams.filter((e) => e.dateTimeCompleted);
 
-      if (latestPhase) return this.visitPhasesMap[latestPhase.phaseCode];
-      return { code: "na", name: "N/A" };
-    },
+    //   const latestExam = completedExams.reduce((acc, s) => {
+    //     if (!acc) return s;
+    //     if (acc.id < s.id) return s;
+    //   }, null);
+
+    //   if (latestExam) return this.examsMap[latestExam.examCode];
+    //   return { code: "na", name: "N/A" };
+    // },
     async getVisits() {
       this.loading = true;
 
@@ -672,12 +779,12 @@ export default defineComponent({
       await delay(1000);
 
       const visits = response.body[0];
-      const visitPhases = response.body[1];
+      const visitExams = response.body[1];
 
       this.visits = visits.map((row) => {
         return {
           ...row,
-          phases: visitPhases.filter((s) => s.visitId === row.id),
+          exams: visitExams.filter((s) => s.visitId === row.id),
         };
       });
 

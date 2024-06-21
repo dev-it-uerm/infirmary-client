@@ -26,12 +26,6 @@ export const examsMap = {
   },
 };
 
-export const visitPhasesMap = {
-  REG: { code: "REG", name: "Registered" },
-  ...examsMap,
-  FIN: { code: "FIN", name: "Completed" },
-};
-
 export const campusesMap = {
   MNL: { code: "MNL", name: "Manila" },
   CAL: { code: "CAL", name: "Caloocan" },
@@ -52,6 +46,7 @@ export const yearLevelsMap = {
 };
 
 export const userRolesMap = {
+  ADM: { code: "CON", name: "Physician" },
   ADM: { code: "ADM", name: "Administrator" },
   MED: { code: "MED", name: "Medical Staff" },
   RAD: { code: "RAD", name: "Radiology Staff" },
@@ -69,7 +64,6 @@ export const colleges = Object.values(collegesMap);
 export const yearLevels = Object.values(yearLevelsMap);
 export const affiliations = Object.values(affiliationsMap);
 export const userRoles = Object.values(userRolesMap);
-export const visitPhases = Object.values(visitPhasesMap);
 
 export const app = {
   name: "UERM Infirmary",
@@ -77,52 +71,59 @@ export const app = {
   url: "https://uermhospital.com.ph/apps/infirmary",
 };
 
-const navMenuAPEPxRegistration = {
-  code: "APE_PATIENT_REGISTRATION",
-  name: "Register Patient",
-  url: "/annual-physical-exam/patient-registration",
-  icon: "fa-solid fa-person-circle-plus",
-};
+// const navMenuAPEPxRegistration = {
+//   code: "APE_PATIENT_REGISTRATION",
+//   name: "Register Patient",
+//   url: "/ape/patient-registration",
+//   icon: "fa-solid fa-person-circle-plus",
+// };
 
 const navMenuRegistration = {
   code: "APE_REGISTRATION",
   name: "Registration",
-  url: "/annual-physical-exam/registration",
+  url: "/ape/registration",
   icon: "fa-solid fa-list-check",
 };
 
 // const navMenuAPEVisitAppointmentBulk = {
 //   code: "APE_VISIT_APPOINTMENT_BULK",
 //   name: "Visit Appointment",
-//   url: "/annual-physical-exam/visit-appointment-bulk",
+//   url: "/ape/visit-appointment-bulk",
 //   icon: "fa-solid fa-calendar-days",
 // };
 
 const navMenuAPEVisits = {
   code: "APE_VISITS",
   name: "Visits",
-  url: "/annual-physical-exam/visits",
+  url: "/ape/visits",
   icon: "fa-solid fa-stethoscope",
 };
 
 const navMenuAPEVisitTracker = {
   code: "APE_VISIT_TRACKER",
   name: "Visit Tracker",
-  url: "/annual-physical-exam/track-visit",
+  url: "/ape/track-visit",
   icon: "fa-solid fa-magnifying-glass",
 };
 
-const navMenuAPECompleteExam = {
-  code: "APE_COMPLETE_EXAM",
-  name: "Complete Exam",
-  url: "/annual-physical-exam/complete-exam",
-  icon: "fa-solid fa-user-tag",
+const navMenuAPEXrayEncodeBulk = {
+  code: "APE_XRAY_ENCODE_BULK",
+  name: "X-Ray Batch Encode",
+  url: "/ape/xray-encode-bulk",
+  icon: "fa-solid fa-list-ul",
 };
+
+// const navMenuAPECompleteExam = {
+//   code: "APE_COMPLETE_EXAM",
+//   name: "Complete Exam",
+//   url: "/ape/complete-exam",
+//   icon: "fa-solid fa-user-tag",
+// };
 
 const navMenuAPEAnalytics = {
   code: "APE_ANALYTICS",
   name: "Analytics",
-  url: "/annual-physical-exam/analytics",
+  url: "/ape/analytics",
   icon: "fa-solid fa-chart-pie",
 };
 
@@ -134,33 +135,21 @@ const navMenuPxRegistration = {
   icon: "fa-solid fa-person-circle-plus",
 };
 
-export const navMenus = [
-  {
-    code: "ANNUAL_PHYSICAL_EXAM",
-    name: "Annual Exam",
-    url: "/annual-physical-exam",
-    icon: "fa-solid fa-heart-pulse",
-    children: [
-      navMenuRegistration,
-      navMenuAPEPxRegistration,
-      // {
-      //   code: "VISIT_APPOINTMENT_LINK",
-      //   name: "Visit Appointment",
-      //   url: "/visit-appointment-link",
-      //   icon: "fa-regular fa-id-card",
-      // },
-      // navMenuAPEVisitAppointmentBulk,
-      navMenuAPEVisits,
-      navMenuAPEVisitTracker,
-      navMenuAPECompleteExam,
-      navMenuAPEAnalytics,
-    ],
-  },
-  {
-    code: "DIAG_EXAM",
-    name: "Procedure",
-    url: "/diag-exam",
-    icon: "fa-solid fa-flask-vial",
-    children: [navMenuPxRegistration],
-  },
+export const apeNavMenus = [
+  navMenuRegistration,
+  // navMenuAPEPxRegistration,
+  // {
+  //   code: "VISIT_APPOINTMENT_LINK",
+  //   name: "Visit Appointment",
+  //   url: "/visit-appointment-link",
+  //   icon: "fa-regular fa-id-card",
+  // },
+  // navMenuAPEVisitAppointmentBulk,
+  navMenuAPEVisits,
+  navMenuAPEVisitTracker,
+  // navMenuAPECompleteExam,
+  navMenuAPEXrayEncodeBulk,
+  navMenuAPEAnalytics,
 ];
+
+export const diagNavMenus = [navMenuPxRegistration];

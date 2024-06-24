@@ -48,7 +48,7 @@ import { defineComponent } from "vue";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 export default defineComponent({
-  name: "VisitCodeScanner",
+  name: "QRCodeScanner",
   props: {
     loading: {
       type: Boolean,
@@ -87,38 +87,35 @@ export default defineComponent({
     patientCode: {
       handler(val) {
         const v = val?.replace(/ /g, "");
-        // this.$emit("patientCodeChanged", v && v.length === 22 ? v : null);
         this.$emit("patientCodeChanged", v && v.length > 3 ? v : null);
       },
       immediate: true,
     },
   },
   mounted() {
-    this.reset();
+    // Initialize QR Code Scanner
+    this.scanner = new Html5QrcodeScanner(
+      "divQrCodeScanner",
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      false
+    );
+
+    const me = this;
+
+    this.scanner.render(
+      (decodedText, decodedResult) => {
+        me.patientCode = decodedText;
+      },
+      (error) => {
+        // handle scan failure, usually better to ignore and keep scanning.
+        // console.warn("Code scan error:", error);
+      }
+    );
   },
   methods: {
     reset() {
       // this.scanner.clear();
       this.patientCode = null;
-
-      // Initialize QR Code Scanner
-      this.scanner = new Html5QrcodeScanner(
-        "divQrCodeScanner",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        false
-      );
-
-      const me = this;
-
-      this.scanner.render(
-        (decodedText, decodedResult) => {
-          me.patientCode = decodedText;
-        },
-        (error) => {
-          // handle scan failure, usually better to ignore and keep scanning.
-          // console.warn("Code scan error:", error);
-        }
-      );
     },
   },
 });

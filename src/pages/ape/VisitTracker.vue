@@ -11,7 +11,7 @@
       />
       <CardComponent>
         <template v-slot:body>
-          <VisitCodeScanner
+          <QRCodeScanner
             ref="visitCodeScanner"
             class="full-width"
             :loading="loading"
@@ -157,8 +157,8 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
-    VisitCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/VisitCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(() =>
+      import("src/components/core/QRCodeScanner.vue")
     ),
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")

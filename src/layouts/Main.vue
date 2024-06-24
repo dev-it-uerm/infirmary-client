@@ -122,6 +122,7 @@
             <template v-for="navMenu in navMenus" :key="navMenu.code">
               <q-btn-dropdown
                 v-if="navMenu.children"
+                :disable="loading"
                 unelevated
                 :class="
                   activeMenu === navMenu.code
@@ -251,7 +252,7 @@ export default defineComponent({
       return [
         {
           code: "ANNUAL_PHYSICAL_EXAM",
-          name: "Annual Exam",
+          name: "Annual P.E.",
           url: "/annual-physical-exam",
           icon: "fa-solid fa-heart-pulse",
           children: apeNavMenus.filter((menu) => {

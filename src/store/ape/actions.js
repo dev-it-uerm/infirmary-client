@@ -117,13 +117,24 @@ export const registerPatient = async (context, payload) => {
   );
 };
 
-export const register = async (context, payload) => {
+export const register = async (context, patientCode) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/register`,
+    `${context.rootState.app.apiHost}/ape/register/${patientCode}`,
     null,
     context.rootState.app?.user?.accessToken,
-    payload,
+    null,
+    context
+  );
+};
+
+export const timeInOut = async (context, employeeCode) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/time-in-out/${employeeCode}`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
     context
   );
 };

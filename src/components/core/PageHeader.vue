@@ -1,5 +1,8 @@
 <template>
-  <q-card class="shadow-0 bg-accent full-width q-pa-md">
+  <q-card
+    class="shadow-0 bg-accent full-width q-pa-md"
+    style="border-radius: 0; border: 2px solid rgba(0, 0, 0, 0.1)"
+  >
     <div
       class="row items-center justify-center text-weight-bold text-h6 text-black text-center text-uppercase"
     >

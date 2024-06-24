@@ -17,7 +17,6 @@
       "
     />
     <!-- <q-dialog :model-value="true" persistent> -->
-
     <div
       class="column"
       style="gap: 16px; z-index: 999"
@@ -48,7 +47,6 @@
               </q-banner>
               <q-input
                 outlined
-                v-model="username"
                 maxlength="255"
                 label="Username"
                 :rules="[
@@ -58,6 +56,7 @@
                       : undefined,
                 ]"
                 class="q-mb-xs q-mt-sm"
+                v-model.trim="username"
               >
                 <template v-slot:prepend>
                   <q-icon name="person" />
@@ -120,7 +119,6 @@
             <div class="q-pa-lg">
               <q-input
                 outlined
-                v-model.trim="forgotPasswordUsername"
                 maxlength="255"
                 label="Username or Employee Number"
                 :rules="[
@@ -129,6 +127,7 @@
                       ? 'This field is required.'
                       : undefined,
                 ]"
+                v-model.trim="forgotPasswordUsername"
               >
                 <template v-slot:prepend>
                   <q-icon name="person" />

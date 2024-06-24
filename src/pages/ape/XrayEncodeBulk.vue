@@ -17,7 +17,7 @@
                 <div class="text-primary text-weight-medium q-mb-md">
                   FILTER:
                 </div>
-                <q-form @submit="getPatients">
+                <q-form @submit="getVisits">
                   <div
                     class="row items-center"
                     :style="$q.screen.lt.md ? {} : { gap: '16px' }"
@@ -26,7 +26,7 @@
                       :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
                       :style="{ minWidth: $q.screen.lt.md ? '100%' : '100px' }"
                       :dense="$q.screen.gt.sm"
-                      :disable="loading"
+                      :disable="filtering || saving"
                       debounce="750"
                       stack-label
                       outlined
@@ -83,19 +83,6 @@
                     </div>
                   </div>
                 </q-form>
-                <div>
-                  <!-- Extra div parent is a visual bug workaround -->
-                  <q-badge
-                    color="accent"
-                    class="text-black q-pa-sm"
-                    :class="$q.screen.lt.md ? 'q-mt-md' : ''"
-                  >
-                    <span class="text-weight-bold">
-                      {{ patients.length }}
-                    </span>
-                    <span>&nbsp;item/s found.</span>
-                  </q-badge>
-                </div>
               </div>
               <q-separator spaced />
               <!-- <div v-if="filtering" class="full-width flex flex-center" style="height: 100px">
@@ -109,7 +96,6 @@
                       PATIENT LIST:
                     </div>
                     <div
-                      v-if="$q.screen.lt.md"
                       class="relative-position bg-white"
                       style="
                         overflow-y: auto;
@@ -118,7 +104,7 @@
                       "
                     >
                       <q-virtual-scroll
-                        v-if="patients && patients.length > 0"
+                        v-if="visits && visits.length > 0"
                         style="
                           max-height: 100%;
                           height: auto;
@@ -126,7 +112,7 @@
                           border-left: 1px solid rgba(0, 0, 0, 0.1);
                           border-right: 1px solid rgba(0, 0, 0, 0.1);
                         "
-                        :items="patients"
+                        :items="visits"
                         v-slot="{ item, index }"
                       >
                         <q-item
@@ -136,24 +122,26 @@
                           @click="showPxVisitInfo(item)"
                         >
                           <q-item-section>
-                            <q-item-label caption class="ellipsis">{{
+                            <q-item-label caption class="ellipsis q-mb-sm">{{
                               formatDate(item.dateTimeCreated)
                             }}</q-item-label>
-                            <q-item-label overline class="q-mb-sm">{{
-                              item.patientIdentificationCode
-                            }}</q-item-label>
                             <q-item-label
-                              class="text-weight-medium text-uppercase"
+                              class="row items-center"
                               style="gap: 8px"
                             >
-                              {{
-                                formatName(
-                                  item.patientFirstName,
-                                  item.patientMiddleName,
-                                  item.patientLastName,
-                                  item.patientExtName
-                                )
-                              }}
+                              <div class="text-weight-medium text-uppercase">
+                                {{
+                                  formatName(
+                                    item.patientFirstName,
+                                    item.patientMiddleName,
+                                    item.patientLastName,
+                                    item.patientExtName
+                                  )
+                                }}
+                              </div>
+                              <div class="text-grey-6">
+                                ({{ item.patientIdentificationCode }})
+                              </div>
                             </q-item-label>
                             <q-item-label caption>
                               <div class="row items-center" style="gap: 6px">
@@ -188,67 +176,47 @@
                               </div>
                             </q-item-label>
                           </q-item-section>
-                          <q-item-section v-if="examsMap" side>
-                            <q-btn
-                              dense
-                              style="padding-left: 10px; padding-right: 10px"
-                              class="q-mb-sm bg-white"
-                              unelevated
-                              outline
-                              :color="
-                                item.dateTimeCompleted
-                                  ? 'positive'
-                                  : 'text-grey-8'
+                          <q-item-section side>
+                            <div v-if="item.loading" class="q-pa-sm">
+                              <q-spinner size="sm" color="primary" />
+                            </div>
+
+                            <q-checkbox
+                              v-if="
+                                item.status == null || item.status.code !== 200
                               "
-                              @click.stop="
-                                () => {
-                                  currentVisit = item;
-                                  statusHistoryVisible = true;
-                                }
-                              "
-                              :label="
-                                item.dateTimeCompleted
-                                  ? 'COMPLETED'
-                                  : 'NOT COMPLETED'
-                              "
+                              :disable="saving"
+                              v-show="!item.loading"
+                              :val="item.id"
+                              v-model="selected"
                             />
-                            <q-btn
-                              dense
-                              style="padding-left: 10px; padding-right: 10px"
-                              unelevated
-                              color="primary"
-                              label="DETAILS"
-                              @click.stop="showPxVisitInfo(item)"
-                            />
+                            <div
+                              v-if="item.status"
+                              :class="
+                                item.status.code === 200
+                                  ? 'text-positive'
+                                  : 'text-negative'
+                              "
+                            >
+                              {{ item.status.name }}
+                            </div>
                           </q-item-section>
                         </q-item>
                         <q-separator />
                       </q-virtual-scroll>
-                      <div
-                        v-else
-                        style="height: 150px"
-                        class="flex flex-center"
-                      >
-                        <NoResult
-                          :bordered="false"
-                          message="No patient found."
-                        />
-                      </div>
+                      <NoResult v-else message="No patient found." />
                     </div>
-
-                    <NoResult v-else message="No student/employee found." />
-                    <div class="row items-start justify-end q-mt-md">
-                      <q-btn
-                        style="height: 40px"
-                        color="primary"
-                        class="q-px-md q-py-xs"
-                        :disable="!selected || selected.length === 0 || saving"
-                        unelevated
-                        stack-label
-                        label="SCHEDULE VISIT"
-                        @click="confirmationDialogVisible = true"
-                      />
-                    </div>
+                  </div>
+                  <div
+                    v-if="selected && selected.length > 0"
+                    class="row full-width justify-end q-mt-md"
+                  >
+                    <q-badge color="accent" class="text-black">
+                      <span class="text-weight-bold">
+                        {{ selected.length }}
+                      </span>
+                      <span>&nbsp;item/s selected</span>
+                    </q-badge>
                   </div>
                 </div>
               </div>
@@ -258,7 +226,32 @@
         <div class="col">
           <CardComponent class="col-6">
             <template v-slot:body>
-              <div style="height: 100px; background: red"></div>
+              <div>
+                <q-form @submit="confirmationDialogVisible = true">
+                  <q-input
+                    stack-label
+                    outlined
+                    type="textarea"
+                    :disable="filtering || saving"
+                    label="Impression"
+                    :rules="[requiredRule]"
+                    v-model="xrayImpression"
+                  >
+                  </q-input>
+                  <div class="row items-start justify-end q-mt-md">
+                    <q-btn
+                      style="height: 40px"
+                      color="primary"
+                      class="q-px-md q-py-xs"
+                      :disable="!selected || selected.length === 0 || saving"
+                      unelevated
+                      stack-label
+                      label="SAVE"
+                      type="submit"
+                    />
+                  </div>
+                </q-form>
+              </div>
             </template>
           </CardComponent>
         </div>
@@ -266,12 +259,12 @@
     </div>
     <ConfirmationDialog
       v-if="confirmationDialogVisible"
-      question="Schedule visit for the selected students/employees?"
+      question="Save X-Ray impression to selected visits?"
       @cancel="(evt) => (confirmationDialogVisible = false)"
       @ok="
         (evt) => {
           confirmationDialogVisible = false;
-          scheduleVisits();
+          saveXrayImpression();
         }
       "
     />
@@ -298,6 +291,8 @@ import {
   colleges,
   yearLevelsMap,
   yearLevels,
+  examsMap,
+  examFieldsMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -369,8 +364,10 @@ export default defineComponent({
 
       filtering: false,
       saving: false,
+
       selected: [],
-      patients: [],
+      visits: [],
+      xrayImpression: "",
 
       confirmationDialogVisible: false,
     };
@@ -381,10 +378,10 @@ export default defineComponent({
     }),
   },
   mounted() {
-    this.getPatients();
+    this.getVisits();
   },
   methods: {
-    async getPatients() {
+    async getVisits() {
       this.filtering = true;
       this.selected = [];
 
@@ -402,7 +399,7 @@ export default defineComponent({
         showMessage(
           this.$q,
           false,
-          "Unable to fetch students/employees. Please try again."
+          "Unable to fetch visits. Please try again."
         );
 
         this.filtering = false;
@@ -411,14 +408,12 @@ export default defineComponent({
 
       await delay(2000);
 
-      this.patients =
+      this.visits =
         response.body && response.body.length > 0
-          ? response.body.map((row, idx) => {
+          ? response.body.map((row) => {
               return {
                 ...row,
-                id: idx,
-                status: { code: null, name: "-" },
-                visitCode: null,
+                status: null,
                 loading: false,
               };
             })
@@ -426,18 +421,26 @@ export default defineComponent({
 
       this.filtering = false;
     },
-    async scheduleVisits() {
+    async saveXrayImpression() {
       this.saving = true;
 
-      for (const row of this.selected) {
-        row.loading = true;
-        row.status = { code: null, name: "-" };
-        row.visitCode = null;
+      const selected = this.visits.filter((v) => this.selected.includes(v.id));
 
-        const response = await this.$store.dispatch(
-          "ape/schedule",
-          sliceObj(row, "id", "status", "visitCode", "loading")
-        );
+      for (const row of selected) {
+        row.loading = true;
+
+        const response = await this.$store.dispatch("ape/saveDetails", {
+          visitId: row.id,
+          patientId: row.patientId,
+          tabCode: examsMap.RADXRCHST.code,
+          details: [
+            {
+              code: examFieldsMap[examsMap.RADXRCHST.code][0].code,
+              value: this.xrayImpression,
+            },
+          ],
+          markAsCompletedOnSave: true,
+        });
 
         await delay(1000);
 
@@ -447,8 +450,7 @@ export default defineComponent({
           continue;
         }
 
-        row.status = { code: 200, name: "Success. Visit details sent." };
-        row.visitCode = response.body.code;
+        row.status = { code: 200, name: "Success." };
         row.loading = false;
       }
 

@@ -36,7 +36,7 @@
               v-model="exam"
               hint=""
             />
-            <VisitCodeScanner
+            <QRCodeScanner
               v-show="!forbidden"
               ref="visitCodeScanner"
               :loading="loading"
@@ -219,8 +219,8 @@ export default defineComponent({
     MessageBanner: defineAsyncComponent(() =>
       import("src/components/core/MessageBanner.vue")
     ),
-    VisitCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/VisitCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(() =>
+      import("src/components/core/QRCodeScanner.vue")
     ),
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")

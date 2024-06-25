@@ -62,11 +62,22 @@ export const track = async (context, visitCode) => {
   );
 };
 
-export const getDetails = async (context, urlQuery) => {
+export const getVisitDetails = async (context, urlQuery) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/visit-details`,
     urlQuery,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getVisitDetailsAll = async (context, visitId) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/visit-details-all/${visitId}`,
+    null,
     context.rootState.app?.user?.accessToken,
     null,
     context

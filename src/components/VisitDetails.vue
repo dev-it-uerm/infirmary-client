@@ -6,7 +6,16 @@
   >
     <template v-slot:title>
       <div class="row items-center justify-between" style="gap: 16px">
-        <div class="col text-weight-medium ellipsis">{{ patientName }}</div>
+        <div class="col text-weight-medium ellipsis">
+          {{
+            formatName(
+              visit.patientFirstName,
+              visit.patientMiddleName,
+              visit.patientLastName,
+              visit.patientExtName
+            )
+          }}
+        </div>
         <q-btn-dropdown
           v-if="tab"
           :disable="loading"
@@ -43,18 +52,15 @@
       </div>
     </template>
     <template v-slot:body>
-      <template v-if="tabs && tab">
-        <template v-for="item in tabs" :key="item.code">
-          <VisitDetailsForm
-            v-if="item.code === tab.code"
-            :visitId="visitId"
-            :patientId="patientId"
-            :tab="tab"
-            @busy="loading = true"
-            @ready="loading = false"
-          />
-        </template>
-      </template>
+      <VisitDetailsForm
+        v-if="tab"
+        :visitId="visit.id"
+        :patientId="visit.patientId"
+        :tab="tab"
+        :visitIsCompleted="Boolean(visit.dateTimeCompleted)"
+        @busy="loading = true"
+        @ready="loading = false"
+      />
     </template>
   </MinimizedDialog>
 </template>
@@ -66,6 +72,8 @@ import {
   // exams,
   examsMap,
 } from "src/helpers/constants.js";
+
+import { formatName } from "src/helpers/util.js";
 
 export default defineComponent({
   name: "VisitDetails",
@@ -81,31 +89,20 @@ export default defineComponent({
     ),
   },
   props: {
-    visitId: {
-      type: Number,
-      required: true,
-    },
-    patientId: {
-      type: Number,
-      required: true,
-    },
-    patientName: {
-      type: String,
+    visit: {
+      type: Object,
       required: true,
     },
   },
   emits: ["close"],
+  setup() {
+    return { formatName };
+  },
   data() {
     return {
       loading: false,
       tab: null,
-      tabs: [
-        {
-          code: "MEDHIST",
-          name: "Medical History",
-          icon: "fa-solid fa-notes-medical",
-        },
-      ],
+      tabs: [],
     };
   },
   computed: {
@@ -126,7 +123,7 @@ export default defineComponent({
   async mounted() {
     const response = await this.$store.dispatch(
       "ape/getVisitExams",
-      this.visitId
+      this.visit.id
     );
 
     if (!response.error && response.body?.length > 0) {
@@ -138,7 +135,14 @@ export default defineComponent({
         return this.user.examsHandled.includes(e.code);
       });
 
-      this.tabs = [...this.tabs, ...examsToShow];
+      this.tabs = [
+        {
+          code: "MEDHIST",
+          name: "Medical History",
+          icon: "fa-solid fa-notes-medical",
+        },
+        ...examsToShow,
+      ];
     }
 
     this.tab = this.tabs[0];

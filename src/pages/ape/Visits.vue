@@ -1,16 +1,19 @@
 <template>
   <q-page class="row justify-center">
     <div
-      :class="$q.screen.lt.sm ? 'q-pa-md' : 'q-pa-lg'"
+      :class="$q.screen.gt.sm ? 'q-pa-lg' : 'q-pa-md'"
       :style="
         $q.screen.gt.md
-          ? { minWidth: '1440px', maxWidth: '1440px' }
-          : { minWidth: '100%' }
+          ? {
+              minWidth: '1440px',
+              maxWidth: '1440px',
+              height: 'calc(100vh - 70px)',
+            }
+          : { minWidth: '100%', maxWidth: '100%', height: 'auto' }
       "
       style="
         display: grid;
         grid-template-rows: min-content min-content auto;
-        height: calc(100vh - 70px);
         gap: 16px;
       "
     >
@@ -38,8 +41,8 @@
                   :rules="[
                     requiredRule,
                     (val) =>
-                      Number(val) <= 0
-                        ? 'Should be a number more than 0.'
+                      Number(val) < 1 || Number(val) > 100
+                        ? 'Should be 1 to 100 only.'
                         : undefined,
                   ]"
                   v-model.trim="filters.limit"
@@ -209,13 +212,10 @@
         </template>
       </CardComponent>
       <div class="row items-between" style="gap: 16px">
-        <div
-          class="full-height bg-red"
-          :class="$q.screen.gt.md ? 'col-8' : 'col-12'"
-        >
+        <div :class="$q.screen.gt.md ? 'col-8 full-height' : 'col-12'">
           <CardComponent class="full-height">
             <template v-slot:body>
-              <div>
+              <div class="scroll" style="overflow: hidden">
                 <FetchingData v-if="loading" />
                 <template v-else>
                   <div class="row items-center justify-between q-mb-md">
@@ -235,7 +235,6 @@
                     >
                       <q-virtual-scroll
                         style="
-                          max-height: 100%;
                           height: auto;
                           border-top: 1px solid rgba(0, 0, 0, 0.1);
                           border-left: 1px solid rgba(0, 0, 0, 0.1);
@@ -321,11 +320,7 @@
                                   statusHistoryVisible = true;
                                 }
                               "
-                              :label="
-                                item.dateTimeCompleted
-                                  ? 'COMPLETED'
-                                  : 'NOT COMPLETED'
-                              "
+                              label="DIAG EXAMS"
                             />
                             <q-btn
                               dense
@@ -340,7 +335,7 @@
                         <q-separator />
                       </q-virtual-scroll>
                     </div>
-                    <template v-else>
+                    <div v-else>
                       <q-separator />
                       <q-table
                         class="shadow-0"
@@ -354,17 +349,15 @@
                             @click.stop="showPxVisitInfo(props.row)"
                           >
                             <template v-for="column of columns">
-                              <q-td
-                                v-if="column.name === 'status'"
+                              <q-td v-if="column.name === 'dateTimeCreated'">
+                                <span class="text-grey-7">
+                                  {{ formatDate(props.row.dateTimeCreated) }}
+                                </span>
+                              </q-td>
+                              <!-- <q-td
+                                v-else-if="column.name === 'status'"
                                 class="row justify-center"
                               >
-                                <!-- <template
-                                    v-for="latestPhase in [
-                                      getLastExamCompleted(props.row.exams),
-                                    ]"
-                                  > -->
-                                <!-- :label="latestPhase.name.toUpperCase()" -->
-                                <!-- :class="phaseClassesMap[latestPhase.code]" -->
                                 <q-btn
                                   dense
                                   style="
@@ -390,15 +383,7 @@
                                       : 'NOT COMPLETED'
                                   "
                                 />
-                                <!-- </template> -->
-                              </q-td>
-                              <q-td
-                                v-else-if="column.name === 'dateTimeCreated'"
-                              >
-                                <span class="text-grey-7">
-                                  {{ formatDate(props.row.dateTimeCreated) }}
-                                </span>
-                              </q-td>
+                              </q-td> -->
                               <q-td v-else-if="column.name === 'action'">
                                 <div class="row justify-center">
                                   <q-btn
@@ -508,7 +493,7 @@
                           >&nbsp;item/s.
                         </q-badge>
                       </div>
-                    </template>
+                    </div>
                   </template>
                   <NoResult v-else message="No pending visits found." />
                 </template>
@@ -516,10 +501,10 @@
             </template>
           </CardComponent>
         </div>
-        <div :class="$q.screen.gt.md ? 'col' : 'col-12'">
+        <div :class="$q.screen.gt.md ? 'col full-height' : 'col-12'">
           <CardComponent class="full-height">
             <template v-slot:body>
-              <div>
+              <div class="scroll" style="overflow: hidden">
                 <FetchingData v-if="loading" />
                 <template v-else>
                   <div class="text-primary text-weight-medium q-mb-md">
@@ -623,7 +608,7 @@
                               unelevated
                               color="primary"
                               label="PRINT"
-                              @click.stop="showPxVisitInfo(item)"
+                              @click.stop="showPxVisitPrintout(item)"
                             />
                           </q-item-section>
                         </q-item>
@@ -686,18 +671,21 @@
     </MinimizedDialog>
     <VisitDetails
       v-if="visitInfoVisible"
-      :visitId="currentVisit.id"
-      :patientId="currentVisit.patientId"
-      :patientName="
-        formatName(
-          currentVisit.patientFirstName,
-          currentVisit.patientMiddleName,
-          currentVisit.patientLastName,
-          currentVisit.patientExtName
-        )
-      "
+      :visit="currentVisit"
       @close="visitInfoVisible = false"
     />
+    <MaximizedDialog
+      v-if="visitPrintoutVisible"
+      title="VISIT INFO."
+      @close="() => (visitPrintoutVisible = false)"
+    >
+      <template v-slot:body>
+        <PrintoutVisitDetails
+          v-if="currentVisit && visitPrintoutVisible"
+          :visitId="currentVisit.id"
+        />
+      </template>
+    </MaximizedDialog>
   </q-page>
 </template>
 
@@ -747,6 +735,9 @@ export default defineComponent({
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")
     ),
+    MaximizedDialog: defineAsyncComponent(() =>
+      import("src/components/core/MaximizedDialog.vue")
+    ),
     VisitDetails: defineAsyncComponent(() =>
       import("src/components/VisitDetails.vue")
     ),
@@ -755,6 +746,9 @@ export default defineComponent({
     ),
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")
+    ),
+    PrintoutVisitDetails: defineAsyncComponent(() =>
+      import("src/components/printouts/VisitDetails.vue")
     ),
   },
   setup() {
@@ -885,6 +879,7 @@ export default defineComponent({
 
       statusHistoryVisible: false,
       visitInfoVisible: false,
+      visitPrintoutVisible: false,
 
       currentVisit: null,
     };
@@ -971,9 +966,12 @@ export default defineComponent({
       this.loading = false;
     },
     async showPxVisitInfo(visit) {
-      this.visitInfoVisible = true;
       this.currentVisit = visit;
-      this.currentPatientId = visit.patientId;
+      this.visitInfoVisible = true;
+    },
+    async showPxVisitPrintout(visit) {
+      this.currentVisit = visit;
+      this.visitPrintoutVisible = true;
     },
   },
 });

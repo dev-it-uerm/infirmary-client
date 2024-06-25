@@ -78,19 +78,24 @@
         <q-separator />
         <div
           class="row q-pa-lg"
-          :class="isExamTab ? 'justify-between' : 'justify-end'"
+          :class="
+            markAsCompletedOnSave != null && !visitIsCompleted
+              ? 'justify-between'
+              : 'justify-end'
+          "
           style="gap: 12px"
         >
           <q-checkbox
-            v-if="isExamTab"
+            v-if="markAsCompletedOnSave != null && !visitIsCompleted"
             v-model="markAsCompletedOnSave"
             label="Mark Exam As Completed On Save"
           />
           <q-btn
             unelevated
+            :disable="visitIsCompleted"
             class="text-white bg-primary"
             :loading="loading"
-            label="SAVE"
+            :label="visitIsCompleted ? 'COMPLETED' : 'SAVE'"
             @click="submitForm"
           />
         </div>
@@ -142,6 +147,10 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    visitIsCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["busy", "ready"],
   setup() {
@@ -170,18 +179,10 @@ export default defineComponent({
       confDialogVisible: false,
     };
   },
-  computed: {
-    isExamTab() {
-      return exams.some((e) => e.code === this.tab.code);
-    },
-  },
   watch: {
-    tab(val) {
-      this.markAsCompletedOnSave = null;
-    },
-    isExamTab: {
+    tab: {
       handler(val) {
-        if (val) this.markAsCompletedOnSave = true;
+        this.init();
       },
       immediate: true,
     },
@@ -191,17 +192,6 @@ export default defineComponent({
       },
       immediate: true,
     },
-  },
-  mounted() {
-    this.value = {
-      ...this.examFieldsMap[this.tab.code].reduce((acc, f) => {
-        acc[f.code] = f.default ?? null;
-        return acc;
-      }, {}),
-      REMARKS: null,
-    };
-
-    this.getInitialValue();
   },
   methods: {
     formatValue(val) {
@@ -237,7 +227,7 @@ export default defineComponent({
       this.loading = true;
       await delay(1000);
 
-      const response = await this.$store.dispatch("ape/getDetails", {
+      const response = await this.$store.dispatch("ape/getVisitDetails", {
         visitId: this.visitId,
         patientId: this.patientId,
         tabCode: this.tab.code,
@@ -272,6 +262,25 @@ export default defineComponent({
 
       this.loading = false;
     },
+    async init() {
+      this.markAsCompletedOnSave = null;
+
+      this.value = {
+        ...this.examFieldsMap[this.tab.code].reduce((acc, f) => {
+          acc[f.code] = f.default ?? null;
+          return acc;
+        }, {}),
+        REMARKS: null,
+      };
+
+      const isExamTab = exams.some((e) => e.code === this.tab.code);
+
+      if (isExamTab && !this.visitIsCompleted) {
+        this.markAsCompletedOnSave = true;
+      }
+
+      this.getInitialValue();
+    },
     async submitForm() {
       const valid = await this.$refs.qFormVisitDetails.validate();
       if (valid) this.confDialogVisible = true;
@@ -288,7 +297,7 @@ export default defineComponent({
         details: this.formatValue(this.value),
       };
 
-      if (this.isExamTab && this.markAsCompletedOnSave) {
+      if (this.markAsCompletedOnSave === true) {
         payload.markAsCompletedOnSave = true;
       }
 

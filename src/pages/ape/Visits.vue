@@ -18,196 +18,212 @@
       "
     >
       <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
-      <CardComponent>
+      <CardComponent :padded="false">
         <template v-slot:body>
           <div>
-            <div class="text-primary text-weight-medium q-mb-md">FILTER:</div>
-            <q-form @submit="getVisits">
-              <div
-                class="row item-center"
-                :style="$q.screen.lt.md ? {} : { gap: '16px' }"
-              >
-                <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
-                <q-input
+            <q-expansion-item switch-toggle-side expand-separator>
+              <template v-slot:header>
+                <div class="text-primary text-weight-medium row items-center">
+                  ADVANCE FILTER
+                </div>
+              </template>
+              <div style="padding: 10px 30px">
+                <q-form @submit="getVisits">
+                  <div
+                    class="row item-center"
+                    :style="$q.screen.lt.md ? {} : { gap: '16px' }"
+                  >
+                    <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
+                    <q-input
+                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                      :style="{
+                        minWidth: $q.screen.lt.md ? '100%' : '100px',
+                      }"
+                      :dense="$q.screen.gt.sm"
+                      :disable="loading"
+                      debounce="750"
+                      stack-label
+                      outlined
+                      label="Limit Items To"
+                      hint=""
+                      :rules="[
+                        requiredRule,
+                        (val) =>
+                          Number(val) < 1 || Number(val) > 100
+                            ? 'Should be 1 to 100 only.'
+                            : undefined,
+                      ]"
+                      v-model.trim="filters.limit"
+                    />
+                    <q-input
+                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                      :style="{
+                        minWidth: $q.screen.lt.md ? '100%' : '100px',
+                      }"
+                      :dense="$q.screen.gt.sm"
+                      :disable="loading"
+                      debounce="750"
+                      stack-label
+                      outlined
+                      label="Year"
+                      hint=""
+                      :rules="[requiredRule, yearRule]"
+                      v-model.trim="filters.year"
+                    />
+                    <!-- <q-select
+                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                    :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
+                    :dense="$q.screen.gt.sm"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    :options="[
+                      { value: null, label: 'All' },
+                      { value: 'PENDING', label: 'Pending' },
+                      { value: 'COMPLETED', label: 'Completed' },
+                    ]"
+                    label="Status"
+                    hint=""
+                    v-model="filters.status"
+                  /> -->
+                    <q-select
+                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                      :style="{
+                        minWidth: $q.screen.lt.md ? '100%' : '150px',
+                      }"
+                      :dense="$q.screen.gt.sm"
+                      :disable="loading"
+                      stack-label
+                      outlined
+                      emit-value
+                      map-options
+                      option-label="name"
+                      option-value="code"
+                      :options="campuses"
+                      label="Campus"
+                      hint=""
+                      v-model="filters.patientCampusCode"
+                    />
+                    <q-select
+                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                      :style="{
+                        minWidth: $q.screen.lt.md ? '100%' : '150px',
+                      }"
+                      :dense="$q.screen.gt.sm"
+                      :disable="loading"
+                      stack-label
+                      outlined
+                      emit-value
+                      map-options
+                      option-label="name"
+                      option-value="code"
+                      :options="affiliations"
+                      label="Affiliation"
+                      hint=""
+                      v-model="filters.patientAffiliationCode"
+                    />
+                    <!-- <template
+                  v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
+                >
+                  <q-input
+                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                    :dense="$q.screen.gt.sm"
+                    class="col-auto"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    maxlength="4"
+                    label="School Year"
+                    :rules="[yearRule]"
+                    v-model.trim="filters.patientSchoolYear"
+                  />
+                  <q-select
+                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                    :dense="$q.screen.gt.sm"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :options="colleges"
+                    label="College"
+                    v-model="filters.patientCollegeCode"
+                    hint=""
+                  />
+                  <q-select
+                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                    :dense="$q.screen.gt.sm"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :options="yearLevels"
+                    label="Year Level"
+                    v-model="filters.patientYearLevel"
+                    hint=""
+                  />
+                </template> -->
+                    <!-- <DateRange
                   :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :style="{ minWidth: $q.screen.lt.md ? '100%' : '100px' }"
                   :dense="$q.screen.gt.sm"
                   :disable="loading"
-                  debounce="750"
                   stack-label
                   outlined
-                  label="Limit Items To"
+                  :subtractDaysCount="7"
+                  label="Visit Date Range"
                   hint=""
-                  :rules="[
-                    requiredRule,
-                    (val) =>
-                      Number(val) < 1 || Number(val) > 100
-                        ? 'Should be 1 to 100 only.'
-                        : undefined,
-                  ]"
-                  v-model.trim="filters.limit"
-                />
-                <q-input
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :style="{ minWidth: $q.screen.lt.md ? '100%' : '100px' }"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  debounce="750"
-                  stack-label
-                  outlined
-                  label="Year"
-                  hint=""
-                  :rules="[requiredRule, yearRule]"
-                  v-model.trim="filters.year"
-                />
-                <!-- <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  :options="[
-                    { value: null, label: 'All' },
-                    { value: 'PENDING', label: 'Pending' },
-                    { value: 'COMPLETED', label: 'Completed' },
-                  ]"
-                  label="Status"
-                  hint=""
-                  v-model="filters.status"
+                  :initialValue="filters.visitDateRange"
+                  @valueChanged="(val) => (filters.visitDateRange = val)"
                 /> -->
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="campuses"
-                  label="Campus"
-                  hint=""
-                  v-model="filters.patientCampusCode"
-                />
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="affiliations"
-                  label="Affiliation"
-                  hint=""
-                  v-model="filters.patientAffiliationCode"
-                />
-                <!-- <template
-                v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
-              >
-                <q-input
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  class="col-auto"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  maxlength="4"
-                  label="School Year"
-                  :rules="[yearRule]"
-                  v-model.trim="filters.patientSchoolYear"
-                />
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="colleges"
-                  label="College"
-                  v-model="filters.patientCollegeCode"
-                  hint=""
-                />
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="yearLevels"
-                  label="Year Level"
-                  v-model="filters.patientYearLevel"
-                  hint=""
-                />
-              </template> -->
-                <!-- <DateRange
-                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                :dense="$q.screen.gt.sm"
-                :disable="loading"
-                stack-label
-                outlined
-                :subtractDaysCount="7"
-                label="Visit Date Range"
-                hint=""
-                :initialValue="filters.visitDateRange"
-                @valueChanged="(val) => (filters.visitDateRange = val)"
-              /> -->
-                <!-- <q-input
-                :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                :dense="$q.screen.gt.sm"
-                :disable="loading"
-                debounce="750"
-                stack-label
-                outlined
-                label="Patient Name"
-                hint=""
-                v-model.trim="filters.patientName"
-              /> -->
-                <q-input
+                    <!-- <q-input
                   :class="$q.screen.lt.md ? 'col-12' : 'col'"
                   :dense="$q.screen.gt.sm"
                   :disable="loading"
                   debounce="750"
                   stack-label
                   outlined
-                  label="Employee/Student Number"
+                  label="Patient Name"
                   hint=""
-                  v-model.trim="filters.identificationCode"
-                />
-                <div
-                  class="row items-start justify-end"
-                  :class="$q.screen.lt.md ? 'full-width' : ''"
-                >
-                  <q-btn
-                    style="height: 40px"
-                    color="primary"
-                    class="q-px-md q-py-xs"
-                    :disable="loading"
-                    :loading="loading"
-                    unelevated
-                    stack-label
-                    label="GO"
-                    type="submit"
-                  />
-                </div>
+                  v-model.trim="filters.patientName"
+                /> -->
+                    <q-input
+                      :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                      :dense="$q.screen.gt.sm"
+                      :disable="loading"
+                      debounce="750"
+                      stack-label
+                      outlined
+                      label="Employee/Student Number"
+                      hint=""
+                      v-model.trim="filters.identificationCode"
+                    />
+                    <div
+                      class="row items-start justify-end"
+                      :class="$q.screen.lt.md ? 'full-width' : ''"
+                    >
+                      <q-btn
+                        style="height: 40px"
+                        color="primary"
+                        class="q-px-md q-py-xs"
+                        :disable="loading"
+                        :loading="loading"
+                        unelevated
+                        stack-label
+                        label="GO"
+                        type="submit"
+                      />
+                    </div>
+                  </div>
+                </q-form>
               </div>
-            </q-form>
+            </q-expansion-item>
           </div>
         </template>
       </CardComponent>
@@ -388,12 +404,12 @@
                                 <div class="row justify-center">
                                   <q-btn
                                     dense
+                                    class="text-primary"
                                     style="
                                       padding-left: 10px;
                                       padding-right: 10px;
                                     "
                                     unelevated
-                                    color="primary"
                                     label="VIEW DETAILS"
                                     @click.stop="showPxVisitInfo(props.row)"
                                   />
@@ -676,7 +692,7 @@
     />
     <MaximizedDialog
       v-if="visitPrintoutVisible"
-      title="VISIT INFO."
+      title="PRINT VISIT"
       @close="() => (visitPrintoutVisible = false)"
     >
       <template v-slot:body>

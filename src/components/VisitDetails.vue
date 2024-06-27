@@ -136,6 +136,11 @@ export default defineComponent({
       });
 
       this.tabs = [
+        // {
+        //   code: "VISIT",
+        //   name: "Visit Info.",
+        //   icon: "fa-solid fa-notes-medical",
+        // },
         {
           code: "MEDHIST",
           name: "Medical History",

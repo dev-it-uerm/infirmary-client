@@ -69,17 +69,17 @@ export default defineComponent({
         this.$emit("inputModeChanged", val);
 
         if (this.scanner) {
-          if (val === "QR") this.scanner.resume();
-          else this.scanner.pause();
+          if (val === "QR") this.resumeScanner();
+          else this.pauseScanner();
         }
       },
       immediate: true,
     },
     loading: {
       handler(val) {
-        if (this.scanner && this.inputMode === "QR") {
-          if (val) this.scanner.pause();
-          else this.scanner.resume();
+        if (this.inputMode === "QR") {
+          if (val) this.pauseScanner();
+          else this.resumeScanner();
         }
       },
       immediate: true,
@@ -113,6 +113,18 @@ export default defineComponent({
     );
   },
   methods: {
+    pauseScanner() {
+      // UNKNOWN = 0, NOT_STARTED = 1, SCANNING = 2, PAUSED = 3
+      if (this.scanner && this.scanner.getState() === 2) {
+        this.scanner.pause();
+      }
+    },
+    resumeScanner() {
+      // UNKNOWN = 0, NOT_STARTED = 1, SCANNING = 2, PAUSED = 3
+      if (this.scanner && this.scanner.getState() === 3) {
+        this.scanner.resume();
+      }
+    },
     reset() {
       // this.scanner.clear();
       this.patientCode = null;

@@ -16,7 +16,7 @@
 import { mapGetters } from "vuex";
 import pdfMake from "pdfmake";
 import pdfMakeFonts from "src/helpers/pdfmake-vfs.js";
-import { delay } from "src/helpers/util";
+import { delay, formatName, formatDate } from "src/helpers/util";
 import { exams, examsMap, examFieldsMap } from "src/helpers/constants.js";
 
 export default {
@@ -55,52 +55,19 @@ export default {
     },
   },
   methods: {
-    createTableWidths() {
-      return Array(12).fill("8.333333333333333%");
-    },
-    createTableTextCells(
-      text,
-      colSpan = 1,
-      rowSpan = 1,
-      padded = false,
-      bordered = true,
-      additionalStyles = {}
-    ) {
-      return [
-        {
-          colSpan,
-          rowSpan,
-          text,
-          border: additionalStyles.border
-            ? additionalStyles.border
-            : Array(4).fill(bordered),
-          margin: padded ? Array(4).fill(2) : Array(4).fill(0),
-          ...additionalStyles,
-        },
-        ...Array(colSpan - 1).fill(""), // "Spanned" or occupied columns must still have cells
-      ];
-    },
     createFooter(currentPage, pageCount, pageSize) {
       return [
         {
           layout: "noBorders",
           margin: [25, 20, 25, 0],
           table: {
-            widths: ["70%", "30%"],
+            widths: ["100%"],
             body: [
               [
                 {
-                  // text: "Print Date & Time: " + formatDate(new Date()),
-                  text: "Official STATEMENT OF ACCOUNT can be requested at the Billing Section of UERMMMC.",
-                  fontSize: 9,
-                  alignment: "left",
-                  italics: true,
-                  bold: true,
-                },
-                {
                   text: `Page ${currentPage} of ${pageCount}`,
                   fontSize: 9,
-                  alignment: "right",
+                  alignment: "center",
                 },
               ],
             ],
@@ -111,52 +78,65 @@ export default {
     createExamTable(examName, fields, fieldValues) {
       const tableBody = [
         // HEADER
-        this.createTableTextCells(examName, 12, 1, true, true, {
-          alignment: "center",
-          fontSize: 10,
-          bold: true,
-        }),
+        [
+          {
+            text: examName,
+            colSpan: 2,
+            alignment: "center",
+            bold: true,
+            margin: 2,
+            background: "#EFEFEF",
+          },
+          "",
+        ],
       ];
 
       for (const field of fields) {
         tableBody.push([
-          ...this.createTableTextCells(field.name, 4, 1, true, true, {
-            fontSize: 9,
-          }),
-          ...this.createTableTextCells(
-            fieldValues[field.code],
-            8,
-            1,
-            true,
-            true,
-            { fontSize: 9 }
-          ),
+          { text: field.name, color: "#71797E" },
+          { text: fieldValues[field.code] },
         ]);
       }
 
       if (fieldValues.REMARKS) {
         tableBody.push([
-          ...this.createTableTextCells("Remarks", 4, 1, true, true, {
-            fontSize: 9,
-          }),
-          ...this.createTableTextCells(fieldValues.REMARKS, 8, 1, true, true, {
-            fontSize: 9,
-          }),
+          { text: "Remarks", color: "#71797E" },
+          { text: fieldValues.REMARKS },
         ]);
       }
 
       return {
         headerRows: 1,
         margin: [0, 0, 0, 10],
-        style: ["fontNormal"],
+        style: { fontSize: 9 },
         table: {
-          widths: this.createTableWidths(),
+          widths: ["auto", "*"],
           body: tableBody,
         },
         layout: {
-          fillColor: function (rowIndex, node, columnIndex) {
-            return rowIndex > 1 && rowIndex % 2 === 0 ? "#E8E8E8" : null;
+          fillColor: (rowIndex, node, columnIndex) => {
+            return rowIndex % 2 === 0 ? "#F1F1F1" : null;
           },
+          hLineWidth: (rowIndex, node) => {
+            return rowIndex === 0 || rowIndex === node.table.body.length
+              ? 1
+              : 0;
+          },
+          vLineWidth: (rowIndex, node) => {
+            return rowIndex === 0 || rowIndex === node.table.widths.length
+              ? 1
+              : 0;
+          },
+          // hLineColor: (rowIndex, node) => {
+          //   return rowIndex === 0 || rowIndex === node.table.body.length
+          //     ? "black"
+          //     : "grey";
+          // },
+          // vLineColor: (rowIndex, node) => {
+          //   return rowIndex === 0 || rowIndex === node.table.widths.length
+          //     ? "black"
+          //     : "grey";
+          // },
         },
       };
     },
@@ -183,7 +163,6 @@ export default {
       return {
         headerRows: 1,
         margin: [0, 0, 0, 0],
-        style: ["fontNormal"],
         table: {
           widths: ["50%", "50%"],
           body: [[{ stack: tableBodyCols[0] }, { stack: tableBodyCols[1] }]],
@@ -193,14 +172,14 @@ export default {
     },
     renderDocument() {
       const documentDefinition = {
-        info: {
-          title: `VISIT DETAILS - ${this.content.patient.identificationCode}`,
-          // author: `${this.user.lastName}, ${this.user.firstName} ${this.user.middleName}`,
-          // subject: this.content.type.name,
-          // keywords: `${this.content.type.name} - ${this.content.case.code}`,
-        },
         // by default we use portrait, you can change it to landscape if you wish
         // pageOrientation: "landscape",
+        info: {
+          title: `VISIT DETAILS - ${this.content.patient.identificationCode}`,
+          // author: "",
+          // subject: "",
+          // keywords: "",
+        },
         // watermark: {
         //   text: "PATIENT COPY",
         //   color: "blue",
@@ -210,7 +189,7 @@ export default {
         // },
         pageSize: "LETTER",
         // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
-        pageMargins: [25, 240, 25, 60], // Body margins. Change top or bottom to resize the header or footer respectively.
+        pageMargins: [25, 190, 25, 60], // Body margins. Change top or bottom to resize the header or footer respectively.
         header: [
           {
             stack: [
@@ -223,10 +202,7 @@ export default {
                   //     height: 55,
                   //   },
                   // ],
-                  {
-                    text: "",
-                    width: "*",
-                  },
+                  { text: "", width: "*" },
                   {
                     stack: [
                       {
@@ -243,22 +219,90 @@ export default {
                     ],
                     width: "auto",
                   },
-                  {
-                    text: "",
-                    width: "*",
-                  },
+                  { text: "", width: "*" },
                 ],
                 columnGap: 10,
+                margin: [0, 0, 0, 20],
+              },
+              {
                 table: {
-                  widths: this.createTableWidths(),
+                  widths: ["100%"],
+                  body: [[{ text: "", border: [false, true] }]],
+                },
+              },
+              {
+                table: {
+                  widths: ["auto", "*", "auto", "*"],
                   body: [
-                    [...this.createTableTextCells("", 4, 1, false, false)],
+                    [
+                      {
+                        text: "Patient Name:",
+                        border: [],
+                      },
+                      {
+                        text: formatName(
+                          this.content.patient.firstName,
+                          this.content.patient.middleName,
+                          this.content.patient.lastName,
+                          this.content.patient.extName
+                        ),
+                        bold: true,
+                        style: "noBorder",
+                        border: [],
+                      },
+                      { text: "Data & Time Visited:", border: [] },
+                      {
+                        text: formatDate(this.content.visit.dateTimeCreated),
+                        bold: true,
+                        border: [],
+                      },
+                    ],
+                    [
+                      { text: "Physician Name:", border: [] },
+                      {
+                        text: this.content.visit.physician,
+                        bold: true,
+                        border: [],
+                      },
+                      { text: "Data & Time Completed:", border: [] },
+                      {
+                        text: formatDate(this.content.visit.dateTimeCompleted),
+                        bold: true,
+                        border: [],
+                      },
+                    ],
                   ],
                 },
-                margin: [25, 10, 25, 0],
+                style: "noBorders",
+                margin: [0, 0, 0, 5],
+              },
+              {
+                table: {
+                  widths: ["100%"],
+                  body: [[{ text: "", border: [false, true] }]],
+                },
+              },
+              {
+                table: {
+                  widths: ["100%"],
+                  body: [
+                    [
+                      {
+                        text: "ANNUAL PHYSICAL EXAM",
+                        alignment: "center",
+                        bold: true,
+                        fontSize: 11,
+                        margin: [0, 5, 0, 5],
+                      },
+                    ],
+                  ],
+                },
+                layout: "noBorders",
+                margin: [0, 10, 0, 0],
               },
             ],
-            style: ["headerStyle", "fontNormal"],
+            style: ["fontNormal"],
+            margin: [25, 10, 25, 0],
           },
         ],
         content: this.createContentBody(),
@@ -271,9 +315,6 @@ export default {
           },
           fontNormal: {
             fontSize: 9,
-          },
-          headerStyle: {
-            bold: true,
           },
           leftAlign: {
             alignment: "left",

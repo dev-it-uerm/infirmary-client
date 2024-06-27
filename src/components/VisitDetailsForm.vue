@@ -13,11 +13,11 @@
           class="q-pa-lg scroll"
           style="height: auto; max-height: 70vh; min-height: 100px"
         >
-          <template v-for="field in examFieldsMap[tab.code]" :key="field.code">
+          <template v-for="field in tabFieldsMap[tab.code]" :key="field.code">
             <div>
               <q-input
                 v-if="field.type === 'TEXT'"
-                :disable="loading"
+                :disable="loading || field.disabled"
                 stack-label
                 outlined
                 :rules="generateRules(field.required)"
@@ -27,7 +27,7 @@
               />
               <q-input
                 v-if="field.type === 'TEXTAREA'"
-                :disable="loading"
+                :disable="loading || field.disabled"
                 type="textarea"
                 stack-label
                 outlined
@@ -38,7 +38,7 @@
               />
               <DiagTest
                 v-if="field.type === 'DIAGTEST'"
-                :disabled="loading"
+                :disabled="loading || field.disabled"
                 :label="field.name"
                 :diagParamCode="field.code"
                 :initialValue="value[field.code]"
@@ -46,7 +46,7 @@
               />
               <DiagTestTextArea
                 v-if="field.type === 'DIAGTESTTEXTAREA'"
-                :disabled="loading"
+                :disabled="loading || field.disabled"
                 :required="field.required"
                 :label="field.name"
                 :diagParamCode="field.code"
@@ -55,7 +55,7 @@
               />
               <DiagTestSelect
                 v-if="field.type === 'DIAGTESTSELECT'"
-                :disabled="loading"
+                :disabled="loading || field.disabled"
                 :options="field.options"
                 :required="field.required"
                 :label="field.name"
@@ -113,7 +113,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
-import { exams, examFieldsMap } from "src/helpers/constants.js";
+import { exams, examsMap, examFieldsMap } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitDetailsForm",
@@ -166,7 +166,44 @@ export default defineComponent({
       },
       showMessage,
       formatDate,
-      examFieldsMap,
+      tabFieldsMap: {
+        VISIT: [
+          // {
+          //   code: "PHYSICIAN",
+          //   name: "Physician",
+          //   type: "TEXT",
+          // },
+          {
+            code: "CREATEDBY",
+            name: "Added By",
+            type: "TEXT",
+            disabled: true,
+          },
+          {
+            code: "DATETIMECREATED",
+            name: "Date & Time Visited",
+            type: "TEXT",
+            format: formatDate,
+            disabled: true,
+          },
+          {
+            code: "COMPLETEDBY",
+            name: "Completed By",
+            type: "TEXT",
+            default: "NOT YET COMPLETED",
+            disabled: true,
+          },
+          {
+            code: "DATETIMECOMPLETED",
+            name: "Date & Time Completed",
+            type: "TEXT",
+            format: formatDate,
+            default: "NOT YET COMPLETED",
+            disabled: true,
+          },
+        ],
+        ...examFieldsMap,
+      },
       // inputRule: (val) =>
       //   val == null || val === "" ? "Field is required." : undefined,
     };
@@ -195,22 +232,26 @@ export default defineComponent({
   },
   methods: {
     formatValue(val) {
-      // CONVERT "" PROPS TO null
-      return Object.entries(val).reduce((acc, e) => {
-        const key = e[0].toUpperCase();
-        const val = e[1];
+      if (!val) return {};
 
+      return Object.entries(val).reduce((acc, entry) => {
+        const key = entry[0].toUpperCase();
+        const val = entry[1];
+
+        // CONVERT "" PROPS TO null
         acc[key] = isObj(val)
           ? Object.entries(val).reduce((acc, e) => {
               acc[e[0]] = e[1] === "" ? null : e[1];
               return acc;
             }, {})
-          : e[1];
+          : val;
 
         return acc;
       }, {});
     },
     formatDiagValue(val) {
+      if (!val) return {};
+
       return val.reduce((acc, row) => {
         acc[row.DiagParamCode] = {
           value: row.DiagParamValue,
@@ -223,9 +264,22 @@ export default defineComponent({
         return acc;
       }, {});
     },
+    mergeTempAndVal(template, obj) {
+      return template.reduce((acc, field) => {
+        if (obj[field.code] == null || obj[field.code] === "") {
+          acc[field.code] = field.default ?? null;
+        } else {
+          acc[field.code] = field.format
+            ? field.format(obj[field.code])
+            : obj[field.code];
+        }
+
+        return acc;
+      }, {});
+    },
     async getInitialValue() {
       this.loading = true;
-      await delay(1000);
+      this.value = {};
 
       const response = await this.$store.dispatch("ape/getVisitDetails", {
         visitId: this.visitId,
@@ -233,8 +287,9 @@ export default defineComponent({
         tabCode: this.tab.code,
       });
 
+      await delay(1000);
+
       if (response.error) {
-        console.log(response.error);
         this.loading = false;
         return;
       }
@@ -244,10 +299,19 @@ export default defineComponent({
         return;
       }
 
-      if (["LABCBC", "LABURI", "LABFCL", "RADXRCHST"].includes(this.tab.code)) {
+      if (
+        [
+          examsMap.LABCBC.code,
+          examsMap.LABURI.code,
+          examsMap.LABFCL.code,
+          examsMap.RADXRCHST.code,
+        ].includes(this.tab.code)
+      ) {
         this.value = {
-          ...this.value,
-          ...this.formatDiagValue(response.body),
+          ...this.mergeTempAndVal(
+            this.tabFieldsMap[this.tab.code],
+            this.formatDiagValue(response.body)
+          ),
           REMARKS: response.body[0]?.Remarks ?? null,
         };
 
@@ -255,24 +319,15 @@ export default defineComponent({
         return;
       }
 
-      this.value = {
-        ...this.value,
-        ...this.formatValue(response.body[0]),
-      };
+      this.value = this.mergeTempAndVal(
+        this.tabFieldsMap[this.tab.code],
+        this.formatValue(response.body[0])
+      );
 
       this.loading = false;
     },
     async init() {
       this.markAsCompletedOnSave = null;
-
-      this.value = {
-        ...this.examFieldsMap[this.tab.code].reduce((acc, f) => {
-          acc[f.code] = f.default ?? null;
-          return acc;
-        }, {}),
-        REMARKS: null,
-      };
-
       const isExamTab = exams.some((e) => e.code === this.tab.code);
 
       if (isExamTab && !this.visitIsCompleted) {

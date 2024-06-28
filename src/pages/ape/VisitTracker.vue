@@ -71,7 +71,9 @@
               <div v-if="patient.deptCode" class="q-mt-sm">
                 <div>
                   <span class="text-grey-7">Deparment:</span>
-                  <span class="q-ml-sm">{{ patient.deptCode }}</span>
+                  <span class="q-ml-sm">{{
+                    departmentsMap[patient.deptCode].name
+                  }}</span>
                 </div>
               </div>
               <div v-if="patient.collegeCode" class="q-mt-sm">
@@ -161,6 +163,7 @@ import {
   campusesMap,
   collegesMap,
   yearLevels,
+  departmentsMap,
 } from "src/helpers/constants.js";
 
 export default defineComponent({
@@ -183,6 +186,7 @@ export default defineComponent({
       campusesMap,
       collegesMap,
       yearLevels,
+      departmentsMap,
       formatDate,
       formatName,
     };

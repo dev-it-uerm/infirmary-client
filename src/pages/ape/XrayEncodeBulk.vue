@@ -9,8 +9,8 @@
       :style="$q.screen.gt.md ? { minWidth: '1440px' } : { minWidth: '100%' }"
     >
       <PageHeader icon="fa-solid fa-calendar-days" text="X-RAY BATCH ENCODE" />
-      <div class="row" style="gap: 16px">
-        <div class="col">
+      <div :class="$q.screen.gt.md ? 'row' : 'column'" style="gap: 16px">
+        <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
           <CardComponent>
             <template v-slot:body>
               <div class="q-mb-lg">
@@ -223,8 +223,8 @@
             </template>
           </CardComponent>
         </div>
-        <div class="col">
-          <CardComponent class="col-6">
+        <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
+          <CardComponent>
             <template v-slot:body>
               <div>
                 <q-form @submit="confirmationDialogVisible = true">
@@ -238,6 +238,14 @@
                     v-model="xrayImpression"
                   >
                   </q-input>
+                  <RadiologistSelect
+                    :disable="filtering || saving"
+                    @valueChanged="
+                      (val) => {
+                        radiologist = val;
+                      }
+                    "
+                  />
                   <div class="row items-start justify-end q-mt-md">
                     <q-btn
                       style="height: 40px"
@@ -324,6 +332,9 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
+    RadiologistSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/RadiologistSelect.vue")
+    ),
   },
   setup() {
     return {
@@ -367,7 +378,9 @@ export default defineComponent({
 
       selected: [],
       visits: [],
+
       xrayImpression: "",
+      radiologist: null,
 
       confirmationDialogVisible: false,
     };
@@ -440,6 +453,7 @@ export default defineComponent({
             },
           ],
           markAsCompletedOnSave: true,
+          creator: this.radiologist,
         });
 
         await delay(1000);

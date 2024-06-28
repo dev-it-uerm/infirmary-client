@@ -289,6 +289,7 @@ export default defineComponent({
                 userRolesMap.ADMIN.code,
                 userRolesMap.DR.code,
                 userRolesMap.STAFF.code,
+                userRolesMap.RAD.code,
                 userRolesMap.RADTECH.code,
               ].includes(this.user.roleCode)
             ) {

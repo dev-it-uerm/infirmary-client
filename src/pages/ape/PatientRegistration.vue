@@ -55,17 +55,20 @@
                 v-model="affiliationCode"
                 hint=""
               />
-              <q-input
+              <q-select
                 v-if="affiliationCode === affiliationsMap.EMP.code"
-                debounce="700"
                 class="full-width"
                 :disable="loading"
                 stack-label
                 outlined
-                maxlength="4"
-                label="Dept Code"
+                :options="departments"
+                label="Department"
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
                 :rules="[requiredRule]"
-                v-model.trim="deptCode"
+                v-model="deptCode"
                 hint=""
               />
               <template v-if="affiliationCode === affiliationsMap.STU.code">
@@ -293,6 +296,7 @@ import {
   yearLevels,
   affiliationsMap,
   affiliations,
+  departments,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -323,6 +327,7 @@ export default defineComponent({
       colleges,
       yearLevelsMap,
       yearLevels,
+      departments,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };

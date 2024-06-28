@@ -1,30 +1,146 @@
+const _formatMap = (map) => {
+  for (const key in map) {
+    map[key] = {
+      ...(typeof map[key] === "object" ? map[key] : { name: map[key] }),
+      code: key,
+    };
+  }
+};
+
 export const examsMap = {
   PE: {
-    code: "PE",
     name: "Physical Exam",
     icon: "fa-solid fa-weight-scale",
   },
   LABCBC: {
-    code: "LABCBC",
     name: "Lab - CBC",
     icon: "fa-solid fa-droplet",
   },
   LABURI: {
-    code: "LABURI",
     name: "Lab - Urinalysis",
     icon: "fa-solid fa-flask-vial",
   },
   LABFCL: {
-    code: "LABFCL",
     name: "Lab - Fecalysis",
     icon: "fa-solid fa-poop",
   },
   RADXRCHST: {
-    code: "RADXRCHST",
     name: "Rad - X-Ray (Chest)",
     icon: "fa-solid fa-x-ray",
   },
 };
+
+export const campusesMap = {
+  MNL: "Manila",
+  CAL: "Caloocan",
+  UERM: "UERM",
+};
+
+export const collegesMap = {
+  MED: "Medicine",
+  NURS: "Nursing",
+  MEDTECH: "Medical Technology",
+  ARTS: "Arts and Sciences",
+  BA: "Business Administration",
+  ENGR: "Engineering",
+  CSS: "Computer Studies and Systems",
+  DEN: "Dentistry",
+  EDUC: "Education",
+  FAAD: "Fine Arts, Architecture and Design",
+  LAW: "Law",
+};
+
+export const yearLevelsMap = {
+  1: "First Year",
+  2: "Second Year",
+  3: "Third Year",
+  4: "Fourth Year",
+};
+
+export const affiliationsMap = {
+  EMP: "Employee/Faculty",
+  STU: "Student",
+};
+
+export const userRolesMap = {
+  ADMIN: "Administrator",
+  DR: "Physician",
+  NURSE: "Nurse",
+  STAFF: "Staff",
+  RAD: "Radiologist",
+  LAB: "Pathologist",
+  RADTECH: "Radiology Technician",
+  LABTECH: "Laboratory Technician",
+};
+
+export const departmentsMap = {
+  ADMSSN: "ADMISSIONS OFFICE",
+  BBM: "BACHELOR OF BUSINESS MANAGEMENT",
+  BED: "BASIC EDUCATION DEPARTMENT",
+  BUDG: "BUDGET OFFICE",
+  BENT: "BUSINESS ENTERPRISES",
+  CASLAB: "CAS-LABORATORIES",
+  COMPT: "COMPTROLLERS DEPARTMENT",
+  ENGR: "DEPARTMENT OF ENGINEERING",
+  GENSRV: "DEPARTMENT OF GENERAL SERVICES",
+  HRD: "DEPARTMENT OF HUMAN RESOURCES & DEVELOPMENT",
+  LIB: "DEPARTMENT OF LIBRARIES",
+  REG: "DEPARTMENT OF REGISTRATION AND RECORDS MANAGEMENT",
+  ELEM: "ELEMENTARY",
+  ELEMLAB: "ELEMENTARY LABORATORY SCHOOL",
+  ENVSRV: "ENVIRONMENTAL SERVICES OFFICE",
+  FNCE: "FINANCE OFFICE",
+  GENSRVPRNT: "GENERAL SERVICES - PRINTING",
+  GUID: "GUIDANCE, COUNSELLING AND CAREER SERVICES OFFICE",
+  HS: "HIGH SCHOOL",
+  IT: "INFORMATION TECHNOLOGY DEPARTMENT",
+  INTAUD: "INTERNAL AUDIT DEPARTMENT",
+  KNDR: "KINDERGARTEN",
+  MRKTG: "MARKETING AND UNIVERSITY RELATIONS DEPARTMENT",
+  NATSRVTR: "NATIONAL SERVICE TRAINING PROGRAM",
+  QA: "OFFICE FOR QUALITY ASSURANCE",
+  CULTAFF: "OFFICE OF CULTURAL AFFAIRS",
+  CURRDEV: "OFFICE OF CURRICULUM DEVELOPMENT AND INSTRUCTION",
+  OUTRCH: "OFFICE OF EXTENSION AND COMMUNITY OUTREACH",
+  RSRCHCOORD: "OFFICE OF RESEARCH COORDINATION",
+  CHAIR: "OFFICE OF THE CHAIRMAN OF THE BOARD AND CEO",
+  CHANC: "OFFICE OF THE CHANCELLOR",
+  CORPSEC: "OFFICE OF THE CORPORATE SECRETARY",
+  DIRADSRV: "OFFICE OF THE DIRECTOR FOR ADMINISTRATIVE SERVICES",
+  EXECVP: "OFFICE OF THE EXECUTIVE VICE PRESIDENT AND CADO",
+  PCAO: "OFFICE OF THE PRESIDENT AND CAO",
+  SVPFAD: "OFFICE OF THE SVP FOR FINANCE AND ADMINISTRATION",
+  LEGALCOUNSEL: "OFFICE OF THE UNIVERSITY LEGAL COUNSEL",
+  VPFN: "OFFICE OF THE VICE PRESIDENT FOR FINANCE",
+  PE: "PHYSICAL EDUCATION",
+  PROP: "PROPERTY CUSTODIAN",
+  PURCH: "PURCHASING OFFICE",
+  SCNDLAB: "SECONDARY LABORATORY SCHOOL",
+  SCRTY: "SECURITY OFFICE",
+  SHS: "SENIOR HIGH SCHOOL",
+  STCK: "STOCK & RECEIVING OFFICE",
+  STUAFF: "STUDENT AFFAIRS OFFICE",
+  PUBLSH: "TEXTBOOK EVALUATION & PUBLISHING OFFICE",
+  UNIVREL: "UNIVERSITY RELATIONS OFFICE",
+  UNIVTHEA: "UNIVERSITY THEATER",
+};
+
+// THIS IS TO LET THE LINTER HELP SUGGEST `map` PROPS WHILE BEING "DRY" AT THE SAME TIME
+_formatMap(examsMap);
+_formatMap(campusesMap);
+_formatMap(collegesMap);
+_formatMap(yearLevelsMap);
+_formatMap(affiliationsMap);
+_formatMap(userRolesMap);
+_formatMap(departmentsMap);
+
+export const exams = Object.values(examsMap);
+export const campuses = Object.values(campusesMap);
+export const colleges = Object.values(collegesMap);
+export const yearLevels = Object.values(yearLevelsMap);
+export const affiliations = Object.values(affiliationsMap);
+export const userRoles = Object.values(userRolesMap);
+export const departments = Object.values(departmentsMap);
 
 export const examFieldsMap = {
   MEDHIST: [
@@ -59,7 +175,7 @@ export const examFieldsMap = {
       type: "TEXTAREA",
     },
   ],
-  PE: [
+  [examsMap.PE.code]: [
     {
       code: "VSIGNBP",
       name: "Blood Pressure",
@@ -168,9 +284,9 @@ export const examFieldsMap = {
       required: true,
     },
   ],
-  LABCBC: [
+  [examsMap.LABCBC.code]: [
     {
-      code: "LABCBCHGB",
+      code: `${examsMap.LABCBC.code}HGB`,
       name: "HGB",
       type: "DIAGTEST",
       default: {
@@ -180,7 +296,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCHCT",
+      code: `${examsMap.LABCBC.code}HCT`,
       name: "HCT",
       type: "DIAGTEST",
       default: {
@@ -190,7 +306,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCRBC",
+      code: `${examsMap.LABCBC.code}RBC`,
       name: "RBC",
       type: "DIAGTEST",
       default: {
@@ -200,7 +316,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCMCHC",
+      code: `${examsMap.LABCBC.code}MCHC`,
       name: "MCHC",
       type: "DIAGTEST",
       default: {
@@ -210,7 +326,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCMCV",
+      code: `${examsMap.LABCBC.code}MCV`,
       name: "MCV",
       type: "DIAGTEST",
       default: {
@@ -220,7 +336,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCRDWCV",
+      code: `${examsMap.LABCBC.code}RDWCV`,
       name: "RDW-CV",
       type: "DIAGTEST",
       default: {
@@ -230,7 +346,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCRDWSD",
+      code: `${examsMap.LABCBC.code}RDWSD`,
       name: "RDW-SD",
       type: "DIAGTEST",
       default: {
@@ -240,7 +356,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCWBC",
+      code: `${examsMap.LABCBC.code}WBC`,
       name: "WBC",
       type: "DIAGTEST",
       default: {
@@ -250,7 +366,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCNEUT",
+      code: `${examsMap.LABCBC.code}NEUT`,
       name: "NEUT",
       type: "DIAGTEST",
       default: {
@@ -260,7 +376,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCLYMPH",
+      code: `${examsMap.LABCBC.code}LYMPH`,
       name: "LYMPH",
       type: "DIAGTEST",
       default: {
@@ -270,7 +386,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCMONO",
+      code: `${examsMap.LABCBC.code}MONO`,
       name: "MONO",
       type: "DIAGTEST",
       default: {
@@ -280,7 +396,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCBASO",
+      code: `${examsMap.LABCBC.code}BASO`,
       name: "BASO",
       type: "DIAGTEST",
       default: {
@@ -290,7 +406,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCPLT",
+      code: `${examsMap.LABCBC.code}PLT`,
       name: "PLT",
       type: "DIAGTEST",
       default: {
@@ -300,7 +416,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCMPV",
+      code: `${examsMap.LABCBC.code}MPV`,
       name: "MPV",
       type: "DIAGTEST",
       default: {
@@ -310,7 +426,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: "LABCBCMORPH",
+      code: `${examsMap.LABCBC.code}MORPH`,
       name: "MORPH",
       type: "DIAGTEST",
       default: {
@@ -320,134 +436,94 @@ export const examFieldsMap = {
       },
     },
   ],
-  LABURI: [
+  [examsMap.LABURI.code]: [
     {
-      code: "LABURICOLOR",
+      code: `${examsMap.LABURI.code}COLOR`,
       name: "Color",
       type: "DIAGTESTSELECT",
       options: ["Straw", "Light Yellow", "Yellow", "Dark Yellow", "Amber"],
       default: { value: null },
     },
     {
-      code: "LABURITURB",
+      code: `${examsMap.LABURI.code}TURB`,
       name: "Turbidity",
       type: "DIAGTESTSELECT",
       options: ["Clear", "Slightly Cloudy", "Cloudy", "Turbid"],
       default: { value: null },
     },
     {
-      code: "LABURISPGR",
+      code: `${examsMap.LABURI.code}SPGR`,
       name: "SP GR",
       type: "DIAGTESTSELECT",
       options: ["1.000", "1.005", "1.010", "1.015", "1.020", "1.025", "1.030"],
       default: { value: null },
     },
     {
-      code: "LABURIPH",
+      code: `${examsMap.LABURI.code}PH`,
       name: "PH",
       type: "DIAGTESTSELECT",
       default: { value: null },
     },
     {
-      code: "LABURIPRTN",
+      code: `${examsMap.LABURI.code}PRTN`,
       name: "Protein",
       type: "DIAGTESTSELECT",
       options: ["None", "Negative", "Trace", "1+", "2+", "3+", "4+"],
       default: { value: null },
     },
     {
-      code: "LABURISGR",
+      code: `${examsMap.LABURI.code}SGR`,
       name: "Sugar",
       type: "DIAGTESTSELECT",
       options: ["None", "Negative", "Trace", "1+", "2+", "3+", "4+"],
       default: { value: null },
     },
     {
-      code: "LABURIRBC",
+      code: `${examsMap.LABURI.code}RBC`,
       name: "RBC",
       type: "DIAGTESTSELECT",
       options: ["None"],
       default: { value: null },
     },
     {
-      code: "LABURIEPI",
+      code: `${examsMap.LABURI.code}EPI`,
       name: "Epithelial",
       type: "DIAGTESTSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
     {
-      code: "LABURIMCS",
+      code: `${examsMap.LABURI.code}MCS`,
       name: "Mucus",
       type: "DIAGTESTSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
     {
-      code: "LABURICRSTL",
+      code: `${examsMap.LABURI.code}CRSTL`,
       name: "Crystal",
       type: "DIAGTESTSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
   ],
-  LABFCL: [
+  [examsMap.LABFCL.code]: [
     {
-      code: "LABFCLIMPRN",
+      code: `${examsMap.LABFCL.code}IMPRN`,
       name: "Impression",
       type: "DIAGTESTTEXTAREA",
       default: { value: null },
     },
   ],
-  RADXRCHST: [
+  [examsMap.RADXRCHST.code]: [
     {
-      code: "RADXRCHSTIMPRN",
+      code: `${examsMap.RADXRCHST.code}IMPRN`,
       name: "Impression",
       type: "DIAGTESTTEXTAREA",
       default: { value: null },
     },
   ],
 };
-
-export const campusesMap = {
-  MNL: { code: "MNL", name: "Manila" },
-  CAL: { code: "CAL", name: "Caloocan" },
-  UERM: { code: "UERM", name: "UERM" },
-};
-
-export const collegesMap = {
-  MED: { code: "MED", name: "Medicine" },
-  NST: { code: "NST", name: "Nursing" },
-  MEDTECH: { code: "MEDTECH", name: "Medical Technology" },
-};
-
-export const yearLevelsMap = {
-  FIRST: { code: 1, name: "First Year" },
-  SECOND: { code: 2, name: "Second Year" },
-  THIRD: { code: 3, name: "Third Year" },
-  FOURTH: { code: 4, name: "Fourth Year" },
-};
-
-export const userRolesMap = {
-  ADMIN: { code: "ADMIN", name: "Administrator" },
-  DR: { code: "DR", name: "Physician" },
-  NURSE: { code: "NURSE", name: "Nurse" },
-  STAFF: { code: "STAFF", name: "Staff" },
-  RADTECH: { code: "RADTECH", name: "Radiology Technician" },
-  LABTECH: { code: "LABTECH", name: "Laboratory Technician" },
-};
-
-export const affiliationsMap = {
-  EMP: { code: "EMP", name: "Employee/Faculty" },
-  STU: { code: "STU", name: "Student" },
-};
-
-export const exams = Object.values(examsMap);
-export const campuses = Object.values(campusesMap);
-export const colleges = Object.values(collegesMap);
-export const yearLevels = Object.values(yearLevelsMap);
-export const affiliations = Object.values(affiliationsMap);
-export const userRoles = Object.values(userRolesMap);
 
 export const app = {
   name: "UERM Infirmary",

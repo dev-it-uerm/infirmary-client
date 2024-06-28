@@ -27,7 +27,7 @@
                   ADVANCE FILTER
                 </div>
               </template>
-              <div style="padding: 10px 30px">
+              <div :style="{ padding: $q.screen.gt.md ? '10px 30px' : '30px' }">
                 <q-form @submit="getVisits">
                   <div
                     class="row item-center"
@@ -231,7 +231,7 @@
         <div :class="$q.screen.gt.md ? 'col-8 full-height' : 'col-12'">
           <CardComponent class="full-height">
             <template v-slot:body>
-              <div class="scroll" style="overflow: hidden">
+              <div>
                 <FetchingData v-if="loading" />
                 <template v-else>
                   <div class="row items-center justify-between q-mb-md">

@@ -51,11 +51,11 @@ const routes = [
         path: "/ape/registration",
         component: () => import("pages/ape/Registration.vue"),
       },
-      // {
-      //   name: "APE_PATIENT_REGISTRATION",
-      //   path: "/ape/patient-registration",
-      //   component: () => import("pages/ape/PatientRegistration.vue"),
-      // },
+      {
+        name: "APE_PATIENT_REGISTRATION",
+        path: "/ape/patient-registration",
+        component: () => import("pages/ape/PatientRegistration.vue"),
+      },
       {
         name: "APE_VISITS",
         path: "/ape/visits",

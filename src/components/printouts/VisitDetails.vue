@@ -85,7 +85,6 @@ export default {
             alignment: "center",
             bold: true,
             margin: 2,
-            background: "#EFEFEF",
           },
           "",
         ],
@@ -127,16 +126,16 @@ export default {
               ? 1
               : 0;
           },
-          // hLineColor: (rowIndex, node) => {
-          //   return rowIndex === 0 || rowIndex === node.table.body.length
-          //     ? "black"
-          //     : "grey";
-          // },
-          // vLineColor: (rowIndex, node) => {
-          //   return rowIndex === 0 || rowIndex === node.table.widths.length
-          //     ? "black"
-          //     : "grey";
-          // },
+          hLineColor: (rowIndex, node) => {
+            return rowIndex === 0 || rowIndex === node.table.body.length
+              ? "#E0E0E0"
+              : "rgba(0, 0, 0, 1)";
+          },
+          vLineColor: (rowIndex, node) => {
+            return rowIndex === 0 || rowIndex === node.table.widths.length
+              ? "#E0E0E0"
+              : "rgba(0, 0, 0, 1)";
+          },
         },
       };
     },
@@ -292,6 +291,7 @@ export default {
                         alignment: "center",
                         bold: true,
                         fontSize: 11,
+                        fillColor: "#F1F1F1",
                         margin: [0, 5, 0, 5],
                       },
                     ],

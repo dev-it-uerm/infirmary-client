@@ -1,13 +1,13 @@
 <template>
-  <q-card
-    class="shadow-0 bg-white full-width"
-    style="border-radius: 0; border: 2px solid rgba(0, 0, 0, 0.1)"
+  <div
+    class="bg-white full-width"
+    style="border: 2px solid rgba(0, 0, 0, 0.1)"
     :style="{ padding: padded ? '30px' : '0' }"
   >
     <slot name="body">
       <!-- fallback content -->
     </slot>
-  </q-card>
+  </div>
 </template>
 
 <script>

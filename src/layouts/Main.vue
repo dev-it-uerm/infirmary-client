@@ -101,7 +101,7 @@
               <q-separator class="q-my-md" style="width: 80px" />
             </div>
             <q-btn
-              v-if="user.roleCode === 'ADM'"
+              v-if="user.roleCode === userRolesMap.ADMIN.code"
               :class="
                 activeMenu === 'USER_REGISTRATION'
                   ? 'bg-accent text-black'
@@ -214,7 +214,11 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage } from "src/helpers/util.js";
-import { apeNavMenus, diagNavMenus } from "src/helpers/constants.js";
+import {
+  apeNavMenus,
+  diagNavMenus,
+  userRolesMap,
+} from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "MainLayout",
@@ -231,6 +235,11 @@ export default defineComponent({
     // TermsAndConditions: defineAsyncComponent(() =>
     //   import("src/components/TermsAndConditions.vue")
     // ),
+  },
+  setup() {
+    return {
+      userRolesMap,
+    };
   },
   data() {
     return {
@@ -257,15 +266,31 @@ export default defineComponent({
           icon: "fa-solid fa-heart-pulse",
           children: apeNavMenus.filter((menu) => {
             if (
-              !["ADM", "CON", "MED"].includes(this.user.roleCode) &&
-              menu.code === "APE_REGISTRATION"
+              menu.code === "APE_PATIENT_REGISTRATION" &&
+              this.user.roleCode !== userRolesMap.ADMIN.code
             ) {
               return false;
             }
 
             if (
-              !["ADM", "CON", "MED", "RAD"].includes(this.user.roleCode) &&
-              menu.code === "APE_XRAY_ENCODE_BULK"
+              menu.code === "APE_REGISTRATION" &&
+              ![
+                userRolesMap.ADMIN.code,
+                userRolesMap.DR.code,
+                userRolesMap.STAFF.code,
+              ].includes(this.user.roleCode)
+            ) {
+              return false;
+            }
+
+            if (
+              menu.code === "APE_XRAY_ENCODE_BULK" &&
+              ![
+                userRolesMap.ADMIN.code,
+                userRolesMap.DR.code,
+                userRolesMap.STAFF.code,
+                userRolesMap.RADTECH.code,
+              ].includes(this.user.roleCode)
             ) {
               return false;
             }

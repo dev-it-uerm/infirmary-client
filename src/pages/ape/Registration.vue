@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center q-pa-md">
     <div class="column" style="gap: 16px; width: 500px">
-      <PageHeader text="REGISTRATION" icon="fa-solid fa-list-check" />
+      <PageHeader text="TRIAGE" icon="fa-solid fa-list-check" />
       <CardComponent>
         <template v-slot:body>
           <MessageBanner v-if="forbidden" :success="false">
@@ -227,7 +227,7 @@ export default defineComponent({
       await delay(2000);
 
       const vuexAction =
-        registrationMode === "REG" ? "ape/register" : "ape/timeInOut";
+        registrationMode === "REG" ? "ape/schedule" : "ape/timeInOut";
 
       const response = await this.$store.dispatch(vuexAction, patientCode);
 

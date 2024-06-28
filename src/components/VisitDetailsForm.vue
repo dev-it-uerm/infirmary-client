@@ -279,7 +279,29 @@ export default defineComponent({
     },
     async getInitialValue() {
       this.loading = true;
-      this.value = {};
+
+      const isExam = [
+        examsMap.LABCBC.code,
+        examsMap.LABURI.code,
+        examsMap.LABFCL.code,
+        examsMap.RADXRCHST.code,
+      ].includes(this.tab.code);
+
+      // SUPPLY DEFAULT VALUE
+      if (isExam) {
+        this.value = {
+          ...this.mergeTempAndVal(
+            this.tabFieldsMap[this.tab.code],
+            this.formatDiagValue([])
+          ),
+          REMARKS: null,
+        };
+      } else {
+        this.value = this.mergeTempAndVal(
+          this.tabFieldsMap[this.tab.code],
+          this.formatValue({})
+        );
+      }
 
       const response = await this.$store.dispatch("ape/getVisitDetails", {
         visitId: this.visitId,
@@ -299,30 +321,16 @@ export default defineComponent({
         return;
       }
 
-      if (
-        [
-          examsMap.LABCBC.code,
-          examsMap.LABURI.code,
-          examsMap.LABFCL.code,
-          examsMap.RADXRCHST.code,
-        ].includes(this.tab.code)
-      ) {
-        this.value = {
-          ...this.mergeTempAndVal(
-            this.tabFieldsMap[this.tab.code],
-            this.formatDiagValue(response.body)
-          ),
-          REMARKS: response.body[0]?.Remarks ?? null,
-        };
+      const formatter = isExam ? this.formatDiagValue : this.formatValue;
+      const val = isExam ? response.body : response.body[0];
 
-        this.loading = false;
-        return;
-      }
-
-      this.value = this.mergeTempAndVal(
-        this.tabFieldsMap[this.tab.code],
-        this.formatValue(response.body[0])
-      );
+      this.value = {
+        ...this.mergeTempAndVal(
+          this.tabFieldsMap[this.tab.code],
+          formatter(val)
+        ),
+        REMARKS: response.body[0]?.Remarks ?? null,
+      };
 
       this.loading = false;
     },

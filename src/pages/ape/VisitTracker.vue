@@ -35,9 +35,15 @@
               class="full-width column q-pa-lg q-mb-md"
               style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
             >
-              <div class="q-mb-sm">
-                <span class="text-grey-7">Visit Code:</span>
-                <span class="q-ml-sm">{{ visit.code }}</span>
+              <div>
+                <span class="text-grey-7">Visit Date & Time:</span>
+                <span class="q-ml-sm">{{
+                  formatDate(visit.dateTimeCreated)
+                }}</span>
+              </div>
+              <div class="q-mt-sm">
+                <span class="text-grey-7">Patient Code:</span>
+                <span class="q-ml-sm">{{ patient.identificationCode }}</span>
               </div>
               <div>
                 <span class="text-grey-7">Patient Name:</span>
@@ -61,6 +67,12 @@
                 <span class="q-ml-sm">{{
                   affiliationsMap[patient.affiliationCode].name
                 }}</span>
+              </div>
+              <div v-if="patient.deptCode" class="q-mt-sm">
+                <div>
+                  <span class="text-grey-7">Deparment:</span>
+                  <span class="q-ml-sm">{{ patient.deptCode }}</span>
+                </div>
               </div>
               <div v-if="patient.collegeCode" class="q-mt-sm">
                 <div>
@@ -90,29 +102,29 @@
               separator
               v-if="exams && exams.length > 0"
             >
-              <template v-for="(phase, idx) in exams" :key="idx">
+              <template v-for="(exam, idx) in exams" :key="idx">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>
                       {{
-                        phase.dateTimeCreated
-                          ? formatDate(phase.dateTimeCreated)
+                        exam.dateTimeCompleted
+                          ? formatDate(exam.dateTimeCompleted)
                           : "NOT YET COMPLETED"
                       }}
                     </q-item-label>
                     <q-item-label>
-                      {{ examsMap[phase.code].name }}
+                      {{ examsMap[exam.examCode].name }}
                     </q-item-label>
                   </q-item-section>
 
                   <q-item-section side>
                     <q-icon
                       :name="
-                        phase.dateTimeCreated
+                        exam.dateTimeCompleted
                           ? 'fa-solid fa-circle-check'
                           : 'fa-solid fa-circle-xmark'
                       "
-                      :color="phase.dateTimeCreated ? 'positive' : 'negative'"
+                      :color="exam.dateTimeCompleted ? 'positive' : 'negative'"
                       size="xs"
                     />
                   </q-item-section>
@@ -221,6 +233,7 @@ export default defineComponent({
 
       this.exams = exams;
 
+      console.log(exams);
       this.$refs.visitCodeScanner.reset();
       this.loading = false;
     },

@@ -29,13 +29,13 @@ export const scheduleSelf = async (context, accessToken) => {
   );
 };
 
-export const schedule = async (context, payload) => {
+export const schedule = async (context, patientCode) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/schedule-visit`,
+    `${context.rootState.app.apiHost}/ape/schedule-visit/${patientCode}`,
     null,
     context.rootState.app?.user?.accessToken,
-    payload,
+    null,
     context
   );
 };
@@ -113,28 +113,6 @@ export const addPatient = async (context, payload) => {
     null,
     context.rootState.app?.user?.accessToken,
     payload,
-    context
-  );
-};
-
-export const registerPatient = async (context, payload) => {
-  return await request(
-    "post",
-    `${context.rootState.app.apiHost}/ape/register-and-schedule`,
-    null,
-    context.rootState.app?.user?.accessToken,
-    payload,
-    context
-  );
-};
-
-export const register = async (context, patientCode) => {
-  return await request(
-    "post",
-    `${context.rootState.app.apiHost}/ape/register/${patientCode}`,
-    null,
-    context.rootState.app?.user?.accessToken,
-    null,
     context
   );
 };

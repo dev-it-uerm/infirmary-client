@@ -534,7 +534,8 @@ export default defineComponent({
 
         const response = await this.$store.dispatch(
           "ape/schedule",
-          sliceObj(row, "id", "status", "visitCode", "loading")
+          // sliceObj(row, "id", "status", "visitCode", "loading")
+          row.identificationCode
         );
 
         await delay(1000);

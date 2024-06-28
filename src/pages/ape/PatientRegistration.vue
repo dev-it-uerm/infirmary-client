@@ -5,7 +5,7 @@
       style="gap: 16px"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <PageHeader text="REGISTER PATIENT" icon="fa-solid fa-user" />
+      <PageHeader text="ADD PATIENT" icon="fa-solid fa-user" />
       <CardComponent>
         <template v-slot:body>
           <q-form
@@ -53,6 +53,19 @@
                 option-value="code"
                 :rules="[requiredRule]"
                 v-model="affiliationCode"
+                hint=""
+              />
+              <q-input
+                v-if="affiliationCode === affiliationsMap.EMP.code"
+                debounce="700"
+                class="full-width"
+                :disable="loading"
+                stack-label
+                outlined
+                maxlength="4"
+                label="Dept Code"
+                :rules="[requiredRule]"
+                v-model.trim="deptCode"
                 hint=""
               />
               <template v-if="affiliationCode === affiliationsMap.STU.code">
@@ -322,6 +335,7 @@ export default defineComponent({
       campusCode: null,
       affiliationCode: null,
       code: null,
+      deptCode: null,
 
       schoolYearFrom: null,
       // schoolYearTo: null,
@@ -367,6 +381,7 @@ export default defineComponent({
       this.campusCode = null;
       this.affiliationCode = null;
       this.code = null;
+      this.deptCode = null;
 
       this.schoolYearFrom = null;
       this.collegeCode = null;
@@ -387,10 +402,11 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("app/registerPatient", {
+      const response = await this.$store.dispatch("ape/addPatient", {
         campusCode: this.campusCode,
         affiliationCode: this.affiliationCode,
         identificationCode: this.code,
+        deptCode: this.deptCode,
 
         schoolYear: this.schoolYearFrom,
         collegeCode: this.collegeCode,

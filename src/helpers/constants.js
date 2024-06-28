@@ -429,11 +429,12 @@ export const yearLevelsMap = {
 };
 
 export const userRolesMap = {
-  PHYSICIAN: { code: "DR", name: "Physician" },
-  ADMIN: { code: "ADM", name: "Administrator" },
-  MED_STAFF: { code: "MEDSTAFF", name: "Medical Staff" },
-  RAD_TECH: { code: "RADTECH", name: "Radiology Technician" },
-  LAB_TECH: { code: "LABTECH", name: "Laboratory Technician" },
+  ADMIN: { code: "ADMIN", name: "Administrator" },
+  DR: { code: "DR", name: "Physician" },
+  NURSE: { code: "NURSE", name: "Nurse" },
+  STAFF: { code: "STAFF", name: "Staff" },
+  RADTECH: { code: "RADTECH", name: "Radiology Technician" },
+  LABTECH: { code: "LABTECH", name: "Laboratory Technician" },
 };
 
 export const affiliationsMap = {
@@ -454,16 +455,16 @@ export const app = {
   url: "https://uermhospital.com.ph/apps/infirmary",
 };
 
-// const navMenuAPEPxRegistration = {
-//   code: "APE_PATIENT_REGISTRATION",
-//   name: "Register Patient",
-//   url: "/ape/patient-registration",
-//   icon: "fa-solid fa-person-circle-plus",
-// };
+const navMenuAPEPxRegistration = {
+  code: "APE_PATIENT_REGISTRATION",
+  name: "Add Patient",
+  url: "/ape/patient-registration",
+  icon: "fa-solid fa-person-circle-plus",
+};
 
 const navMenuRegistration = {
   code: "APE_REGISTRATION",
-  name: "Registration",
+  name: "Triage",
   url: "/ape/registration",
   icon: "fa-solid fa-list-check",
 };
@@ -520,7 +521,7 @@ const navMenuPxRegistration = {
 
 export const apeNavMenus = [
   navMenuRegistration,
-  // navMenuAPEPxRegistration,
+  navMenuAPEPxRegistration,
   // {
   //   code: "VISIT_APPOINTMENT_LINK",
   //   name: "Visit Appointment",

@@ -122,7 +122,7 @@ export default defineComponent({
   methods: {
     async search(val) {
       const searchStr = val.trim();
-      if (searchStr.length < 4) return;
+      if (searchStr.length < 3) return;
 
       this.options = [];
       this.loading = true;

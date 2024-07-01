@@ -1,6 +1,7 @@
 <template>
   <MinimizedDialog
     title="Visit Details"
+    :loading="loading"
     widthOnDesktop="720px"
     @close="$emit('close')"
   >

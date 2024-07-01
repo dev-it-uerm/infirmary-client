@@ -10,8 +10,8 @@
       :disable="disable || loading"
       option-value="code"
       option-label="name"
-      label="Employee"
-      :placeholder="value ? '' : 'Type in Employee Name or Number to search'"
+      :label="label"
+      :placeholder="value ? '' : 'Type in user name to search'"
       @input-value="search"
       :rules="[
         (val) => {
@@ -82,15 +82,26 @@
 import { defineComponent } from "vue";
 import { mapGetters } from "vuex";
 import { debounce } from "quasar";
-import { delay, request } from "src/helpers/util.js";
-import { userRolesMap } from "src/helpers/constants.js";
+import { delay } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "RadiologistSelect",
+  name: "UserSelect",
   props: {
+    initialValue: {
+      type: Object,
+      default: null,
+    },
     disable: {
       type: Boolean,
       default: false,
+    },
+    label: {
+      type: String,
+      default: "User",
+    },
+    roleCode: {
+      type: String,
+      required: true,
     },
   },
   emits: ["valueChanged"],
@@ -107,6 +118,12 @@ export default defineComponent({
     }),
   },
   watch: {
+    initialValue: {
+      handler(val) {
+        this.value = val;
+      },
+      immediate: true,
+    },
     value: {
       handler(val) {
         this.$emit("valueChanged", val);
@@ -129,7 +146,7 @@ export default defineComponent({
 
       const response = await this.$store.dispatch("app/getUsers", {
         searchStr,
-        roleCode: userRolesMap.RAD.code,
+        roleCode: this.roleCode,
       });
 
       await delay(1000);

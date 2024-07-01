@@ -238,7 +238,9 @@
                     v-model="xrayImpression"
                   >
                   </q-input>
-                  <RadiologistSelect
+                  <UserSelect
+                    label="Radiologist"
+                    :roleCode="userRolesMap.RAD.code"
                     :disable="filtering || saving"
                     @valueChanged="
                       (val) => {
@@ -301,6 +303,7 @@ import {
   yearLevels,
   examsMap,
   examFieldsMap,
+  userRolesMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -332,8 +335,8 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
-    RadiologistSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/RadiologistSelect.vue")
+    UserSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/UserSelect.vue")
     ),
   },
   setup() {
@@ -346,6 +349,7 @@ export default defineComponent({
       colleges,
       yearLevelsMap,
       yearLevels,
+      userRolesMap,
       showMessage,
       formatDate,
       formatName,

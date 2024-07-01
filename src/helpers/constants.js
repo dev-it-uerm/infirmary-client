@@ -149,14 +149,6 @@ export const affiliations = Object.values(affiliationsMap);
 export const userRoles = Object.values(userRolesMap);
 export const departments = Object.values(departmentsMap);
 
-console.log(examsMap);
-console.log(campusesMap);
-console.log(collegesMap);
-console.log(yearLevelsMap);
-console.log(affiliationsMap);
-console.log(userRolesMap);
-console.log(departmentsMap);
-
 export const examFieldsMap = {
   MEDHIST: [
     {

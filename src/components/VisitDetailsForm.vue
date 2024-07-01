@@ -17,7 +17,7 @@
             <div>
               <q-input
                 v-if="field.type === 'TEXT'"
-                :disable="loading || field.disabled"
+                :disable="visitIsCompleted || field.disable || loading"
                 stack-label
                 outlined
                 :rules="generateRules(field.required)"
@@ -27,7 +27,7 @@
               />
               <q-input
                 v-if="field.type === 'TEXTAREA'"
-                :disable="loading || field.disabled"
+                :disable="visitIsCompleted || field.disable || loading"
                 type="textarea"
                 stack-label
                 outlined
@@ -36,9 +36,17 @@
                 v-model.trim="value[field.code]"
                 hint=""
               />
+              <UserSelect
+                v-if="field.type === 'PHYSICIANSELECT'"
+                label="Physician"
+                :roleCode="userRolesMap.DR.code"
+                :disable="visitIsCompleted || field.disable || loading"
+                :initialValue="value[field.code]"
+                @valueChanged="(val) => (value[field.code] = val)"
+              />
               <DiagTest
                 v-if="field.type === 'DIAGTEST'"
-                :disabled="loading || field.disabled"
+                :disable="visitIsCompleted || field.disable || loading"
                 :label="field.name"
                 :diagParamCode="field.code"
                 :initialValue="value[field.code]"
@@ -46,7 +54,7 @@
               />
               <DiagTestTextArea
                 v-if="field.type === 'DIAGTESTTEXTAREA'"
-                :disabled="loading || field.disabled"
+                :disable="visitIsCompleted || field.disable || loading"
                 :required="field.required"
                 :label="field.name"
                 :diagParamCode="field.code"
@@ -55,7 +63,7 @@
               />
               <DiagTestSelect
                 v-if="field.type === 'DIAGTESTSELECT'"
-                :disabled="loading || field.disabled"
+                :disable="visitIsCompleted || field.disable || loading"
                 :options="field.options"
                 :required="field.required"
                 :label="field.name"
@@ -66,7 +74,7 @@
             </div>
           </template>
           <q-input
-            :disable="loading"
+            :disable="visitIsCompleted || loading"
             type="textarea"
             stack-label
             outlined
@@ -113,7 +121,12 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
-import { exams, examsMap, examFieldsMap } from "src/helpers/constants.js";
+import {
+  exams,
+  examsMap,
+  examFieldsMap,
+  userRolesMap,
+} from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitDetailsForm",
@@ -132,6 +145,9 @@ export default defineComponent({
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
+    ),
+    UserSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/UserSelect.vue")
     ),
   },
   props: {
@@ -155,6 +171,7 @@ export default defineComponent({
   emits: ["busy", "ready", "success", "error"],
   setup() {
     return {
+      userRolesMap,
       generateRules(required) {
         return required
           ? [
@@ -168,30 +185,31 @@ export default defineComponent({
       formatDate,
       tabFieldsMap: {
         VISIT: [
-          // {
-          //   code: "PHYSICIAN",
-          //   name: "Physician",
-          //   type: "TEXT",
-          // },
+          {
+            code: "PATIENTNAME",
+            name: "Patient Name",
+            type: "TEXT",
+            disable: true,
+          },
           {
             code: "CREATEDBY",
             name: "Added By",
             type: "TEXT",
-            disabled: true,
+            disable: true,
           },
           {
             code: "DATETIMECREATED",
             name: "Date & Time Visited",
             type: "TEXT",
             format: formatDate,
-            disabled: true,
+            disable: true,
           },
           {
             code: "COMPLETEDBY",
             name: "Completed By",
             type: "TEXT",
             default: "NOT YET COMPLETED",
-            disabled: true,
+            disable: true,
           },
           {
             code: "DATETIMECOMPLETED",
@@ -199,7 +217,13 @@ export default defineComponent({
             type: "TEXT",
             format: formatDate,
             default: "NOT YET COMPLETED",
-            disabled: true,
+            disable: true,
+          },
+          {
+            code: "PHYSICIAN",
+            name: "Physician",
+            type: "PHYSICIANSELECT",
+            required: true,
           },
         ],
         ...examFieldsMap,
@@ -288,20 +312,10 @@ export default defineComponent({
       ].includes(this.tab.code);
 
       // SUPPLY DEFAULT VALUE
-      if (isExam) {
-        this.value = {
-          ...this.mergeTempAndVal(
-            this.tabFieldsMap[this.tab.code],
-            this.formatDiagValue([])
-          ),
-          REMARKS: null,
-        };
-      } else {
-        this.value = this.mergeTempAndVal(
-          this.tabFieldsMap[this.tab.code],
-          this.formatValue({})
-        );
-      }
+      this.value = this.mergeTempAndVal(
+        this.tabFieldsMap[this.tab.code],
+        isExam ? this.formatDiagValue([]) : this.formatValue({})
+      );
 
       const response = await this.$store.dispatch("ape/getVisitDetails", {
         visitId: this.visitId,
@@ -324,12 +338,16 @@ export default defineComponent({
       const formatter = isExam ? this.formatDiagValue : this.formatValue;
       const val = isExam ? response.body : response.body[0];
 
+      const remarks = isExam
+        ? val[0].Remarks
+        : val?.REMARKS ?? val?.Remarks ?? val?.remarks ?? null;
+
       this.value = {
         ...this.mergeTempAndVal(
           this.tabFieldsMap[this.tab.code],
           formatter(val)
         ),
-        REMARKS: response.body[0]?.Remarks ?? null,
+        REMARKS: remarks,
       };
 
       this.loading = false;

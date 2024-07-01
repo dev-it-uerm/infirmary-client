@@ -5,7 +5,7 @@
       <q-input
         class="col"
         dense
-        :disable="disabled"
+        :disable="disable"
         stack-label
         outlined
         label="Result"
@@ -15,7 +15,7 @@
       <q-input
         class="col"
         dense
-        :disable="disabled"
+        :disable="disable"
         stack-label
         outlined
         :rules="rules"
@@ -26,7 +26,7 @@
       <q-input
         class="col"
         dense
-        :disable="disabled"
+        :disable="disable"
         stack-label
         outlined
         :rules="rules"
@@ -48,7 +48,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    disabled: {
+    disable: {
       type: Boolean,
       default: false,
     },

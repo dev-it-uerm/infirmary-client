@@ -1,6 +1,6 @@
 <template>
   <q-input
-    :disable="loading"
+    :disable="disable || loading"
     type="textarea"
     stack-label
     outlined
@@ -27,7 +27,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "FormFieldDiagTestTextArea",
   props: {
-    disabled: {
+    disable: {
       type: Boolean,
       default: false,
     },

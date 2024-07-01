@@ -42,11 +42,7 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ item.name }}</q-item-label>
-                <!-- <q-item-label caption>February 22, 2016</q-item-label> -->
               </q-item-section>
-              <!-- <q-item-section side>
-              <q-icon name="info" color="amber" />
-            </q-item-section> -->
             </q-item>
           </q-list>
         </q-btn-dropdown>
@@ -71,11 +67,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import {
-  // exams,
-  examsMap,
-} from "src/helpers/constants.js";
-
+import { examsMap } from "src/helpers/constants.js";
 import { formatName } from "src/helpers/util.js";
 
 export default defineComponent({
@@ -112,16 +104,6 @@ export default defineComponent({
     ...mapGetters({
       user: "app/user",
     }),
-    // tabs() {
-    //   return [
-    //     {
-    //       code: "MEDHIST",
-    //       name: "Medical History",
-    //       icon: "fa-solid fa-notes-medical",
-    //     },
-    //     ...exams,
-    //   ];
-    // },
   },
   async mounted() {
     const response = await this.$store.dispatch(
@@ -139,11 +121,11 @@ export default defineComponent({
       });
 
       this.tabs = [
-        // {
-        //   code: "VISIT",
-        //   name: "Visit Info.",
-        //   icon: "fa-solid fa-notes-medical",
-        // },
+        {
+          code: "VISIT",
+          name: "Visit Info.",
+          icon: "fa-solid fa-notes-medical",
+        },
         {
           code: "MEDHIST",
           name: "Medical History",

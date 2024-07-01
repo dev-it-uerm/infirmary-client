@@ -7,7 +7,7 @@
     fill-input
     label-slot
     :options="options"
-    :disable="disabled"
+    :disable="disable"
     :model-value="value"
     @input-value="
       (val) => (value = val == null || val === '' ? null : val.trim())
@@ -27,7 +27,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "FormFieldDiagTestSelect",
   props: {
-    disabled: {
+    disable: {
       type: Boolean,
       default: false,
     },

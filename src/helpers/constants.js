@@ -1,9 +1,17 @@
+// THIS IS TO LET THE LINTER HELP SUGGEST `map` PROPS WHILE BEING "DRY" AT THE SAME TIME
 const _formatMap = (map) => {
   for (const key in map) {
-    map[key] = {
-      ...(typeof map[key] === "object" ? map[key] : { name: map[key] }),
-      code: key,
-    };
+    if (!map[key]) {
+      map[key] = { name: key, code: key };
+      continue;
+    }
+
+    if (map[key].constructor.name === "Object") {
+      map[key] = { ...map[key], code: map[key].code || key };
+      continue;
+    }
+
+    map[key] = { name: map[key], code: key };
   }
 };
 
@@ -33,7 +41,7 @@ export const examsMap = {
 export const campusesMap = {
   MNL: "Manila",
   CAL: "Caloocan",
-  UERM: "UERM",
+  UERM: null, // `name` is the same as the `code`
 };
 
 export const collegesMap = {
@@ -51,10 +59,10 @@ export const collegesMap = {
 };
 
 export const yearLevelsMap = {
-  1: "First Year",
-  2: "Second Year",
-  3: "Third Year",
-  4: "Fourth Year",
+  FIRST: { code: 1, name: "First Year" },
+  SECOND: { code: 2, name: "Second Year" },
+  THIRD: { code: 3, name: "Third Year" },
+  FOURTH: { code: 4, name: "Fourth Year" },
 };
 
 export const affiliationsMap = {
@@ -125,7 +133,6 @@ export const departmentsMap = {
   UNIVTHEA: "UNIVERSITY THEATER",
 };
 
-// THIS IS TO LET THE LINTER HELP SUGGEST `map` PROPS WHILE BEING "DRY" AT THE SAME TIME
 _formatMap(examsMap);
 _formatMap(campusesMap);
 _formatMap(collegesMap);
@@ -141,6 +148,14 @@ export const yearLevels = Object.values(yearLevelsMap);
 export const affiliations = Object.values(affiliationsMap);
 export const userRoles = Object.values(userRolesMap);
 export const departments = Object.values(departmentsMap);
+
+console.log(examsMap);
+console.log(campusesMap);
+console.log(collegesMap);
+console.log(yearLevelsMap);
+console.log(affiliationsMap);
+console.log(userRolesMap);
+console.log(departmentsMap);
 
 export const examFieldsMap = {
   MEDHIST: [

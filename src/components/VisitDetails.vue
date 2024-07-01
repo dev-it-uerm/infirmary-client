@@ -61,6 +61,8 @@
         :visitIsCompleted="Boolean(visit.dateTimeCompleted)"
         @busy="loading = true"
         @ready="loading = false"
+        @success="$emit('success')"
+        @error="$emit('error')"
       />
     </template>
   </MinimizedDialog>
@@ -95,7 +97,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["close"],
+  emits: ["close", "success", "error"],
   setup() {
     return { formatName };
   },

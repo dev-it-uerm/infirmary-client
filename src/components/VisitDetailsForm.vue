@@ -152,7 +152,7 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ["busy", "ready"],
+  emits: ["busy", "ready", "success", "error"],
   setup() {
     return {
       generateRules(required) {
@@ -369,11 +369,13 @@ export default defineComponent({
       if (response.error) {
         showMessage(this.$q, false, response.body);
         this.loading = false;
+        this.$emit("error");
         return;
       }
 
       showMessage(this.$q, true, "Visit details have been saved successfully.");
       this.loading = false;
+      this.$emit("success");
     },
   },
 });

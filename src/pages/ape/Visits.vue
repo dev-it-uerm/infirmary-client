@@ -125,7 +125,7 @@
                       v-model="filters.patientAffiliationCode"
                     />
                     <!-- <template
-                  v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
+                  v-if="filters.patientAffiliationCode === AFFILIATIONS.STU"
                 >
                   <q-input
                     :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
@@ -477,11 +477,9 @@
                               >
                                 {{
                                   props.row[column.name]
-                                    ? Object.values(yearLevelsMap).find(
-                                        (y) =>
-                                          y.code ===
-                                          Number(props.row[column.name])
-                                      ).name
+                                    ? yearLevelsMap[
+                                        Number(props.row[column.name])
+                                      ].name
                                     : ""
                                 }}
                               </q-td>
@@ -718,20 +716,32 @@ import {
   formatName,
 } from "src/helpers/util.js";
 
+import * as inputRules from "src/helpers/input-rules.js";
+
 import {
-  affiliationsMap,
-  affiliations,
-  campusesMap,
-  campuses,
+  EXAMS,
   examsMap,
   exams,
+  CAMPUSES,
+  campusesMap,
+  campuses,
+  COLLEGES,
   collegesMap,
   colleges,
+  YEAR_LEVELS,
   yearLevelsMap,
   yearLevels,
+  AFFILIATIONS,
+  affiliationsMap,
+  affiliations,
+  USER_ROLES,
+  userRolesMap,
+  userRoles,
+  DEPARTMENTS,
+  departmentsMap,
+  departments,
+  examFieldsMap,
 } from "src/helpers/constants.js";
-
-import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "VisitsPage",
@@ -769,16 +779,29 @@ export default defineComponent({
   },
   setup() {
     return {
-      affiliations,
-      affiliationsMap,
-      campuses,
-      campusesMap,
-      exams,
+      EXAMS,
       examsMap,
+      exams,
+      CAMPUSES,
+      campusesMap,
+      campuses,
+      COLLEGES,
       collegesMap,
       colleges,
+      YEAR_LEVELS,
       yearLevelsMap,
       yearLevels,
+      AFFILIATIONS,
+      affiliationsMap,
+      affiliations,
+      USER_ROLES,
+      userRolesMap,
+      userRoles,
+      DEPARTMENTS,
+      departmentsMap,
+      departments,
+      examFieldsMap,
+
       showMessage,
       formatDate,
       formatName,
@@ -879,8 +902,8 @@ export default defineComponent({
         //   to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
         // },
 
-        patientCampusCode: campusesMap.UERM.code,
-        patientAffiliationCode: affiliationsMap.STU.code,
+        patientCampusCode: CAMPUSES.UERM,
+        patientAffiliationCode: AFFILIATIONS.STU,
         // patientName: null,
         identificationCode: "",
 
@@ -908,9 +931,9 @@ export default defineComponent({
   watch: {
     // "filters.patientAffiliationCode": {
     //   handler(val) {
-    //     if (val === affiliationsMap.STU.code) {
-    //       this.filters.patientCollegeCode = collegesMap.MED.code;
-    //       this.filters.patientYearLevel = yearLevelsMap.FIRST.code;
+    //     if (val === AFFILIATIONS.STU) {
+    //       this.filters.patientCollegeCode = COLLEGES.MED;
+    //       this.filters.patientYearLevel = YEAR_LEVELS.FIRST;
     //       this.filters.patientSchoolYear = new Date().getFullYear();
     //       return;
     //     }

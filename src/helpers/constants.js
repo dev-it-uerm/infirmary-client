@@ -1,13 +1,43 @@
-const _formatMap = (map) => {
-  for (const key in map) {
-    map[key] = {
-      ...(typeof map[key] === "object" ? map[key] : { name: map[key] }),
-      code: key,
-    };
+// const _getMapArrayThenFormat = (map) => {
+//   for (const key in map) {
+//     map[key] = {
+//       ...(typeof map[key] === "object" ? map[key] : { name: map[key] }),
+//       code: key,
+//     };
+//   }
+// };
+
+// THIS IS TO LET THE LINTER HELP SUGGEST `map` PROPS WHILE BEING "DRY" AT THE SAME TIME
+// `code` WILL BE USED AS ENUM VALUE IF IT EXISTS
+const _getMapArrayThenFormat = (obj) => {
+  const map = {};
+  const arr = [];
+
+  for (const key in obj) {
+    if (!obj[key]) {
+      arr.push({ name: key, code: key });
+      map[key] = { name: key, code: key };
+      obj[key] = key;
+      continue;
+    }
+
+    if (obj[key].constructor.name === "Object") {
+      arr.push({ ...obj[key], code: obj[key].code || key });
+      map[key] = { ...obj[key], code: obj[key].code || key };
+      obj[key] = obj[key].code || key;
+      continue;
+    }
+
+    arr.push({ name: obj[key], code: key });
+    map[key] = { name: obj[key], code: key };
+    obj[key] = key;
+    continue;
   }
+
+  return [map, arr];
 };
 
-export const examsMap = {
+export const EXAMS = {
   PE: {
     name: "Physical Exam",
     icon: "fa-solid fa-weight-scale",
@@ -30,13 +60,13 @@ export const examsMap = {
   },
 };
 
-export const campusesMap = {
+export const CAMPUSES = {
   MNL: "Manila",
   CAL: "Caloocan",
   UERM: "UERM",
 };
 
-export const collegesMap = {
+export const COLLEGES = {
   MED: "Medicine",
   NURS: "Nursing",
   MEDTECH: "Medical Technology",
@@ -50,19 +80,19 @@ export const collegesMap = {
   LAW: "Law",
 };
 
-export const yearLevelsMap = {
-  1: "First Year",
-  2: "Second Year",
-  3: "Third Year",
-  4: "Fourth Year",
+export const YEAR_LEVELS = {
+  FIRST: { code: 1, name: "First Year" },
+  SECOND: { code: 2, name: "Second Year" },
+  THIRD: { code: 3, name: "Third Year" },
+  FOURTH: { code: 4, name: "Fourth Year" },
 };
 
-export const affiliationsMap = {
+export const AFFILIATIONS = {
   EMP: "Employee/Faculty",
   STU: "Student",
 };
 
-export const userRolesMap = {
+export const USER_ROLES = {
   ADMIN: "Administrator",
   DR: "Physician",
   NURSE: "Nurse",
@@ -73,7 +103,7 @@ export const userRolesMap = {
   LABTECH: "Laboratory Technician",
 };
 
-export const departmentsMap = {
+export const DEPARTMENTS = {
   ADMSSN: "ADMISSIONS OFFICE",
   BBM: "BACHELOR OF BUSINESS MANAGEMENT",
   BED: "BASIC EDUCATION DEPARTMENT",
@@ -125,22 +155,18 @@ export const departmentsMap = {
   UNIVTHEA: "UNIVERSITY THEATER",
 };
 
-// THIS IS TO LET THE LINTER HELP SUGGEST `map` PROPS WHILE BEING "DRY" AT THE SAME TIME
-_formatMap(examsMap);
-_formatMap(campusesMap);
-_formatMap(collegesMap);
-_formatMap(yearLevelsMap);
-_formatMap(affiliationsMap);
-_formatMap(userRolesMap);
-_formatMap(departmentsMap);
+export const [examsMap, exams] = _getMapArrayThenFormat(EXAMS);
+export const [campusesMap, campuses] = _getMapArrayThenFormat(CAMPUSES);
+export const [collegesMap, colleges] = _getMapArrayThenFormat(COLLEGES);
+export const [yearLevelsMap, yearLevels] = _getMapArrayThenFormat(YEAR_LEVELS);
 
-export const exams = Object.values(examsMap);
-export const campuses = Object.values(campusesMap);
-export const colleges = Object.values(collegesMap);
-export const yearLevels = Object.values(yearLevelsMap);
-export const affiliations = Object.values(affiliationsMap);
-export const userRoles = Object.values(userRolesMap);
-export const departments = Object.values(departmentsMap);
+export const [affiliationsMap, affiliations] =
+  _getMapArrayThenFormat(AFFILIATIONS);
+
+export const [userRolesMap, userRoles] = _getMapArrayThenFormat(USER_ROLES);
+
+export const [departmentsMap, departments] =
+  _getMapArrayThenFormat(DEPARTMENTS);
 
 export const examFieldsMap = {
   MEDHIST: [
@@ -175,7 +201,7 @@ export const examFieldsMap = {
       type: "TEXTAREA",
     },
   ],
-  [examsMap.PE.code]: [
+  [EXAMS.PE]: [
     {
       code: "VSIGNBP",
       name: "Blood Pressure",
@@ -284,9 +310,9 @@ export const examFieldsMap = {
       required: true,
     },
   ],
-  [examsMap.LABCBC.code]: [
+  [EXAMS.LABCBC]: [
     {
-      code: `${examsMap.LABCBC.code}HGB`,
+      code: `${EXAMS.LABCBC}HGB`,
       name: "HGB",
       type: "DIAGTEST",
       default: {
@@ -296,7 +322,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}HCT`,
+      code: `${EXAMS.LABCBC}HCT`,
       name: "HCT",
       type: "DIAGTEST",
       default: {
@@ -306,7 +332,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}RBC`,
+      code: `${EXAMS.LABCBC}RBC`,
       name: "RBC",
       type: "DIAGTEST",
       default: {
@@ -316,7 +342,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MCHC`,
+      code: `${EXAMS.LABCBC}MCHC`,
       name: "MCHC",
       type: "DIAGTEST",
       default: {
@@ -326,7 +352,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MCV`,
+      code: `${EXAMS.LABCBC}MCV`,
       name: "MCV",
       type: "DIAGTEST",
       default: {
@@ -336,7 +362,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}RDWCV`,
+      code: `${EXAMS.LABCBC}RDWCV`,
       name: "RDW-CV",
       type: "DIAGTEST",
       default: {
@@ -346,7 +372,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}RDWSD`,
+      code: `${EXAMS.LABCBC}RDWSD`,
       name: "RDW-SD",
       type: "DIAGTEST",
       default: {
@@ -356,7 +382,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}WBC`,
+      code: `${EXAMS.LABCBC}WBC`,
       name: "WBC",
       type: "DIAGTEST",
       default: {
@@ -366,7 +392,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}NEUT`,
+      code: `${EXAMS.LABCBC}NEUT`,
       name: "NEUT",
       type: "DIAGTEST",
       default: {
@@ -376,7 +402,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}LYMPH`,
+      code: `${EXAMS.LABCBC}LYMPH`,
       name: "LYMPH",
       type: "DIAGTEST",
       default: {
@@ -386,7 +412,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MONO`,
+      code: `${EXAMS.LABCBC}MONO`,
       name: "MONO",
       type: "DIAGTEST",
       default: {
@@ -396,7 +422,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}BASO`,
+      code: `${EXAMS.LABCBC}BASO`,
       name: "BASO",
       type: "DIAGTEST",
       default: {
@@ -406,7 +432,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}PLT`,
+      code: `${EXAMS.LABCBC}PLT`,
       name: "PLT",
       type: "DIAGTEST",
       default: {
@@ -416,7 +442,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MPV`,
+      code: `${EXAMS.LABCBC}MPV`,
       name: "MPV",
       type: "DIAGTEST",
       default: {
@@ -426,7 +452,7 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MORPH`,
+      code: `${EXAMS.LABCBC}MORPH`,
       name: "MORPH",
       type: "DIAGTEST",
       default: {
@@ -436,88 +462,88 @@ export const examFieldsMap = {
       },
     },
   ],
-  [examsMap.LABURI.code]: [
+  [EXAMS.LABURI]: [
     {
-      code: `${examsMap.LABURI.code}COLOR`,
+      code: `${EXAMS.LABURI}COLOR`,
       name: "Color",
       type: "DIAGTESTSELECT",
       options: ["Straw", "Light Yellow", "Yellow", "Dark Yellow", "Amber"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}TURB`,
+      code: `${EXAMS.LABURI}TURB`,
       name: "Turbidity",
       type: "DIAGTESTSELECT",
       options: ["Clear", "Slightly Cloudy", "Cloudy", "Turbid"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}SPGR`,
+      code: `${EXAMS.LABURI}SPGR`,
       name: "SP GR",
       type: "DIAGTESTSELECT",
       options: ["1.000", "1.005", "1.010", "1.015", "1.020", "1.025", "1.030"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}PH`,
+      code: `${EXAMS.LABURI}PH`,
       name: "PH",
       type: "DIAGTESTSELECT",
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}PRTN`,
+      code: `${EXAMS.LABURI}PRTN`,
       name: "Protein",
       type: "DIAGTESTSELECT",
       options: ["None", "Negative", "Trace", "1+", "2+", "3+", "4+"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}SGR`,
+      code: `${EXAMS.LABURI}SGR`,
       name: "Sugar",
       type: "DIAGTESTSELECT",
       options: ["None", "Negative", "Trace", "1+", "2+", "3+", "4+"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}RBC`,
+      code: `${EXAMS.LABURI}RBC`,
       name: "RBC",
       type: "DIAGTESTSELECT",
       options: ["None"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}EPI`,
+      code: `${EXAMS.LABURI}EPI`,
       name: "Epithelial",
       type: "DIAGTESTSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}MCS`,
+      code: `${EXAMS.LABURI}MCS`,
       name: "Mucus",
       type: "DIAGTESTSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}CRSTL`,
+      code: `${EXAMS.LABURI}CRSTL`,
       name: "Crystal",
       type: "DIAGTESTSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
   ],
-  [examsMap.LABFCL.code]: [
+  [EXAMS.LABFCL]: [
     {
-      code: `${examsMap.LABFCL.code}IMPRN`,
+      code: `${EXAMS.LABFCL}IMPRN`,
       name: "Impression",
       type: "DIAGTESTTEXTAREA",
       default: { value: null },
     },
   ],
-  [examsMap.RADXRCHST.code]: [
+  [EXAMS.RADXRCHST]: [
     {
-      code: `${examsMap.RADXRCHST.code}IMPRN`,
+      code: `${EXAMS.RADXRCHST}IMPRN`,
       name: "Impression",
       type: "DIAGTESTTEXTAREA",
       default: { value: null },

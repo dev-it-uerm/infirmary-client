@@ -101,7 +101,7 @@
               <q-separator class="q-my-md" style="width: 80px" />
             </div>
             <q-btn
-              v-if="user.roleCode === userRolesMap.ADMIN.code"
+              v-if="user.roleCode === USER_ROLES.ADMIN"
               :class="
                 activeMenu === 'USER_REGISTRATION'
                   ? 'bg-accent text-black'
@@ -217,6 +217,7 @@ import { delay, showMessage } from "src/helpers/util.js";
 import {
   apeNavMenus,
   diagNavMenus,
+  USER_ROLES,
   userRolesMap,
 } from "src/helpers/constants.js";
 
@@ -238,6 +239,7 @@ export default defineComponent({
   },
   setup() {
     return {
+      USER_ROLES,
       userRolesMap,
     };
   },
@@ -267,18 +269,16 @@ export default defineComponent({
           children: apeNavMenus.filter((menu) => {
             if (
               menu.code === "APE_PATIENT_REGISTRATION" &&
-              this.user.roleCode !== userRolesMap.ADMIN.code
+              this.user.roleCode !== USER_ROLES.ADMIN
             ) {
               return false;
             }
 
             if (
               menu.code === "APE_REGISTRATION" &&
-              ![
-                userRolesMap.ADMIN.code,
-                userRolesMap.DR.code,
-                userRolesMap.STAFF.code,
-              ].includes(this.user.roleCode)
+              ![USER_ROLES.ADMIN, USER_ROLES.DR, USER_ROLES.STAFF].includes(
+                this.user.roleCode
+              )
             ) {
               return false;
             }
@@ -286,11 +286,11 @@ export default defineComponent({
             if (
               menu.code === "APE_XRAY_ENCODE_BULK" &&
               ![
-                userRolesMap.ADMIN.code,
-                userRolesMap.DR.code,
-                userRolesMap.STAFF.code,
-                userRolesMap.RAD.code,
-                userRolesMap.RADTECH.code,
+                USER_ROLES.ADMIN,
+                USER_ROLES.DR,
+                USER_ROLES.STAFF,
+                USER_ROLES.RAD,
+                USER_ROLES.RADTECH,
               ].includes(this.user.roleCode)
             ) {
               return false;

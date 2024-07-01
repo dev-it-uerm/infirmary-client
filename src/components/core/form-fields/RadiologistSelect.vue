@@ -83,7 +83,7 @@ import { defineComponent } from "vue";
 import { mapGetters } from "vuex";
 import { debounce } from "quasar";
 import { delay, request } from "src/helpers/util.js";
-import { userRolesMap } from "src/helpers/constants.js";
+import { USER_ROLES, userRolesMap } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "RadiologistSelect",
@@ -129,7 +129,7 @@ export default defineComponent({
 
       const response = await this.$store.dispatch("app/getUsers", {
         searchStr,
-        roleCode: userRolesMap.RAD.code,
+        roleCode: USER_ROLES.RAD,
       });
 
       await delay(1000);

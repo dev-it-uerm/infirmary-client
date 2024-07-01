@@ -113,7 +113,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
-import { exams, examsMap, examFieldsMap } from "src/helpers/constants.js";
+import { exams, EXAMS, examFieldsMap } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitDetailsForm",
@@ -281,10 +281,10 @@ export default defineComponent({
       this.loading = true;
 
       const isExam = [
-        examsMap.LABCBC.code,
-        examsMap.LABURI.code,
-        examsMap.LABFCL.code,
-        examsMap.RADXRCHST.code,
+        EXAMS.LABCBC,
+        EXAMS.LABURI,
+        EXAMS.LABFCL,
+        EXAMS.RADXRCHST,
       ].includes(this.tab.code);
 
       // SUPPLY DEFAULT VALUE
@@ -336,6 +336,7 @@ export default defineComponent({
     },
     async init() {
       this.markAsCompletedOnSave = null;
+      console.log(exams);
       const isExamTab = exams.some((e) => e.code === this.tab.code);
 
       if (isExamTab && !this.visitIsCompleted) {

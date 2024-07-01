@@ -47,9 +47,7 @@
                 v-model="filters.affiliationCode"
                 hint=""
               />
-              <template
-                v-if="filters.affiliationCode === affiliationsMap.STU.code"
-              >
+              <template v-if="filters.affiliationCode === AFFILIATIONS.STU">
                 <q-input
                   :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
                   :dense="$q.screen.gt.sm"
@@ -300,18 +298,32 @@ import {
   formatName,
 } from "src/helpers/util.js";
 
+import * as inputRules from "src/helpers/input-rules.js";
+
 import {
+  EXAMS,
+  examsMap,
+  exams,
+  CAMPUSES,
   campusesMap,
   campuses,
-  affiliationsMap,
-  affiliations,
+  COLLEGES,
   collegesMap,
   colleges,
+  YEAR_LEVELS,
   yearLevelsMap,
   yearLevels,
+  AFFILIATIONS,
+  affiliationsMap,
+  affiliations,
+  USER_ROLES,
+  userRolesMap,
+  userRoles,
+  DEPARTMENTS,
+  departmentsMap,
+  departments,
+  examFieldsMap,
 } from "src/helpers/constants.js";
-
-import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "VisitAppointmentBulk",
@@ -343,14 +355,28 @@ export default defineComponent({
   },
   setup() {
     return {
-      campuses,
+      EXAMS,
+      examsMap,
+      exams,
+      CAMPUSES,
       campusesMap,
-      affiliations,
-      affiliationsMap,
+      campuses,
+      COLLEGES,
       collegesMap,
       colleges,
+      YEAR_LEVELS,
       yearLevelsMap,
       yearLevels,
+      AFFILIATIONS,
+      affiliationsMap,
+      affiliations,
+      USER_ROLES,
+      userRolesMap,
+      userRoles,
+      DEPARTMENTS,
+      departmentsMap,
+      departments,
+      examFieldsMap,
       showMessage,
       formatDate,
       formatName,
@@ -370,8 +396,8 @@ export default defineComponent({
   data() {
     return {
       filters: {
-        campusCode: campusesMap.UERM.code,
-        affiliationCode: affiliationsMap.STU.code,
+        campusCode: CAMPUSES.UERM,
+        affiliationCode: AFFILIATIONS.STU,
         fullName: "",
 
         collegeCode: null,
@@ -399,9 +425,9 @@ export default defineComponent({
       handler(val) {
         this.filters.schoolYear = null;
 
-        if (val === affiliationsMap.STU.code) {
-          this.filters.collegeCode = collegesMap.MED.code;
-          this.filters.yearLevel = yearLevelsMap.FIRST.code;
+        if (val === AFFILIATIONS.STU) {
+          this.filters.collegeCode = COLLEGES.MED;
+          this.filters.yearLevel = YEAR_LEVELS.FIRST;
           this.filters.schoolYear = new Date().getFullYear();
           return;
         }
@@ -434,12 +460,12 @@ export default defineComponent({
           name: "identificationCode",
           field: "identificationCode",
           label:
-            this.filters.affiliationCode === this.affiliationsMap.STU.code
+            this.filters.affiliationCode === AFFILIATIONS.STU
               ? "STUDENT NO."
               : "EMPLOYEE NO.",
           align: "left",
         },
-        ...(this.filters.affiliationCode === this.affiliationsMap.STU.code
+        ...(this.filters.affiliationCode === AFFILIATIONS.STU
           ? [
               {
                 name: "schoolYear",

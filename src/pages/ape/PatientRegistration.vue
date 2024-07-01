@@ -56,7 +56,7 @@
                 hint=""
               />
               <q-select
-                v-if="affiliationCode === affiliationsMap.EMP.code"
+                v-if="affiliationCode === AFFILIATIONS.EMP"
                 class="full-width"
                 :disable="loading"
                 stack-label
@@ -71,7 +71,7 @@
                 v-model="deptCode"
                 hint=""
               />
-              <template v-if="affiliationCode === affiliationsMap.STU.code">
+              <template v-if="affiliationCode === AFFILIATIONS.STU">
                 <q-separator style="width: 50px; margin: 8px 0 24px 0" />
                 <q-input
                   debounce="700"
@@ -287,19 +287,32 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage, empty } from "src/helpers/util.js";
+import * as inputRules from "src/helpers/input-rules.js";
+
 import {
+  EXAMS,
+  examsMap,
+  exams,
+  CAMPUSES,
   campusesMap,
   campuses,
+  COLLEGES,
   collegesMap,
   colleges,
+  YEAR_LEVELS,
   yearLevelsMap,
   yearLevels,
+  AFFILIATIONS,
   affiliationsMap,
   affiliations,
+  USER_ROLES,
+  userRolesMap,
+  userRoles,
+  DEPARTMENTS,
+  departmentsMap,
   departments,
+  examFieldsMap,
 } from "src/helpers/constants.js";
-
-import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "PatientRegistration",
@@ -319,15 +332,28 @@ export default defineComponent({
   },
   setup() {
     return {
+      EXAMS,
+      examsMap,
+      exams,
+      CAMPUSES,
       campusesMap,
       campuses,
-      affiliationsMap,
-      affiliations,
+      COLLEGES,
       collegesMap,
       colleges,
+      YEAR_LEVELS,
       yearLevelsMap,
       yearLevels,
+      AFFILIATIONS,
+      affiliationsMap,
+      affiliations,
+      USER_ROLES,
+      userRolesMap,
+      userRoles,
+      DEPARTMENTS,
+      departmentsMap,
       departments,
+      examFieldsMap,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };
@@ -365,7 +391,7 @@ export default defineComponent({
   },
   watch: {
     affiliationCode(val) {
-      if (val === affiliationsMap.EMP.code) {
+      if (val === AFFILIATIONS.EMP) {
         this.schoolYearFrom = null;
         // this.schoolYearTo = null;
         this.collegeCode = null;

@@ -69,11 +69,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import {
-  // exams,
-  examsMap,
-} from "src/helpers/constants.js";
-
+import { EXAMS, examsMap, exams } from "src/helpers/constants.js";
 import { formatName } from "src/helpers/util.js";
 
 export default defineComponent({

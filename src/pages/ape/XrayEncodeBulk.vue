@@ -290,20 +290,32 @@ import {
   formatName,
 } from "src/helpers/util.js";
 
+import * as inputRules from "src/helpers/input-rules.js";
+
 import {
+  EXAMS,
+  examsMap,
+  exams,
+  CAMPUSES,
   campusesMap,
   campuses,
-  affiliationsMap,
-  affiliations,
+  COLLEGES,
   collegesMap,
   colleges,
+  YEAR_LEVELS,
   yearLevelsMap,
   yearLevels,
-  examsMap,
+  AFFILIATIONS,
+  affiliationsMap,
+  affiliations,
+  USER_ROLES,
+  userRolesMap,
+  userRoles,
+  DEPARTMENTS,
+  departmentsMap,
+  departments,
   examFieldsMap,
 } from "src/helpers/constants.js";
-
-import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "XrayEncodeBulk",
@@ -338,14 +350,28 @@ export default defineComponent({
   },
   setup() {
     return {
-      campuses,
+      EXAMS,
+      examsMap,
+      exams,
+      CAMPUSES,
       campusesMap,
-      affiliations,
-      affiliationsMap,
+      campuses,
+      COLLEGES,
       collegesMap,
       colleges,
+      YEAR_LEVELS,
       yearLevelsMap,
       yearLevels,
+      AFFILIATIONS,
+      affiliationsMap,
+      affiliations,
+      USER_ROLES,
+      userRolesMap,
+      userRoles,
+      DEPARTMENTS,
+      departmentsMap,
+      departments,
+      examFieldsMap,
       showMessage,
       formatDate,
       formatName,
@@ -366,8 +392,8 @@ export default defineComponent({
     return {
       filters: {
         identificationCode: "",
-        campusCode: campusesMap.UERM.code,
-        affiliationCode: affiliationsMap.STU.code,
+        campusCode: CAMPUSES.UERM,
+        affiliationCode: AFFILIATIONS.STU,
         year: new Date().getFullYear(),
       },
 
@@ -445,10 +471,10 @@ export default defineComponent({
         const response = await this.$store.dispatch("ape/saveDetails", {
           visitId: row.id,
           patientId: row.patientId,
-          tabCode: examsMap.RADXRCHST.code,
+          tabCode: EXAMS.RADXRCHST,
           details: [
             {
-              code: examFieldsMap[examsMap.RADXRCHST.code][0].code,
+              code: examFieldsMap[EXAMS.RADXRCHST][0].code,
               value: this.xrayImpression,
             },
           ],

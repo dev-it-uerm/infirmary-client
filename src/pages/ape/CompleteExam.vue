@@ -193,19 +193,38 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
+import {
+  EXAMS,
+  examsMap,
+  exams,
+  CAMPUSES,
+  campusesMap,
+  campuses,
+  COLLEGES,
+  collegesMap,
+  colleges,
+  YEAR_LEVELS,
+  yearLevelsMap,
+  yearLevels,
+  AFFILIATIONS,
+  affiliationsMap,
+  affiliations,
+  USER_ROLES,
+  userRolesMap,
+  userRoles,
+  DEPARTMENTS,
+  departmentsMap,
+  departments,
+  examFieldsMap,
+} from "src/helpers/constants.js";
+
 import {
   delay,
   showMessage,
   formatName,
   formatDate,
 } from "src/helpers/util.js";
-import {
-  examsMap,
-  affiliationsMap,
-  campusesMap,
-  collegesMap,
-  yearLevels,
-} from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "CompleteExam",
@@ -228,13 +247,30 @@ export default defineComponent({
   },
   setup() {
     return {
+      EXAMS,
+      examsMap,
+      exams,
+      CAMPUSES,
+      campusesMap,
+      campuses,
+      COLLEGES,
+      collegesMap,
+      colleges,
+      YEAR_LEVELS,
+      yearLevelsMap,
+      yearLevels,
+      AFFILIATIONS,
+      affiliationsMap,
+      affiliations,
+      USER_ROLES,
+      userRolesMap,
+      userRoles,
+      DEPARTMENTS,
+      departmentsMap,
+      departments,
+      examFieldsMap,
       formatName,
       formatDate,
-      examsMap,
-      affiliationsMap,
-      campusesMap,
-      collegesMap,
-      yearLevels,
     };
   },
   data() {

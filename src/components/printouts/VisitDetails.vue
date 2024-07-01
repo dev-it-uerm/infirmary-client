@@ -17,7 +17,7 @@ import { mapGetters } from "vuex";
 import pdfMake from "pdfmake";
 import pdfMakeFonts from "src/helpers/pdfmake-vfs.js";
 import { delay, formatName, formatDate } from "src/helpers/util";
-import { exams, examsMap, examFieldsMap } from "src/helpers/constants.js";
+import { exams, examFieldsMap } from "src/helpers/constants.js";
 
 export default {
   name: "PrintoutVisitDetails",

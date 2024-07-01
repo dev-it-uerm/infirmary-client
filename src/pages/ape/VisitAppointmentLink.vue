@@ -72,10 +72,28 @@ import { delay, showMessage } from "src/helpers/util.js";
 import { mapGetters } from "vuex";
 
 import {
-  campuses,
+  EXAMS,
+  examsMap,
+  exams,
+  CAMPUSES,
   campusesMap,
-  affiliations,
+  campuses,
+  COLLEGES,
+  collegesMap,
+  colleges,
+  YEAR_LEVELS,
+  yearLevelsMap,
+  yearLevels,
+  AFFILIATIONS,
   affiliationsMap,
+  affiliations,
+  USER_ROLES,
+  userRolesMap,
+  userRoles,
+  DEPARTMENTS,
+  departmentsMap,
+  departments,
+  examFieldsMap,
 } from "src/helpers/constants.js";
 
 export default defineComponent({
@@ -96,10 +114,28 @@ export default defineComponent({
   },
   setup() {
     return {
-      campuses,
+      EXAMS,
+      examsMap,
+      exams,
+      CAMPUSES,
       campusesMap,
-      affiliations,
+      campuses,
+      COLLEGES,
+      collegesMap,
+      colleges,
+      YEAR_LEVELS,
+      yearLevelsMap,
+      yearLevels,
+      AFFILIATIONS,
       affiliationsMap,
+      affiliations,
+      USER_ROLES,
+      userRolesMap,
+      userRoles,
+      DEPARTMENTS,
+      departmentsMap,
+      departments,
+      examFieldsMap,
       requiredRule: (val) =>
         val == null || val === "" ? "This field is required." : undefined,
     };

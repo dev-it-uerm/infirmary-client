@@ -136,11 +136,12 @@ export const userRolesMap = {
   ADMIN: "Administrator",
   DR: "Physician",
   NURSE: "Nurse",
-  STAFF: "Staff",
   RAD: "Radiologist",
   LAB: "Pathologist",
   RADTECH: "Radiology Technician",
   LABTECH: "Laboratory Technician",
+  STAFF: "Staff",
+  FAC: "Faculty",
 };
 
 _formatMap(examsMap);

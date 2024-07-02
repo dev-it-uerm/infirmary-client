@@ -89,7 +89,11 @@
       <CardComponent v-if="lastPatientRegistered">
         <template v-slot:body>
           <div class="text-primary text-weight-medium q-mb-md">
-            LAST PATIENT REGISTERED:
+            {{
+              registrationMode === "REG"
+                ? "LAST PATIENT REGISTERED"
+                : "LAST EMPLOYEE ATTENDANCE"
+            }}:
           </div>
           <!-- <div
             v-if="loading"
@@ -209,14 +213,18 @@ export default defineComponent({
       const registration = row.visit || row.attendance;
 
       return {
-        "Student/Employee No.": patient.code || patient.identificationCode,
+        [this.registrationMode === "REG"
+          ? "Student Number"
+          : "Employee Number"]: patient.code || patient.identificationCode,
+        [this.registrationMode === "REG"
+          ? "Date & Time Registered"
+          : "Date & Time IN/OUT"]: formatDate(registration.dateTimeCreated),
         Fullname: formatName(
           patient.firstName,
           patient.middleName,
           patient.lastName,
           patient.extName
         ),
-        "Date & Time Registered": formatDate(registration.dateTimeCreated),
       };
     },
     async register(registrationMode, patientCode) {

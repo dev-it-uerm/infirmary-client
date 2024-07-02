@@ -218,6 +218,7 @@ export default defineComponent({
       this.loading = true;
       this.patient = null;
       this.visit = null;
+      this.exams = [];
 
       const response = await this.$store.dispatch("ape/track", patientCode);
       await delay(2000);
@@ -237,7 +238,6 @@ export default defineComponent({
 
       this.exams = exams;
 
-      console.log(exams);
       this.$refs.visitCodeScanner.reset();
       this.loading = false;
     },

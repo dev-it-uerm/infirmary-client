@@ -1,13 +1,18 @@
 <template>
-  <q-page class="row justify-center">
+  <q-page
+    class="row justify-center"
+    :style="$q.screen.gt.sm ? { overflowY: 'scroll' } : {}"
+  >
     <div
+      class="bg-grey-3"
       :class="$q.screen.gt.sm ? 'q-pa-lg' : 'q-pa-md'"
       :style="
         $q.screen.gt.md
           ? {
-              minWidth: '1440px',
-              maxWidth: '1440px',
-              height: 'calc(100vh - 70px)',
+              // minWidth: '1440px',
+              // maxWidth: '1440px',
+              width: '100%',
+              height: 'calc(100vh - 68px)',
             }
           : { minWidth: '100%', maxWidth: '100%', height: 'auto' }
       "
@@ -520,7 +525,7 @@
         <div :class="$q.screen.gt.md ? 'col full-height' : 'col-12'">
           <CardComponent class="full-height">
             <template v-slot:body>
-              <div class="scroll" style="overflow: hidden">
+              <div>
                 <FetchingData v-if="loading" />
                 <template v-else>
                   <div class="text-primary text-weight-medium q-mb-md">

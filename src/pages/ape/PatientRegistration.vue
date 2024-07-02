@@ -135,7 +135,12 @@
                   map-options
                   option-label="name"
                   option-value="code"
-                  :rules="[requiredRule]"
+                  :rules="[
+                    (v) =>
+                      v === undefined || v === ''
+                        ? 'This field is required'
+                        : undefined,
+                  ]"
                   v-model="yearLevel"
                   hint=""
                 />
@@ -369,6 +374,7 @@ export default defineComponent({
         this.schoolYearFrom = null;
         // this.schoolYearTo = null;
         this.collegeCode = null;
+        this.deptCode = null;
         this.yearLevel = null;
       }
     },

@@ -38,7 +38,7 @@ export default {
   },
   data() {
     return {
-      exams: [{ code: "MED_HIST", name: "Medical History" }, ...exams],
+      exams,
       loading: true,
       content: null,
     };
@@ -94,13 +94,6 @@ export default {
         tableBody.push([
           { text: field.name, color: "#71797E" },
           { text: fieldValues[field.code] },
-        ]);
-      }
-
-      if (fieldValues.REMARKS) {
-        tableBody.push([
-          { text: "Remarks", color: "#71797E" },
-          { text: fieldValues.REMARKS },
         ]);
       }
 
@@ -348,13 +341,7 @@ export default {
       };
 
       for (const exam of this.exams) {
-        // MED_HIST AND PE ARE ALREADY FORMATTED. LEAVE AS IS.
-        if (["MED_HIST", "PE"].includes(exam.code)) {
-          ret.exams[exam.code] = response[exam.code];
-          continue;
-        }
-
-        ret.exams[exam.code] = response.diagResults
+        ret.exams[exam.code] = response.details
           .filter((e) => e.examCode === exam.code)
           .map((e) => {
             return [

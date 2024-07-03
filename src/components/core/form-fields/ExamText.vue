@@ -1,31 +1,31 @@
 <template>
-  <q-select
+  <q-input
+    debounce="750"
+    :disable="disable || loading"
     stack-label
     outlined
-    use-input
-    hide-selected
-    fill-input
     label-slot
-    :options="options"
-    :disable="disable"
-    :model-value="value"
-    @input-value="
-      (val) => (value = val == null || val === '' ? null : val.trim())
-    "
+    :rules="[
+      (val) =>
+        required && (val == null || val === '')
+          ? 'This field is required.'
+          : undefined,
+    ]"
+    v-model.trim="value"
     hint=""
   >
     <template v-slot:label>
       {{ label }}
       <span class="text-weight-bold text-red" v-if="required"> *</span>
     </template>
-  </q-select>
+  </q-input>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "FormFieldExamSelect",
+  name: "FormFieldExamText",
   props: {
     disable: {
       type: Boolean,
@@ -35,13 +35,13 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     label: {
       type: String,
       required: true,
-    },
-    options: {
-      type: Array,
-      default: () => [],
     },
     initialValue: {
       type: Object,
@@ -55,12 +55,14 @@ export default defineComponent({
     };
   },
   created() {
-    if (this.initialValue) this.value = this.initialValue;
+    if (this.initialValue) this.value = this.initialValue.value;
   },
   watch: {
     value: {
       handler(val) {
-        this.$emit("valueChanged", val);
+        this.$emit("valueChanged", {
+          value: val == null || val === "" ? null : val,
+        });
       },
       immediate: true,
     },

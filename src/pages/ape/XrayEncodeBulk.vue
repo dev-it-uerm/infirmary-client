@@ -228,7 +228,7 @@
             <template v-slot:body>
               <div>
                 <q-form @submit="confirmationDialogVisible = true">
-                  <XrayImpression
+                  <FormFieldXrayImpression
                     :disable="filtering || saving"
                     label="Impression"
                     :required="true"
@@ -341,7 +341,7 @@ export default defineComponent({
     UserSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/UserSelect.vue")
     ),
-    XrayImpression: defineAsyncComponent(() =>
+    FormFieldXrayImpression: defineAsyncComponent(() =>
       import("src/components/core/form-fields/XrayImpression.vue")
     ),
   },
@@ -359,15 +359,6 @@ export default defineComponent({
       showMessage,
       formatDate,
       formatName,
-      phaseClassesMap: {
-        REG: "text-grey-8",
-        PE: "text-grey-8",
-        LABCBC: "text-grey-8",
-        LABURI: "text-grey-8",
-        LABFCL: "text-grey-8",
-        RADXRCHST: "text-grey-8",
-        FIN: "text-positive",
-      },
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };
@@ -455,10 +446,10 @@ export default defineComponent({
         const response = await this.$store.dispatch("ape/saveDetails", {
           visitId: row.id,
           patientId: row.patientId,
-          tabCode: examsMap.RADXRCHST.code,
+          tabCode: examsMap.RAD_XRCHST.code,
           details: [
             {
-              code: examFieldsMap[examsMap.RADXRCHST.code][0].code,
+              code: examFieldsMap[examsMap.RAD_XRCHST.code][0].code,
               value: this.xrayImpression,
             },
           ],

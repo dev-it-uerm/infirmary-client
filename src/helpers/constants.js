@@ -24,23 +24,27 @@ const _formatMap = (map) => {
 };
 
 export const examsMap = {
+  MED_HIST: {
+    name: "Medical History",
+    icon: "fa-solid fa-notes-medical",
+  },
   PE: {
     name: "Physical Exam",
     icon: "fa-solid fa-weight-scale",
   },
-  LABCBC: {
+  LAB_CBC: {
     name: "Lab - CBC",
     icon: "fa-solid fa-droplet",
   },
-  LABURI: {
+  LAB_URI: {
     name: "Lab - Urinalysis",
     icon: "fa-solid fa-flask-vial",
   },
-  LABFCL: {
+  LAB_FCL: {
     name: "Lab - Fecalysis",
     icon: "fa-solid fa-poop",
   },
-  RADXRCHST: {
+  RAD_XRCHST: {
     name: "Rad - X-Ray (Chest)",
     icon: "fa-solid fa-x-ray",
   },
@@ -161,152 +165,162 @@ export const affiliations = Object.values(affiliationsMap);
 export const userRoles = Object.values(userRolesMap);
 
 export const examFieldsMap = {
-  MEDHIST: [
+  [examsMap.MED_HIST.code]: [
     {
       code: "PRESENTSYMPTOMS",
       name: "Present Symptoms",
-      type: "TEXTAREA",
+      type: "EXAMTEXTAREA",
     },
     {
       code: "PASTILLNESSES",
       name: "Past Illnesses",
-      type: "TEXTAREA",
+      type: "EXAMTEXTAREA",
     },
     {
       code: "ALLERGIES",
       name: "Allergies",
-      type: "TEXTAREA",
+      type: "EXAMTEXTAREA",
     },
     {
       code: "MEDICATIONS",
       name: "Medications",
-      type: "TEXTAREA",
+      type: "EXAMTEXTAREA",
     },
     {
       code: "MENSHISTLMP",
       name: "Menstrual History (LMP)",
-      type: "TEXTAREA",
+      type: "EXAMTEXTAREA",
     },
     {
       code: "OPERATIONS",
       name: "Surgeries/Operations",
-      type: "TEXTAREA",
+      type: "EXAMTEXTAREA",
+    },
+    {
+      code: "REMARKS",
+      name: "Remarks",
+      type: "EXAMTEXTAREA",
     },
   ],
   [examsMap.PE.code]: [
     {
       code: "VSIGNBP",
       name: "Blood Pressure",
-      type: "TEXT",
+      type: "EXAMTEXT",
       required: true,
     },
     {
       code: "VSIGNRR",
       name: "Respiratory Rate",
-      type: "TEXT",
+      type: "EXAMTEXT",
       required: true,
     },
     {
       code: "VSIGNHR",
       name: "Heart Rate",
-      type: "TEXT",
+      type: "EXAMTEXT",
       required: true,
     },
     {
       code: "HEIGHT",
       name: "height",
-      type: "TEXT",
+      type: "EXAMTEXT",
       required: true,
     },
     {
       code: "WEIGHT",
       name: "weight",
-      type: "TEXT",
+      type: "EXAMTEXT",
       required: true,
     },
     {
       code: "SKIN",
       name: "Skin",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "HEENT",
       name: "HEENT",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "NECK",
       name: "Neck",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "CHEST",
       name: "Chest",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "BREAST",
       name: "Breast",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "HEART",
       name: "Heart",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "ABDOMEN",
       name: "Abdomen",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "GENITOURINARY",
       name: "Genitourinary",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "ANUS",
       name: "Anus",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "REFLEXES",
       name: "Reflexes",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
     {
       code: "EXTREMITIES",
       name: "Extremities",
-      type: "TEXT",
-      default: "NORMAL",
+      type: "EXAMTEXT",
+      default: { value: "NORMAL" },
       required: true,
     },
-  ],
-  [examsMap.LABCBC.code]: [
     {
-      code: `${examsMap.LABCBC.code}HGB`,
+      code: "REMARKS",
+      name: "Remarks",
+      type: "EXAMTEXTAREA",
+    },
+  ],
+  [examsMap.LAB_CBC.code]: [
+    {
+      code: `HGB`,
       name: "HGB",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "g/L",
@@ -314,9 +328,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}HCT`,
+      code: `HCT`,
       name: "HCT",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "%",
@@ -324,9 +338,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}RBC`,
+      code: `RBC`,
       name: "RBC",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "x10^12/L",
@@ -334,9 +348,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MCHC`,
+      code: `MCHC`,
       name: "MCHC",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "pg",
@@ -344,9 +358,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MCV`,
+      code: `MCV`,
       name: "MCV",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "fL",
@@ -354,9 +368,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}RDWCV`,
+      code: `RDWCV`,
       name: "RDW-CV",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "",
@@ -364,9 +378,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}RDWSD`,
+      code: `RDWSD`,
       name: "RDW-SD",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "",
@@ -374,9 +388,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}WBC`,
+      code: `WBC`,
       name: "WBC",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "x10^9/L",
@@ -384,9 +398,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}NEUT`,
+      code: `NEUT`,
       name: "NEUT",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "%",
@@ -394,9 +408,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}LYMPH`,
+      code: `LYMPH`,
       name: "LYMPH",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "%",
@@ -404,9 +418,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MONO`,
+      code: `MONO`,
       name: "MONO",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "%",
@@ -414,9 +428,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}BASO`,
+      code: `BASO`,
       name: "BASO",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "%",
@@ -424,9 +438,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}PLT`,
+      code: `PLT`,
       name: "PLT",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "",
@@ -434,9 +448,9 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MPV`,
+      code: `MPV`,
       name: "MPV",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "",
@@ -444,101 +458,121 @@ export const examFieldsMap = {
       },
     },
     {
-      code: `${examsMap.LABCBC.code}MORPH`,
+      code: `MORPH`,
       name: "MORPH",
-      type: "DIAGTEST",
+      type: "EXAM",
       default: {
         value: null,
         unit: "",
         normalRange: "",
       },
+    },
+    {
+      code: "REMARKS",
+      name: "Remarks",
+      type: "EXAMTEXTAREA",
     },
   ],
-  [examsMap.LABURI.code]: [
+  [examsMap.LAB_URI.code]: [
     {
-      code: `${examsMap.LABURI.code}COLOR`,
+      code: `COLOR`,
       name: "Color",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["Straw", "Light Yellow", "Yellow", "Dark Yellow", "Amber"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}TURB`,
+      code: `TURB`,
       name: "Turbidity",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["Clear", "Slightly Cloudy", "Cloudy", "Turbid"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}SPGR`,
+      code: `SPGR`,
       name: "SP GR",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["1.000", "1.005", "1.010", "1.015", "1.020", "1.025", "1.030"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}PH`,
+      code: `PH`,
       name: "PH",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}PRTN`,
+      code: `PRTN`,
       name: "Protein",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["None", "Negative", "Trace", "1+", "2+", "3+", "4+"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}SGR`,
+      code: `SGR`,
       name: "Sugar",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["None", "Negative", "Trace", "1+", "2+", "3+", "4+"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}RBC`,
+      code: `RBC`,
       name: "RBC",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["None"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}EPI`,
+      code: `EPI`,
       name: "Epithelial",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}MCS`,
+      code: `MCS`,
       name: "Mucus",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
     {
-      code: `${examsMap.LABURI.code}CRSTL`,
+      code: `CRSTL`,
       name: "Crystal",
-      type: "DIAGTESTSELECT",
+      type: "EXAMSELECT",
       options: ["None", "Few", "Many", "Moderate", "Abundant"],
       default: { value: null },
     },
-  ],
-  [examsMap.LABFCL.code]: [
     {
-      code: `${examsMap.LABFCL.code}IMPRN`,
-      name: "Impression",
-      type: "DIAGTESTTEXTAREA",
-      default: { value: null },
+      code: "REMARKS",
+      name: "Remarks",
+      type: "EXAMTEXTAREA",
     },
   ],
-  [examsMap.RADXRCHST.code]: [
+  [examsMap.LAB_FCL.code]: [
     {
-      code: `${examsMap.RADXRCHST.code}IMPRN`,
+      code: `IMPRN`,
       name: "Impression",
-      type: "DIAGTESTTEXTAREA",
+      type: "EXAMTEXTAREA",
       default: { value: null },
+    },
+    {
+      code: "REMARKS",
+      name: "Remarks",
+      type: "EXAMTEXTAREA",
+    },
+  ],
+  [examsMap.RAD_XRCHST.code]: [
+    {
+      code: `IMPRN`,
+      name: "Impression",
+      type: "XRAYIMPRESSION",
+      default: { value: null },
+    },
+    {
+      code: "REMARKS",
+      name: "Remarks",
+      type: "EXAMTEXTAREA",
     },
   ],
 };

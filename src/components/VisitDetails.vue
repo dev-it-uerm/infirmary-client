@@ -52,8 +52,7 @@
       <VisitDetailsForm
         v-if="tab"
         :visitId="visit.id"
-        :patientId="visit.patientId"
-        :tab="tab"
+        :examCode="tab.code"
         :visitIsCompleted="Boolean(visit.dateTimeCompleted)"
         @busy="loading = true"
         @ready="loading = false"
@@ -124,11 +123,6 @@ export default defineComponent({
         {
           code: "VISIT",
           name: "Visit Info.",
-          icon: "fa-solid fa-notes-medical",
-        },
-        {
-          code: "MEDHIST",
-          name: "Medical History",
           icon: "fa-solid fa-notes-medical",
         },
         ...examsToShow,

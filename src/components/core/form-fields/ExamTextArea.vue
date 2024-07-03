@@ -26,7 +26,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "FormFieldDiagTestTextArea",
+  name: "FormFieldExamTextArea",
   props: {
     disable: {
       type: Boolean,
@@ -41,10 +41,6 @@ export default defineComponent({
       default: false,
     },
     label: {
-      type: String,
-      required: true,
-    },
-    diagParamCode: {
       type: String,
       required: true,
     },
@@ -65,15 +61,9 @@ export default defineComponent({
   watch: {
     value: {
       handler(val) {
-        this.$emit(
-          "valueChanged",
-          val == null
-            ? null
-            : {
-                code: this.diagParamCode,
-                value: val,
-              }
-        );
+        this.$emit("valueChanged", {
+          value: val == null || val === "" ? null : val,
+        });
       },
       immediate: true,
     },

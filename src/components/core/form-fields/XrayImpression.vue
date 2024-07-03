@@ -120,12 +120,6 @@ export default defineComponent({
     };
   },
   watch: {
-    initialValue: {
-      handler(val) {
-        this.value = val;
-      },
-      immediate: true,
-    },
     value: {
       handler(val) {
         this.$emit("valueChanged", val);
@@ -134,7 +128,7 @@ export default defineComponent({
     },
   },
   created() {
-    if (this.initialValue) this.value = this.initialValue.value;
+    this.value = this.initialValue;
   },
 });
 </script>

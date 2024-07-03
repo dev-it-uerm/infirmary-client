@@ -25,7 +25,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "FormFieldDiagTestSelect",
+  name: "FormFieldExamSelect",
   props: {
     disable: {
       type: Boolean,
@@ -42,10 +42,6 @@ export default defineComponent({
     options: {
       type: Array,
       default: () => [],
-    },
-    diagParamCode: {
-      type: String,
-      required: true,
     },
     initialValue: {
       type: Object,
@@ -64,15 +60,9 @@ export default defineComponent({
   watch: {
     value: {
       handler(val) {
-        this.$emit(
-          "valueChanged",
-          val == null
-            ? null
-            : {
-                code: this.diagParamCode,
-                value: val,
-              }
-        );
+        this.$emit("valueChanged", {
+          value: val ?? null,
+        });
       },
       immediate: true,
     },

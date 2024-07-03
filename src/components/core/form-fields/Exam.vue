@@ -42,7 +42,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "FormFieldDiagTest",
+  name: "FormFieldExam",
   props: {
     label: {
       type: String,
@@ -51,10 +51,6 @@ export default defineComponent({
     disable: {
       type: Boolean,
       default: false,
-    },
-    diagParamCode: {
-      type: String,
-      required: true,
     },
     initialValue: {
       type: Object,
@@ -87,15 +83,11 @@ export default defineComponent({
   },
   created() {
     if (this.initialValue) {
-      this.value = {
-        code: this.diagParamCode,
-        ...this.initialValue,
-      };
+      this.value = this.initialValue;
       return;
     }
 
     this.value = {
-      code: this.diagParamCode,
       value: null,
       unit: null,
       normalRange: null,

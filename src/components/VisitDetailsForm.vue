@@ -13,7 +13,7 @@
           class="q-pa-lg scroll"
           style="height: auto; max-height: 70vh; min-height: 100px"
         >
-          <template v-for="field in tabFieldsMap[tab.code]" :key="field.code">
+          <template v-for="field in tabFieldsMap[examCode]" :key="field.code">
             <div>
               <q-input
                 v-if="field.type === 'TEXT'"
@@ -44,44 +44,52 @@
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
               />
-              <DiagTest
-                v-if="field.type === 'DIAGTEST'"
+              <FormFieldExam
+                v-if="field.type === 'EXAM'"
                 :disable="visitIsCompleted || field.disable || loading"
                 :label="field.name"
-                :diagParamCode="field.code"
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
               />
-              <DiagTestTextArea
-                v-if="field.type === 'DIAGTESTTEXTAREA'"
+              <FormFieldExamText
+                v-if="field.type === 'EXAMTEXT'"
                 :disable="visitIsCompleted || field.disable || loading"
                 :required="field.required"
                 :label="field.name"
-                :diagParamCode="field.code"
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
               />
-              <DiagTestSelect
-                v-if="field.type === 'DIAGTESTSELECT'"
+              <FormFieldExamTextArea
+                v-if="field.type === 'EXAMTEXTAREA'"
+                :disable="visitIsCompleted || field.disable || loading"
+                :required="field.required"
+                :label="field.name"
+                :initialValue="value[field.code]"
+                @valueChanged="(val) => (value[field.code] = val)"
+              />
+              <FormFieldExamSelect
+                v-if="field.type === 'EXAMSELECT'"
                 :disable="visitIsCompleted || field.disable || loading"
                 :options="field.options"
                 :required="field.required"
                 :label="field.name"
-                :diagParamCode="field.code"
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
               />
+              <FormFieldXrayImpression
+                v-if="field.type === 'XRAYIMPRESSION'"
+                :disable="visitIsCompleted || field.disable || loading"
+                :label="field.name"
+                :required="field.required"
+                :initialValue="value[field.code]?.value || null"
+                @valueChanged="
+                  (val) => {
+                    value[field.code] = { code: field.code, value: val };
+                  }
+                "
+              />
             </div>
           </template>
-          <q-input
-            :disable="visitIsCompleted || loading"
-            type="textarea"
-            stack-label
-            outlined
-            label="Remarks"
-            v-model.trim="value.REMARKS"
-            hint=""
-          />
         </div>
         <q-separator />
         <div
@@ -134,14 +142,20 @@ export default defineComponent({
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
     ),
-    DiagTest: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DiagTest.vue")
+    FormFieldExam: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/Exam.vue")
     ),
-    DiagTestTextArea: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DiagTestTextArea.vue")
+    FormFieldExamText: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamText.vue")
     ),
-    DiagTestSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DiagTestSelect.vue")
+    FormFieldExamTextArea: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamTextArea.vue")
+    ),
+    FormFieldExamSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamSelect.vue")
+    ),
+    FormFieldXrayImpression: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/XrayImpression.vue")
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -155,12 +169,8 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    patientId: {
-      type: Number,
-      required: true,
-    },
-    tab: {
-      type: Object,
+    examCode: {
+      type: String,
       required: true,
     },
     visitIsCompleted: {
@@ -241,7 +251,7 @@ export default defineComponent({
     };
   },
   watch: {
-    tab: {
+    examCode: {
       handler(val) {
         this.init();
       },
@@ -255,48 +265,29 @@ export default defineComponent({
     },
   },
   methods: {
-    formatValue(val) {
-      if (!val) return {};
+    formatResponseBody(arr) {
+      if (!arr) return {};
 
-      return Object.entries(val).reduce((acc, entry) => {
-        const key = entry[0].toUpperCase();
-        const val = entry[1];
-
-        // CONVERT "" PROPS TO null
-        acc[key] = isObj(val)
-          ? Object.entries(val).reduce((acc, e) => {
-              acc[e[0]] = e[1] === "" ? null : e[1];
-              return acc;
-            }, {})
-          : val;
-
-        return acc;
-      }, {});
-    },
-    formatDiagValue(val) {
-      if (!val) return {};
-
-      return val.reduce((acc, row) => {
-        acc[row.DiagParamCode] = {
-          value: row.DiagParamValue,
-          ...(row.DiagParamUnit == null ? {} : { unit: row.DiagParamUnit }),
-          ...(row.DiagParamNormalRange == null
-            ? {}
-            : { normalRange: row.DiagParamNormalRange }),
+      return arr.reduce((acc, row) => {
+        acc[row.code] = {
+          value: row.value,
+          ...(row.unit == null ? {} : { unit: row.unit }),
+          ...(row.normalRange == null ? {} : { normalRange: row.normalRange }),
         };
 
         return acc;
       }, {});
     },
-    mergeTempAndVal(template, obj) {
-      return template.reduce((acc, field) => {
+    mergeFieldsAndVal(fields, obj) {
+      return fields.reduce((acc, field) => {
         if (obj[field.code] == null || obj[field.code] === "") {
           acc[field.code] = field.default ?? null;
-        } else {
-          acc[field.code] = field.format
-            ? field.format(obj[field.code])
-            : obj[field.code];
+          return acc;
         }
+
+        acc[field.code] = field.format
+          ? field.format(obj[field.code])
+          : obj[field.code];
 
         return acc;
       }, {});
@@ -304,23 +295,15 @@ export default defineComponent({
     async getInitialValue() {
       this.loading = true;
 
-      const isExam = [
-        examsMap.LABCBC.code,
-        examsMap.LABURI.code,
-        examsMap.LABFCL.code,
-        examsMap.RADXRCHST.code,
-      ].includes(this.tab.code);
-
       // SUPPLY DEFAULT VALUE
-      this.value = this.mergeTempAndVal(
-        this.tabFieldsMap[this.tab.code],
-        isExam ? this.formatDiagValue([]) : this.formatValue({})
+      this.value = this.mergeFieldsAndVal(
+        this.tabFieldsMap[this.examCode],
+        this.formatResponseBody([])
       );
 
       const response = await this.$store.dispatch("ape/getVisitDetails", {
         visitId: this.visitId,
-        patientId: this.patientId,
-        tabCode: this.tab.code,
+        examCode: this.examCode,
       });
 
       await delay(1000);
@@ -335,26 +318,16 @@ export default defineComponent({
         return;
       }
 
-      const formatter = isExam ? this.formatDiagValue : this.formatValue;
-      const val = isExam ? response.body : response.body[0];
-
-      const remarks = isExam
-        ? val[0].Remarks
-        : val?.REMARKS ?? val?.Remarks ?? val?.remarks ?? null;
-
-      this.value = {
-        ...this.mergeTempAndVal(
-          this.tabFieldsMap[this.tab.code],
-          formatter(val)
-        ),
-        REMARKS: remarks,
-      };
+      this.value = this.mergeFieldsAndVal(
+        this.tabFieldsMap[this.examCode],
+        this.formatResponseBody(response.body)
+      );
 
       this.loading = false;
     },
     async init() {
       this.markAsCompletedOnSave = null;
-      const isExamTab = exams.some((e) => e.code === this.tab.code);
+      const isExamTab = exams.some((e) => e.code === this.examCode);
 
       if (isExamTab && !this.visitIsCompleted) {
         this.markAsCompletedOnSave = true;
@@ -373,9 +346,12 @@ export default defineComponent({
 
       const payload = {
         visitId: this.visitId,
-        patientId: this.patientId,
-        tabCode: this.tab.code,
-        details: this.formatValue(this.value),
+        examCode: this.examCode,
+        // MAKE SURE EVERY `detail` HAS A `code` PROP
+        details: Object.entries(this.value).map((e) => ({
+          code: e[0],
+          ...e[1],
+        })),
       };
 
       if (this.markAsCompletedOnSave === true) {

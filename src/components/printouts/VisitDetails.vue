@@ -38,7 +38,7 @@ export default {
   },
   data() {
     return {
-      exams: [{ code: "MEDHIST", name: "Medical History" }, ...exams],
+      exams: [{ code: "MED_HIST", name: "Medical History" }, ...exams],
       loading: true,
       content: null,
     };
@@ -348,23 +348,19 @@ export default {
       };
 
       for (const exam of this.exams) {
-        // MEDHIST AND PE ARE ALREADY FORMATTED. LEAVE AS IS.
-        if (["MEDHIST", "PE"].includes(exam.code)) {
+        // MED_HIST AND PE ARE ALREADY FORMATTED. LEAVE AS IS.
+        if (["MED_HIST", "PE"].includes(exam.code)) {
           ret.exams[exam.code] = response[exam.code];
           continue;
         }
 
         ret.exams[exam.code] = response.diagResults
-          .filter((e) => e.diagCode === exam.code)
+          .filter((e) => e.examCode === exam.code)
           .map((e) => {
             return [
-              e.diagParamCode,
-              `${e.diagParamValue}${
-                e.diagParamUnit ? " ".concat(e.diagParamUnit) : ""
-              }${
-                e.diagParamNormalRange
-                  ? " (".concat(e.diagParamNormalRange).concat(")")
-                  : ""
+              e.code,
+              `${e.value}${e.unit ? " ".concat(e.unit) : ""}${
+                e.normalRange ? " (".concat(e.normalRange).concat(")") : ""
               }`,
               ...(e.remarks ? [e.remarks] : []),
             ];

@@ -228,16 +228,12 @@
             <template v-slot:body>
               <div>
                 <q-form @submit="confirmationDialogVisible = true">
-                  <q-input
-                    stack-label
-                    outlined
-                    type="textarea"
+                  <XrayImpression
                     :disable="filtering || saving"
                     label="Impression"
-                    :rules="[requiredRule]"
-                    v-model="xrayImpression"
-                  >
-                  </q-input>
+                    :required="true"
+                    @value-changed="(val) => (xrayImpression = val)"
+                  />
                   <UserSelect
                     label="Radiologist"
                     :roleCode="userRolesMap.RAD.code"
@@ -248,7 +244,14 @@
                       }
                     "
                   />
-                  <div class="row items-start justify-end q-mt-md">
+                  <div class="row items-center justify-between q-mt-md">
+                    <div class="text-negative">
+                      {{
+                        selected && selected.length > 0
+                          ? ""
+                          : "Please select at least one patient to start saving."
+                      }}
+                    </div>
                     <q-btn
                       style="height: 40px"
                       color="primary"
@@ -337,6 +340,9 @@ export default defineComponent({
     ),
     UserSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/UserSelect.vue")
+    ),
+    XrayImpression: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/XrayImpression.vue")
     ),
   },
   setup() {

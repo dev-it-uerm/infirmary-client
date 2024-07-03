@@ -96,7 +96,7 @@
           <q-checkbox
             v-if="markAsCompletedOnSave != null && !visitIsCompleted"
             v-model="markAsCompletedOnSave"
-            label="Mark Exam As Completed On Save"
+            label="Mark Exam As COMPLETED On Save"
           />
           <q-btn
             unelevated

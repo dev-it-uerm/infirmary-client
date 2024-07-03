@@ -1,5 +1,6 @@
 <template>
   <q-input
+    debounce="750"
     :disable="disable || loading"
     type="textarea"
     stack-label

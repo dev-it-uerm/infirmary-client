@@ -13,11 +13,16 @@
           class="q-pa-lg scroll"
           style="height: auto; max-height: 70vh; min-height: 100px"
         >
-          <template v-for="field in tabFieldsMap[examCode]" :key="field.code">
+          <template v-for="field in examFieldsMap[examCode]" :key="field.code">
             <div>
               <q-input
                 v-if="field.type === 'TEXT'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 stack-label
                 outlined
                 :rules="generateRules(field.required)"
@@ -27,7 +32,12 @@
               />
               <q-input
                 v-if="field.type === 'TEXTAREA'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 type="textarea"
                 stack-label
                 outlined
@@ -40,20 +50,35 @@
                 v-if="field.type === 'PHYSICIANSELECT'"
                 label="Physician"
                 :roleCode="userRolesMap.DR.code"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
               />
               <FormFieldExam
                 v-if="field.type === 'EXAM'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 :label="field.name"
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
               />
               <FormFieldExamText
                 v-if="field.type === 'EXAMTEXT'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 :required="field.required"
                 :label="field.name"
                 :initialValue="value[field.code]"
@@ -61,7 +86,12 @@
               />
               <FormFieldExamTextArea
                 v-if="field.type === 'EXAMTEXTAREA'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 :required="field.required"
                 :label="field.name"
                 :initialValue="value[field.code]"
@@ -69,7 +99,12 @@
               />
               <FormFieldExamSelect
                 v-if="field.type === 'EXAMSELECT'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 :options="field.options"
                 :required="field.required"
                 :label="field.name"
@@ -78,7 +113,12 @@
               />
               <FormFieldXrayImpression
                 v-if="field.type === 'XRAYIMPRESSION'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
                 :label="field.name"
                 :required="field.required"
                 :initialValue="value[field.code]?.value || null"
@@ -95,23 +135,29 @@
         <div
           class="row q-pa-lg"
           :class="
-            markAsCompletedOnSave != null && !visitIsCompleted
+            markAsCompletedOnSave != null &&
+            !visitIsCompleted &&
+            !examIsCompleted
               ? 'justify-between'
               : 'justify-end'
           "
           style="gap: 12px"
         >
           <q-checkbox
-            v-if="markAsCompletedOnSave != null && !visitIsCompleted"
+            v-if="
+              markAsCompletedOnSave != null &&
+              !visitIsCompleted &&
+              !examIsCompleted
+            "
             v-model="markAsCompletedOnSave"
             label="Mark Exam As COMPLETED On Save"
           />
           <q-btn
             unelevated
-            :disable="visitIsCompleted"
+            :disable="visitIsCompleted || examIsCompleted"
             class="text-white bg-primary"
             :loading="loading"
-            :label="visitIsCompleted ? 'COMPLETED' : 'SAVE'"
+            :label="visitIsCompleted || examIsCompleted ? 'COMPLETED' : 'SAVE'"
             @click="submitForm"
           />
         </div>
@@ -129,15 +175,10 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
-import {
-  exams,
-  examsMap,
-  examFieldsMap,
-  userRolesMap,
-} from "src/helpers/constants.js";
+import { examFieldsMap, userRolesMap } from "src/helpers/constants.js";
 
 export default defineComponent({
-  name: "VisitDetailsForm",
+  name: "VisitExamDetailsForm",
   components: {
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
@@ -173,12 +214,8 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    visitIsCompleted: {
-      type: Boolean,
-      default: false,
-    },
   },
-  emits: ["busy", "ready", "success", "error"],
+  emits: ["busy", "ready", "visitCompleted"],
   setup() {
     return {
       userRolesMap,
@@ -193,51 +230,7 @@ export default defineComponent({
       },
       showMessage,
       formatDate,
-      tabFieldsMap: {
-        VISIT: [
-          {
-            code: "PATIENTNAME",
-            name: "Patient Name",
-            type: "TEXT",
-            disable: true,
-          },
-          {
-            code: "CREATEDBY",
-            name: "Added By",
-            type: "TEXT",
-            disable: true,
-          },
-          {
-            code: "DATETIMECREATED",
-            name: "Date & Time Visited",
-            type: "TEXT",
-            format: formatDate,
-            disable: true,
-          },
-          {
-            code: "COMPLETEDBY",
-            name: "Completed By",
-            type: "TEXT",
-            default: "NOT YET COMPLETED",
-            disable: true,
-          },
-          {
-            code: "DATETIMECOMPLETED",
-            name: "Date & Time Completed",
-            type: "TEXT",
-            format: formatDate,
-            default: "NOT YET COMPLETED",
-            disable: true,
-          },
-          {
-            code: "PHYSICIAN",
-            name: "Physician",
-            type: "PHYSICIANSELECT",
-            required: true,
-          },
-        ],
-        ...examFieldsMap,
-      },
+      examFieldsMap,
       // inputRule: (val) =>
       //   val == null || val === "" ? "Field is required." : undefined,
     };
@@ -248,12 +241,15 @@ export default defineComponent({
       value: {},
       markAsCompletedOnSave: null,
       confDialogVisible: false,
+
+      visitIsCompleted: false,
+      examIsCompleted: false,
     };
   },
   watch: {
     examCode: {
       handler(val) {
-        this.init();
+        this.getInitialValue();
       },
       immediate: true,
     },
@@ -294,14 +290,15 @@ export default defineComponent({
     },
     async getInitialValue() {
       this.loading = true;
+      this.markAsCompletedOnSave = null;
 
       // SUPPLY DEFAULT VALUE
       this.value = this.mergeFieldsAndVal(
-        this.tabFieldsMap[this.examCode],
+        this.examFieldsMap[this.examCode],
         this.formatResponseBody([])
       );
 
-      const response = await this.$store.dispatch("ape/getVisitDetails", {
+      const response = await this.$store.dispatch("ape/getVisitExamDetails", {
         visitId: this.visitId,
         examCode: this.examCode,
       });
@@ -318,22 +315,19 @@ export default defineComponent({
         return;
       }
 
+      this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
+      this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
+
       this.value = this.mergeFieldsAndVal(
-        this.tabFieldsMap[this.examCode],
-        this.formatResponseBody(response.body)
+        this.examFieldsMap[this.examCode],
+        this.formatResponseBody(response.body.details)
       );
 
-      this.loading = false;
-    },
-    async init() {
-      this.markAsCompletedOnSave = null;
-      const isExamTab = exams.some((e) => e.code === this.examCode);
-
-      if (isExamTab && !this.visitIsCompleted) {
+      if (!this.visitIsCompleted && !this.examIsCompleted) {
         this.markAsCompletedOnSave = true;
       }
 
-      this.getInitialValue();
+      this.loading = false;
     },
     async submitForm() {
       const valid = await this.$refs.qFormVisitDetails.validate();
@@ -344,10 +338,10 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
+      // MAKE SURE EVERY `detail` HAS A `code` PROP
       const payload = {
         visitId: this.visitId,
         examCode: this.examCode,
-        // MAKE SURE EVERY `detail` HAS A `code` PROP
         details: Object.entries(this.value).map((e) => ({
           code: e[0],
           ...e[1],
@@ -358,18 +352,33 @@ export default defineComponent({
         payload.markAsCompletedOnSave = true;
       }
 
-      const response = await this.$store.dispatch("ape/saveDetails", payload);
+      const response = await this.$store.dispatch(
+        "ape/saveExamDetails",
+        payload
+      );
 
       if (response.error) {
         showMessage(this.$q, false, response.body);
         this.loading = false;
-        this.$emit("error");
         return;
       }
 
-      showMessage(this.$q, true, "Visit details have been saved successfully.");
+      this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
+      this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
+
+      if (this.visitIsCompleted || this.examIsCompleted) {
+        this.markAsCompletedOnSave = null;
+      }
+
+      if (this.visitIsCompleted) this.$emit("visitCompleted");
+
+      showMessage(
+        this.$q,
+        true,
+        "Visit exam details have been saved successfully."
+      );
+
       this.loading = false;
-      this.$emit("success");
     },
   },
 });

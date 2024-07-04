@@ -62,13 +62,35 @@ export const track = async (context, visitCode) => {
   );
 };
 
-export const getVisitDetails = async (context, urlQuery) => {
+export const getVisitExamDetails = async (context, urlQuery) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/visit-details`,
+    `${context.rootState.app.apiHost}/ape/visit-exam-details`,
     urlQuery,
     context.rootState.app?.user?.accessToken,
     null,
+    context
+  );
+};
+
+export const getVisit = async (context, visitId) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/visit/${visitId}`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const updateVisit = async (context, payload) => {
+  return await request(
+    "put",
+    `${context.rootState.app.apiHost}/ape/visit`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
     context
   );
 };
@@ -84,10 +106,10 @@ export const getVisitDetailsAll = async (context, visitId) => {
   );
 };
 
-export const saveDetails = async (context, payload) => {
+export const saveExamDetails = async (context, payload) => {
   return await request(
     "put",
-    `${context.rootState.app.apiHost}/ape/visit-details`,
+    `${context.rootState.app.apiHost}/ape/visit-exam-details`,
     null,
     context.rootState.app?.user?.accessToken,
     payload,

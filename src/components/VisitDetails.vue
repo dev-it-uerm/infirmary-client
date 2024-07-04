@@ -49,16 +49,22 @@
       </div>
     </template>
     <template v-slot:body>
-      <VisitDetailsForm
-        v-if="tab"
-        :visitId="visit.id"
-        :examCode="tab.code"
-        :visitIsCompleted="Boolean(visit.dateTimeCompleted)"
-        @busy="loading = true"
-        @ready="loading = false"
-        @success="$emit('success')"
-        @error="$emit('error')"
-      />
+      <template v-if="tab">
+        <VisitInfoForm
+          v-if="tab.code === 'VISIT'"
+          :visitId="visit.id"
+          @busy="loading = true"
+          @ready="loading = false"
+        />
+        <VisitExamDetailsForm
+          v-else
+          :visitId="visit.id"
+          :examCode="tab.code"
+          @busy="loading = true"
+          @ready="loading = false"
+          @visitCompleted="$emit('visitCompleted')"
+        />
+      </template>
     </template>
   </MinimizedDialog>
 </template>
@@ -78,8 +84,11 @@ export default defineComponent({
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")
     ),
-    VisitDetailsForm: defineAsyncComponent(() =>
-      import("src/components/VisitDetailsForm.vue")
+    VisitInfoForm: defineAsyncComponent(() =>
+      import("src/components/VisitInfoForm.vue")
+    ),
+    VisitExamDetailsForm: defineAsyncComponent(() =>
+      import("src/components/VisitExamDetailsForm.vue")
     ),
   },
   props: {
@@ -88,7 +97,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["close", "success", "error"],
+  emits: ["close", "visitCompleted"],
   setup() {
     return { formatName };
   },

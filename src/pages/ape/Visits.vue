@@ -694,7 +694,7 @@
       v-if="visitInfoVisible"
       :visit="currentVisit"
       @close="visitInfoVisible = false"
-      @success="getVisits"
+      @visitCompleted="getVisits"
     />
     <MaximizedDialog
       v-if="visitPrintoutVisible"

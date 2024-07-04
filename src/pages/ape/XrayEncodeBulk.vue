@@ -443,10 +443,9 @@ export default defineComponent({
       for (const row of selected) {
         row.loading = true;
 
-        const response = await this.$store.dispatch("ape/saveDetails", {
+        const response = await this.$store.dispatch("ape/saveExamDetails", {
           visitId: row.id,
-          patientId: row.patientId,
-          tabCode: examsMap.RAD_XRCHST.code,
+          examCode: examsMap.RAD_XRCHST.code,
           details: [
             {
               code: examFieldsMap[examsMap.RAD_XRCHST.code][0].code,

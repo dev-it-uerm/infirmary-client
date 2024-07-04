@@ -89,11 +89,7 @@
       <CardComponent v-if="lastPatientRegistered">
         <template v-slot:body>
           <div class="text-primary text-weight-medium q-mb-md">
-            {{
-              registrationMode === "REG"
-                ? "LAST PATIENT REGISTERED"
-                : "LAST EMPLOYEE ATTENDANCE"
-            }}:
+            LAST PATIENT/EMPLOYEE REGISTERED:
           </div>
           <!-- <div
             v-if="loading"

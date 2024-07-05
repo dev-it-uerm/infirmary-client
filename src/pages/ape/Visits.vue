@@ -1,7 +1,7 @@
 <template>
   <q-page
     class="row justify-center"
-    :style="$q.screen.gt.sm ? { overflowY: 'scroll' } : {}"
+    :style="$q.screen.gt.sm ? { overflowY: 'auto' } : {}"
   >
     <div
       class="bg-grey-3"
@@ -233,7 +233,7 @@
         </template>
       </CardComponent>
       <div class="row items-between" style="gap: 16px">
-        <div :class="$q.screen.gt.md ? 'col-8 full-height' : 'col-12'">
+        <div :class="$q.screen.gt.md ? 'col-9 full-height' : 'col-12'">
           <CardComponent class="full-height">
             <template v-slot:body>
               <div>

@@ -1,127 +1,42 @@
 <template>
   <q-page class="flex flex-center q-pa-xl">
-    <div
-      class="column"
-      style="gap: 16px"
-      :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
-    >
-      <PageHeader text="ADD PATIENT" icon="fa-solid fa-user" />
+    <div :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }">
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader text="ADD PATIENT" icon="fa-solid fa-user" />
+        </template>
         <template v-slot:body>
-          <q-form
-            ref="qForm"
-            @submit="(evt) => (yesNoDialogVisible = true)"
-            @reset="reset"
-          >
-            <div class="column items-center">
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="Student/Employee Number"
-                :rules="[requiredRule]"
-                v-model.trim="code"
-                hint=""
-              />
-              <q-select
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                :options="campuses"
-                label="Campus"
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :rules="[requiredRule]"
-                v-model="campusCode"
-                hint=""
-              />
-              <q-select
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                :options="affiliations"
-                label="Affiliation"
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :rules="[requiredRule]"
-                v-model="affiliationCode"
-                hint=""
-              />
-              <q-select
-                v-if="affiliationCode === affiliationsMap.EMP.code"
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                :options="departments"
-                label="Department"
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :rules="[requiredRule]"
-                v-model="deptCode"
-                hint=""
-              />
-              <template v-if="affiliationCode === affiliationsMap.STU.code">
-                <q-separator style="width: 50px; margin: 8px 0 24px 0" />
+          <div>
+            <q-form
+              ref="qForm"
+              @submit="(evt) => (yesNoDialogVisible = true)"
+              @reset="reset"
+            >
+              <div class="column items-center">
                 <q-input
-                  debounce="700"
                   class="full-width"
                   :disable="loading"
                   stack-label
                   outlined
-                  maxlength="4"
-                  label="School Year"
-                  :rules="[requiredRule, yearRule]"
-                  v-model.trim="schoolYearFrom"
+                  maxlength="255"
+                  label="Student/Employee Number"
+                  :rules="[requiredRule]"
+                  v-model.trim="code"
                   hint=""
                 />
-                <!-- <div class="row full-width" style="gap: 16px">
-                  <q-input
-                    class="col"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    maxlength="4"
-                    label="School Year (From)"
-                    :rules="[requiredRule, yearRule]"
-                    v-model.trim="schoolYearFrom"
-                    hint=""
-                  />
-                  <q-input
-                    class="col"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    readonly
-                    maxlength="4"
-                    label="School Year (To)"
-                    v-model.trim="schoolYearTo"
-                    hint=""
-                  />
-                </div> -->
                 <q-select
                   class="full-width"
                   :disable="loading"
                   stack-label
                   outlined
-                  :options="colleges"
-                  label="College"
+                  :options="campuses"
+                  label="Campus"
                   emit-value
                   map-options
                   option-label="name"
                   option-value="code"
                   :rules="[requiredRule]"
-                  v-model="collegeCode"
+                  v-model="campusCode"
                   hint=""
                 />
                 <q-select
@@ -129,153 +44,239 @@
                   :disable="loading"
                   stack-label
                   outlined
-                  :options="yearLevels"
-                  label="Year Level"
+                  :options="affiliations"
+                  label="Affiliation"
                   emit-value
                   map-options
                   option-label="name"
                   option-value="code"
-                  :rules="[
-                    (v) =>
-                      v === undefined || v === ''
-                        ? 'This field is required'
-                        : undefined,
-                  ]"
-                  v-model="yearLevel"
+                  :rules="[requiredRule]"
+                  v-model="affiliationCode"
                   hint=""
                 />
-              </template>
-              <q-separator style="width: 50px; margin: 8px 0 24px 0" />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="First Name"
-                :rules="[requiredRule]"
-                v-model.trim="firstName"
-                hint=""
-              />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="Middle Name"
-                v-model.trim="middleName"
-                hint=""
-              />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="Last Name"
-                :rules="[requiredRule]"
-                v-model.trim="lastName"
-                hint=""
-              />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="Extension Name (Jr., II, etc.)"
-                v-model.trim="extName"
-                hint=""
-              />
-              <q-select
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                :options="[
-                  { value: 'M', label: 'MALE' },
-                  { value: 'F', label: 'FEMALE' },
-                ]"
-                label="Gender"
-                emit-value
-                map-options
-                :rules="[requiredRule]"
-                v-model="gender"
-                hint=""
-              />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                readonly
-                label="Date of Birth"
-                :rules="[requiredRule]"
-                :model-value="birthDate"
-                hint=""
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover :breakpoint="600" ref="qPopUpProxy">
-                      <div class="column">
-                        <q-date
-                          style="border-color: rgba(0, 0, 0, 0.25)"
-                          v-model="birthDate"
-                          minimal
-                          mask="YYYY/MM/DD"
-                        >
-                          <div class="row justify-end">
-                            <q-btn
-                              dense
-                              unelevated
-                              color="primary"
-                              label="CLOSE"
-                              class="q-px-sm"
-                              v-close-popup
-                            />
-                          </div>
-                        </q-date>
-                      </div>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-              <q-separator style="width: 50px; margin: 8px 0 24px 0" />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="Email Address"
-                :rules="[requiredRule]"
-                v-model.trim="emailAddress"
-                hint=""
-              />
-              <q-input
-                class="full-width"
-                :disable="loading"
-                stack-label
-                outlined
-                maxlength="255"
-                label="Mobile Phone Number"
-                :rules="[requiredRule]"
-                v-model.trim="mobileNumber"
-                hint=""
-              />
-              <div class="row justify-end full-width">
-                <q-btn
-                  :loading="loading"
+                <q-select
+                  v-if="affiliationCode === affiliationsMap.EMP.code"
+                  class="full-width"
                   :disable="loading"
-                  unelevated
-                  color="primary"
-                  label="REGISTER"
-                  type="submit"
+                  stack-label
+                  outlined
+                  :options="departments"
+                  label="Department"
+                  emit-value
+                  map-options
+                  option-label="name"
+                  option-value="code"
+                  :rules="[requiredRule]"
+                  v-model="deptCode"
+                  hint=""
                 />
+                <template v-if="affiliationCode === affiliationsMap.STU.code">
+                  <q-separator style="width: 50px; margin: 8px 0 24px 0" />
+                  <q-input
+                    debounce="700"
+                    class="full-width"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    maxlength="4"
+                    label="School Year"
+                    :rules="[requiredRule, yearRule]"
+                    v-model.trim="schoolYearFrom"
+                    hint=""
+                  />
+                  <!-- <div class="row full-width" style="gap: 16px">
+                      <q-input
+                        class="col"
+                        :disable="loading"
+                        stack-label
+                        outlined
+                        maxlength="4"
+                        label="School Year (From)"
+                        :rules="[requiredRule, yearRule]"
+                        v-model.trim="schoolYearFrom"
+                        hint=""
+                      />
+                      <q-input
+                        class="col"
+                        :disable="loading"
+                        stack-label
+                        outlined
+                        readonly
+                        maxlength="4"
+                        label="School Year (To)"
+                        v-model.trim="schoolYearTo"
+                        hint=""
+                      />
+                    </div> -->
+                  <q-select
+                    class="full-width"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    :options="colleges"
+                    label="College"
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :rules="[requiredRule]"
+                    v-model="collegeCode"
+                    hint=""
+                  />
+                  <q-select
+                    class="full-width"
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    :options="yearLevels"
+                    label="Year Level"
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :rules="[
+                      (v) =>
+                        v === undefined || v === ''
+                          ? 'This field is required'
+                          : undefined,
+                    ]"
+                    v-model="yearLevel"
+                    hint=""
+                  />
+                </template>
+                <q-separator style="width: 50px; margin: 8px 0 24px 0" />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="255"
+                  label="First Name"
+                  :rules="[requiredRule]"
+                  v-model.trim="firstName"
+                  hint=""
+                />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="255"
+                  label="Middle Name"
+                  v-model.trim="middleName"
+                  hint=""
+                />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="255"
+                  label="Last Name"
+                  :rules="[requiredRule]"
+                  v-model.trim="lastName"
+                  hint=""
+                />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="255"
+                  label="Extension Name (Jr., II, etc.)"
+                  v-model.trim="extName"
+                  hint=""
+                />
+                <q-select
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  :options="[
+                    { value: 'M', label: 'MALE' },
+                    { value: 'F', label: 'FEMALE' },
+                  ]"
+                  label="Gender"
+                  emit-value
+                  map-options
+                  :rules="[requiredRule]"
+                  v-model="gender"
+                  hint=""
+                />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  readonly
+                  label="Date of Birth"
+                  :rules="[requiredRule]"
+                  :model-value="birthDate"
+                  hint=""
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy cover :breakpoint="600" ref="qPopUpProxy">
+                        <div class="column">
+                          <q-date
+                            style="border-color: rgba(0, 0, 0, 0.25)"
+                            v-model="birthDate"
+                            minimal
+                            mask="YYYY/MM/DD"
+                          >
+                            <div class="row justify-end">
+                              <q-btn
+                                dense
+                                unelevated
+                                color="primary"
+                                label="CLOSE"
+                                class="q-px-sm"
+                                v-close-popup
+                              />
+                            </div>
+                          </q-date>
+                        </div>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+                <q-separator style="width: 50px; margin: 8px 0 24px 0" />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="255"
+                  label="Email Address"
+                  :rules="[requiredRule]"
+                  v-model.trim="emailAddress"
+                  hint=""
+                />
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  maxlength="255"
+                  label="Mobile Phone Number"
+                  :rules="[requiredRule]"
+                  v-model.trim="mobileNumber"
+                  hint=""
+                />
+                <div class="row justify-end full-width">
+                  <q-btn
+                    :loading="loading"
+                    :disable="loading"
+                    unelevated
+                    color="accent"
+                    class="text-black"
+                    label="REGISTER"
+                    type="submit"
+                  />
+                </div>
               </div>
-            </div>
-          </q-form>
+            </q-form>
+          </div>
         </template>
       </CardComponent>
     </div>

@@ -13,6 +13,7 @@
         true-value="QR"
         false-value="MANUAL"
         class="text-overline"
+        color="accent"
         v-model="inputMode"
       />
     </div>
@@ -132,3 +133,23 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+button#html5-qrcode-button-camera-start,
+button#html5-qrcode-button-camera-stop {
+  /* background-color: #ffd600; */
+  background-color: white;
+  border: solid 1px #0d47a1;
+  /* color: black; */
+  color: #0d47a1;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+div#divQrCodeScanner__dashboard_section {
+  padding: 16px !important;
+}
+</style>

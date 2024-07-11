@@ -1,117 +1,68 @@
 <template>
   <q-page class="flex flex-center q-pa-md">
-    <div class="column" style="gap: 16px; width: 500px">
-      <PageHeader text="TRIAGE" icon="fa-solid fa-list-check" />
+    <div style="width: 500px">
       <CardComponent>
-        <template v-slot:body>
-          <MessageBanner v-if="forbidden" :success="false">
-            <template v-slot:error-body>
-              <div>You are not allowed to access this page.</div>
-            </template>
-          </MessageBanner>
-          <div>
-            <div
-              style="border: 1px solid rgba(0, 0, 0, 0.15)"
-              class="row justify-center q-mb-md q-pa-sm"
-            >
-              <q-btn
-                :disable="loading"
-                unelevated
-                label="REGISTRATION"
-                :color="registrationMode === 'REG' ? 'primary' : 'transparent'"
-                :class="
-                  registrationMode === 'REG' ? 'text-white' : 'text-black'
-                "
-                @click="() => (registrationMode = 'REG')"
-              />
-              <q-btn
-                :disable="loading"
-                unelevated
-                label="ATTENDANCE"
-                :color="registrationMode === 'ATT' ? 'primary' : 'transparent'"
-                :class="
-                  registrationMode === 'ATT' ? 'text-white' : 'text-black'
-                "
-                @click="() => (registrationMode = 'ATT')"
-              />
-            </div>
-            <QRCodeScanner
-              v-show="!forbidden"
-              ref="REGISTRATION_PAGE__qrCodeScanner"
-              :loading="loading"
-              @patientCodeChanged="(val) => (patientCode = val)"
-              @inputModeChanged="(val) => (inputMode = val)"
-            />
-          </div>
-          <!-- <div class="q-mt-md">
-            <div class="text-primary text-weight-medium q-mb-sm">
-              Recent entries:
-            </div>
-            <q-list
-              bordered
-              style="
-                min-height: 150px;
-                height: 150px;
-                max-height: 150px;
-                overflow-y: auto;
-              "
-            >
-              <template v-if="recentEntries && recentEntries.length > 0">
-                <template v-for="(entry, idx) in recentEntries" :key="idx">
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label>{{ entry.patientCode }}</q-item-label>
-                      <q-item-label caption>{{ entry.message }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section side top>
-                      <q-badge
-                        :color="entry.success ? 'positive' : 'negative'"
-                        :label="entry.success ? 'SUCCESS' : 'ERROR'"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-separator />
-                </template>
-              </template>
-              <div
-                v-else
-                class="fit flex flex-center"
-                style="border: solid 1px rgba(255, 255, 255, 0.25)"
-              >
-                <q-item-label class="text-center" caption>
-                  No entry yet.
-                </q-item-label>
-              </div>
-            </q-list>
-          </div> -->
+        <template v-slot:header>
+          <PageHeader text="TRIAGE" icon="fa-solid fa-list-check" />
         </template>
-      </CardComponent>
-      <CardComponent v-if="lastPatientRegistered">
         <template v-slot:body>
-          <div class="text-primary text-weight-medium q-mb-md">
-            LAST PATIENT/EMPLOYEE REGISTERED:
-          </div>
-          <!-- <div
-            v-if="loading"
-            class="full-width flex flex-center"
-            style="height: 100px"
-          >
-            <q-spinner-dots size="lg" />
-          </div> -->
-          <table class="full-width" style="border-collapse: collapse">
-            <tr v-for="(val, key) in lastPatientRegistered" :key="key">
-              <td
-                v-for="(v, idx) in [key, val]"
-                :key="idx"
-                class="q-pa-sm"
-                :class="idx === 0 ? 'text-grey-8' : ''"
-                :style="{ width: idx === 0 ? '40%' : '60%' }"
-                style="border: 1px solid #dddddd"
+          <div>
+            <MessageBanner v-if="forbidden" :success="false">
+              <template v-slot:error-body>
+                <div>You are not allowed to access this page.</div>
+              </template>
+            </MessageBanner>
+            <div>
+              <div
+                class="row justify-center q-mb-md q-pa-md"
+                style="border: 1px solid rgba(0, 0, 0, 0.1)"
               >
-                {{ v }}
-              </td>
-            </tr>
-          </table>
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  label="REGISTRATION"
+                  :color="registrationMode === 'REG' ? 'accent' : 'transparent'"
+                  class="text-black"
+                  @click="() => (registrationMode = 'REG')"
+                />
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  label="ATTENDANCE"
+                  :color="registrationMode === 'ATT' ? 'accent' : 'transparent'"
+                  class="text-black"
+                  @click="() => (registrationMode = 'ATT')"
+                />
+              </div>
+              <QRCodeScanner
+                v-show="!forbidden"
+                ref="REGISTRATION_PAGE__qrCodeScanner"
+                :loading="loading"
+                @patientCodeChanged="(val) => (patientCode = val)"
+                @inputModeChanged="(val) => (inputMode = val)"
+              />
+            </div>
+            <div v-if="lastPatientRegistered">
+              <q-separator class="q-my-lg" />
+              <div class="text-primary text-weight-medium q-mb-md">
+                LAST PATIENT/EMPLOYEE REGISTERED:
+              </div>
+              <table class="full-width" style="border-collapse: collapse">
+                <tr v-for="(val, key) in lastPatientRegistered" :key="key">
+                  <td
+                    v-for="(v, idx) in [key, val]"
+                    :key="idx"
+                    class="q-pa-sm"
+                    :class="idx === 0 ? 'text-grey-8' : ''"
+                    :style="{ width: idx === 0 ? '40%' : '60%' }"
+                    style="border: 1px solid #dddddd"
+                  >
+                    {{ v }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </template>
       </CardComponent>
     </div>

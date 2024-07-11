@@ -1,12 +1,13 @@
 <template>
-  <div
-    class="bg-white full-width"
-    style="border: 2px solid rgba(0, 0, 0, 0.1)"
-    :style="{ padding: padded ? '30px' : '0' }"
-  >
-    <slot name="body">
+  <div class="bg-white full-width" style="border-radius: 6px; overflow: hidden">
+    <slot name="header">
       <!-- fallback content -->
     </slot>
+    <div :class="padded ? ($q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg') : ''">
+      <slot name="body">
+        <!-- fallback content -->
+      </slot>
+    </div>
   </div>
 </template>
 

@@ -1,12 +1,18 @@
 <template>
-  <q-page
-    class="flex flex-center q-pa-md"
-    style="
-      background-image: url('src/assets/bg-uerm.jpg');
-      background-repeat: no-repeat;
-      background-size: cover;
-    "
-  >
+  <q-page class="flex flex-center q-pa-md">
+    <div
+      class="absolute"
+      style="
+        width: 100vw;
+        height: 100vh;
+        background-image: url('src/assets/bg-uerm.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        /* Add the blur effect */
+        filter: blur(3px);
+        /* -webkit-filter: blur(2px); */
+      "
+    />
     <div
       class="absolute"
       style="
@@ -23,72 +29,84 @@
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
       <AppLogo size="md" :inverted="true" />
-      <PageHeader icon="fa-solid fa-unlock-keyhole" text="LOG IN" />
       <CardComponent>
         <template v-slot:body>
-          <FetchingData v-if="loading" />
-          <q-form v-else @submit="submit">
-            <div>
-              <q-banner
-                v-if="messageText"
-                :class="'bg-' + messageBgColor + ' q-mb-lg'"
-              >
-                <div class="row items-center">
-                  <q-icon
-                    :name="messageIcon"
-                    size="sm"
-                    :color="messageTextColor"
-                    class="q-mr-sm col-auto"
-                  />
-                  <span class="col" :class="'text-' + messageTextColor">{{
-                    messageText
-                  }}</span>
-                </div>
-              </q-banner>
-              <q-input
-                outlined
-                maxlength="255"
-                label="Username"
-                :rules="[
-                  (val) =>
-                    val == null || val === ''
-                      ? 'Username is required.'
-                      : undefined,
-                ]"
-                class="q-mb-xs q-mt-sm"
-                v-model.trim="username"
-              >
-                <template v-slot:prepend>
-                  <q-icon name="person" />
-                </template>
-              </q-input>
-              <FormFieldPassword outlined v-model="password" label="Password" />
-              <!-- <div
-                  style="color: rgba(0, 0, 0, 0.75)"
-                  class="text-center bordered-grey q-pa-md"
+          <div class="column" style="gap: 16px">
+            <PageHeader
+              :colorInverted="true"
+              :padded="false"
+              icon="fa-solid fa-unlock-keyhole"
+              text="LOG IN"
+            />
+            <FetchingData v-if="loading" />
+            <q-form v-else @submit="submit">
+              <div>
+                <q-banner
+                  v-if="messageText"
+                  :class="'bg-' + messageBgColor + ' q-mb-lg'"
                 >
-                  By logging in, you give consent for cookies to be used.
-                  <a href="/apps/patient-portal/#/cookie-policy">Click here</a>
-                  to view the {{ appConfig.name }} cookie policy.
-                </div> -->
-            </div>
-            <div class="row justify-end">
-              <q-btn
-                :disable="loading"
-                flat
-                label="Forgot Password?"
-                class="text-black q-mr-sm"
-                @click="(evt) => (forgotPasswordDialogVisible = true)"
-              />
-              <q-btn
-                :disable="loading"
-                unelevated
-                color="primary"
-                label="LOGIN"
-                type="submit"
-              />
-            </div>
-          </q-form>
+                  <div class="row items-center">
+                    <q-icon
+                      :name="messageIcon"
+                      size="sm"
+                      :color="messageTextColor"
+                      class="q-mr-sm col-auto"
+                    />
+                    <span class="col" :class="'text-' + messageTextColor">{{
+                      messageText
+                    }}</span>
+                  </div>
+                </q-banner>
+                <q-input
+                  outlined
+                  maxlength="255"
+                  label="Username"
+                  :rules="[
+                    (val) =>
+                      val == null || val === ''
+                        ? 'Username is required.'
+                        : undefined,
+                  ]"
+                  class="q-mb-xs q-mt-sm"
+                  v-model.trim="username"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="person" />
+                  </template>
+                </q-input>
+                <FormFieldPassword
+                  outlined
+                  v-model="password"
+                  label="Password"
+                />
+                <!-- <div
+                    style="color: rgba(0, 0, 0, 0.75)"
+                    class="text-center bordered-grey q-pa-md"
+                  >
+                    By logging in, you give consent for cookies to be used.
+                    <a href="/apps/patient-portal/#/cookie-policy">Click here</a>
+                    to view the {{ appConfig.name }} cookie policy.
+                  </div> -->
+              </div>
+              <div class="row justify-end">
+                <q-btn
+                  :disable="loading"
+                  flat
+                  label="Forgot Password?"
+                  class="text-black q-mr-sm"
+                  @click="(evt) => (forgotPasswordDialogVisible = true)"
+                />
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  color="accent"
+                  class="text-black"
+                  label="LOGIN"
+                  type="submit"
+                />
+              </div>
+            </q-form>
+          </div>
         </template>
       </CardComponent>
       <!-- <q-card borderless>

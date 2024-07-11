@@ -36,14 +36,14 @@
                 v-model.trim="value[field.code]"
                 hint=""
               />
-              <UserSelect
+              <!-- <UserSelect
                 v-if="field.type === 'PHYSICIANSELECT'"
                 label="Physician"
                 :roleCode="userRolesMap.DR.code"
                 :disable="visitIsCompleted || field.disable || loading"
                 :initialValue="value[field.code]"
                 @valueChanged="(val) => (value[field.code] = val)"
-              />
+              /> -->
             </div>
           </template>
         </div>
@@ -143,12 +143,12 @@ export default defineComponent({
           default: "NOT YET COMPLETED",
           disable: true,
         },
-        {
-          code: "physician",
-          name: "Physician",
-          type: "PHYSICIANSELECT",
-          required: true,
-        },
+        // {
+        //   code: "physician",
+        //   name: "Physician",
+        //   type: "PHYSICIANSELECT",
+        //   required: true,
+        // },
         {
           code: "remarks",
           name: "Remarks",

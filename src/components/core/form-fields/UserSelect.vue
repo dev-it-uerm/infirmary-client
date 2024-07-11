@@ -10,16 +10,18 @@
       :disable="disable || loading"
       option-value="code"
       option-label="name"
-      :label="label"
       :placeholder="value ? '' : 'Type in user name to search'"
       @input-value="search"
+      label-slot
       :rules="[
-        (val) => {
-          if (!val) return 'This field is required.';
-        },
+        (val) => (required && !val ? 'This field is required.' : undefined),
       ]"
       v-model="value"
     >
+      <template v-slot:label>
+        {{ label }}
+        <span class="text-weight-bold text-red" v-if="required"> *</span>
+      </template>
       <template v-slot:selected-item="scope">
         <q-chip
           removable
@@ -90,6 +92,10 @@ export default defineComponent({
     initialValue: {
       type: Object,
       default: null,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
     disable: {
       type: Boolean,

@@ -318,6 +318,8 @@ export default defineComponent({
       this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
       this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
 
+      console.log(response.body.details);
+
       this.value = this.mergeFieldsAndVal(
         this.examFieldsMap[this.examCode],
         this.formatResponseBody(response.body.details)

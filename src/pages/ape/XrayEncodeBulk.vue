@@ -6,269 +6,172 @@
     <div
       class="column justify-start"
       style="gap: 16px"
-      :style="$q.screen.gt.md ? { minWidth: '1440px' } : { minWidth: '100%' }"
+      :style="$q.screen.gt.md ? { minWidth: '1080px' } : { minWidth: '100%' }"
     >
-      <PageHeader icon="fa-solid fa-calendar-days" text="X-RAY BATCH ENCODE" />
-      <div :class="$q.screen.gt.md ? 'row' : 'column'" style="gap: 16px">
-        <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
-          <CardComponent>
-            <template v-slot:body>
-              <div class="q-mb-lg">
-                <div class="text-primary text-weight-medium q-mb-md">
-                  FILTER:
+      <CardComponent>
+        <template v-slot:header>
+          <PageHeader
+            icon="fa-solid fa-calendar-days"
+            text="X-RAY BATCH ENCODE"
+          />
+        </template>
+        <template v-slot:body>
+          <div class="column" style="gap: 46px">
+            <q-form @submit="confirmationDialogVisible = true">
+              <div class="full-width q-mb-xl">
+                <div class="text-primary text-weight-medium q-mb-md row">
+                  PATIENT LIST:
                 </div>
-                <q-form @submit="getVisits">
-                  <div
-                    class="row items-center"
-                    :style="$q.screen.lt.md ? {} : { gap: '16px' }"
-                  >
-                    <q-input
-                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                      :style="{ minWidth: $q.screen.lt.md ? '100%' : '100px' }"
-                      :dense="$q.screen.gt.sm"
-                      :disable="filtering || saving"
-                      debounce="750"
-                      stack-label
-                      outlined
-                      label="Year"
-                      hint=""
-                      :rules="[requiredRule, yearRule]"
-                      v-model="filters.year"
-                    />
-                    <q-select
-                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                      :dense="$q.screen.gt.sm"
-                      :disable="filtering || saving"
-                      stack-label
-                      outlined
-                      emit-value
-                      map-options
-                      option-label="name"
-                      option-value="code"
-                      :options="campuses"
-                      label="Campus"
-                      v-model="filters.campusCode"
-                      hint=""
-                    />
-                    <q-select
-                      :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                      :dense="$q.screen.gt.sm"
-                      :disable="filtering || saving"
-                      stack-label
-                      outlined
-                      emit-value
-                      map-options
-                      option-label="name"
-                      option-value="code"
-                      :options="affiliations"
-                      label="Affiliation"
-                      v-model="filters.affiliationCode"
-                      hint=""
-                    />
-                    <div
-                      class="row items-start justify-end"
-                      :class="$q.screen.lt.md ? 'full-width' : ''"
-                      style="margin-bottom: 20px"
-                    >
-                      <q-btn
-                        style="height: 40px"
-                        color="primary"
-                        class="q-px-md q-py-xs"
-                        :disable="filtering || saving"
-                        unelevated
-                        stack-label
-                        label="SEARCH"
-                        type="submit"
-                      />
-                    </div>
-                  </div>
-                </q-form>
-              </div>
-              <q-separator spaced />
-              <!-- <div v-if="filtering" class="full-width flex flex-center" style="height: 100px">
-                <q-spinner-dots size="md" color="primary" />
-              </div> -->
-              <div class="q-mt-lg">
-                <FetchingData v-if="filtering" />
-                <div v-else>
-                  <div>
-                    <div class="text-primary text-weight-medium q-mb-md row">
-                      PATIENT LIST:
-                    </div>
-                    <div
-                      class="relative-position bg-white"
-                      style="
-                        overflow-y: auto;
-                        display: grid;
-                        grid-template-rows: min-content auto;
-                      "
-                    >
-                      <q-virtual-scroll
-                        v-if="visits && visits.length > 0"
-                        style="
-                          max-height: 100%;
-                          height: auto;
-                          border-top: 1px solid rgba(0, 0, 0, 0.1);
-                          border-left: 1px solid rgba(0, 0, 0, 0.1);
-                          border-right: 1px solid rgba(0, 0, 0, 0.1);
-                        "
-                        :items="visits"
-                        v-slot="{ item, index }"
-                      >
-                        <q-item
-                          class="full-width q-pa-md"
-                          :key="index"
-                          clickable
-                          @click="showPxVisitInfo(item)"
-                        >
-                          <q-item-section>
-                            <q-item-label caption class="ellipsis q-mb-sm">{{
-                              formatDate(item.dateTimeCreated)
-                            }}</q-item-label>
-                            <q-item-label
-                              class="row items-center"
-                              style="gap: 8px"
-                            >
-                              <div class="text-weight-medium text-uppercase">
-                                {{
-                                  formatName(
-                                    item.patientFirstName,
-                                    item.patientMiddleName,
-                                    item.patientLastName,
-                                    item.patientExtName
-                                  )
-                                }}
-                              </div>
-                              <div class="text-grey-6">
-                                ({{ item.patientIdentificationCode }})
-                              </div>
-                            </q-item-label>
-                            <q-item-label caption>
-                              <div class="row items-center" style="gap: 6px">
-                                <q-icon
-                                  size="xs"
-                                  :color="
-                                    item.patientGender === 'M'
-                                      ? 'blue-4'
-                                      : 'pink-4'
-                                  "
-                                  :name="
-                                    item.patientGender === 'M'
-                                      ? 'fa-solid fa-mars'
-                                      : 'fa-solid fa-venus'
-                                  "
-                                />
-                                <q-badge
-                                  v-if="item.patientCampusCode"
-                                  class="bg-grey"
-                                  >{{
-                                    campusesMap[item.patientCampusCode].name
-                                  }}</q-badge
-                                >
-                                <q-badge
-                                  v-if="item.patientAffiliationCode"
-                                  class="bg-grey"
-                                  >{{
-                                    affiliationsMap[item.patientAffiliationCode]
-                                      .name
-                                  }}</q-badge
-                                >
-                              </div>
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <div v-if="item.loading" class="q-pa-sm">
-                              <q-spinner size="sm" color="primary" />
-                            </div>
-
-                            <q-checkbox
-                              v-if="
-                                item.status == null || item.status.code !== 200
-                              "
-                              :disable="saving"
-                              v-show="!item.loading"
-                              :val="item.id"
-                              v-model="selected"
-                            />
-                            <div
-                              v-if="item.status"
-                              :class="
-                                item.status.code === 200
-                                  ? 'text-positive'
-                                  : 'text-negative'
-                              "
-                            >
-                              {{ item.status.name }}
-                            </div>
-                          </q-item-section>
-                        </q-item>
-                        <q-separator />
-                      </q-virtual-scroll>
-                      <NoResult v-else message="No patient found." />
-                    </div>
-                  </div>
-                  <div
-                    v-if="selected && selected.length > 0"
-                    class="row full-width justify-end q-mt-md"
-                  >
-                    <q-badge color="accent" class="text-black">
-                      <span class="text-weight-bold">
-                        {{ selected.length }}
-                      </span>
-                      <span>&nbsp;item/s selected</span>
-                    </q-badge>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </CardComponent>
-        </div>
-        <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
-          <CardComponent>
-            <template v-slot:body>
-              <div>
-                <q-form @submit="confirmationDialogVisible = true">
-                  <FormFieldXrayImpression
-                    :disable="filtering || saving"
-                    label="Impression"
-                    :required="true"
-                    @value-changed="(val) => (xrayImpression = val)"
+                <div
+                  class="row items-center q-mb-md"
+                  :style="$q.screen.lt.md ? {} : { gap: '16px' }"
+                >
+                  <q-input
+                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                    :style="{
+                      minWidth: $q.screen.lt.md ? '100%' : '100px',
+                    }"
+                    :dense="$q.screen.gt.sm"
+                    :disable="saving"
+                    debounce="750"
+                    stack-label
+                    outlined
+                    label="Year"
+                    hint=""
+                    :rules="[requiredRule, yearRule]"
+                    v-model="filters.year"
                   />
-                  <UserSelect
-                    label="Radiologist"
-                    :roleCode="userRolesMap.RAD.code"
-                    :disable="filtering || saving"
-                    @valueChanged="
-                      (val) => {
-                        radiologist = val;
-                      }
+                  <q-select
+                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                    :dense="$q.screen.gt.sm"
+                    :disable="saving"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :options="campuses"
+                    label="Campus"
+                    v-model="filters.campusCode"
+                    hint=""
+                  />
+                  <q-select
+                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
+                    :dense="$q.screen.gt.sm"
+                    :disable="saving"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :options="affiliations"
+                    label="Affiliation"
+                    v-model="filters.affiliationCode"
+                    hint=""
+                  />
+                </div>
+                <div>
+                  <q-input
+                    debounce="750"
+                    :disable="saving"
+                    bordered
+                    stack-label
+                    outlined
+                    type="textarea"
+                    label="Student/Employee Numbers (separated by new line)"
+                    :rules="[requiredRule]"
+                    v-model.trim="studempNumbersStr"
+                  />
+                  <q-virtual-scroll
+                    v-if="visits && visits.length > 0"
+                    style="
+                      border-top: 1px solid rgba(0, 0, 0, 0.1);
+                      border-left: 1px solid rgba(0, 0, 0, 0.1);
+                      border-right: 1px solid rgba(0, 0, 0, 0.1);
+                      max-height: 100%;
                     "
-                  />
-                  <div class="row items-center justify-between q-mt-md">
-                    <div class="text-negative">
-                      {{
-                        selected && selected.length > 0
-                          ? ""
-                          : "Please select at least one patient to start saving."
-                      }}
-                    </div>
-                    <q-btn
-                      style="height: 40px"
-                      color="primary"
-                      class="q-px-md q-py-xs"
-                      :disable="!selected || selected.length === 0 || saving"
-                      unelevated
-                      stack-label
-                      label="SAVE"
-                      type="submit"
-                    />
-                  </div>
-                </q-form>
+                    :items="visits"
+                    v-slot="{ item, index }"
+                  >
+                    <q-item class="full-width q-pa-md" :key="index">
+                      <q-item-section>
+                        <div>
+                          <q-badge color="grey-7">
+                            {{ item.identificationCode }}
+                          </q-badge>
+                        </div>
+                      </q-item-section>
+                      <q-item-section side>
+                        <div v-if="item.loading" class="q-pa-sm">
+                          <q-spinner size="sm" color="primary" />
+                        </div>
+                        <div class="row items-center">
+                          <div class="q-mr-sm">Status:</div>
+                          <div
+                            v-if="item.status"
+                            :class="
+                              item.status.code === 200
+                                ? 'text-positive'
+                                : 'text-negative'
+                            "
+                          >
+                            {{ item.status.name }}
+                          </div>
+                          <div v-else class="text-caption">PENDING</div>
+                        </div>
+                      </q-item-section>
+                    </q-item>
+                    <q-separator />
+                  </q-virtual-scroll>
+                </div>
               </div>
-            </template>
-          </CardComponent>
-        </div>
-      </div>
+              <div class="full-width">
+                <div class="text-primary text-weight-medium q-mb-md row">
+                  X-RAY (CHEST) RESULT:
+                </div>
+                <FormFieldXrayImpression
+                  :disable="saving"
+                  label="Impression"
+                  :required="true"
+                  @value-changed="(val) => (xrayImpression = val)"
+                />
+                <UserSelect
+                  label="Radiologist"
+                  :roleCode="userRolesMap.RAD.code"
+                  :disable="saving"
+                  :required="true"
+                  @valueChanged="
+                    (val) => {
+                      radiologist = val;
+                    }
+                  "
+                />
+                <div class="row items-center justify-between q-mt-md">
+                  <div class="text-negative text-caption">
+                    {{
+                      visits && visits.length > 0
+                        ? ""
+                        : "Please add at least one student/employee number to start saving."
+                    }}
+                  </div>
+                  <q-btn
+                    style="height: 40px"
+                    color="accent"
+                    class="q-px-md q-py-xs text-black"
+                    :disable="!visits || visits.length === 0 || saving"
+                    unelevated
+                    stack-label
+                    label="SAVE"
+                    type="submit"
+                  />
+                </div>
+              </div>
+            </q-form>
+          </div>
+        </template>
+      </CardComponent>
     </div>
     <ConfirmationDialog
       v-if="confirmationDialogVisible"
@@ -377,7 +280,7 @@ export default defineComponent({
       filtering: false,
       saving: false,
 
-      selected: [],
+      studempNumbersStr: "",
       visits: [],
 
       xrayImpression: "",
@@ -391,52 +294,33 @@ export default defineComponent({
       user: "app/user",
     }),
   },
-  mounted() {
-    this.getVisits();
+  watch: {
+    studempNumbersStr(val) {
+      if (!val) {
+        this.visits = [];
+        return;
+      }
+
+      this.visits = val
+        .split("\n")
+        .map((e) => {
+          return {
+            identificationCode: e.trim(),
+            status: null,
+            loading: false,
+          };
+        })
+        .filter((e) => e.identificationCode !== "");
+    },
   },
   methods: {
-    async getVisits() {
-      this.filtering = true;
-      this.selected = [];
+    async saveXrayImpression() {
+      this.saving = true;
 
       const sanitizedFilters = Object.entries(this.filters).reduce((acc, e) => {
         if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
         return acc;
       }, {});
-
-      const response = await this.$store.dispatch(
-        "ape/getVisitsWithXray",
-        sanitizedFilters
-      );
-
-      if (response.error) {
-        showMessage(
-          this.$q,
-          false,
-          "Unable to fetch visits. Please try again."
-        );
-
-        this.filtering = false;
-        return;
-      }
-
-      await delay(2000);
-
-      this.visits =
-        response.body && response.body.length > 0
-          ? response.body.map((row) => {
-              return {
-                ...row,
-                status: null,
-                loading: false,
-              };
-            })
-          : [];
-
-      this.filtering = false;
-    },
-    async saveXrayImpression() {
-      this.saving = true;
 
       const selected = this.visits.filter((v) => this.selected.includes(v.id));
 

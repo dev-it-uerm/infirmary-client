@@ -1,15 +1,17 @@
 <template>
-  <q-page class="flex flex-center q-pa-lg">
+  <q-page class="flex flex-center q-pa-xl">
     <div
       class="column"
       style="gap: 16px"
       :style="{ width: $q.screen.lt.md ? '100%' : '500px' }"
     >
-      <PageHeader
-        text="VISIT TRACKER"
-        icon="fa-solid fa-solid fa-magnifying-glass"
-      />
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader
+            text="VISIT TRACKER"
+            icon="fa-solid fa-solid fa-magnifying-glass"
+          />
+        </template>
         <template v-slot:body>
           <QRCodeScanner
             ref="visitCodeScanner"
@@ -18,10 +20,7 @@
             @patientCodeChanged="(val) => (patientCode = val)"
             @inputModeChanged="(val) => (inputMode = val)"
           />
-        </template>
-      </CardComponent>
-      <CardComponent>
-        <template v-slot:body>
+          <q-separator class="q-my-xl" />
           <div
             v-if="loading"
             class="full-width flex flex-center"

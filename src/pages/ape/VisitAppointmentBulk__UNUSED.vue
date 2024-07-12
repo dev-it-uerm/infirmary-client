@@ -50,18 +50,6 @@
               <template
                 v-if="filters.affiliationCode === affiliationsMap.STU.code"
               >
-                <q-input
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  class="col-auto"
-                  :disable="filtering || scheduling"
-                  stack-label
-                  outlined
-                  maxlength="4"
-                  label="School Year"
-                  :rules="[yearRule]"
-                  v-model.trim="filters.schoolYear"
-                />
                 <q-select
                   :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
                   :dense="$q.screen.gt.sm"
@@ -375,7 +363,6 @@ export default defineComponent({
         fullName: "",
 
         collegeCode: null,
-        schoolYear: null,
         yearLevel: null,
       },
 
@@ -397,12 +384,9 @@ export default defineComponent({
   watch: {
     "filters.affiliationCode": {
       handler(val) {
-        this.filters.schoolYear = null;
-
         if (val === affiliationsMap.STU.code) {
           this.filters.collegeCode = collegesMap.MED.code;
           this.filters.yearLevel = yearLevelsMap.FIRST.code;
-          this.filters.schoolYear = new Date().getFullYear();
           return;
         }
 
@@ -441,12 +425,6 @@ export default defineComponent({
         },
         ...(this.filters.affiliationCode === this.affiliationsMap.STU.code
           ? [
-              {
-                name: "schoolYear",
-                field: "schoolYear",
-                label: "SCHOOL YEAR",
-                align: "center",
-              },
               {
                 name: "collegeCode",
                 field: "collegeCode",

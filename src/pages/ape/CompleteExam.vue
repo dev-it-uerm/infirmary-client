@@ -139,10 +139,6 @@
                       collegesMap[patient.collegeCode].name
                     }}</span>
                   </div>
-                  <div v-if="patient.schoolYear">
-                    <span class="text-grey-7">School Year:</span>
-                    <span class="q-ml-sm">{{ patient.schoolYear }}</span>
-                  </div>
                   <div v-if="patient.yearLevel">
                     <span class="text-grey-7">Year Level:</span>
                     <span class="q-ml-sm">{{

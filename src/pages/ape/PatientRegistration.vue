@@ -72,42 +72,6 @@
                 />
                 <template v-if="affiliationCode === affiliationsMap.STU.code">
                   <q-separator style="width: 50px; margin: 8px 0 24px 0" />
-                  <q-input
-                    debounce="700"
-                    class="full-width"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    maxlength="4"
-                    label="School Year"
-                    :rules="[requiredRule, yearRule]"
-                    v-model.trim="schoolYearFrom"
-                    hint=""
-                  />
-                  <!-- <div class="row full-width" style="gap: 16px">
-                      <q-input
-                        class="col"
-                        :disable="loading"
-                        stack-label
-                        outlined
-                        maxlength="4"
-                        label="School Year (From)"
-                        :rules="[requiredRule, yearRule]"
-                        v-model.trim="schoolYearFrom"
-                        hint=""
-                      />
-                      <q-input
-                        class="col"
-                        :disable="loading"
-                        stack-label
-                        outlined
-                        readonly
-                        maxlength="4"
-                        label="School Year (To)"
-                        v-model.trim="schoolYearTo"
-                        hint=""
-                      />
-                    </div> -->
                   <q-select
                     class="full-width"
                     :disable="loading"
@@ -348,8 +312,6 @@ export default defineComponent({
       code: null,
       deptCode: null,
 
-      schoolYearFrom: null,
-      // schoolYearTo: null,
       collegeCode: null,
       yearLevel: null,
 
@@ -372,21 +334,11 @@ export default defineComponent({
   watch: {
     affiliationCode(val) {
       if (val === affiliationsMap.EMP.code) {
-        this.schoolYearFrom = null;
-        // this.schoolYearTo = null;
         this.collegeCode = null;
         this.deptCode = null;
         this.yearLevel = null;
       }
     },
-    // schoolYearFrom(val) {
-    //   if (!val) {
-    //     this.schoolYearTo = null;
-    //     return;
-    //   }
-
-    //   this.schoolYearTo = Number(this.schoolYearFrom) + 1;
-    // },
   },
   methods: {
     reset() {
@@ -395,7 +347,6 @@ export default defineComponent({
       this.code = null;
       this.deptCode = null;
 
-      this.schoolYearFrom = null;
       this.collegeCode = null;
       this.yearLevel = null;
 
@@ -420,7 +371,6 @@ export default defineComponent({
         identificationCode: this.code,
         deptCode: this.deptCode,
 
-        schoolYear: this.schoolYearFrom,
         collegeCode: this.collegeCode,
         yearLevel: this.yearLevel,
 

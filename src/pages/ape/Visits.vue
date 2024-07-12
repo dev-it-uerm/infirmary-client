@@ -109,18 +109,6 @@
                   <!-- <template
                   v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
                 >
-                  <q-input
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :dense="$q.screen.gt.sm"
-                    class="col-auto"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    maxlength="4"
-                    label="School Year"
-                    :rules="[yearRule]"
-                    v-model.trim="filters.patientSchoolYear"
-                  />
                   <q-select
                     :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
                     :dense="$q.screen.gt.sm"
@@ -764,15 +752,6 @@ export default defineComponent({
       formatName,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
-      // phaseClassesMap: {
-      //   REG: "text-grey-8",
-      //   PE: "text-grey-8",
-      //   LABCBC: "text-grey-8",
-      //   LABURI: "text-grey-8",
-      //   LABFCL: "text-grey-8",
-      //   RADXRCHST: "text-grey-8",
-      //   FIN: "text-positive",
-      // },
       columns: [
         {
           name: "action",
@@ -797,8 +776,6 @@ export default defineComponent({
           field: "patientCampusCode",
           label: "CAMPUS",
           align: "center",
-          // format: (val) => `${val}`,
-          // sortable: true,
         },
         {
           name: "patientAffiliationCode",
@@ -820,12 +797,6 @@ export default defineComponent({
           name: "patientCollegeCode",
           field: "patientCollegeCode",
           label: "COLLEGE",
-          align: "center",
-        },
-        {
-          name: "patientSchoolYear",
-          field: "patientSchoolYear",
-          label: "SCHOOL YEAR",
           align: "center",
         },
         {
@@ -864,7 +835,6 @@ export default defineComponent({
         // patientName: null,
 
         // patientCollegeCode: null,
-        // patientSchoolYear: null,
         // patientYearLevel: null,
       },
 
@@ -887,22 +857,6 @@ export default defineComponent({
       user: "app/user",
     }),
   },
-  watch: {
-    // "filters.patientAffiliationCode": {
-    //   handler(val) {
-    //     if (val === affiliationsMap.STU.code) {
-    //       this.filters.patientCollegeCode = collegesMap.MED.code;
-    //       this.filters.patientYearLevel = yearLevelsMap.FIRST.code;
-    //       this.filters.patientSchoolYear = new Date().getFullYear();
-    //       return;
-    //     }
-    //     this.filters.patientCollegeCode = null;
-    //     this.filters.patientYearLevel = null;
-    //     this.filters.patientSchoolYear = null;
-    //   },
-    //   immediate: true,
-    // },
-  },
   mounted() {
     if (this.user) this.getVisits();
   },
@@ -910,17 +864,6 @@ export default defineComponent({
     getExamName(code) {
       return this.examsMap[code].name;
     },
-    // getLastExamCompleted(exams) {
-    //   const completedExams = exams.filter((e) => e.dateTimeCompleted);
-
-    //   const latestExam = completedExams.reduce((acc, s) => {
-    //     if (!acc) return s;
-    //     if (acc.id < s.id) return s;
-    //   }, null);
-
-    //   if (latestExam) return this.examsMap[latestExam.examCode];
-    //   return { code: "na", name: "N/A" };
-    // },
     async getVisits() {
       this.loading = true;
 
@@ -979,7 +922,6 @@ export default defineComponent({
       );
 
       this.pendingVisits = visits[0];
-      // this.pendingVisits = Array(50).fill(visits[0][0]);
       this.completedVisits = visits[1];
 
       this.loading = false;

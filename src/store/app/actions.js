@@ -98,3 +98,14 @@ export const getUsers = async (context, payload) => {
     context
   );
 };
+
+export const getXrayChestResultTemplates = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/xray-chest-result-templates`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};

@@ -23,7 +23,7 @@
       <q-icon
         name="fa-solid fa-book cursor-pointer"
         color="primary"
-        @click="templateVisible = true"
+        @click="getTemplates"
       />
     </template>
   </q-input>
@@ -44,7 +44,11 @@
           overflow: hidden auto;
         "
       >
+        <div v-if="templateLoading" class="row justify-center">
+          <q-spinner color="primary" size="md" />
+        </div>
         <div
+          v-else
           v-for="(template, idx) in templates"
           :key="idx"
           flat
@@ -58,17 +62,6 @@
             }
           "
         >
-          <!-- <q-card-section>
-            <div class="text-h6">Our Changing Planet</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </q-card-section>
-
-          <q-separator inset /> -->
-
           <div class="text-primary">
             {{ template }}
           </div>
@@ -80,6 +73,7 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import { delay } from "src/helpers/util.js";
 
 export default defineComponent({
   name: "XrayImpression",
@@ -110,13 +104,10 @@ export default defineComponent({
   data() {
     return {
       value: null,
+
       templateVisible: false,
-      templates: [
-        "Present study (PA) again shows clear lung fields.\n\nHeart and great vessels are within normal size configuration.\n\nOther chest structures are not remarkable.\n\n\nIMPRESSION: Normal chest.",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      ],
+      templateLoading: false,
+      templates: [],
     };
   },
   watch: {
@@ -129,6 +120,26 @@ export default defineComponent({
   },
   created() {
     this.value = this.initialValue;
+  },
+  methods: {
+    async getTemplates() {
+      this.templates = [];
+      this.templateVisible = true;
+      this.templateLoading = true;
+
+      const response = await this.$store.dispatch(
+        "app/getXrayChestResultTemplates"
+      );
+      await delay(2000);
+
+      if (response.error) {
+        this.templateLoading = false;
+        return;
+      }
+
+      this.templates = response.body.map((t) => t.impression);
+      this.templateLoading = false;
+    },
   },
 });
 </script>

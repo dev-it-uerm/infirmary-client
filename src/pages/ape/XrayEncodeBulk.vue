@@ -39,7 +39,7 @@
                     label="Year"
                     hint=""
                     :rules="[requiredRule, yearRule]"
-                    v-model="filters.year"
+                    v-model="year"
                   />
                   <q-select
                     :class="$q.screen.lt.md ? 'col-12' : 'col'"
@@ -53,7 +53,8 @@
                     option-value="code"
                     :options="campuses"
                     label="Campus"
-                    v-model="filters.campusCode"
+                    :rules="[requiredRule]"
+                    v-model="campusCode"
                     hint=""
                   />
                   <q-select
@@ -68,11 +69,12 @@
                     option-value="code"
                     :options="affiliations"
                     label="Affiliation"
-                    v-model="filters.affiliationCode"
+                    :rules="[requiredRule]"
+                    v-model="affiliationCode"
                     hint=""
                   />
                 </div>
-                <div>
+                <div class="column" style="gap: 16px">
                   <q-input
                     debounce="750"
                     :disable="saving"
@@ -85,14 +87,14 @@
                     v-model.trim="studempNumbersStr"
                   />
                   <q-virtual-scroll
-                    v-if="visits && visits.length > 0"
+                    v-if="patients && patients.length > 0"
                     style="
                       border-top: 1px solid rgba(0, 0, 0, 0.1);
                       border-left: 1px solid rgba(0, 0, 0, 0.1);
                       border-right: 1px solid rgba(0, 0, 0, 0.1);
                       max-height: 100%;
                     "
-                    :items="visits"
+                    :items="patients"
                     v-slot="{ item, index }"
                   >
                     <q-item class="full-width q-pa-md" :key="index">
@@ -104,11 +106,13 @@
                         </div>
                       </q-item-section>
                       <q-item-section side>
-                        <div v-if="item.loading" class="q-pa-sm">
-                          <q-spinner size="sm" color="primary" />
+                        <!-- <div v-if="item.loading" class="q-pa-sm">
+                          <q-spinner-dots color="primary" size="1em" />
+                        </div> -->
+                        <div v-if="item.loading" class="text-caption">
+                          Saving...
                         </div>
-                        <div class="row items-center">
-                          <div class="q-mr-sm">Status:</div>
+                        <div v-else class="text-caption">
                           <div
                             v-if="item.status"
                             :class="
@@ -119,12 +123,17 @@
                           >
                             {{ item.status.name }}
                           </div>
-                          <div v-else class="text-caption">PENDING</div>
+                          <div v-else>PENDING</div>
                         </div>
                       </q-item-section>
                     </q-item>
                     <q-separator />
                   </q-virtual-scroll>
+                  <div class="row text-caption" style="gap: 12px">
+                    <div>ITEM COUNT: {{ patients.length }}</div>
+                    <div class="text-positive">SUCCESS: {{ successCount }}</div>
+                    <div class="text-negative">ERROR: {{ errorCount }}</div>
+                  </div>
                 </div>
               </div>
               <div class="full-width">
@@ -151,7 +160,7 @@
                 <div class="row items-center justify-between q-mt-md">
                   <div class="text-negative text-caption">
                     {{
-                      visits && visits.length > 0
+                      patients && patients.length > 0
                         ? ""
                         : "Please add at least one student/employee number to start saving."
                     }}
@@ -160,7 +169,7 @@
                     style="height: 40px"
                     color="accent"
                     class="q-px-md q-py-xs text-black"
-                    :disable="!visits || visits.length === 0 || saving"
+                    :disable="!patients || patients.length === 0 || saving"
                     unelevated
                     stack-label
                     label="SAVE"
@@ -175,7 +184,7 @@
     </div>
     <ConfirmationDialog
       v-if="confirmationDialogVisible"
-      question="Save X-Ray impression to selected visits?"
+      question="Save X-Ray impression to selected patients?"
       @cancel="(evt) => (confirmationDialogVisible = false)"
       @ok="
         (evt) => {
@@ -268,25 +277,25 @@ export default defineComponent({
   },
   data() {
     return {
-      filters: {
-        identificationCode: "",
-        campusCode: campusesMap.UERM.code,
-        affiliationCode: affiliationsMap.STU.code,
-        year: new Date().getFullYear(),
-      },
-
       columns: [],
 
       filtering: false,
       saving: false,
 
+      campusCode: campusesMap.UERM.code,
+      affiliationCode: affiliationsMap.STU.code,
+      year: new Date().getFullYear(),
+
       studempNumbersStr: "",
-      visits: [],
+      patients: [],
 
       xrayImpression: "",
       radiologist: null,
 
       confirmationDialogVisible: false,
+
+      successCount: 0,
+      errorCount: 0,
     };
   },
   computed: {
@@ -297,11 +306,11 @@ export default defineComponent({
   watch: {
     studempNumbersStr(val) {
       if (!val) {
-        this.visits = [];
+        this.patients = [];
         return;
       }
 
-      this.visits = val
+      this.patients = val
         .split("\n")
         .map((e) => {
           return {
@@ -311,31 +320,36 @@ export default defineComponent({
           };
         })
         .filter((e) => e.identificationCode !== "");
+
+      this.successCount = 0;
+      this.errorCount = 0;
     },
   },
   methods: {
     async saveXrayImpression() {
       this.saving = true;
 
-      const sanitizedFilters = Object.entries(this.filters).reduce((acc, e) => {
-        if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
-        return acc;
-      }, {});
+      this.successCount = 0;
+      this.errorCount = 0;
 
-      const selected = this.visits.filter((v) => this.selected.includes(v.id));
-
-      for (const row of selected) {
-        row.loading = true;
+      for (const patient of this.patients) {
+        patient.loading = true;
 
         const response = await this.$store.dispatch("ape/saveExamDetails", {
-          visitId: row.id,
+          identificationCode: patient.identificationCode,
+          campusCode: this.campusCode,
+          affiliationCode: this.affiliationCode,
+          year: this.year,
+
           examCode: examsMap.RAD_XRCHST.code,
+
           details: [
             {
               code: examFieldsMap[examsMap.RAD_XRCHST.code][0].code,
               value: this.xrayImpression,
             },
           ],
+
           markAsCompletedOnSave: true,
           creator: this.radiologist,
         });
@@ -343,16 +357,17 @@ export default defineComponent({
         await delay(1000);
 
         if (response.error) {
-          row.status = { code: response.status, name: response.body };
-          row.loading = false;
+          this.errorCount += 1;
+          patient.status = { code: response.status, name: response.body };
+          patient.loading = false;
           continue;
         }
 
-        row.status = { code: 200, name: "Success." };
-        row.loading = false;
+        this.successCount += 1;
+        patient.status = { code: 200, name: "Success." };
+        patient.loading = false;
       }
 
-      this.selected = [];
       this.saving = false;
     },
   },

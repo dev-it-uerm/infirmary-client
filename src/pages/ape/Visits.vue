@@ -232,6 +232,7 @@
                       :rows="pendingVisits"
                       :columns="columns"
                       hide-bottom
+                      :rows-per-page-options="[0]"
                     >
                       <template v-slot:body="props">
                         <q-tr

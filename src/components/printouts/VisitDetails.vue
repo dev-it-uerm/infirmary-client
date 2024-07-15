@@ -58,6 +58,39 @@ export default {
     createFooter(currentPage, pageCount, pageSize) {
       return [
         {
+          stack: [
+            {
+              columns: [
+                {
+                  text: this.content.visit.physician
+                    ? "_________________________"
+                    : "",
+                  alignment: "center",
+                  width: "50%",
+                },
+                { text: "", width: "50%" },
+              ],
+              fontSize: 9,
+            },
+            {
+              columns: [
+                {
+                  text: `${
+                    this.content.visit.physician
+                      ? `${this.content.visit.physician} MD`
+                      : ""
+                  }`,
+                  alignment: "center",
+                  width: "50%",
+                },
+                { text: "", width: "50%" },
+              ],
+              fontSize: 8,
+            },
+          ],
+          margin: [25, 20, 25, 0],
+        },
+        {
           layout: "noBorders",
           margin: [25, 20, 25, 0],
           table: {
@@ -66,7 +99,7 @@ export default {
               [
                 {
                   text: `Page ${currentPage} of ${pageCount}`,
-                  fontSize: 9,
+                  fontSize: 8,
                   alignment: "center",
                 },
               ],
@@ -100,7 +133,7 @@ export default {
       return {
         headerRows: 1,
         margin: [0, 0, 0, 10],
-        style: { fontSize: 9 },
+        style: { fontSize: 8 },
         table: {
           widths: ["auto", "*"],
           body: tableBody,
@@ -111,12 +144,12 @@ export default {
           },
           hLineWidth: (rowIndex, node) => {
             return rowIndex === 0 || rowIndex === node.table.body.length
-              ? 1
+              ? 0.5
               : 0;
           },
           vLineWidth: (rowIndex, node) => {
             return rowIndex === 0 || rowIndex === node.table.widths.length
-              ? 1
+              ? 0.5
               : 0;
           },
           hLineColor: (rowIndex, node) => {
@@ -133,6 +166,15 @@ export default {
       };
     },
     createContentBody() {
+      const examCodesToTableColIndexMap = {
+        MED_HIST: 0,
+        PE: 0,
+        RAD_XRCHST: 0,
+        LAB_CBC: 1,
+        LAB_URI: 1,
+        LAB_FCL: 1,
+      };
+
       const tableBodyCols = [[], []];
 
       for (const i in this.exams) {
@@ -142,7 +184,7 @@ export default {
           this.content.exams[exam.code] &&
           Object.keys(this.content.exams[exam.code]).length > 0
         ) {
-          tableBodyCols[i % 2].push(
+          tableBodyCols[examCodesToTableColIndexMap[exam.code] ?? 0].push(
             this.createExamTable(
               exam.name.toUpperCase(),
               examFieldsMap[exam.code],
@@ -181,7 +223,7 @@ export default {
         // },
         pageSize: "LETTER",
         // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
-        pageMargins: [25, 190, 25, 60], // Body margins. Change top or bottom to resize the header or footer respectively.
+        pageMargins: [25, 190, 25, 90], // Body margins. Change top or bottom to resize the header or footer respectively.
         header: [
           {
             stack: [

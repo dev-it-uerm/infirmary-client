@@ -1,15 +1,15 @@
 <template>
-  <div class="full-width q-pa-md bg-primary" :class="outerDivClasses">
+  <div class="full-width q-pa-md" :class="outerDivClasses">
     <div class="row items-center justify-center" :class="innerDivClasses">
       <q-icon
         v-if="icon"
         size="sm"
         :name="icon"
-        color="white"
+        :color="colorInverted ? 'primary' : 'white'"
         style="margin-right: 12px"
       />
       <span
-        class="text-weight-bold text-h6 text-center text-uppercase text-white"
+        class="text-weight-bold text-h6 text-center text-uppercase"
         style="letter-spacing: 1pt"
       >
         {{ text }}

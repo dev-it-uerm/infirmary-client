@@ -55,7 +55,7 @@ module.exports = configure(function (/* ctx */) {
       // analyze: true,
       env: {
         apiHost: "https://api.uerm.edu.ph/infirmary",
-        apiHost__DEV: "http://10.107.0.24:4443/infirmary",
+        apiHost__DEV: "http://10.107.0.24:4040/infirmary",
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

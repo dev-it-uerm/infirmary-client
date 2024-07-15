@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center q-pa-md">
+  <q-page class="flex flex-center q-pa-lg">
     <div
       class="absolute"
       style="
@@ -30,14 +30,11 @@
     >
       <AppLogo size="md" :inverted="true" />
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader icon="fa-solid fa-unlock-keyhole" text="LOG IN" />
+        </template>
         <template v-slot:body>
           <div class="column" style="gap: 16px">
-            <PageHeader
-              :colorInverted="true"
-              :padded="false"
-              icon="fa-solid fa-unlock-keyhole"
-              text="LOG IN"
-            />
             <FetchingData v-if="loading" />
             <q-form v-else @submit="submit">
               <div>

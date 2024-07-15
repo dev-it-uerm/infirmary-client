@@ -86,21 +86,33 @@
                     :rules="[requiredRule]"
                     v-model.trim="studempNumbersStr"
                   />
-                  <q-virtual-scroll
+                  <q-list
                     v-if="patients && patients.length > 0"
-                    style="
-                      border-top: 1px solid rgba(0, 0, 0, 0.1);
-                      border-left: 1px solid rgba(0, 0, 0, 0.1);
-                      border-right: 1px solid rgba(0, 0, 0, 0.1);
-                      max-height: 100%;
-                    "
-                    :items="patients"
-                    v-slot="{ item, index }"
+                    bordered
+                    separator
+                    style="overflow-y: auto"
+                    :style="$q.screen.gt.md ? { maxHeight: '500px' } : {}"
                   >
-                    <q-item class="full-width q-pa-md" :key="index">
+                    <q-item
+                      class="full-width q-pa-md"
+                      v-for="(item, index) in patients"
+                      :key="index"
+                    >
                       <q-item-section>
-                        <div>
-                          <q-badge color="grey-7">
+                        <div class="row">
+                          <div
+                            class="text-caption text-grey-8"
+                            style="min-width: 50px"
+                          >
+                            {{ index + 1 }}
+                          </div>
+                          <!-- <q-badge color="grey-7">
+                            {{ item.identificationCode }}
+                          </q-badge> -->
+                          <q-badge
+                            color="accent"
+                            class="text-black text-weight-medium"
+                          >
                             {{ item.identificationCode }}
                           </q-badge>
                         </div>
@@ -127,8 +139,7 @@
                         </div>
                       </q-item-section>
                     </q-item>
-                    <q-separator />
-                  </q-virtual-scroll>
+                  </q-list>
                   <div class="row text-caption" style="gap: 12px">
                     <div>ITEM COUNT: {{ patients.length }}</div>
                     <div class="text-positive">SUCCESS: {{ successCount }}</div>
@@ -314,7 +325,7 @@ export default defineComponent({
         .split("\n")
         .map((e) => {
           return {
-            identificationCode: e.trim(),
+            identificationCode: e.replace(/\W/g, "").trim(),
             status: null,
             loading: false,
           };

@@ -180,8 +180,8 @@
                   >
                     <q-btn
                       style="height: 40px"
-                      color="primary"
-                      class="q-px-md q-py-xs"
+                      color="accent"
+                      class="q-px-md q-py-xs text-black"
                       :disable="loading"
                       :loading="loading"
                       unelevated
@@ -476,7 +476,8 @@
                             dense
                             style="padding-left: 10px; padding-right: 10px"
                             unelevated
-                            color="primary"
+                            class="text-black"
+                            color="accent"
                             label="DETAILS"
                             @click.stop="showPxVisitInfo(item)"
                           />
@@ -590,7 +591,8 @@
                             dense
                             style="padding-left: 10px; padding-right: 10px"
                             unelevated
-                            color="primary"
+                            class="text-black"
+                            color="accent"
                             label="PRINT"
                             @click.stop="showPxVisitPrintout(item)"
                           />

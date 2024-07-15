@@ -13,7 +13,7 @@
         true-value="QR"
         false-value="MANUAL"
         class="text-overline"
-        color="accent"
+        color="primary"
         v-model="inputMode"
       />
     </div>

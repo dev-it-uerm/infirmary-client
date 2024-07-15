@@ -5,11 +5,13 @@
       style="gap: 16px"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <PageHeader text="CHANGE PASSWORD" icon="fa-solid fa-user-pen" />
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader text="CHANGE PASSWORD" icon="fa-solid fa-user-pen" />
+        </template>
         <template v-slot:body>
           <FetchingData v-if="loading" />
-          <q-form ref="qForm" @submit="submit" @reset="reset">
+          <q-form v-show="!loading" ref="qForm" @submit="submit" @reset="reset">
             <q-banner
               v-if="messageText"
               class="q-pa-md"
@@ -49,7 +51,8 @@
               <q-btn
                 :disable="loading"
                 unelevated
-                color="primary"
+                class="text-black"
+                color="accent"
                 label="CHANGE"
                 type="submit"
               />

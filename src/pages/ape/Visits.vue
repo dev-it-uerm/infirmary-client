@@ -8,7 +8,6 @@
       <template v-slot:body>
         <div class="column full-width" style="gap: 36px">
           <div class="full-width">
-            <div class="text-primary text-weight-medium">FILTER:</div>
             <div class="q-mt-md">
               <q-form @submit="getVisits">
                 <div
@@ -163,17 +162,6 @@
                   hint=""
                   v-model.trim="filters.patientName"
                 /> -->
-                  <q-input
-                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    debounce="750"
-                    stack-label
-                    outlined
-                    label="Employee/Student Number"
-                    hint=""
-                    v-model.trim="identificationCodeFilter"
-                  />
                   <div
                     class="row items-start justify-end"
                     :class="$q.screen.lt.md ? 'full-width' : ''"
@@ -186,7 +174,7 @@
                       :loading="loading"
                       unelevated
                       stack-label
-                      label="FILTER"
+                      label="SEARCH"
                       type="submit"
                     />
                   </div>
@@ -197,17 +185,42 @@
           <div
             class="full-width"
             :class="$q.screen.gt.md ? 'row' : 'column'"
-            style="gap: 46px"
+            style="gap: 56px"
           >
             <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
               <FetchingData v-if="loading" />
               <template v-else>
-                <div class="row items-center justify-between q-mb-md">
+                <div class="row items-center q-mb-md" style="gap: 16px">
                   <div class="text-primary text-weight-medium">
                     PENDING VISITS:
                   </div>
                 </div>
-                <template v-if="pendingVisits && pendingVisits.length > 0">
+                <q-input
+                  :style="$q.screen.gt.md ? { maxWidth: '200px' } : {}"
+                  dense
+                  outlined
+                  debounce="750"
+                  label="Filter"
+                  maxlength="255"
+                  hint=""
+                  v-model.trim="pendingVisitsFilterStr"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="pendingVisitsFilterStr !== ''"
+                      size="xs"
+                      name="close"
+                      class="cursor-pointer"
+                      @click="pendingVisitsFilterStr = ''"
+                    />
+                    <q-icon name="search" size="xs" />
+                  </template>
+                </q-input>
+                <template
+                  v-if="
+                    filteredPendingVisits && filteredPendingVisits.length > 0
+                  "
+                >
                   <div
                     class="full-width relative-position"
                     v-if="$q.screen.gt.md"
@@ -217,7 +230,7 @@
                       style="border-radius: 0"
                       id="uerm-infirmary__visits-page__q-table"
                       class="shadow-0"
-                      :rows="pendingVisits"
+                      :rows="filteredPendingVisits"
                       :columns="columns"
                       hide-bottom
                       :rows-per-page-options="[0]"
@@ -496,7 +509,21 @@
                 <div class="text-primary text-weight-medium q-mb-md">
                   COMPLETED VISITS:
                 </div>
-                <template v-if="completedVisits && completedVisits.length > 0">
+                <q-input
+                  dense
+                  debounce="750"
+                  outlined
+                  label="Filter"
+                  max-length="255"
+                  hint=""
+                  v-model.trim="completedVisitsFilterStr"
+                />
+                <template
+                  v-if="
+                    filteredCompletedVisits &&
+                    filteredCompletedVisits.length > 0
+                  "
+                >
                   <div
                     class="relative-position bg-white"
                     style="
@@ -514,7 +541,7 @@
                         border-right: 1px solid rgba(0, 0, 0, 0.1);
                       "
                       :style="$q.screen.gt.md ? { maxHeight: '500px' } : {}"
-                      :items="completedVisits"
+                      :items="filteredCompletedVisits"
                       v-slot="{ item, index }"
                     >
                       <q-item
@@ -524,11 +551,11 @@
                         @click="showPxVisitInfo(item)"
                       >
                         <q-item-section>
-                          <!-- <q-item-label overline class="q-mb-sm">{{
-                              item.patientIdentificationCode
-                            }}</q-item-label> -->
                           <q-item-label caption class="ellipsis q-mb-xs">{{
                             formatDate(item.dateTimeCreated)
+                          }}</q-item-label>
+                          <q-item-label overline class="q-mb-sm">{{
+                            item.patientIdentificationCode
                           }}</q-item-label>
                           <q-item-label
                             class="text-weight-medium text-uppercase"
@@ -593,7 +620,7 @@
                             unelevated
                             class="text-black"
                             color="accent"
-                            label="PRINT"
+                            label="PRINT RESULT"
                             @click.stop="showPxVisitPrintout(item)"
                           />
                         </q-item-section>
@@ -663,7 +690,7 @@
     <MaximizedDialog
       v-if="visitPrintoutVisible"
       title="PRINT VISIT"
-      @close="() => (visitPrintoutVisible = false)"
+      @close="visitPrintoutVisible = false"
     >
       <template v-slot:body>
         <PrintoutVisitDetails
@@ -840,7 +867,8 @@ export default defineComponent({
         // patientYearLevel: null,
       },
 
-      identificationCodeFilter: "",
+      pendingVisitsFilterStr: "",
+      completedVisitsFilterStr: "",
 
       loading: false,
 
@@ -858,6 +886,18 @@ export default defineComponent({
     ...mapGetters({
       user: "app/user",
     }),
+    filteredPendingVisits() {
+      return this.getFilteredVisits(
+        this.pendingVisits,
+        this.pendingVisitsFilterStr
+      );
+    },
+    filteredCompletedVisits() {
+      return this.getFilteredVisits(
+        this.completedVisits,
+        this.completedVisitsFilterStr
+      );
+    },
   },
   mounted() {
     if (this.user) this.getVisits();
@@ -908,16 +948,7 @@ export default defineComponent({
             return acc;
           }
 
-          if (!this.identificationCodeFilter) {
-            acc[0].push(v);
-            return acc;
-          }
-
-          if (this.identificationCodeFilter === v.patientIdentificationCode) {
-            acc[0].push(v);
-            return acc;
-          }
-
+          acc[0].push(v);
           return acc;
         },
         [[], []]
@@ -926,6 +957,8 @@ export default defineComponent({
       this.pendingVisits = visits[0];
       this.completedVisits = visits[1];
 
+      this.pendingVisitsFilterStr = "";
+      this.completedVisitsFilterStr = "";
       this.loading = false;
     },
     async showPxVisitInfo(visit) {
@@ -935,6 +968,21 @@ export default defineComponent({
     async showPxVisitPrintout(visit) {
       this.currentVisit = visit;
       this.visitPrintoutVisible = true;
+    },
+    getFilteredVisits(visits, searchStr) {
+      if (!searchStr || searchStr.length < 3) return [...visits];
+
+      const lowerCasedSearchStr = searchStr.toLowerCase();
+
+      return visits.filter((v) => {
+        return Boolean(
+          v.patientIdentificationCode.includes(searchStr) ||
+            v.patientFirstName.toLowerCase().includes(lowerCasedSearchStr) ||
+            v.patientMiddleName?.toLowerCase().includes(lowerCasedSearchStr) ||
+            v.patientLastName.toLowerCase().includes(lowerCasedSearchStr) ||
+            v.patientExtName?.toLowerCase().includes(lowerCasedSearchStr)
+        );
+      });
     },
   },
 });

@@ -37,6 +37,7 @@
               <QRCodeScanner
                 v-show="!forbidden"
                 ref="REGISTRATION_PAGE__qrCodeScanner"
+                scannerId="qrCodeScanner__triage_page"
                 :loading="loading"
                 @patientCodeChanged="(val) => (patientCode = val)"
                 @inputModeChanged="(val) => (inputMode = val)"

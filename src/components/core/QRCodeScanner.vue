@@ -27,7 +27,7 @@
     <div
       v-show="inputMode === 'QR' && !loading"
       :disable="loading"
-      id="divQrCodeScanner"
+      :id="scannerId"
       width="600px"
     ></div>
     <q-input
@@ -54,6 +54,10 @@ export default defineComponent({
     loading: {
       type: Boolean,
       default: false,
+    },
+    scannerId: {
+      type: String,
+      required: true,
     },
   },
   emits: ["patientCodeChanged", "inputModeChanged"],
@@ -96,7 +100,7 @@ export default defineComponent({
   mounted() {
     // Initialize QR Code Scanner
     this.scanner = new Html5QrcodeScanner(
-      "divQrCodeScanner",
+      this.scannerId,
       { fps: 10, qrbox: { width: 250, height: 250 } },
       false
     );
@@ -137,10 +141,8 @@ export default defineComponent({
 <style>
 button#html5-qrcode-button-camera-start,
 button#html5-qrcode-button-camera-stop {
-  /* background-color: #ffd600; */
   background-color: white;
   border: solid 1px #0d47a1;
-  /* color: black; */
   color: #0d47a1;
   padding: 8px 14px;
   border-radius: 4px;
@@ -149,7 +151,7 @@ button#html5-qrcode-button-camera-stop {
   cursor: pointer;
 }
 
-div#divQrCodeScanner__dashboard_section {
+/* div#divQrCodeScanner__dashboard_section {
   padding: 16px !important;
-}
+} */
 </style>

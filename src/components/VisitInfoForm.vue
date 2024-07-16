@@ -51,6 +51,7 @@
         <div class="row q-pa-lg justify-end" style="gap: 12px">
           <q-btn
             unelevated
+            icon="save"
             :disable="visitIsCompleted"
             class="text-white bg-primary"
             :loading="loading"

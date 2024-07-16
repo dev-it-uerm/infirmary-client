@@ -1,28 +1,42 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header class="bg-primary text-white" height-hint="98">
-      <q-toolbar>
-        <q-btn
-          v-if="user"
-          dense
-          flat
-          round
-          icon="menu"
-          @click="toggleLeftDrawer"
-        />
-        <!-- <q-toolbar-title>
-          <q-avatar>
-            <q-img
-              no-native-menu
-              src="logo-white.png"
-              alt="UERM Logo"
-              class="img-fluid"
-              style="height: 35px; width: 35px"
-            />
-          </q-avatar>
-        </q-toolbar-title> -->
-        <AppLogo :inverted="true" size="xs" :showTitle="false" />
-        <div><b>UERM</b> INFIRMARY</div>
+      <q-toolbar class="row">
+        <div class="row items-center col-auto">
+          <q-btn
+            v-if="user"
+            dense
+            flat
+            round
+            icon="menu"
+            @click="leftDrawerOpen = !leftDrawerOpen"
+          />
+          <!-- <q-toolbar-title>
+            <q-avatar>
+              <q-img
+                no-native-menu
+                src="logo-white.png"
+                alt="UERM Logo"
+                class="img-fluid"
+                style="height: 35px; width: 35px"
+              />
+            </q-avatar>
+          </q-toolbar-title> -->
+          <AppLogo :inverted="true" size="xs" :showTitle="false" />
+          <div><b>UERM</b> INFIRMARY</div>
+        </div>
+        <div
+          v-if="user && $route.name === 'APE_VISITS'"
+          class="col row justify-end"
+        >
+          <q-btn
+            dense
+            flat
+            round
+            icon="qr_code_2"
+            @click="rightDrawerOpen = !rightDrawerOpen"
+          />
+        </div>
       </q-toolbar>
     </q-header>
     <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered overlay>
@@ -204,6 +218,44 @@
         "
       />
     </q-drawer>
+    <q-drawer
+      v-if="user"
+      v-model="rightDrawerOpen"
+      side="right"
+      bordered
+      overlay
+    >
+      <q-scroll-area style="height: 100%">
+        <div
+          class="column q-pa-lg justify-between fit no-wrap"
+          style="gap: 16px"
+        >
+          <div class="column" style="gap: 16px">
+            <div class="row justify-end">
+              <q-btn
+                outline
+                dense
+                icon="arrow_forward"
+                color="primary"
+                @click="rightDrawerOpen = false"
+              />
+            </div>
+            <VisitTracker scannerId="qrCodeScanner__right_drawer" />
+          </div>
+        </div>
+      </q-scroll-area>
+      <ConfirmationDialog
+        v-if="logoutDialogVisible"
+        question="Are you sure you want to logout?"
+        @cancel="(evt) => (logoutDialogVisible = false)"
+        @ok="
+          (evt) => {
+            logoutDialogVisible = false;
+            logout();
+          }
+        "
+      />
+    </q-drawer>
     <q-page-container class="bg-grey-3">
       <router-view />
     </q-page-container>
@@ -229,6 +281,9 @@ export default defineComponent({
     AppLogo: defineAsyncComponent(() =>
       import("src/components/core/AppLogo.vue")
     ),
+    VisitTracker: defineAsyncComponent(() =>
+      import("src/components/VisitTracker.vue")
+    ),
     // UermCopyright: defineAsyncComponent(() =>
     //   import("src/components/UermCopyright.vue")
     // ),
@@ -245,8 +300,10 @@ export default defineComponent({
     return {
       loading: false,
       leftDrawerOpen: true,
-      activeMenu: null,
+      rightDrawerOpen: false,
       logoutDialogVisible: false,
+
+      activeMenu: null,
     };
   },
   computed: {
@@ -318,9 +375,6 @@ export default defineComponent({
     },
   },
   methods: {
-    toggleLeftDrawer() {
-      this.leftDrawerOpen = !this.leftDrawerOpen;
-    },
     async logout() {
       this.loading = true;
       await delay(1000);

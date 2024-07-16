@@ -154,6 +154,7 @@
           />
           <q-btn
             unelevated
+            icon="save"
             :disable="visitIsCompleted || examIsCompleted"
             class="text-white bg-primary"
             :loading="loading"
@@ -290,7 +291,6 @@ export default defineComponent({
     },
     async getInitialValue() {
       this.loading = true;
-      this.markAsCompletedOnSave = null;
 
       // SUPPLY DEFAULT VALUE
       this.value = this.mergeFieldsAndVal(
@@ -318,15 +318,13 @@ export default defineComponent({
       this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
       this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
 
-      console.log(response.body.details);
-
       this.value = this.mergeFieldsAndVal(
         this.examFieldsMap[this.examCode],
         this.formatResponseBody(response.body.details)
       );
 
       if (!this.visitIsCompleted && !this.examIsCompleted) {
-        this.markAsCompletedOnSave = true;
+        this.markAsCompletedOnSave = false;
       }
 
       this.loading = false;

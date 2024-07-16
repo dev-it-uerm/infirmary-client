@@ -388,9 +388,9 @@ export default {
           .map((e) => {
             return [
               e.code,
-              `${e.value}${e.unit ? " ".concat(e.unit) : ""}${
-                e.normalRange ? " (".concat(e.normalRange).concat(")") : ""
-              }`,
+              `${e.value == null || e.value === "" ? "" : e.value}${
+                e.unit ? " ".concat(e.unit) : ""
+              }${e.normalRange ? " (".concat(e.normalRange).concat(")") : ""}`,
               ...(e.remarks ? [e.remarks] : []),
             ];
           })

@@ -7,13 +7,10 @@
     >
       <CardComponent>
         <template v-slot:header>
-          <PageHeader
-            text="VISIT TRACKER"
-            icon="fa-solid fa-solid fa-magnifying-glass"
-          />
+          <PageHeader text="RECEIVE PATIENT" icon="fa-solid fa-door-open" />
         </template>
         <template v-slot:body>
-          <ExamAccept scannerId="qrCodeScanner__visit-tracker_page" />
+          <ExamAccept scannerId="qrCodeScanner__exam-accept_page" />
         </template>
       </CardComponent>
     </div>

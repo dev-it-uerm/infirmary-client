@@ -1,6 +1,17 @@
 <template>
   <div>
     <div class="column" style="gap: 16px">
+      <q-select
+        stack-label
+        outlined
+        label="Exam"
+        option-value="code"
+        option-label="name"
+        :options="exams"
+        :disable="loading"
+        v-model="exam"
+        hint=""
+      />
       <QRCodeScanner
         ref="visitCodeScanner"
         :scannerId="scannerId"
@@ -109,6 +120,7 @@ import {
 
 import {
   examsMap,
+  exams,
   affiliationsMap,
   campusesMap,
   collegesMap,
@@ -135,6 +147,7 @@ export default defineComponent({
   setup() {
     return {
       examsMap,
+      exams: exams.filter((e) => e.code !== examsMap.MED_HIST.code),
       affiliationsMap,
       campusesMap,
       collegesMap,
@@ -153,7 +166,7 @@ export default defineComponent({
 
       visit: null,
       patient: null,
-      exam: null,
+      exam: examsMap.PE,
     };
   },
   computed: {
@@ -163,21 +176,20 @@ export default defineComponent({
   },
   watch: {
     patientCode(val) {
-      if (val) this.track(val);
+      if (val) this.accept(val);
     },
   },
   methods: {
-    async track(patientCode) {
+    async accept(patientCode) {
       this.loading = true;
 
       this.visit = null;
       this.patient = null;
-      this.exam = null;
 
-      const response = await this.$store.dispatch(
-        "ape/acceptExam",
-        patientCode
-      );
+      const response = await this.$store.dispatch("ape/acceptExam", {
+        identificationCode: patientCode,
+        examCode: this.exam.code,
+      });
       await delay(2000);
 
       if (response.error) {
@@ -189,7 +201,6 @@ export default defineComponent({
 
       this.visit = response.body.visit;
       this.patient = response.body.patient;
-      this.exam = response.body.exam;
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;

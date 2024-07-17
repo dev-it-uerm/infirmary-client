@@ -5,12 +5,10 @@
       style="
         width: 100vw;
         height: 100vh;
-        background-image: url('public/bg-uerm.jpg');
+        background-image: url('bg-uerm.jpg');
         background-repeat: no-repeat;
         background-size: cover;
-        /* Add the blur effect */
         filter: blur(3px);
-        /* -webkit-filter: blur(2px); */
       "
     />
     <div
@@ -18,11 +16,9 @@
       style="
         width: 100vw;
         height: 100vh;
-        /* background-color: rgba(255, 214, 0, 1); */
         background-color: rgba(255, 255, 255, 0.5);
       "
     />
-    <!-- <q-dialog :model-value="true" persistent> -->
     <div
       class="column"
       style="gap: 16px; z-index: 999"

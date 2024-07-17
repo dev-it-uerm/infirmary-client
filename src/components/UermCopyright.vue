@@ -3,7 +3,7 @@
     <div class="column items-center text-weight-bold">
       <q-img
         no-native-menu
-        src="public/uerm-logo.png"
+        src="uerm-logo.png"
         alt="UERM Logo"
         class="img-fluid q-mx-sm"
         style="height: 24px; width: 24px"

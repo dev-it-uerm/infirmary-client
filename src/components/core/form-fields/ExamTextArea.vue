@@ -12,7 +12,7 @@
           ? 'This field is required.'
           : undefined,
     ]"
-    v-model.trim="value"
+    v-model="value"
     hint=""
   >
     <template v-slot:label>

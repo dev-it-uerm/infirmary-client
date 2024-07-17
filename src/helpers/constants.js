@@ -634,9 +634,9 @@ const navMenuAPEXrayEncodeBulk = {
 
 const navMenuAPEExamAccept = {
   code: "APE_EXAM_ACCEPT",
-  name: "Accept Patient",
+  name: "Receive Patient",
   url: "/ape/exam-accept",
-  icon: "fa-solid fa-chart-pie",
+  icon: "fa-solid fa-door-open",
 };
 
 const navMenuAPEAnalytics = {

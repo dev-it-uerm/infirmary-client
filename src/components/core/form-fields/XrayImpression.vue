@@ -12,7 +12,7 @@
           : undefined,
     ]"
     label-slot
-    v-model.trim="value"
+    v-model="value"
     hint=""
   >
     <template v-slot:label>

@@ -9,7 +9,7 @@
         <template v-slot:header>
           <PageHeader
             text="VISIT TRACKER"
-            icon="fa-solid fa-solid fa-magnifying-glass"
+            icon="fa-solid fa-magnifying-glass"
           />
         </template>
         <template v-slot:body>

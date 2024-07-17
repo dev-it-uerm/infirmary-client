@@ -28,13 +28,21 @@
         <div
           v-if="user && $route.name === 'APE_VISITS'"
           class="col row justify-end"
+          style="gap: 12px"
         >
           <q-btn
             dense
             flat
             round
             icon="qr_code_2"
-            @click="rightDrawerOpen = !rightDrawerOpen"
+            @click="rightDrawerOpen1 = !rightDrawerOpen1"
+          />
+          <q-btn
+            dense
+            flat
+            round
+            icon="fa-solid fa-door-open"
+            @click="rightDrawerOpen2 = !rightDrawerOpen2"
           />
         </div>
       </q-toolbar>
@@ -220,7 +228,7 @@
     </q-drawer>
     <q-drawer
       v-if="user"
-      v-model="rightDrawerOpen"
+      v-model="rightDrawerOpen1"
       side="right"
       bordered
       overlay
@@ -237,10 +245,48 @@
                 dense
                 icon="arrow_forward"
                 color="primary"
-                @click="rightDrawerOpen = false"
+                @click="rightDrawerOpen1 = false"
               />
             </div>
-            <VisitTracker scannerId="qrCodeScanner__right_drawer" />
+            <VisitTracker scannerId="qrCodeScanner__right-drawer-1" />
+          </div>
+        </div>
+      </q-scroll-area>
+      <ConfirmationDialog
+        v-if="logoutDialogVisible"
+        question="Are you sure you want to logout?"
+        @cancel="(evt) => (logoutDialogVisible = false)"
+        @ok="
+          (evt) => {
+            logoutDialogVisible = false;
+            logout();
+          }
+        "
+      />
+    </q-drawer>
+    <q-drawer
+      v-if="user"
+      v-model="rightDrawerOpen2"
+      side="right"
+      bordered
+      overlay
+    >
+      <q-scroll-area style="height: 100%">
+        <div
+          class="column q-pa-lg justify-between fit no-wrap"
+          style="gap: 16px"
+        >
+          <div class="column" style="gap: 16px">
+            <div class="row justify-end">
+              <q-btn
+                outline
+                dense
+                icon="arrow_forward"
+                color="primary"
+                @click="rightDrawerOpen2 = false"
+              />
+            </div>
+            <ExamAccept scannerId="qrCodeScanner__right-drawer-2" />
           </div>
         </div>
       </q-scroll-area>
@@ -284,6 +330,9 @@ export default defineComponent({
     VisitTracker: defineAsyncComponent(() =>
       import("src/components/VisitTracker.vue")
     ),
+    ExamAccept: defineAsyncComponent(() =>
+      import("src/components/ExamAccept.vue")
+    ),
     // UermCopyright: defineAsyncComponent(() =>
     //   import("src/components/UermCopyright.vue")
     // ),
@@ -300,7 +349,10 @@ export default defineComponent({
     return {
       loading: false,
       leftDrawerOpen: true,
-      rightDrawerOpen: false,
+
+      rightDrawerOpen1: false,
+      rightDrawerOpen2: false,
+
       logoutDialogVisible: false,
 
       activeMenu: null,

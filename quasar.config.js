@@ -54,7 +54,7 @@ module.exports = configure(function (/* ctx */) {
       publicPath: "/infirmary",
       // analyze: true,
       env: {
-        apiHost: "https://localapi.uerm.edu.ph:8081",
+        apiHost: "https://localapi.uerm.edu.ph:8081/infirmary",
         apiHost__DEV: "http://10.107.0.24:4040/infirmary",
       },
       // rawDefine: {}

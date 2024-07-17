@@ -182,6 +182,7 @@
               </q-form>
             </div>
           </div>
+          <q-separator />
           <div
             class="full-width"
             :class="$q.screen.gt.md ? 'row' : 'column'"
@@ -511,13 +512,24 @@
                 </div>
                 <q-input
                   dense
-                  debounce="750"
                   outlined
+                  debounce="750"
                   label="Filter"
-                  max-length="255"
+                  maxlength="255"
                   hint=""
                   v-model.trim="completedVisitsFilterStr"
-                />
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="completedVisitsFilterStr !== ''"
+                      size="xs"
+                      name="close"
+                      class="cursor-pointer"
+                      @click="completedVisitsFilterStr = ''"
+                    />
+                    <q-icon name="search" size="xs" />
+                  </template>
+                </q-input>
                 <template
                   v-if="
                     filteredCompletedVisits &&

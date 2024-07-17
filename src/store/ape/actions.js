@@ -40,6 +40,17 @@ export const schedule = async (context, patientCode) => {
   );
 };
 
+export const acceptExam = async (context, payload) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/accept-exam`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
+    context
+  );
+};
+
 export const completeExam = async (context, payload) => {
   return await request(
     "post",

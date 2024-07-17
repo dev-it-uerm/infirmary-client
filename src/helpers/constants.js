@@ -632,6 +632,13 @@ const navMenuAPEXrayEncodeBulk = {
 //   icon: "fa-solid fa-user-tag",
 // };
 
+const navMenuAPEExamAccept = {
+  code: "APE_EXAM_ACCEPT",
+  name: "Accept Patient",
+  url: "/ape/exam-accept",
+  icon: "fa-solid fa-chart-pie",
+};
+
 const navMenuAPEAnalytics = {
   code: "APE_ANALYTICS",
   name: "Analytics",
@@ -658,6 +665,7 @@ export const apeNavMenus = [
   // },
   // navMenuAPEVisitAppointmentBulk,
   navMenuAPEVisits,
+  navMenuAPEExamAccept,
   navMenuAPEVisitTracker,
   // navMenuAPECompleteExam,
   navMenuAPEXrayEncodeBulk,

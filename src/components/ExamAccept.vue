@@ -19,7 +19,7 @@
         </div>
         <div v-else class="fit flex flex-center">
           <div
-            v-if="patient && visit"
+            v-if="visit && patient && exam"
             class="full-width column q-pa-lg q-mb-md"
             style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
           >
@@ -28,6 +28,10 @@
               <span class="q-ml-sm">{{
                 formatDate(visit.dateTimeCreated)
               }}</span>
+            </div>
+            <div class="q-mt-sm">
+              <span class="text-grey-7">Exam Name:</span>
+              <span class="q-ml-sm">{{ exam.name }}</span>
             </div>
             <div class="q-mt-sm">
               <span class="text-grey-7">Patient Code:</span>
@@ -80,69 +84,15 @@
               </div>
             </div>
           </div>
-          <q-list class="full-width" separator v-if="exams && exams.length > 0">
-            <template v-for="(exam, idx) in exams" :key="idx">
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption>
-                    {{
-                      exam.dateTimeCompleted
-                        ? formatDate(exam.dateTimeCompleted)
-                        : "NOT YET COMPLETED"
-                    }}
-                  </q-item-label>
-                  <q-item-label>
-                    {{ examsMap[exam.examCode].name }}
-                  </q-item-label>
-                </q-item-section>
-
-                <q-item-section side>
-                  <q-icon
-                    :name="
-                      exam.dateTimeCompleted
-                        ? 'fa-solid fa-circle-check'
-                        : 'fa-solid fa-circle-xmark'
-                    "
-                    :color="exam.dateTimeCompleted ? 'positive' : 'negative'"
-                    size="xs"
-                  />
-                </q-item-section>
-              </q-item>
-            </template>
-            <div
-              v-if="visit?.dateTimeCompleted"
-              class="row justify-center q-mt-lg"
-            >
-              <q-btn
-                unelevated
-                color="accent"
-                class="text-black"
-                label="PRINT RESULT"
-                @click="visitPrintoutVisible = true"
-              />
-            </div>
-          </q-list>
           <div v-else class="column items-center">
             <q-icon class="q-mb-sm" name="info" size="sm" />
             <div class="text-center">
-              Scan/enter the patient code to see its status.
+              Scan/enter the patient code to receive him/her.
             </div>
           </div>
         </div>
       </div>
     </div>
-    <MaximizedDialog
-      v-if="visitPrintoutVisible"
-      title="PRINT VISIT"
-      @close="visitPrintoutVisible = false"
-    >
-      <template v-slot:body>
-        <PrintoutVisitDetails
-          v-if="visit && visitPrintoutVisible"
-          :visitId="visit.id"
-        />
-      </template>
-    </MaximizedDialog>
   </div>
 </template>
 
@@ -167,16 +117,13 @@ import {
 } from "src/helpers/constants.js";
 
 export default defineComponent({
-  name: "VisitTracker",
+  name: "ExamAccept",
   components: {
     QRCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/QRCodeScanner.vue")
     ),
     MaximizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MaximizedDialog.vue")
-    ),
-    PrintoutVisitDetails: defineAsyncComponent(() =>
-      import("src/components/printouts/VisitDetails.vue")
     ),
   },
   props: {
@@ -199,16 +146,14 @@ export default defineComponent({
   },
   data() {
     return {
-      // recentEntries: [],
       loading: false,
       inputMode: null,
+
       patientCode: null,
-      exams: [],
 
-      patient: null,
       visit: null,
-
-      visitPrintoutVisible: false,
+      patient: null,
+      exam: null,
     };
   },
   computed: {
@@ -224,11 +169,15 @@ export default defineComponent({
   methods: {
     async track(patientCode) {
       this.loading = true;
-      this.patient = null;
-      this.visit = null;
-      this.exams = [];
 
-      const response = await this.$store.dispatch("ape/track", patientCode);
+      this.visit = null;
+      this.patient = null;
+      this.exam = null;
+
+      const response = await this.$store.dispatch(
+        "ape/acceptExam",
+        patientCode
+      );
       await delay(2000);
 
       if (response.error) {
@@ -238,13 +187,9 @@ export default defineComponent({
         return;
       }
 
-      this.patient = response.body.patient;
       this.visit = response.body.visit;
-
-      const exams = response.body.exams;
-      sortStringArr(exams, "dateTimeCompleted");
-
-      this.exams = exams;
+      this.patient = response.body.patient;
+      this.exam = response.body.exam;
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;

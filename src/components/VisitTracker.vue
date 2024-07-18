@@ -80,7 +80,7 @@
               </div>
             </div>
           </div>
-          <q-list class="full-width" separator v-if="exams && exams.length > 0">
+          <q-list v-if="exams && exams.length > 0" class="full-width" separator>
             <template v-for="(exam, idx) in exams" :key="idx">
               <q-item>
                 <q-item-section>
@@ -122,10 +122,14 @@
               />
             </div>
           </q-list>
-          <div v-else class="column items-center">
+          <div
+            v-else
+            class="full-width column items-center q-pa-md"
+            style="border: 1px solid rgba(0, 0, 0, 0.15)"
+          >
             <q-icon class="q-mb-sm" name="info" size="sm" />
             <div class="text-center">
-              Scan/enter the patient code to see its status.
+              Scan or enter patient code to see patient's exam status.
             </div>
           </div>
         </div>

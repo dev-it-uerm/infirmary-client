@@ -121,12 +121,14 @@ export default defineComponent({
     pauseScanner() {
       // UNKNOWN = 0, NOT_STARTED = 1, SCANNING = 2, PAUSED = 3
       if (this.scanner && this.scanner.getState() === 2) {
+        // console.log("Pausing QR Code scanner...");
         this.scanner.pause();
       }
     },
     resumeScanner() {
       // UNKNOWN = 0, NOT_STARTED = 1, SCANNING = 2, PAUSED = 3
       if (this.scanner && this.scanner.getState() === 3) {
+        // console.log("Resuming QR Code scanner...");
         this.scanner.resume();
       }
     },

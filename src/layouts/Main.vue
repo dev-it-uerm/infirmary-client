@@ -5,6 +5,7 @@
         <div class="row items-center col-auto">
           <q-btn
             v-if="user"
+            :disable="loading"
             dense
             flat
             round
@@ -31,18 +32,12 @@
           style="gap: 12px"
         >
           <q-btn
+            :disable="loading"
             dense
             flat
             round
             icon="qr_code_2"
-            @click="rightDrawerOpen1 = !rightDrawerOpen1"
-          />
-          <q-btn
-            dense
-            flat
-            round
-            icon="fa-solid fa-door-open"
-            @click="rightDrawerOpen2 = !rightDrawerOpen2"
+            @click="rightDrawerOpen = !rightDrawerOpen"
           />
         </div>
       </q-toolbar>
@@ -56,6 +51,7 @@
           <div class="column" style="gap: 16px">
             <div class="row justify-start">
               <q-btn
+                :disable="loading"
                 outline
                 dense
                 icon="arrow_back"
@@ -83,8 +79,8 @@
             </div>
             <div class="row items-start" style="gap: 12px">
               <q-btn
-                class="col-12"
                 :disable="loading"
+                class="col-12"
                 outline
                 label="Change Password"
                 color="primary"
@@ -228,7 +224,7 @@
     </q-drawer>
     <q-drawer
       v-if="user"
-      v-model="rightDrawerOpen1"
+      v-model="rightDrawerOpen"
       side="right"
       bordered
       overlay
@@ -241,52 +237,47 @@
           <div class="column" style="gap: 16px">
             <div class="row justify-end">
               <q-btn
+                :disable="loading"
                 outline
                 dense
                 icon="arrow_forward"
                 color="primary"
-                @click="rightDrawerOpen1 = false"
+                @click="rightDrawerOpen = false"
               />
             </div>
-            <VisitTracker scannerId="qrCodeScanner__right-drawer-1" />
-          </div>
-        </div>
-      </q-scroll-area>
-      <ConfirmationDialog
-        v-if="logoutDialogVisible"
-        question="Are you sure you want to logout?"
-        @cancel="(evt) => (logoutDialogVisible = false)"
-        @ok="
-          (evt) => {
-            logoutDialogVisible = false;
-            logout();
-          }
-        "
-      />
-    </q-drawer>
-    <q-drawer
-      v-if="user"
-      v-model="rightDrawerOpen2"
-      side="right"
-      bordered
-      overlay
-    >
-      <q-scroll-area style="height: 100%">
-        <div
-          class="column q-pa-lg justify-between fit no-wrap"
-          style="gap: 16px"
-        >
-          <div class="column" style="gap: 16px">
-            <div class="row justify-end">
-              <q-btn
-                outline
-                dense
-                icon="arrow_forward"
-                color="primary"
-                @click="rightDrawerOpen2 = false"
+            <div class="column">
+              <div
+                class="row justify-center q-mb-md q-pa-md"
+                style="border: 1px solid rgba(0, 0, 0, 0.1)"
+              >
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  label="TRACK"
+                  :color="tab === 1 ? 'accent' : 'transparent'"
+                  class="text-black"
+                  @click="tab = 1"
+                />
+                <q-btn
+                  :disable="loading"
+                  unelevated
+                  label="RECEIVE"
+                  :color="tab === 2 ? 'accent' : 'transparent'"
+                  class="text-black"
+                  @click="tab = 2"
+                />
+              </div>
+              <!-- `rightDrawerOpen` in the v-if is to force the scanner to unmount
+              when the drawer is not visible, fixing the "double scanner" bug. -->
+              <VisitTracker
+                v-if="rightDrawerOpen && tab === 1"
+                scannerId="qrCodeScanner__right-drawer-1"
+              />
+              <ExamAccept
+                v-if="rightDrawerOpen && tab === 2"
+                scannerId="qrCodeScanner__right-drawer-2"
               />
             </div>
-            <ExamAccept scannerId="qrCodeScanner__right-drawer-2" />
           </div>
         </div>
       </q-scroll-area>
@@ -348,10 +339,11 @@ export default defineComponent({
   data() {
     return {
       loading: false,
-      leftDrawerOpen: true,
 
-      rightDrawerOpen1: false,
-      rightDrawerOpen2: false,
+      tab: 1,
+
+      leftDrawerOpen: true,
+      rightDrawerOpen: false,
 
       logoutDialogVisible: false,
 
@@ -425,12 +417,19 @@ export default defineComponent({
       },
       immediate: true,
     },
+    async rightDrawerOpen(val) {
+      if (val) {
+        this.loading = true;
+        await delay(2000);
+        this.loading = false;
+      }
+    },
   },
   methods: {
     async logout() {
       this.loading = true;
-      await delay(1000);
       const response = await this.$store.dispatch("app/logout");
+      await delay(2000);
 
       if (response.error) {
         showMessage(this.$q, false, "Unable to log out. Please try again.");

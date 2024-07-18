@@ -1,105 +1,106 @@
 <template>
-  <div>
-    <div class="column" style="gap: 16px">
-      <q-select
-        stack-label
-        outlined
-        label="Exam"
-        option-value="code"
-        option-label="name"
-        :options="exams"
-        :disable="loading"
-        v-model="exam"
-        hint=""
-      />
-      <QRCodeScanner
-        ref="visitCodeScanner"
-        :scannerId="scannerId"
-        class="full-width"
-        :loading="loading"
-        @patientCodeChanged="(val) => (patientCode = val)"
-        @inputModeChanged="(val) => (inputMode = val)"
-      />
-      <div class="q-mt-md">
+  <div class="column" style="gap: 16px">
+    <q-select
+      stack-label
+      outlined
+      label="Exam"
+      option-value="code"
+      option-label="name"
+      :options="exams"
+      :disable="loading"
+      v-model="exam"
+    />
+    <QRCodeScanner
+      ref="visitCodeScanner"
+      :scannerId="scannerId"
+      class="full-width"
+      :loading="loading"
+      @patientCodeChanged="(val) => (patientCode = val)"
+      @inputModeChanged="(val) => (inputMode = val)"
+    />
+    <div class="q-mt-md">
+      <div
+        v-if="loading"
+        class="full-width flex flex-center"
+        style="height: 100px"
+      >
+        <q-spinner-dots size="lg" />
+      </div>
+      <div v-else class="fit flex flex-center">
         <div
-          v-if="loading"
-          class="full-width flex flex-center"
-          style="height: 100px"
+          v-if="visit && patient && exam"
+          class="full-width column q-pa-lg q-mb-md"
+          style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
         >
-          <q-spinner-dots size="lg" />
-        </div>
-        <div v-else class="fit flex flex-center">
-          <div
-            v-if="visit && patient && exam"
-            class="full-width column q-pa-lg q-mb-md"
-            style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
-          >
+          <div>
+            <span class="text-grey-7">Visit Date & Time:</span>
+            <span class="q-ml-sm">{{ formatDate(visit.dateTimeCreated) }}</span>
+          </div>
+          <div class="q-mt-sm">
+            <span class="text-grey-7">Exam Name:</span>
+            <span class="q-ml-sm">{{ exam.name }}</span>
+          </div>
+          <div class="q-mt-sm">
+            <span class="text-grey-7">Patient Code:</span>
+            <span class="q-ml-sm">{{ patient.identificationCode }}</span>
+          </div>
+          <div>
+            <span class="text-grey-7">Patient Name:</span>
+            <span class="q-ml-sm">{{
+              formatName(
+                patient.firstName,
+                patient.middleName,
+                patient.lastName,
+                patient.extName
+              )
+            }}</span>
+          </div>
+          <div>
+            <span class="text-grey-7">Patient Campus:</span>
+            <span class="q-ml-sm">{{
+              campusesMap[patient.campusCode].name
+            }}</span>
+          </div>
+          <div>
+            <span class="text-grey-7">Patient Affiliation:</span>
+            <span class="q-ml-sm">{{
+              affiliationsMap[patient.affiliationCode].name
+            }}</span>
+          </div>
+          <div v-if="patient.deptCode" class="q-mt-sm">
             <div>
-              <span class="text-grey-7">Visit Date & Time:</span>
+              <span class="text-grey-7">Deparment:</span>
               <span class="q-ml-sm">{{
-                formatDate(visit.dateTimeCreated)
+                departmentsMap[patient.deptCode].name
               }}</span>
-            </div>
-            <div class="q-mt-sm">
-              <span class="text-grey-7">Exam Name:</span>
-              <span class="q-ml-sm">{{ exam.name }}</span>
-            </div>
-            <div class="q-mt-sm">
-              <span class="text-grey-7">Patient Code:</span>
-              <span class="q-ml-sm">{{ patient.identificationCode }}</span>
-            </div>
-            <div>
-              <span class="text-grey-7">Patient Name:</span>
-              <span class="q-ml-sm">{{
-                formatName(
-                  patient.firstName,
-                  patient.middleName,
-                  patient.lastName,
-                  patient.extName
-                )
-              }}</span>
-            </div>
-            <div>
-              <span class="text-grey-7">Patient Campus:</span>
-              <span class="q-ml-sm">{{
-                campusesMap[patient.campusCode].name
-              }}</span>
-            </div>
-            <div>
-              <span class="text-grey-7">Patient Affiliation:</span>
-              <span class="q-ml-sm">{{
-                affiliationsMap[patient.affiliationCode].name
-              }}</span>
-            </div>
-            <div v-if="patient.deptCode" class="q-mt-sm">
-              <div>
-                <span class="text-grey-7">Deparment:</span>
-                <span class="q-ml-sm">{{
-                  departmentsMap[patient.deptCode].name
-                }}</span>
-              </div>
-            </div>
-            <div v-if="patient.collegeCode" class="q-mt-sm">
-              <div>
-                <span class="text-grey-7">College:</span>
-                <span class="q-ml-sm">{{
-                  collegesMap[patient.collegeCode].name
-                }}</span>
-              </div>
-              <div v-if="patient.yearLevel">
-                <span class="text-grey-7">Year Level:</span>
-                <span class="q-ml-sm">{{
-                  yearLevels.find((l) => l.code === Number(patient.yearLevel))
-                    .name ?? ""
-                }}</span>
-              </div>
             </div>
           </div>
-          <div v-else class="column items-center">
-            <q-icon class="q-mb-sm" name="info" size="sm" />
-            <div class="text-center">
-              Scan/enter the patient code to receive him/her.
+          <div v-if="patient.collegeCode" class="q-mt-sm">
+            <div>
+              <span class="text-grey-7">College:</span>
+              <span class="q-ml-sm">{{
+                collegesMap[patient.collegeCode].name
+              }}</span>
             </div>
+            <div v-if="patient.yearLevel">
+              <span class="text-grey-7">Year Level:</span>
+              <span class="q-ml-sm">{{
+                yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                  .name ?? ""
+              }}</span>
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="column items-center q-pa-md"
+          style="border: 1px solid rgba(0, 0, 0, 0.15)"
+        >
+          <q-icon class="q-mb-sm" name="info" size="sm" />
+          <div class="text-center">
+            Scan or enter patient code to tag the patient as
+            <strong>received/accepted</strong> in the
+            <strong>{{ exam.name }}</strong> section.
           </div>
         </div>
       </div>

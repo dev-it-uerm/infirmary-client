@@ -91,18 +91,15 @@
             </div>
           </div>
         </div>
-        <div
-          v-else
-          class="column items-center q-pa-md"
-          style="border: 1px solid rgba(0, 0, 0, 0.15)"
-        >
-          <q-icon class="q-mb-sm" name="info" size="sm" />
-          <div class="text-center">
-            Scan or enter patient code to tag the patient as
-            <strong>received/accepted</strong> in the
-            <strong>{{ exam.name }}</strong> section.
-          </div>
-        </div>
+        <ReminderCard v-else bordered>
+          <template v-slot:body>
+            <div>
+              Scan or enter patient code to tag the patient as
+              <strong>received/accepted</strong> in the
+              <strong>{{ exam.name }}</strong> section.
+            </div>
+          </template>
+        </ReminderCard>
       </div>
     </div>
   </div>
@@ -137,6 +134,9 @@ export default defineComponent({
     ),
     MaximizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MaximizedDialog.vue")
+    ),
+    ReminderCard: defineAsyncComponent(() =>
+      import("src/components/core/ReminderCard.vue")
     ),
   },
   props: {

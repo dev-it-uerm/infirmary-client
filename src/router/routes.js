@@ -99,7 +99,7 @@ const routes = [
       {
         name: "APE_ANALYTICS",
         path: "/ape/analytics",
-        component: () => import("pages/ComingSoon.vue"),
+        component: () => import("pages/ape/Analytics.vue"),
       },
       // UERM DIAGNOSTIC EXAM
       {

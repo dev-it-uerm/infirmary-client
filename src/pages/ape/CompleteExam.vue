@@ -164,21 +164,23 @@
                 </div>
               </div>
             </template>
-            <div v-else class="column items-center">
-              <q-icon class="q-mb-sm" name="info" size="sm" />
-              <div class="text-center">
-                <div v-if="qrCodeMode">
-                  Scan the <strong>Visit QR Code</strong> to mark the patient as
-                  DONE in the
-                  <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
+            <ReminderCard v-else>
+              <template v-slot:body>
+                <div>
+                  <div v-if="qrCodeMode">
+                    Scan the <strong>Visit QR Code</strong> to mark the patient
+                    as DONE in the <strong>{{ exam.name.toUpperCase() }}</strong
+                    >.
+                  </div>
+                  <div v-else>
+                    Enter the <strong>Visit Reference Number</strong> to mark
+                    the patient as DONE in the
+                    <strong>{{ exam.name.toUpperCase() }}</strong
+                    >.
+                  </div>
                 </div>
-                <div v-else>
-                  Enter the <strong>Visit Reference Number</strong> to mark the
-                  patient as DONE in the
-                  <b class="text-uppercase"> {{ exam.name.toUpperCase() }} </b>.
-                </div>
-              </div>
-            </div>
+              </template>
+            </ReminderCard>
           </div>
         </template>
       </CardComponent>
@@ -220,6 +222,9 @@ export default defineComponent({
     ),
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")
+    ),
+    ReminderCard: defineAsyncComponent(() =>
+      import("src/components/core/ReminderCard.vue")
     ),
   },
   setup() {

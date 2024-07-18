@@ -182,3 +182,14 @@ export const getVisitsWithXray = async (context, payload) => {
     context
   );
 };
+
+export const getAnalyticsCompletedVisitsPerDay = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/completed-visits-per-day`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};

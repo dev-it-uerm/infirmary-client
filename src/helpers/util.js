@@ -52,71 +52,39 @@ export const httpResponseStatusCodesMap = {
 };
 
 export const formatDate = (date, options) => {
-  if (!options) options = {};
-
   // `date` can be a JS date or an ISO date string
   if (!date) return "";
+  if (!options) options = {};
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
   const dt = isDate(date) ? date : new Date(date);
   const year = new Intl.DateTimeFormat("en", { year: "numeric" }).format(dt);
   const month = new Intl.DateTimeFormat("en", { month: "short" }).format(dt);
   const day = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(dt);
+  const minute = dt.getMinutes();
+  const hour = dt.getHours();
 
-  let minute = dt.getMinutes();
-  let hour = dt.getHours();
+  const hourStr =
+    hour === 0 ? "12" : hour > 12 ? String(hour - 12) : String(hour);
 
-  const ampm = hour > 11 ? "PM" : "AM";
-
-  if (minute < 10) minute = `0${minute}`;
-
-  if (hour === 0) {
-    hour = 12;
-  } else if (hour > 12) {
-    hour -= 12;
-  }
-
-  const time = `${hour}:${minute} ${ampm}`;
+  const minuteStr = minute < 10 ? `0${minute}` : String(minute);
+  const time = `${hourStr}:${minuteStr} ${hour > 11 ? "PM" : "AM"}`;
   const dayName = days[dt.getDay()];
 
-  if (options.withDayName)
+  if (options.withDayName) {
     return `${dayName.toUpperCase()}, ${month.toUpperCase()} ${day}, ${year} ${time}`;
-  else if (options.dateOnly) return `${month.toUpperCase()} ${day}, ${year}`;
+  }
 
+  if (options.dateOnly) return `${month.toUpperCase()} ${day}, ${year}`;
   return `${month.toUpperCase()} ${day}, ${year} ${time}`;
 };
 
 // formatDate TEST CASES
-// console.log(
-//   "2024-02-27 00:36:00",
-//   " -> ",
-//   formatDate({ date: "2024-02-27 00:36:00" })
-// );
-
-// console.log(
-//   "2024-02-27 01:36:00",
-//   " -> ",
-//   formatDate({ date: "2024-02-27 01:36:00" })
-// );
-
-// console.log(
-//   "2024-02-27 17:00:00",
-//   " -> ",
-//   formatDate({ date: "2024-02-27 17:00:00" })
-// );
-
-// console.log(
-//   "2024-02-27 11:36:00",
-//   " -> ",
-//   formatDate({ date: "2024-02-27 11:36:00" })
-// );
-
-// console.log(
-//   "2024-02-27 12:30:00",
-//   " -> ",
-//   formatDate({ date: "2024-02-27 12:30:00" })
-// );
+// console.log("2024-02-27 00:36:00", " -> ", formatDate("2024-02-27 00:36:00"));
+// console.log("2024-02-27 01:36:00", " -> ", formatDate("2024-02-27 01:36:00"));
+// console.log("2024-02-27 17:00:00", " -> ", formatDate("2024-02-27 17:00:00"));
+// console.log("2024-02-27 11:36:00", " -> ", formatDate("2024-02-27 11:36:00"));
+// console.log("2024-02-27 12:30:00", " -> ", formatDate("2024-02-27 12:30:00"));
 
 export const empty = (arg) => {
   if (isDate(arg)) return false;

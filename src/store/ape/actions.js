@@ -106,10 +106,21 @@ export const updateVisit = async (context, payload) => {
   );
 };
 
-export const getVisitDetailsAll = async (context, visitId) => {
+// export const getVisitDetailsAll = async (context, visitId) => {
+//   return await request(
+//     "get",
+//     `${context.rootState.app.apiHost}/ape/visit-details-all/${visitId}`,
+//     null,
+//     context.rootState.app?.user?.accessToken,
+//     null,
+//     context
+//   );
+// };
+
+export const getVisitPdfJson = async (context, visitId) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/visit-details-all/${visitId}`,
+    `${context.rootState.app.apiHost}/ape/printout/visit-pdf-json/${visitId}`,
     null,
     context.rootState.app?.user?.accessToken,
     null,

@@ -7,642 +7,563 @@
       </template>
       <template v-slot:body>
         <div class="column full-width" style="gap: 36px">
-          <div class="full-width">
-            <div class="q-mt-md">
-              <q-form @submit="getVisits">
-                <div
-                  class="row item-center"
-                  :style="$q.screen.lt.md ? {} : { gap: '16px' }"
-                >
-                  <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
-                  <q-input
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :style="{
-                      minWidth: $q.screen.lt.md ? '100%' : '100px',
-                    }"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    debounce="750"
-                    stack-label
-                    outlined
-                    label="Limit Items To"
-                    hint=""
-                    :rules="[
-                      requiredRule,
-                      (val) =>
-                        Number(val) < 1 || Number(val) > 100
-                          ? 'Should be 1 to 100 only.'
-                          : undefined,
-                    ]"
-                    v-model.trim="filters.limit"
-                  />
-                  <q-input
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :style="{
-                      minWidth: $q.screen.lt.md ? '100%' : '100px',
-                    }"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    debounce="750"
-                    stack-label
-                    outlined
-                    label="Year"
-                    hint=""
-                    :rules="[requiredRule, yearRule]"
-                    v-model.trim="filters.year"
-                  />
-                  <!-- <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :style="{ minWidth: $q.screen.lt.md ? '100%' : '150px' }"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    :options="[
-                      { value: null, label: 'All' },
-                      { value: 'PENDING', label: 'Pending' },
-                      { value: 'COMPLETED', label: 'Completed' },
-                    ]"
-                    label="Status"
-                    hint=""
-                    v-model="filters.status"
-                  /> -->
-                  <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :style="{
-                      minWidth: $q.screen.lt.md ? '100%' : '150px',
-                    }"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="campuses"
-                    label="Campus"
-                    hint=""
-                    v-model="filters.patientCampusCode"
-                  />
-                  <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :style="{
-                      minWidth: $q.screen.lt.md ? '100%' : '150px',
-                    }"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="affiliations"
-                    label="Affiliation"
-                    hint=""
-                    v-model="filters.patientAffiliationCode"
-                  />
-                  <!-- <template
-                  v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
-                >
-                  <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="colleges"
-                    label="College"
-                    v-model="filters.patientCollegeCode"
-                    hint=""
-                  />
-                  <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                    :dense="$q.screen.gt.sm"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="yearLevels"
-                    label="Year Level"
-                    v-model="filters.patientYearLevel"
-                    hint=""
-                  />
-                </template> -->
-                  <!-- <DateRange
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  :subtractDaysCount="7"
-                  label="Visit Date Range"
-                  hint=""
-                  :initialValue="filters.visitDateRange"
-                  @valueChanged="(val) => (filters.visitDateRange = val)"
-                /> -->
-                  <!-- <q-input
-                  :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="loading"
-                  debounce="750"
-                  stack-label
-                  outlined
-                  label="Patient Name"
-                  hint=""
-                  v-model.trim="filters.patientName"
-                /> -->
-                  <div
-                    class="row items-start justify-end"
-                    :class="$q.screen.lt.md ? 'full-width' : ''"
-                  >
-                    <q-btn
-                      style="height: 40px"
-                      color="accent"
-                      class="q-px-md q-py-xs text-black"
-                      :disable="loading"
-                      :loading="loading"
-                      unelevated
-                      stack-label
-                      label="SEARCH"
-                      type="submit"
-                    />
-                  </div>
-                </div>
-              </q-form>
-            </div>
-          </div>
-          <q-separator />
           <div
             class="full-width"
             :class="$q.screen.gt.md ? 'row' : 'column'"
             style="gap: 56px"
           >
             <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
-              <FetchingData v-if="loading" />
-              <template v-else>
-                <div class="row items-center q-mb-md" style="gap: 16px">
-                  <div class="text-primary text-weight-medium">
+              <div class="row items-center q-mb-md" style="gap: 16px">
+                <div class="col row items-center" style="gap: 12px">
+                  <div
+                    class="text-primary text-weight-medium text-uppercase"
+                    style="
+                      font-size: 18px;
+                      line-height: 18px;
+                      letter-spacing: 0.8pt;
+                    "
+                  >
                     PENDING VISITS:
                   </div>
-                </div>
-                <q-input
-                  :style="$q.screen.gt.md ? { maxWidth: '200px' } : {}"
-                  dense
-                  outlined
-                  debounce="750"
-                  label="Filter"
-                  maxlength="255"
-                  hint=""
-                  v-model.trim="pendingVisitsFilterStr"
-                >
-                  <template v-slot:append>
+                  <q-btn
+                    :disable="loading"
+                    color="primary"
+                    round
+                    flat
+                    dense
+                    @click="getVisits"
+                  >
                     <q-icon
-                      v-if="pendingVisitsFilterStr !== ''"
+                      style="font-weight: bold"
+                      name="fa-solid fa-arrows-rotate"
                       size="xs"
-                      name="close"
-                      class="cursor-pointer"
-                      @click="pendingVisitsFilterStr = ''"
                     />
-                    <q-icon name="search" size="xs" />
-                  </template>
-                </q-input>
-                <template
-                  v-if="
-                    filteredPendingVisits && filteredPendingVisits.length > 0
+                  </q-btn>
+                </div>
+                <div
+                  class="col-auto row items-center"
+                  style="gap: 10px; cursor: pointer"
+                  @click="
+                    () => {
+                      if (!loading) filterDialogVisible = true;
+                    }
                   "
                 >
                   <div
-                    class="full-width relative-position"
-                    v-if="$q.screen.gt.md"
+                    class="row text-uppercase"
+                    style="
+                      gap: 6px;
+                      font-size: 18px;
+                      line-height: 18px;
+                      letter-spacing: 0.8pt;
+                    "
                   >
-                    <q-table
-                      bordered
-                      style="border-radius: 0"
-                      id="uerm-infirmary__visits-page__q-table"
-                      class="shadow-0"
-                      :rows="filteredPendingVisits"
-                      :columns="columns"
-                      hide-bottom
-                      :rows-per-page-options="[0]"
+                    <q-badge class="bg-grey" style="padding: 8px">
+                      {{ campusesMap[filters.patientCampusCode]?.name }}
+                    </q-badge>
+                    <q-badge class="bg-grey" style="padding: 8px">
+                      {{
+                        affiliationsMap[filters.patientAffiliationCode]?.name
+                      }}
+                    </q-badge>
+                  </div>
+                  <div class="col-auto">
+                    <q-btn
+                      :disable="loading"
+                      color="primary"
+                      round
+                      flat
+                      dense
+                      @click.stop="filterDialogVisible = true"
                     >
-                      <template v-slot:body="props">
-                        <q-tr
-                          class="cursor-pointer"
-                          @click.stop="showPxVisitInfo(props.row)"
+                      <q-icon
+                        style="font-weight: bold"
+                        name="fa-solid fa-filter"
+                        size="xs"
+                      />
+                    </q-btn>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <FetchingData v-if="loading" />
+                <template v-else>
+                  <q-input
+                    :style="$q.screen.gt.md ? { maxWidth: '200px' } : {}"
+                    dense
+                    outlined
+                    debounce="750"
+                    label="Filter"
+                    maxlength="255"
+                    hint=""
+                    v-model.trim="pendingVisitsFilterStr"
+                  >
+                    <template v-slot:append>
+                      <q-icon
+                        v-if="pendingVisitsFilterStr !== ''"
+                        size="xs"
+                        name="close"
+                        class="cursor-pointer"
+                        @click="pendingVisitsFilterStr = ''"
+                      />
+                      <q-icon name="search" size="xs" />
+                    </template>
+                  </q-input>
+                  <template
+                    v-if="
+                      filteredPendingVisits && filteredPendingVisits.length > 0
+                    "
+                  >
+                    <div
+                      class="full-width relative-position"
+                      v-if="$q.screen.gt.md"
+                    >
+                      <q-table
+                        bordered
+                        style="border-radius: 0"
+                        id="uerm-infirmary__visits-page__q-table"
+                        class="shadow-0"
+                        :rows="filteredPendingVisits"
+                        :columns="columns"
+                        hide-bottom
+                        :rows-per-page-options="[0]"
+                      >
+                        <template v-slot:body="props">
+                          <q-tr
+                            class="cursor-pointer"
+                            @click.stop="showPxVisitInfo(props.row)"
+                          >
+                            <template v-for="column of columns">
+                              <q-td v-if="column.name === 'dateTimeCreated'">
+                                <span class="text-grey-7">
+                                  {{ formatDate(props.row.dateTimeCreated) }}
+                                </span>
+                              </q-td>
+                              <q-td
+                                v-else-if="column.name === 'completedExamNames'"
+                                class="row items-center no-wrap"
+                                style="gap: 6px"
+                              >
+                                <!-- class="bg-grey" -->
+                                <!-- class="bg-accent text-black text-uppercase q-pa-sm" -->
+                                <q-badge
+                                  v-for="(examName, idx) in props.row
+                                    .completedExamNames"
+                                  :key="idx"
+                                  class="bg-blue-1 text-primary text-uppercase q-pa-xs"
+                                >
+                                  {{ examName }}
+                                </q-badge>
+                              </q-td>
+                              <q-td v-else-if="column.name === 'action'">
+                                <div class="row justify-center">
+                                  <q-btn
+                                    outline
+                                    dense
+                                    class="text-primary"
+                                    style="
+                                      padding-left: 10px;
+                                      padding-right: 10px;
+                                    "
+                                    unelevated
+                                    label="DETAILS"
+                                    @click.stop="showPxVisitInfo(props.row)"
+                                  />
+                                </div>
+                              </q-td>
+                              <!-- <q-td
+                                v-else-if="column.name === 'patientCampusCode'"
+                              >
+                                <div class="row justify-center">
+                                  <q-badge
+                                    v-if="props.row.patientCampusCode"
+                                    class="bg-grey"
+                                  >
+                                    {{
+                                      campusesMap[props.row.patientCampusCode]
+                                        .name
+                                    }}
+                                  </q-badge>
+                                </div>
+                              </q-td>
+                              <q-td
+                                v-else-if="
+                                  column.name === 'patientAffiliationCode'
+                                "
+                              >
+                                <div class="row justify-center">
+                                  <q-badge
+                                    v-if="props.row.patientCampusCode"
+                                    class="bg-grey"
+                                  >
+                                    {{
+                                      affiliationsMap[
+                                        props.row.patientAffiliationCode
+                                      ].name
+                                    }}
+                                  </q-badge>
+                                </div>
+                              </q-td> -->
+                              <q-td
+                                v-else-if="column.name === 'patientFullName'"
+                                class="text-weight-bold text-uppercase"
+                              >
+                                {{
+                                  formatName(
+                                    props.row.patientFirstName,
+                                    props.row.patientMiddleName,
+                                    props.row.patientLastName,
+                                    props.row.patientExtName
+                                  )
+                                }}
+                              </q-td>
+                              <q-td
+                                v-else-if="column.name === 'patientCollegeCode'"
+                                class="text-center"
+                              >
+                                {{
+                                  props.row[column.name]
+                                    ? collegesMap[props.row[column.name]].name
+                                    : ""
+                                }}
+                              </q-td>
+                              <q-td
+                                v-else-if="column.name === 'patientYearLevel'"
+                                class="text-center"
+                              >
+                                {{
+                                  props.row[column.name]
+                                    ? Object.values(yearLevelsMap).find(
+                                        (y) =>
+                                          y.code ===
+                                          Number(props.row[column.name])
+                                      ).name
+                                    : ""
+                                }}
+                              </q-td>
+                              <q-td v-else class="text-center">
+                                {{
+                                  column.format
+                                    ? column.format(props.row[column.name])
+                                    : props.row[column.name]
+                                }}
+                              </q-td>
+                            </template>
+                          </q-tr>
+                        </template>
+                      </q-table>
+                      <div class="row justify-start q-mt-md">
+                        <q-badge
+                          color="accent"
+                          class="text-black q-pa-sm"
+                          :class="$q.screen.lt.md ? 'q-mt-md' : ''"
                         >
-                          <template v-for="column of columns">
-                            <q-td v-if="column.name === 'dateTimeCreated'">
-                              <span class="text-grey-7">
-                                {{ formatDate(props.row.dateTimeCreated) }}
-                              </span>
-                            </q-td>
-                            <q-td
-                              v-else-if="column.name === 'examsCompleted'"
-                              class="flex flex-center"
-                            >
-                              <div>{{ props.row.examNames }}</div>
-                              <!-- <q-btn
-                                  dense
-                                  style="
-                                    padding-left: 10px;
-                                    padding-right: 10px;
-                                  "
-                                  :class="
-                                    props.row.dateTimeCompleted
-                                      ? 'text-positive'
-                                      : 'text-grey-8'
-                                  "
-                                  unelevated
-                                  outline
-                                  @click.stop="
-                                    () => {
-                                      currentVisit = props.row;
-                                      statusHistoryVisible = true;
-                                    }
-                                  "
-                                  :label="
-                                    props.row.dateTimeCompleted
-                                      ? 'COMPLETED'
-                                      : 'NOT COMPLETED'
-                                  "
-                                /> -->
-                            </q-td>
-                            <q-td v-else-if="column.name === 'action'">
-                              <div class="row justify-center">
-                                <q-btn
-                                  outline
-                                  dense
-                                  class="text-primary"
-                                  style="
-                                    padding-left: 10px;
-                                    padding-right: 10px;
-                                  "
-                                  unelevated
-                                  label="DETAILS"
-                                  @click.stop="showPxVisitInfo(props.row)"
-                                />
-                              </div>
-                            </q-td>
-                            <q-td
-                              v-else-if="column.name === 'patientCampusCode'"
-                            >
-                              <div class="row justify-center">
-                                <q-badge
-                                  v-if="props.row.patientCampusCode"
-                                  class="bg-grey"
-                                >
-                                  {{
-                                    campusesMap[props.row.patientCampusCode]
-                                      .name
-                                  }}
-                                </q-badge>
-                              </div>
-                            </q-td>
-                            <q-td
-                              v-else-if="
-                                column.name === 'patientAffiliationCode'
-                              "
-                            >
-                              <div class="row justify-center">
-                                <q-badge
-                                  v-if="props.row.patientCampusCode"
-                                  class="bg-grey"
-                                >
-                                  {{
-                                    affiliationsMap[
-                                      props.row.patientAffiliationCode
-                                    ].name
-                                  }}
-                                </q-badge>
-                              </div>
-                            </q-td>
-                            <q-td
-                              v-else-if="column.name === 'patientFullName'"
-                              class="text-weight-bold text-uppercase"
+                          <span class="text-weight-bold">{{
+                            pendingVisits.length
+                          }}</span
+                          >&nbsp;item/s
+                        </q-badge>
+                      </div>
+                    </div>
+                    <div
+                      v-else
+                      class="relative-position bg-white"
+                      style="
+                        overflow-y: auto;
+                        display: grid;
+                        grid-template-rows: min-content auto;
+                      "
+                    >
+                      <q-virtual-scroll
+                        style="
+                          height: auto;
+                          border-top: 1px solid rgba(0, 0, 0, 0.1);
+                          border-left: 1px solid rgba(0, 0, 0, 0.1);
+                          border-right: 1px solid rgba(0, 0, 0, 0.1);
+                        "
+                        :items="pendingVisits"
+                        v-slot="{ item, index }"
+                      >
+                        <q-item
+                          class="full-width q-pa-md"
+                          :key="index"
+                          clickable
+                          @click="showPxVisitInfo(item)"
+                        >
+                          <q-item-section>
+                            <q-item-label caption class="ellipsis">{{
+                              formatDate(item.dateTimeCreated)
+                            }}</q-item-label>
+                            <q-item-label overline class="q-mb-sm">{{
+                              item.patientIdentificationCode
+                            }}</q-item-label>
+                            <q-item-label
+                              class="text-weight-medium text-uppercase"
+                              style="gap: 8px"
                             >
                               {{
                                 formatName(
-                                  props.row.patientFirstName,
-                                  props.row.patientMiddleName,
-                                  props.row.patientLastName,
-                                  props.row.patientExtName
+                                  item.patientFirstName,
+                                  item.patientMiddleName,
+                                  item.patientLastName,
+                                  item.patientExtName
                                 )
                               }}
-                            </q-td>
-                            <q-td
-                              v-else-if="column.name === 'patientCollegeCode'"
-                              class="text-center"
-                            >
-                              {{
-                                props.row[column.name]
-                                  ? collegesMap[props.row[column.name]].name
-                                  : ""
-                              }}
-                            </q-td>
-                            <q-td
-                              v-else-if="column.name === 'patientYearLevel'"
-                              class="text-center"
-                            >
-                              {{
-                                props.row[column.name]
-                                  ? Object.values(yearLevelsMap).find(
-                                      (y) =>
-                                        y.code ===
-                                        Number(props.row[column.name])
-                                    ).name
-                                  : ""
-                              }}
-                            </q-td>
-                            <q-td v-else class="text-center">
-                              {{
-                                column.format
-                                  ? column.format(props.row[column.name])
-                                  : props.row[column.name]
-                              }}
-                            </q-td>
-                          </template>
-                        </q-tr>
-                      </template>
-                    </q-table>
-                    <div class="row justify-start q-mt-md">
-                      <q-badge
-                        color="accent"
-                        class="text-black q-pa-sm"
-                        :class="$q.screen.lt.md ? 'q-mt-md' : ''"
-                      >
-                        <span class="text-weight-bold">{{
-                          pendingVisits.length
-                        }}</span
-                        >&nbsp;item/s
-                      </q-badge>
+                            </q-item-label>
+                            <q-item-label caption>
+                              <div class="row items-center" style="gap: 6px">
+                                <q-icon
+                                  size="xs"
+                                  :color="
+                                    item.patientGender === 'M'
+                                      ? 'blue-4'
+                                      : 'pink-4'
+                                  "
+                                  :name="
+                                    item.patientGender === 'M'
+                                      ? 'fa-solid fa-mars'
+                                      : 'fa-solid fa-venus'
+                                  "
+                                />
+                                <q-badge
+                                  v-if="
+                                    item.patientCollegeCode ||
+                                    item.patientDeptCode
+                                  "
+                                  class="bg-grey"
+                                  >{{
+                                    collegesMap[item.patientCollegeCode]
+                                      ?.name ??
+                                    departmentsMap[item.patientDeptCode]?.name
+                                  }}</q-badge
+                                >
+                              </div>
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section v-if="examsMap" side>
+                            <q-btn
+                              dense
+                              style="padding-left: 10px; padding-right: 10px"
+                              class="q-mb-sm bg-white"
+                              unelevated
+                              outline
+                              :color="
+                                item.dateTimeCompleted
+                                  ? 'positive'
+                                  : 'text-grey-8'
+                              "
+                              @click.stop="
+                                () => {
+                                  currentVisit = item;
+                                  statusHistoryVisible = true;
+                                }
+                              "
+                              label="DIAG EXAMS"
+                            />
+                            <q-btn
+                              dense
+                              style="padding-left: 10px; padding-right: 10px"
+                              unelevated
+                              class="text-black"
+                              color="accent"
+                              label="DETAILS"
+                              @click.stop="showPxVisitInfo(item)"
+                            />
+                          </q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </q-virtual-scroll>
                     </div>
-                  </div>
-                  <div
-                    v-else
-                    class="relative-position bg-white"
-                    style="
-                      overflow-y: auto;
-                      display: grid;
-                      grid-template-rows: min-content auto;
-                    "
-                  >
-                    <q-virtual-scroll
-                      style="
-                        height: auto;
-                        border-top: 1px solid rgba(0, 0, 0, 0.1);
-                        border-left: 1px solid rgba(0, 0, 0, 0.1);
-                        border-right: 1px solid rgba(0, 0, 0, 0.1);
-                      "
-                      :items="pendingVisits"
-                      v-slot="{ item, index }"
-                    >
-                      <q-item
-                        class="full-width q-pa-md"
-                        :key="index"
-                        clickable
-                        @click="showPxVisitInfo(item)"
-                      >
-                        <q-item-section>
-                          <q-item-label caption class="ellipsis">{{
-                            formatDate(item.dateTimeCreated)
-                          }}</q-item-label>
-                          <q-item-label overline class="q-mb-sm">{{
-                            item.patientIdentificationCode
-                          }}</q-item-label>
-                          <q-item-label
-                            class="text-weight-medium text-uppercase"
-                            style="gap: 8px"
-                          >
-                            {{
-                              formatName(
-                                item.patientFirstName,
-                                item.patientMiddleName,
-                                item.patientLastName,
-                                item.patientExtName
-                              )
-                            }}
-                          </q-item-label>
-                          <q-item-label caption>
-                            <div class="row items-center" style="gap: 6px">
-                              <q-icon
-                                size="xs"
-                                :color="
-                                  item.patientGender === 'M'
-                                    ? 'blue-4'
-                                    : 'pink-4'
-                                "
-                                :name="
-                                  item.patientGender === 'M'
-                                    ? 'fa-solid fa-mars'
-                                    : 'fa-solid fa-venus'
-                                "
-                              />
-                              <q-badge
-                                v-if="item.patientCampusCode"
-                                class="bg-grey"
-                                >{{
-                                  campusesMap[item.patientCampusCode].name
-                                }}</q-badge
-                              >
-                              <q-badge
-                                v-if="item.patientAffiliationCode"
-                                class="bg-grey"
-                                >{{
-                                  affiliationsMap[item.patientAffiliationCode]
-                                    .name
-                                }}</q-badge
-                              >
-                            </div>
-                          </q-item-label>
-                        </q-item-section>
-                        <q-item-section v-if="examsMap" side>
-                          <q-btn
-                            dense
-                            style="padding-left: 10px; padding-right: 10px"
-                            class="q-mb-sm bg-white"
-                            unelevated
-                            outline
-                            :color="
-                              item.dateTimeCompleted
-                                ? 'positive'
-                                : 'text-grey-8'
-                            "
-                            @click.stop="
-                              () => {
-                                currentVisit = item;
-                                statusHistoryVisible = true;
-                              }
-                            "
-                            label="DIAG EXAMS"
-                          />
-                          <q-btn
-                            dense
-                            style="padding-left: 10px; padding-right: 10px"
-                            unelevated
-                            class="text-black"
-                            color="accent"
-                            label="DETAILS"
-                            @click.stop="showPxVisitInfo(item)"
-                          />
-                        </q-item-section>
-                      </q-item>
-                      <q-separator />
-                    </q-virtual-scroll>
-                  </div>
+                  </template>
+                  <NoResult v-else message="No pending visits found." />
                 </template>
-                <NoResult v-else message="No pending visits found." />
-              </template>
+              </div>
             </div>
             <div :class="$q.screen.gt.md ? 'col-3' : 'full-width'">
-              <FetchingData v-if="loading" />
-              <template v-else>
-                <div class="text-primary text-weight-medium q-mb-md">
-                  COMPLETED VISITS:
-                </div>
-                <q-input
-                  dense
-                  outlined
-                  debounce="750"
-                  label="Filter"
-                  maxlength="255"
-                  hint=""
-                  v-model.trim="completedVisitsFilterStr"
-                >
-                  <template v-slot:append>
-                    <q-icon
-                      v-if="completedVisitsFilterStr !== ''"
-                      size="xs"
-                      name="close"
-                      class="cursor-pointer"
-                      @click="completedVisitsFilterStr = ''"
-                    />
-                    <q-icon name="search" size="xs" />
-                  </template>
-                </q-input>
-                <template
-                  v-if="
-                    filteredCompletedVisits &&
-                    filteredCompletedVisits.length > 0
+              <div class="row items-center q-mb-md">
+                <div
+                  class="col text-primary text-weight-medium text-uppercase"
+                  style="
+                    font-size: 18px;
+                    line-height: 18px;
+                    letter-spacing: 0.8pt;
                   "
                 >
-                  <div
-                    class="relative-position bg-white"
-                    style="
-                      overflow-y: auto;
-                      display: grid;
-                      grid-template-rows: min-content auto;
+                  COMPLETED VISITS:
+                </div>
+                <div class="col-auto">
+                  <q-btn
+                    class="col-auto"
+                    :disable="loading"
+                    color="primary"
+                    round
+                    flat
+                    dense
+                    @click="getVisits"
+                  >
+                    <q-icon
+                      style="font-weight: bold"
+                      name="fa-solid fa-arrows-rotate"
+                      size="xs"
+                    />
+                  </q-btn>
+                  <q-btn
+                    :disable="loading"
+                    color="primary"
+                    round
+                    flat
+                    dense
+                    @click="filterDialogVisible = true"
+                  >
+                    <q-icon
+                      style="font-weight: bold"
+                      name="fa-solid fa-filter"
+                      size="xs"
+                    />
+                  </q-btn>
+                </div>
+              </div>
+              <div>
+                <FetchingData v-if="loading" />
+                <template v-else>
+                  <q-input
+                    dense
+                    outlined
+                    debounce="750"
+                    label="Filter"
+                    maxlength="255"
+                    hint=""
+                    v-model.trim="completedVisitsFilterStr"
+                  >
+                    <template v-slot:append>
+                      <q-icon
+                        v-if="completedVisitsFilterStr !== ''"
+                        size="xs"
+                        name="close"
+                        class="cursor-pointer"
+                        @click="completedVisitsFilterStr = ''"
+                      />
+                      <q-icon name="search" size="xs" />
+                    </template>
+                  </q-input>
+                  <template
+                    v-if="
+                      filteredCompletedVisits &&
+                      filteredCompletedVisits.length > 0
                     "
                   >
-                    <q-virtual-scroll
-                      bordered
+                    <div
+                      class="relative-position bg-white"
                       style="
-                        height: auto;
-                        border-top: 1px solid rgba(0, 0, 0, 0.1);
-                        border-left: 1px solid rgba(0, 0, 0, 0.1);
-                        border-right: 1px solid rgba(0, 0, 0, 0.1);
+                        overflow-y: auto;
+                        display: grid;
+                        grid-template-rows: min-content auto;
                       "
-                      :style="$q.screen.gt.md ? { maxHeight: '500px' } : {}"
-                      :items="filteredCompletedVisits"
-                      v-slot="{ item, index }"
                     >
-                      <q-item
-                        class="full-width q-pa-md"
-                        :key="index"
-                        clickable
-                        @click="showPxVisitInfo(item)"
+                      <q-virtual-scroll
+                        bordered
+                        style="
+                          height: auto;
+                          border-top: 1px solid rgba(0, 0, 0, 0.1);
+                          border-left: 1px solid rgba(0, 0, 0, 0.1);
+                          border-right: 1px solid rgba(0, 0, 0, 0.1);
+                        "
+                        :style="
+                          $q.screen.gt.md
+                            ? { maxHeight: 'calc(100vh - 400px)' }
+                            : {}
+                        "
+                        :items="filteredCompletedVisits"
+                        v-slot="{ item, index }"
                       >
-                        <q-item-section>
-                          <q-item-label caption class="ellipsis q-mb-xs">{{
-                            formatDate(item.dateTimeCreated)
-                          }}</q-item-label>
-                          <q-item-label overline class="q-mb-sm">{{
-                            item.patientIdentificationCode
-                          }}</q-item-label>
-                          <q-item-label
-                            class="text-weight-medium text-uppercase"
-                            style="gap: 8px"
-                          >
-                            {{
-                              formatName(
-                                item.patientFirstName,
-                                item.patientMiddleName,
-                                item.patientLastName,
-                                item.patientExtName
-                              )
-                            }}
-                          </q-item-label>
-                          <q-item-label caption>
-                            <div class="row items-center" style="gap: 6px">
-                              <q-icon
-                                size="xs"
-                                :color="
-                                  item.patientGender === 'M'
-                                    ? 'blue-4'
-                                    : 'pink-4'
-                                "
-                                :name="
-                                  item.patientGender === 'M'
-                                    ? 'fa-solid fa-mars'
-                                    : 'fa-solid fa-venus'
-                                "
-                              />
-                              <q-badge
-                                v-if="item.patientCampusCode"
-                                class="bg-grey"
-                                >{{
-                                  campusesMap[item.patientCampusCode].name
-                                }}</q-badge
-                              >
-                              <q-badge
-                                v-if="item.patientAffiliationCode"
-                                class="bg-grey"
-                                >{{
-                                  affiliationsMap[item.patientAffiliationCode]
-                                    .name
-                                }}</q-badge
-                              >
-                            </div>
-                          </q-item-label>
-                        </q-item-section>
-                        <q-item-section v-if="examsMap" side>
-                          <q-btn
-                            class="q-mb-sm"
-                            outline
-                            dense
-                            style="padding-left: 10px; padding-right: 10px"
-                            unelevated
-                            color="primary"
-                            label="DETAILS"
-                            @click.stop="showPxVisitInfo(item)"
-                          />
-                          <q-btn
-                            dense
-                            style="padding-left: 10px; padding-right: 10px"
-                            unelevated
-                            class="text-black"
-                            color="accent"
-                            label="PRINT RESULT"
-                            @click.stop="showPxVisitPrintout(item)"
-                          />
-                        </q-item-section>
-                      </q-item>
-                      <q-separator />
-                    </q-virtual-scroll>
-                  </div>
+                        <q-item
+                          class="full-width q-pa-md"
+                          :key="index"
+                          clickable
+                          @click="showPxVisitInfo(item)"
+                        >
+                          <q-item-section>
+                            <q-item-label caption class="ellipsis q-mb-xs">{{
+                              formatDate(item.dateTimeCreated)
+                            }}</q-item-label>
+                            <q-item-label overline class="q-mb-sm">{{
+                              item.patientIdentificationCode
+                            }}</q-item-label>
+                            <q-item-label
+                              class="text-weight-medium text-uppercase"
+                              style="gap: 8px"
+                            >
+                              {{
+                                formatName(
+                                  item.patientFirstName,
+                                  item.patientMiddleName,
+                                  item.patientLastName,
+                                  item.patientExtName
+                                )
+                              }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              <div class="row items-center" style="gap: 6px">
+                                <q-icon
+                                  size="xs"
+                                  :color="
+                                    item.patientGender === 'M'
+                                      ? 'blue-4'
+                                      : 'pink-4'
+                                  "
+                                  :name="
+                                    item.patientGender === 'M'
+                                      ? 'fa-solid fa-mars'
+                                      : 'fa-solid fa-venus'
+                                  "
+                                />
+                                <q-badge
+                                  v-if="item.patientCampusCode"
+                                  class="bg-grey"
+                                  >{{
+                                    campusesMap[item.patientCampusCode].name
+                                  }}</q-badge
+                                >
+                                <q-badge
+                                  v-if="item.patientAffiliationCode"
+                                  class="bg-grey"
+                                  >{{
+                                    affiliationsMap[item.patientAffiliationCode]
+                                      .name
+                                  }}</q-badge
+                                >
+                              </div>
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section v-if="examsMap" side>
+                            <q-btn
+                              class="q-mb-sm"
+                              outline
+                              dense
+                              style="padding-left: 10px; padding-right: 10px"
+                              unelevated
+                              color="primary"
+                              label="DETAILS"
+                              @click.stop="showPxVisitInfo(item)"
+                            />
+                            <q-btn
+                              dense
+                              style="padding-left: 10px; padding-right: 10px"
+                              unelevated
+                              class="text-black"
+                              color="accent"
+                              label="PRINT"
+                              @click.stop="showPxVisitPrintout(item)"
+                            />
+                          </q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </q-virtual-scroll>
+                    </div>
+                  </template>
+                  <NoResult v-else message="No completed visits found." />
                 </template>
-                <NoResult v-else message="No completed visits found." />
-              </template>
+              </div>
             </div>
           </div>
         </div>
@@ -693,6 +614,158 @@
         </div>
       </template>
     </MinimizedDialog>
+    <MinimizedDialog
+      v-if="filterDialogVisible"
+      title="ADVANCE FILTER"
+      widthOnDesktop="400px"
+      @close="filterDialogVisible = false"
+    >
+      <template v-slot:body>
+        <div>
+          <q-form
+            @submit="
+              () => {
+                filterDialogVisible = false;
+                getVisits();
+              }
+            "
+          >
+            <div class="column q-pa-lg" style="padding: 36px">
+              <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
+              <q-input
+                :disable="loading"
+                debounce="750"
+                stack-label
+                outlined
+                label="Limit Items To"
+                hint=""
+                :rules="[
+                  requiredRule,
+                  (val) =>
+                    Number(val) < 1 || Number(val) > 100
+                      ? 'Should be 1 to 100 only.'
+                      : undefined,
+                ]"
+                v-model.trim="filters.limit"
+              />
+              <q-input
+                :disable="loading"
+                debounce="750"
+                stack-label
+                outlined
+                label="Year"
+                hint=""
+                :rules="[requiredRule, yearRule]"
+                v-model.trim="filters.year"
+              />
+              <!-- <q-select
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    :options="[
+                      { value: null, label: 'All' },
+                      { value: 'PENDING', label: 'Pending' },
+                      { value: 'COMPLETED', label: 'Completed' },
+                    ]"
+                    label="Status"
+                    hint=""
+                    v-model="filters.status"
+                  /> -->
+              <q-select
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="campuses"
+                label="Campus"
+                hint=""
+                v-model="filters.patientCampusCode"
+              />
+              <q-select
+                :disable="loading"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="affiliations"
+                label="Affiliation"
+                hint=""
+                v-model="filters.patientAffiliationCode"
+              />
+              <!-- <template
+                  v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
+                >
+                  <q-select
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :options="colleges"
+                    label="College"
+                    v-model="filters.patientCollegeCode"
+                    hint=""
+                  />
+                  <q-select
+                    :disable="loading"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
+                    option-label="name"
+                    option-value="code"
+                    :options="yearLevels"
+                    label="Year Level"
+                    v-model="filters.patientYearLevel"
+                    hint=""
+                  />
+                </template> -->
+              <!-- <DateRange
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  :subtractDaysCount="7"
+                  label="Visit Date Range"
+                  hint=""
+                  :initialValue="filters.visitDateRange"
+                  @valueChanged="(val) => (filters.visitDateRange = val)"
+                /> -->
+              <!-- <q-input
+                  :disable="loading"
+                  debounce="750"
+                  stack-label
+                  outlined
+                  label="Patient Name"
+                  hint=""
+                  v-model.trim="filters.patientName"
+                /> -->
+              <div class="row items-start justify-end">
+                <q-btn
+                  style="height: 40px"
+                  color="accent"
+                  class="q-px-md q-py-xs text-black"
+                  :disable="loading"
+                  :loading="loading"
+                  unelevated
+                  stack-label
+                  label="FILTER"
+                  type="submit"
+                />
+              </div>
+            </div>
+          </q-form>
+        </div>
+      </template>
+    </MinimizedDialog>
     <VisitDetails
       v-if="visitInfoVisible"
       :visit="currentVisit"
@@ -738,6 +811,7 @@ import {
   colleges,
   yearLevelsMap,
   yearLevels,
+  departmentsMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -812,18 +886,18 @@ export default defineComponent({
           label: "STU/EMP NO.",
           align: "left",
         },
-        {
-          name: "patientCampusCode",
-          field: "patientCampusCode",
-          label: "CAMPUS",
-          align: "center",
-        },
-        {
-          name: "patientAffiliationCode",
-          field: "patientAffiliationCode",
-          label: "AFFILIATION",
-          align: "center",
-        },
+        // {
+        //   name: "patientCampusCode",
+        //   field: "patientCampusCode",
+        //   label: "CAMPUS",
+        //   align: "center",
+        // },
+        // {
+        //   name: "patientAffiliationCode",
+        //   field: "patientAffiliationCode",
+        //   label: "AFFILIATION",
+        //   align: "center",
+        // },
         {
           name: "patientFullName",
           label: "PATIENT NAME",
@@ -847,8 +921,8 @@ export default defineComponent({
           align: "center",
         },
         {
-          name: "examsCompleted",
-          field: "examNames",
+          name: "completedExamNames",
+          field: "completedExamNames",
           label: "EXAMS COMPLETED",
           align: "center",
         },
@@ -871,7 +945,7 @@ export default defineComponent({
         //   to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
         // },
 
-        patientCampusCode: campusesMap.UERM.code,
+        patientCampusCode: campusesMap.CAL.code,
         patientAffiliationCode: affiliationsMap.STU.code,
         // patientName: null,
 
@@ -891,6 +965,7 @@ export default defineComponent({
       visitInfoVisible: false,
       visitPrintoutVisible: false,
 
+      filterDialogVisible: false,
       currentVisit: null,
     };
   },
@@ -918,61 +993,6 @@ export default defineComponent({
     getExamName(code) {
       return this.examsMap[code].name;
     },
-    async getVisits() {
-      this.loading = true;
-
-      const sanitizedFilters = Object.entries(this.filters).reduce((acc, e) => {
-        if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
-        return acc;
-      }, {});
-
-      const response = await this.$store.dispatch("ape/get", sanitizedFilters);
-
-      if (response.error) {
-        showMessage(this.$q, false, "Unable to fetch visits. Please try again");
-        return;
-      }
-
-      await delay(1000);
-
-      const rows1 = response.body[0];
-      const rows2 = response.body[1];
-
-      const formattedResponse = rows1.map((row) => {
-        const exams = rows2.filter((r) => r.visitId === row.id);
-
-        const examNames = exams
-          .filter((e) => e.dateTimeCompleted)
-          .map((e) => examsMap[e.examCode].name)
-          .join(", ");
-
-        return {
-          ...row,
-          exams,
-          examNames,
-        };
-      });
-
-      const visits = formattedResponse.reduce(
-        (acc, v) => {
-          if (v.dateTimeCompleted) {
-            acc[1].push(v);
-            return acc;
-          }
-
-          acc[0].push(v);
-          return acc;
-        },
-        [[], []]
-      );
-
-      this.pendingVisits = visits[0];
-      this.completedVisits = visits[1];
-
-      this.pendingVisitsFilterStr = "";
-      this.completedVisitsFilterStr = "";
-      this.loading = false;
-    },
     async showPxVisitInfo(visit) {
       this.currentVisit = visit;
       this.visitInfoVisible = true;
@@ -995,6 +1015,69 @@ export default defineComponent({
             v.patientExtName?.toLowerCase().includes(lowerCasedSearchStr)
         );
       });
+    },
+    formatResponse(rows1, rows2) {
+      return rows1.map((row) => {
+        const exams = rows2.filter((r) => r.visitId === row.id);
+
+        const completedExamNames = exams
+          .filter((e) => e.dateTimeCompleted)
+          .map((e) => examsMap[e.examCode].name);
+        // .join(", ");
+
+        return {
+          ...row,
+          exams,
+          completedExamNames,
+        };
+      });
+    },
+    async getVisits() {
+      this.loading = true;
+
+      const sanitizedFilters = Object.entries(this.filters).reduce((acc, e) => {
+        if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
+        return acc;
+      }, {});
+
+      const response1 = await this.$store.dispatch(
+        "ape/getVisitsPending",
+        sanitizedFilters
+      );
+
+      const response2 = await this.$store.dispatch(
+        "ape/getVisitsCompleted",
+        sanitizedFilters
+      );
+
+      if (response1.error || response2.error) {
+        showMessage(this.$q, false, "Unable to fetch visits. Please try again");
+        return;
+      }
+
+      await delay(1000);
+
+      const response1Rows1 = response1.body[0];
+      const response1Rows2 = response1.body[1];
+      const response2Rows1 = response2.body[0];
+      const response2Rows2 = response2.body[1];
+
+      const formattedResponse1 = this.formatResponse(
+        response1Rows1,
+        response1Rows2
+      );
+
+      const formattedResponse2 = this.formatResponse(
+        response2Rows1,
+        response2Rows2
+      );
+
+      this.pendingVisits = formattedResponse1;
+      this.completedVisits = formattedResponse2;
+
+      this.pendingVisitsFilterStr = "";
+      this.completedVisitsFilterStr = "";
+      this.loading = false;
     },
   },
 });

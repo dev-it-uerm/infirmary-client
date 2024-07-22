@@ -1,10 +1,21 @@
 import { request } from "src/helpers/util";
 
-export const get = async (context, urlQuery) => {
+export const getVisitsPending = async (context, urlQuery) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/visit`,
-    urlQuery,
+    { ...urlQuery, status: "PENDING" },
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getVisitsCompleted = async (context, urlQuery) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/visit`,
+    { ...urlQuery, status: "COMPLETED" },
     context.rootState.app?.user?.accessToken,
     null,
     context

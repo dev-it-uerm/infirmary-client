@@ -272,10 +272,14 @@
               <VisitTracker
                 v-if="rightDrawerOpen && tab === 1"
                 scannerId="qrCodeScanner__right-drawer-1"
+                @busy="loading = true"
+                @ready="loading = false"
               />
               <ExamAccept
                 v-if="rightDrawerOpen && tab === 2"
                 scannerId="qrCodeScanner__right-drawer-2"
+                @busy="loading = true"
+                @ready="loading = false"
               />
             </div>
           </div>

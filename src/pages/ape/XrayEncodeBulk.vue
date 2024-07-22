@@ -84,7 +84,7 @@
                     type="textarea"
                     label="Student/Employee Numbers (separated by new line)"
                     :rules="[requiredRule]"
-                    v-model.trim="studempNumbersStr"
+                    v-model="studempNumbersStr"
                   />
                   <q-list
                     v-if="patients && patients.length > 0"
@@ -99,7 +99,31 @@
                       :key="index"
                     >
                       <q-item-section>
-                        <div class="row">
+                        <div class="row items-center">
+                          <q-btn
+                            :disable="saving"
+                            class="q-mr-sm"
+                            color="grey-7"
+                            round
+                            flat
+                            dense
+                            @click="
+                              studempNumbersStr = studempNumbersStr
+                                .replace(
+                                  new RegExp(
+                                    `[\s\n\r]*${item.identificationCode}`
+                                  ),
+                                  ''
+                                )
+                                .trim()
+                            "
+                          >
+                            <q-icon
+                              style="font-weight: bold"
+                              name="close"
+                              size="xs"
+                            />
+                          </q-btn>
                           <div
                             class="text-caption text-grey-8"
                             style="min-width: 50px"
@@ -109,9 +133,10 @@
                           <!-- <q-badge color="grey-7">
                             {{ item.identificationCode }}
                           </q-badge> -->
+
                           <q-badge
                             color="accent"
-                            class="text-black text-weight-medium"
+                            class="text-black text-weight-medium q-pa-sm"
                           >
                             {{ item.identificationCode }}
                           </q-badge>
@@ -177,6 +202,7 @@
                     }}
                   </div>
                   <q-btn
+                    icon="save"
                     style="height: 40px"
                     color="accent"
                     class="q-px-md q-py-xs text-black"
@@ -293,7 +319,7 @@ export default defineComponent({
       filtering: false,
       saving: false,
 
-      campusCode: campusesMap.UERM.code,
+      campusCode: campusesMap.CAL.code,
       affiliationCode: affiliationsMap.STU.code,
       year: new Date().getFullYear(),
 

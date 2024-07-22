@@ -18,8 +18,8 @@
                   <div
                     class="text-primary text-weight-medium text-uppercase"
                     style="
-                      font-size: 18px;
-                      line-height: 18px;
+                      font-size: 16px;
+                      line-height: 16px;
                       letter-spacing: 0.8pt;
                     "
                   >
@@ -53,8 +53,8 @@
                     class="row text-uppercase"
                     style="
                       gap: 6px;
-                      font-size: 18px;
-                      line-height: 18px;
+                      font-size: 16px;
+                      line-height: 16px;
                       letter-spacing: 0.8pt;
                     "
                   >
@@ -384,8 +384,8 @@
                 <div
                   class="col text-primary text-weight-medium text-uppercase"
                   style="
-                    font-size: 18px;
-                    line-height: 18px;
+                    font-size: 16px;
+                    line-height: 16px;
                     letter-spacing: 0.8pt;
                   "
                 >

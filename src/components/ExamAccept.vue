@@ -145,6 +145,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ["busy", "ready"],
   setup() {
     return {
       examsMap,
@@ -183,7 +184,7 @@ export default defineComponent({
   methods: {
     async accept(patientCode) {
       this.loading = true;
-
+      this.$emit("busy");
       this.visit = null;
       this.patient = null;
 
@@ -205,6 +206,7 @@ export default defineComponent({
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;
+      this.$emit("ready");
     },
   },
 });

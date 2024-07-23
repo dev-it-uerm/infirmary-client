@@ -100,6 +100,46 @@
                     >
                       <q-item-section>
                         <div class="row items-center">
+                          <div
+                            class="text-caption text-grey-8"
+                            style="min-width: 50px"
+                          >
+                            {{ index + 1 }}
+                          </div>
+                          <!-- <q-badge color="grey-7">
+                            {{ item.identificationCode }}
+                          </q-badge> -->
+
+                          <q-badge
+                            color="accent"
+                            class="text-black text-weight-medium q-pa-sm"
+                          >
+                            {{ item.identificationCode }}
+                          </q-badge>
+                        </div>
+                      </q-item-section>
+                      <q-item-section side>
+                        <div
+                          class="row items-center text-caption text-uppercase"
+                          style="gap: 12px"
+                        >
+                          <!-- <div v-if="item.loading" class="q-pa-sm">
+                            <q-spinner-dots color="primary" size="1em" />
+                          </div> -->
+                          <div v-if="item.loading">SAVING...</div>
+                          <div v-else>
+                            <div
+                              v-if="item.status"
+                              :class="
+                                item.status.code === 200
+                                  ? 'text-positive'
+                                  : 'text-negative'
+                              "
+                            >
+                              {{ item.status.name }}
+                            </div>
+                            <div v-else>PENDING</div>
+                          </div>
                           <q-btn
                             :disable="saving"
                             class="q-mr-sm"
@@ -124,43 +164,6 @@
                               size="xs"
                             />
                           </q-btn>
-                          <div
-                            class="text-caption text-grey-8"
-                            style="min-width: 50px"
-                          >
-                            {{ index + 1 }}
-                          </div>
-                          <!-- <q-badge color="grey-7">
-                            {{ item.identificationCode }}
-                          </q-badge> -->
-
-                          <q-badge
-                            color="accent"
-                            class="text-black text-weight-medium q-pa-sm"
-                          >
-                            {{ item.identificationCode }}
-                          </q-badge>
-                        </div>
-                      </q-item-section>
-                      <q-item-section side>
-                        <!-- <div v-if="item.loading" class="q-pa-sm">
-                          <q-spinner-dots color="primary" size="1em" />
-                        </div> -->
-                        <div v-if="item.loading" class="text-caption">
-                          Saving...
-                        </div>
-                        <div v-else class="text-caption">
-                          <div
-                            v-if="item.status"
-                            :class="
-                              item.status.code === 200
-                                ? 'text-positive'
-                                : 'text-negative'
-                            "
-                          >
-                            {{ item.status.name }}
-                          </div>
-                          <div v-else>PENDING</div>
                         </div>
                       </q-item-section>
                     </q-item>
@@ -221,7 +224,7 @@
     </div>
     <ConfirmationDialog
       v-if="confirmationDialogVisible"
-      question="Save X-Ray impression to selected patients?"
+      question="Save X-Ray impression to patients?"
       @cancel="(evt) => (confirmationDialogVisible = false)"
       @ok="
         (evt) => {

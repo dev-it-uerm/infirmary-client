@@ -96,6 +96,10 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    tabCode: {
+      type: String,
+      default: null,
+    },
   },
   emits: ["close", "visitCompleted"],
   setup() {
@@ -138,7 +142,9 @@ export default defineComponent({
       ];
     }
 
-    this.tab = this.tabs[0];
+    this.tab = this.tabCode
+      ? this.tabs.find((t) => t.code === this.tabCode) ?? this.tabs[0]
+      : this.tabs[0];
   },
 });
 </script>

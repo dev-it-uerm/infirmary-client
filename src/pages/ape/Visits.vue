@@ -14,7 +14,11 @@
           >
             <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
               <div class="row items-center q-mb-md" style="gap: 16px">
-                <div class="col row items-center" style="gap: 12px">
+                <div
+                  class="row items-center no-wrap"
+                  :class="$q.screen.gt.md ? 'col' : 'col-12'"
+                  style="gap: 12px"
+                >
                   <div
                     class="text-primary text-weight-medium text-uppercase"
                     style="
@@ -41,7 +45,8 @@
                   </q-btn>
                 </div>
                 <div
-                  class="col-auto row items-center"
+                  class="row items-center justify-end"
+                  :class="$q.screen.gt.md ? 'col-auto' : 'col-12'"
                   style="gap: 10px; cursor: pointer"
                   @click="
                     () => {
@@ -51,13 +56,11 @@
                 >
                   <div
                     class="row text-uppercase"
-                    style="
-                      gap: 6px;
-                      font-size: 16px;
-                      line-height: 16px;
-                      letter-spacing: 0.8pt;
-                    "
+                    style="gap: 6px; letter-spacing: 0.8pt"
                   >
+                    <q-badge class="bg-grey" style="padding: 8px">
+                      SHOWING {{ filters.limit }} VISITS
+                    </q-badge>
                     <q-badge class="bg-grey" style="padding: 8px">
                       {{ campusesMap[filters.patientCampusCode]?.name }}
                     </q-badge>
@@ -140,20 +143,29 @@
                                 </span>
                               </q-td>
                               <q-td
-                                v-else-if="column.name === 'completedExamNames'"
+                                v-else-if="column.name === 'visitExams'"
                                 class="row items-center no-wrap"
                                 style="gap: 6px"
                               >
-                                <!-- class="bg-grey" -->
-                                <!-- class="bg-accent text-black text-uppercase q-pa-sm" -->
-                                <q-badge
-                                  v-for="(examName, idx) in props.row
-                                    .completedExamNames"
+                                <q-btn
+                                  v-for="(item, idx) in props.row.exams"
                                   :key="idx"
-                                  class="bg-blue-1 text-primary text-uppercase q-pa-xs"
-                                >
-                                  {{ examName }}
-                                </q-badge>
+                                  dense
+                                  unelevated
+                                  class="q-px-sm"
+                                  :class="
+                                    item.dateTimeCompleted
+                                      ? 'bg-green-1 text-positive'
+                                      : 'bg-red-1 text-negative'
+                                  "
+                                  @click.stop="
+                                    () => {
+                                      visitInfoTabCode = item.examCode;
+                                      showPxVisitInfo(props.row);
+                                    }
+                                  "
+                                  :label="examsMap[item.examCode].name"
+                                />
                               </q-td>
                               <q-td v-else-if="column.name === 'action'">
                                 <div class="row justify-center">
@@ -571,7 +583,7 @@
     </CardComponent>
     <MinimizedDialog
       v-if="statusHistoryVisible"
-      title="HISTORY"
+      title="DIAGNOSITC EXAMS"
       widthOnDesktop="500px"
       @close="statusHistoryVisible = false"
     >
@@ -588,7 +600,7 @@
             :columns="[
               {
                 name: 'examCode',
-                label: 'Exam',
+                label: 'Exam Name',
                 field: 'examCode',
                 align: 'left',
                 format: getExamName,
@@ -769,7 +781,13 @@
     <VisitDetails
       v-if="visitInfoVisible"
       :visit="currentVisit"
-      @close="visitInfoVisible = false"
+      :tabCode="visitInfoTabCode"
+      @close="
+        () => {
+          visitInfoTabCode = null;
+          visitInfoVisible = false;
+        }
+      "
       @visitCompleted="getVisits"
     />
     <MaximizedDialog
@@ -921,9 +939,9 @@ export default defineComponent({
           align: "center",
         },
         {
-          name: "completedExamNames",
-          field: "completedExamNames",
-          label: "EXAMS COMPLETED",
+          name: "visitExams",
+          field: "visitExams",
+          label: "DIAGNOSTIC EXAMS",
           align: "center",
         },
       ],
@@ -962,8 +980,10 @@ export default defineComponent({
       completedVisits: [],
 
       statusHistoryVisible: false,
-      visitInfoVisible: false,
       visitPrintoutVisible: false,
+
+      visitInfoTabCode: null,
+      visitInfoVisible: false,
 
       filterDialogVisible: false,
       currentVisit: null,
@@ -1018,17 +1038,9 @@ export default defineComponent({
     },
     formatResponse(rows1, rows2) {
       return rows1.map((row) => {
-        const exams = rows2.filter((r) => r.visitId === row.id);
-
-        const completedExamNames = exams
-          .filter((e) => e.dateTimeCompleted)
-          .map((e) => examsMap[e.examCode].name);
-        // .join(", ");
-
         return {
           ...row,
-          exams,
-          completedExamNames,
+          exams: rows2.filter((r) => r.visitId === row.id),
         };
       });
     },

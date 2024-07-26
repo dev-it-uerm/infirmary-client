@@ -24,7 +24,7 @@
             </q-avatar>
           </q-toolbar-title> -->
           <AppLogo :inverted="true" size="xs" :showTitle="false" />
-          <div><b>UERM</b> INFIRMARY</div>
+          <div><b>UE</b> INFIRMARY</div>
         </div>
         <div
           v-if="user && $route.name === 'APE_VISITS'"

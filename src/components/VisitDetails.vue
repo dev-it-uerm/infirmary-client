@@ -118,29 +118,36 @@ export default defineComponent({
     }),
   },
   async mounted() {
-    const response = await this.$store.dispatch(
-      "ape/getVisitExams",
-      this.visit.id
-    );
+    if (!this.user) return;
 
-    if (!response.error && response.body?.length > 0) {
-      const examsAllowedForPx = response.body.map((e) => {
-        return examsMap[e.examCode];
-      });
+    const tabs = [
+      {
+        code: "VISIT",
+        name: "Visit Info.",
+        icon: "fa-solid fa-notes-medical",
+      },
+    ];
 
-      const examsToShow = examsAllowedForPx.filter((e) => {
-        return this.user.examsHandled.includes(e.code);
-      });
+    if (this.user.examsHandled) {
+      const response = await this.$store.dispatch(
+        "ape/getVisitExams",
+        this.visit.id
+      );
 
-      this.tabs = [
-        {
-          code: "VISIT",
-          name: "Visit Info.",
-          icon: "fa-solid fa-notes-medical",
-        },
-        ...examsToShow,
-      ];
+      if (!response.error && response.body?.length > 0) {
+        const examsAllowedForPx = response.body.map((e) => {
+          return examsMap[e.examCode];
+        });
+
+        const examsToShow = examsAllowedForPx.filter((e) => {
+          return this.user.examsHandled.includes(e.code);
+        });
+
+        tabs.push(...examsToShow);
+      }
     }
+
+    this.tabs = tabs;
 
     this.tab = this.tabCode
       ? this.tabs.find((t) => t.code === this.tabCode) ?? this.tabs[0]

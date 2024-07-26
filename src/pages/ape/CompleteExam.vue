@@ -1,15 +1,12 @@
 <template>
   <q-page class="flex flex-center q-pa-md">
     <div class="column" style="gap: 16px; width: 500px">
-      <PageHeader text="COMPLETE EXAM" icon="fa-solid fa-list-check" />
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader text="COMPLETE EXAM" icon="fa-solid fa-list-check" />
+        </template>
         <template v-slot:body>
-          <MessageBanner v-if="forbidden" :success="false">
-            <template v-slot:error-body>
-              <div>You are not allowed to access this page.</div>
-            </template>
-          </MessageBanner>
-          <div>
+          <div v-if="exams && exams.length > 0">
             <!-- <ReminderCard v-if="exam" :exitable="false" class="q-mb-md">
               <template v-slot:body>
                 <div v-if="qrCodeMode">
@@ -25,7 +22,6 @@
               </template>
             </ReminderCard> -->
             <q-select
-              v-if="!forbidden"
               :disable="loading"
               outlined
               stack-label
@@ -37,13 +33,124 @@
               hint=""
             />
             <QRCodeScanner
-              v-show="!forbidden"
               ref="visitCodeScanner"
+              :scannerId="scannerId"
+              class="full-width"
               :loading="loading"
-              @visitCodeChanged="(val) => (visitCode = val)"
+              @patientCodeChanged="(val) => (patientCode = val)"
               @inputModeChanged="(val) => (inputMode = val)"
             />
+            <div class="q-mt-md">
+              <div
+                v-if="loading"
+                class="full-width flex flex-center"
+                style="height: 100px"
+              >
+                <q-spinner-dots size="lg" />
+              </div>
+              <div v-else class="fit column">
+                <template v-if="patient && visit && phase">
+                  <span class="text-primary text-weight-medium q-mb-md"
+                    >LAST SCAN:</span
+                  >
+                  <div
+                    class="full-width column q-pa-lg q-mb-md"
+                    style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
+                  >
+                    <div class="q-mb-sm">
+                      <span class="text-grey-7">Visit Code:</span>
+                      <span class="q-ml-sm">{{ visit.code }}</span>
+                    </div>
+                    <div>
+                      <span class="text-grey-7">Patient Name:</span>
+                      <span class="q-ml-sm">{{
+                        formatName(
+                          patient.firstName,
+                          patient.middleName,
+                          patient.lastName,
+                          patient.extName
+                        )
+                      }}</span>
+                    </div>
+                    <div>
+                      <span class="text-grey-7">Patient Campus:</span>
+                      <span class="q-ml-sm">{{
+                        campusesMap[patient.campusCode].name
+                      }}</span>
+                    </div>
+                    <div>
+                      <span class="text-grey-7">Patient Affiliation:</span>
+                      <span class="q-ml-sm">{{
+                        affiliationsMap[patient.affiliationCode].name
+                      }}</span>
+                    </div>
+                    <div v-if="patient.collegeCode" class="q-mt-sm">
+                      <div>
+                        <span class="text-grey-7">College:</span>
+                        <span class="q-ml-sm">{{
+                          collegesMap[patient.collegeCode].name
+                        }}</span>
+                      </div>
+                      <div v-if="patient.yearLevel">
+                        <span class="text-grey-7">Year Level:</span>
+                        <span class="q-ml-sm">{{
+                          yearLevels.find(
+                            (l) => l.code === Number(patient.yearLevel)
+                          ).name ?? ""
+                        }}</span>
+                      </div>
+                    </div>
+                    <div class="q-mt-sm">
+                      <div>
+                        <span class="text-grey-7">Exam:</span>
+                        <span class="q-ml-sm">{{
+                          examsMap[phase.phaseCode].name
+                        }}</span>
+                      </div>
+                      <div>
+                        <span class="text-grey-7"
+                          >Date & Time Exam Completed:</span
+                        >
+                        <span class="q-ml-sm">{{
+                          formatDate(phase.dateTimeCreated)
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <ReminderCard v-else>
+                  <template v-slot:body>
+                    <div>
+                      <div v-if="qrCodeMode">
+                        Scan the <strong>Visit QR Code</strong> to mark the
+                        patient as DONE in the
+                        <strong>{{ exam.name.toUpperCase() }}</strong
+                        >.
+                      </div>
+                      <div v-else>
+                        Enter the <strong>Visit Reference Number</strong> to
+                        mark the patient as DONE in the
+                        <strong>{{ exam.name.toUpperCase() }}</strong
+                        >.
+                      </div>
+                    </div>
+                  </template>
+                </ReminderCard>
+              </div>
+            </div>
           </div>
+          <ReminderCard
+            v-else
+            iconName="fa-solid fa-ban"
+            iconColor="negative"
+            bordered
+          >
+            <template v-slot:body>
+              <div class="text-negative">
+                You are not allowed to complete any diagnostic exams.
+              </div>
+            </template>
+          </ReminderCard>
           <!-- <div class="q-mt-md">
             <div class="text-primary text-weight-medium q-mb-sm">
               Recent entries:
@@ -87,103 +194,6 @@
           </div> -->
         </template>
       </CardComponent>
-      <CardComponent>
-        <template v-slot:body>
-          <div
-            v-if="loading"
-            class="full-width flex flex-center"
-            style="height: 100px"
-          >
-            <q-spinner-dots size="lg" />
-          </div>
-          <div v-else class="fit column">
-            <template v-if="patient && visit && phase">
-              <span class="text-primary text-weight-medium q-mb-md"
-                >LAST SCAN:</span
-              >
-              <div
-                class="full-width column q-pa-lg q-mb-md"
-                style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
-              >
-                <div class="q-mb-sm">
-                  <span class="text-grey-7">Visit Code:</span>
-                  <span class="q-ml-sm">{{ visit.code }}</span>
-                </div>
-                <div>
-                  <span class="text-grey-7">Patient Name:</span>
-                  <span class="q-ml-sm">{{
-                    formatName(
-                      patient.firstName,
-                      patient.middleName,
-                      patient.lastName,
-                      patient.extName
-                    )
-                  }}</span>
-                </div>
-                <div>
-                  <span class="text-grey-7">Patient Campus:</span>
-                  <span class="q-ml-sm">{{
-                    campusesMap[patient.campusCode].name
-                  }}</span>
-                </div>
-                <div>
-                  <span class="text-grey-7">Patient Affiliation:</span>
-                  <span class="q-ml-sm">{{
-                    affiliationsMap[patient.affiliationCode].name
-                  }}</span>
-                </div>
-                <div v-if="patient.collegeCode" class="q-mt-sm">
-                  <div>
-                    <span class="text-grey-7">College:</span>
-                    <span class="q-ml-sm">{{
-                      collegesMap[patient.collegeCode].name
-                    }}</span>
-                  </div>
-                  <div v-if="patient.yearLevel">
-                    <span class="text-grey-7">Year Level:</span>
-                    <span class="q-ml-sm">{{
-                      yearLevels.find(
-                        (l) => l.code === Number(patient.yearLevel)
-                      ).name ?? ""
-                    }}</span>
-                  </div>
-                </div>
-                <div class="q-mt-sm">
-                  <div>
-                    <span class="text-grey-7">Exam:</span>
-                    <span class="q-ml-sm">{{
-                      examsMap[phase.phaseCode].name
-                    }}</span>
-                  </div>
-                  <div>
-                    <span class="text-grey-7">Date & Time Exam Completed:</span>
-                    <span class="q-ml-sm">{{
-                      formatDate(phase.dateTimeCreated)
-                    }}</span>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <ReminderCard v-else>
-              <template v-slot:body>
-                <div>
-                  <div v-if="qrCodeMode">
-                    Scan the <strong>Visit QR Code</strong> to mark the patient
-                    as DONE in the <strong>{{ exam.name.toUpperCase() }}</strong
-                    >.
-                  </div>
-                  <div v-else>
-                    Enter the <strong>Visit Reference Number</strong> to mark
-                    the patient as DONE in the
-                    <strong>{{ exam.name.toUpperCase() }}</strong
-                    >.
-                  </div>
-                </div>
-              </template>
-            </ReminderCard>
-          </div>
-        </template>
-      </CardComponent>
     </div>
   </q-page>
 </template>
@@ -199,6 +209,7 @@ import {
 } from "src/helpers/util.js";
 import {
   examsMap,
+  exams,
   affiliationsMap,
   campusesMap,
   collegesMap,
@@ -211,9 +222,6 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
-    // ReminderCard: defineAsyncComponent(() =>
-    //   import("src/components/core/ReminderCard.vue")
-    // ),
     MessageBanner: defineAsyncComponent(() =>
       import("src/components/core/MessageBanner.vue")
     ),
@@ -227,11 +235,18 @@ export default defineComponent({
       import("src/components/core/ReminderCard.vue")
     ),
   },
+  props: {
+    scannerId: {
+      type: String,
+      required: true,
+    },
+  },
   setup() {
     return {
       formatName,
       formatDate,
       examsMap,
+      exams,
       affiliationsMap,
       campusesMap,
       collegesMap,
@@ -242,7 +257,7 @@ export default defineComponent({
     return {
       // recentEntries: [],
       inputMode: null,
-      forbidden: false,
+
       exams: [],
       exam: null,
       loading: false,
@@ -279,18 +294,11 @@ export default defineComponent({
     },
   },
   mounted() {
-    if (!this.user) return;
+    if (!this.user || !this.user.examsHandled) return;
 
-    const examsHandled = Object.values(this.examsMap).filter(
-      (v) =>
-        !["REG", "FIN"].includes(v.code) &&
-        (this.user.examsHandled ?? []).includes(v.code)
+    const examsHandled = exams.filter((e) =>
+      this.user.examsHandled.includes(e.code)
     );
-
-    if (examsHandled.length === 0) {
-      this.forbidden = true;
-      return;
-    }
 
     this.exams = examsHandled;
     this.exam = examsHandled[0];

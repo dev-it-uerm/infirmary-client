@@ -578,7 +578,7 @@ export const examFieldsMap = {
 };
 
 export const app = {
-  name: "UERM Infirmary",
+  name: "UE Infirmary",
   version: "1.0.0",
   url: "https://uermhospital.com.ph/apps/infirmary",
 };

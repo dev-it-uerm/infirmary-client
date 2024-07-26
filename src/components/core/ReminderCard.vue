@@ -1,7 +1,7 @@
 <template>
   <!-- :class="exitable ? 'q-pt-lg q-pb-xl' : 'q-py-lg'" -->
   <div
-    class="column items-center q-pa-md"
+    class="column items-center q-pa-md full-width"
     :style="bordered ? { border: '1px solid rgba(0, 0, 0, 0.3)' } : {}"
   >
     <div :class="$q.screen.gt.sm ? 'col' : 'col-12'">

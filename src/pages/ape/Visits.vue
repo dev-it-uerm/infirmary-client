@@ -81,7 +81,7 @@
                     >
                       <q-icon
                         style="font-weight: bold"
-                        name="fa-solid fa-filter"
+                        name="fa-solid fa-magnifying-glass"
                         size="xs"
                       />
                     </q-btn>
@@ -109,7 +109,7 @@
                         class="cursor-pointer"
                         @click="pendingVisitsFilterStr = ''"
                       />
-                      <q-icon name="search" size="xs" />
+                      <q-icon name="filter_alt" size="xs" />
                     </template>
                   </q-input>
                   <template
@@ -153,10 +153,11 @@
                                   dense
                                   unelevated
                                   class="q-px-sm"
+                                  style="font-size: 9pt"
                                   :class="
                                     item.dateTimeCompleted
-                                      ? 'bg-green-1 text-positive'
-                                      : 'bg-red-1 text-negative'
+                                      ? 'text-positive'
+                                      : 'text-negative'
                                   "
                                   @click.stop="
                                     () => {
@@ -429,7 +430,7 @@
                   >
                     <q-icon
                       style="font-weight: bold"
-                      name="fa-solid fa-filter"
+                      name="fa-solid fa-magnifying-glass"
                       size="xs"
                     />
                   </q-btn>
@@ -455,7 +456,7 @@
                         class="cursor-pointer"
                         @click="completedVisitsFilterStr = ''"
                       />
-                      <q-icon name="search" size="xs" />
+                      <q-icon name="filter_alt" size="xs" />
                     </template>
                   </q-input>
                   <template
@@ -628,7 +629,7 @@
     </MinimizedDialog>
     <MinimizedDialog
       v-if="filterDialogVisible"
-      title="ADVANCE FILTER"
+      title="ADVANCE SEARCH"
       widthOnDesktop="400px"
       @close="filterDialogVisible = false"
     >
@@ -649,7 +650,7 @@
                 debounce="750"
                 stack-label
                 outlined
-                label="Limit Items To"
+                label="Limit Result To"
                 hint=""
                 :rules="[
                   requiredRule,
@@ -768,8 +769,9 @@
                   :disable="loading"
                   :loading="loading"
                   unelevated
+                  icon="search"
                   stack-label
-                  label="FILTER"
+                  label="SEARCH"
                   type="submit"
                 />
               </div>
@@ -880,6 +882,7 @@ export default defineComponent({
       colleges,
       yearLevelsMap,
       yearLevels,
+      departmentsMap,
       showMessage,
       formatDate,
       formatName,

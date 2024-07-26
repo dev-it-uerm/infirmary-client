@@ -1,5 +1,5 @@
 <template>
-  <div class="column" style="gap: 16px">
+  <div v-if="exams && exams.length > 0" class="column" style="gap: 16px">
     <q-select
       stack-label
       outlined
@@ -26,69 +26,77 @@
       >
         <q-spinner-dots size="lg" />
       </div>
-      <div v-else class="fit flex flex-center">
+      <div v-else class="full-width">
         <div
           v-if="visit && patient && exam"
           class="full-width column q-pa-lg q-mb-md"
           style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
         >
           <div>
-            <span class="text-grey-7">Visit Date & Time:</span>
+            <span class="text-grey-7">Date & Time Visited:</span>
             <span class="q-ml-sm">{{ formatDate(visit.dateTimeCreated) }}</span>
           </div>
-          <div class="q-mt-sm">
-            <span class="text-grey-7">Exam Name:</span>
-            <span class="q-ml-sm">{{ exam.name }}</span>
-          </div>
-          <div class="q-mt-sm">
-            <span class="text-grey-7">Patient Code:</span>
-            <span class="q-ml-sm">{{ patient.identificationCode }}</span>
-          </div>
-          <div>
-            <span class="text-grey-7">Patient Name:</span>
-            <span class="q-ml-sm">{{
-              formatName(
-                patient.firstName,
-                patient.middleName,
-                patient.lastName,
-                patient.extName
-              )
-            }}</span>
-          </div>
-          <div>
-            <span class="text-grey-7">Patient Campus:</span>
-            <span class="q-ml-sm">{{
-              campusesMap[patient.campusCode].name
-            }}</span>
-          </div>
-          <div>
-            <span class="text-grey-7">Patient Affiliation:</span>
-            <span class="q-ml-sm">{{
-              affiliationsMap[patient.affiliationCode].name
-            }}</span>
-          </div>
-          <div v-if="patient.deptCode" class="q-mt-sm">
+          <div class="q-mt-md">
             <div>
-              <span class="text-grey-7">Deparment:</span>
+              <span class="text-grey-7">Exam Name:</span>
+              <span class="q-ml-sm">{{ exam.name }}</span>
+            </div>
+            <div>
+              <span class="text-grey-7">Date & Time Exam Accepted:</span>
+              <span class="q-ml-sm">{{ dateTimeExamAccepted }}</span>
+            </div>
+          </div>
+          <div class="q-mt-md">
+            <div>
+              <span class="text-grey-7">Patient Code:</span>
+              <span class="q-ml-sm">{{ patient.identificationCode }}</span>
+            </div>
+            <div>
+              <span class="text-grey-7">Patient Name:</span>
+              <span class="q-ml-sm">{{
+                formatName(
+                  patient.firstName,
+                  patient.middleName,
+                  patient.lastName,
+                  patient.extName
+                )
+              }}</span>
+            </div>
+          </div>
+          <div class="q-mt-md">
+            <div>
+              <span class="text-grey-7">Patient Campus:</span>
+              <span class="q-ml-sm">{{
+                campusesMap[patient.campusCode].name
+              }}</span>
+            </div>
+            <div>
+              <span class="text-grey-7">Patient Affiliation:</span>
+              <span class="q-ml-sm">{{
+                affiliationsMap[patient.affiliationCode].name
+              }}</span>
+            </div>
+            <div v-if="patient.deptCode">
+              <span class="text-grey-7">Patient Deparment:</span>
               <span class="q-ml-sm">{{
                 departmentsMap[patient.deptCode].name
               }}</span>
             </div>
-          </div>
-          <div v-if="patient.collegeCode" class="q-mt-sm">
-            <div>
-              <span class="text-grey-7">College:</span>
-              <span class="q-ml-sm">{{
-                collegesMap[patient.collegeCode].name
-              }}</span>
-            </div>
-            <div v-if="patient.yearLevel">
-              <span class="text-grey-7">Year Level:</span>
-              <span class="q-ml-sm">{{
-                yearLevels.find((l) => l.code === Number(patient.yearLevel))
-                  .name ?? ""
-              }}</span>
-            </div>
+            <template v-if="patient.collegeCode">
+              <div>
+                <span class="text-grey-7">Patient College:</span>
+                <span class="q-ml-sm">{{
+                  collegesMap[patient.collegeCode].name
+                }}</span>
+              </div>
+              <div v-if="patient.yearLevel">
+                <span class="text-grey-7">Patient Year Level:</span>
+                <span class="q-ml-sm">{{
+                  yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                    .name ?? ""
+                }}</span>
+              </div>
+            </template>
           </div>
         </div>
         <ReminderCard v-else bordered>
@@ -103,6 +111,13 @@
       </div>
     </div>
   </div>
+  <ReminderCard v-else iconName="fa-solid fa-ban" iconColor="negative" bordered>
+    <template v-slot:body>
+      <div class="text-negative">
+        You are not allowed to receive any diagnostic exams.
+      </div>
+    </template>
+  </ReminderCard>
 </template>
 
 <script>
@@ -149,7 +164,6 @@ export default defineComponent({
   setup() {
     return {
       examsMap,
-      exams: exams.filter((e) => e.code !== examsMap.MED_HIST.code),
       affiliationsMap,
       campusesMap,
       collegesMap,
@@ -168,7 +182,10 @@ export default defineComponent({
 
       visit: null,
       patient: null,
-      exam: examsMap.PE,
+      dateTimeExamAccepted: null,
+
+      exams: [],
+      exam: null,
     };
   },
   computed: {
@@ -181,12 +198,26 @@ export default defineComponent({
       if (val) this.accept(val);
     },
   },
+  mounted() {
+    if (!this.user) return;
+
+    this.exams = exams.filter((e) => {
+      return (
+        e.code !== examsMap.MED_HIST.code &&
+        this.user.examsHandled &&
+        this.user.examsHandled.includes(e.code)
+      );
+    });
+
+    if (this.exams.length > 0) this.exam = this.exams[0];
+  },
   methods: {
     async accept(patientCode) {
       this.loading = true;
       this.$emit("busy");
       this.visit = null;
       this.patient = null;
+      this.dateTimeExamAccepted = null;
 
       const response = await this.$store.dispatch("ape/acceptExam", {
         identificationCode: patientCode,
@@ -203,6 +234,9 @@ export default defineComponent({
 
       this.visit = response.body.visit;
       this.patient = response.body.patient;
+      this.dateTimeExamAccepted = formatDate(
+        response.body.visitExam.dateTimeAccepted
+      );
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;

@@ -30,7 +30,7 @@
                     PENDING VISITS:
                   </div>
                   <q-btn
-                    :disable="loading"
+                    :disable="pendingVisitsLoading"
                     color="primary"
                     round
                     flat
@@ -50,7 +50,8 @@
                   style="gap: 10px; cursor: pointer"
                   @click="
                     () => {
-                      if (!loading) filterDialogVisible = true;
+                      if (!pendingVisitsLoading)
+                        pendingVisitsFilterVisible = true;
                     }
                   "
                 >
@@ -59,25 +60,30 @@
                     style="gap: 6px; letter-spacing: 0.8pt"
                   >
                     <q-badge class="bg-grey" style="padding: 8px">
-                      SHOWING {{ filters.limit }} VISITS
-                    </q-badge>
-                    <q-badge class="bg-grey" style="padding: 8px">
-                      {{ campusesMap[filters.patientCampusCode]?.name }}
+                      SHOWING {{ pendingVisitsFilters.limit }} VISITS
                     </q-badge>
                     <q-badge class="bg-grey" style="padding: 8px">
                       {{
-                        affiliationsMap[filters.patientAffiliationCode]?.name
+                        campusesMap[pendingVisitsFilters.patientCampusCode]
+                          ?.name
+                      }}
+                    </q-badge>
+                    <q-badge class="bg-grey" style="padding: 8px">
+                      {{
+                        affiliationsMap[
+                          pendingVisitsFilters.patientAffiliationCode
+                        ]?.name
                       }}
                     </q-badge>
                   </div>
                   <div class="col-auto">
                     <q-btn
-                      :disable="loading"
+                      :disable="pendingVisitsLoading"
                       color="primary"
                       round
                       flat
                       dense
-                      @click.stop="filterDialogVisible = true"
+                      @click.stop="pendingVisitsFilterVisible = true"
                     >
                       <q-icon
                         style="font-weight: bold"
@@ -89,7 +95,7 @@
                 </div>
               </div>
               <div>
-                <FetchingData v-if="loading" />
+                <FetchingData v-if="pendingVisitsLoading" />
                 <template v-else>
                   <q-input
                     :style="$q.screen.gt.md ? { maxWidth: '200px' } : {}"
@@ -407,12 +413,12 @@
                 <div class="col-auto">
                   <q-btn
                     class="col-auto"
-                    :disable="loading"
+                    :disable="completedVisitsLoading"
                     color="primary"
                     round
                     flat
                     dense
-                    @click="getVisits"
+                    @click="getCompletedVisits"
                   >
                     <q-icon
                       style="font-weight: bold"
@@ -421,12 +427,12 @@
                     />
                   </q-btn>
                   <q-btn
-                    :disable="loading"
+                    :disable="completedVisitsLoading"
                     color="primary"
                     round
                     flat
                     dense
-                    @click="filterDialogVisible = true"
+                    @click="completedVisitsFilterVisible = true"
                   >
                     <q-icon
                       style="font-weight: bold"
@@ -437,7 +443,7 @@
                 </div>
               </div>
               <div>
-                <FetchingData v-if="loading" />
+                <FetchingData v-if="completedVisitsLoading" />
                 <template v-else>
                   <q-input
                     dense
@@ -627,159 +633,30 @@
         </div>
       </template>
     </MinimizedDialog>
-    <MinimizedDialog
-      v-if="filterDialogVisible"
-      title="ADVANCE SEARCH"
-      widthOnDesktop="400px"
-      @close="filterDialogVisible = false"
-    >
-      <template v-slot:body>
-        <div>
-          <q-form
-            @submit="
-              () => {
-                filterDialogVisible = false;
-                getVisits();
-              }
-            "
-          >
-            <div class="column q-pa-lg" style="padding: 36px">
-              <!-- :options="[{ code: null, name: 'All' }, ...campuses]" -->
-              <q-input
-                :disable="loading"
-                debounce="750"
-                stack-label
-                outlined
-                label="Limit Result To"
-                hint=""
-                :rules="[
-                  requiredRule,
-                  (val) =>
-                    Number(val) < 1 || Number(val) > 100
-                      ? 'Should be 1 to 100 only.'
-                      : undefined,
-                ]"
-                v-model.trim="filters.limit"
-              />
-              <q-input
-                :disable="loading"
-                debounce="750"
-                stack-label
-                outlined
-                label="Year"
-                hint=""
-                :rules="[requiredRule, yearRule]"
-                v-model.trim="filters.year"
-              />
-              <!-- <q-select
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    :options="[
-                      { value: null, label: 'All' },
-                      { value: 'PENDING', label: 'Pending' },
-                      { value: 'COMPLETED', label: 'Completed' },
-                    ]"
-                    label="Status"
-                    hint=""
-                    v-model="filters.status"
-                  /> -->
-              <q-select
-                :disable="loading"
-                stack-label
-                outlined
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :options="campuses"
-                label="Campus"
-                hint=""
-                v-model="filters.patientCampusCode"
-              />
-              <q-select
-                :disable="loading"
-                stack-label
-                outlined
-                emit-value
-                map-options
-                option-label="name"
-                option-value="code"
-                :options="affiliations"
-                label="Affiliation"
-                hint=""
-                v-model="filters.patientAffiliationCode"
-              />
-              <!-- <template
-                  v-if="filters.patientAffiliationCode === affiliationsMap.STU.code"
-                >
-                  <q-select
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="colleges"
-                    label="College"
-                    v-model="filters.patientCollegeCode"
-                    hint=""
-                  />
-                  <q-select
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="yearLevels"
-                    label="Year Level"
-                    v-model="filters.patientYearLevel"
-                    hint=""
-                  />
-                </template> -->
-              <!-- <DateRange
-                  :disable="loading"
-                  stack-label
-                  outlined
-                  :subtractDaysCount="7"
-                  label="Visit Date Range"
-                  hint=""
-                  :initialValue="filters.visitDateRange"
-                  @valueChanged="(val) => (filters.visitDateRange = val)"
-                /> -->
-              <!-- <q-input
-                  :disable="loading"
-                  debounce="750"
-                  stack-label
-                  outlined
-                  label="Patient Name"
-                  hint=""
-                  v-model.trim="filters.patientName"
-                /> -->
-              <div class="row items-start justify-end">
-                <q-btn
-                  style="height: 40px"
-                  color="accent"
-                  class="q-px-md q-py-xs text-black"
-                  :disable="loading"
-                  :loading="loading"
-                  unelevated
-                  icon="search"
-                  stack-label
-                  label="SEARCH"
-                  type="submit"
-                />
-              </div>
-            </div>
-          </q-form>
-        </div>
-      </template>
-    </MinimizedDialog>
+    <AdvanceSearch
+      v-if="pendingVisitsFilterVisible"
+      :initialValue="pendingVisitsFilters"
+      @close="pendingVisitsFilterVisible = false"
+      @valueChanged="
+        (val) => {
+          pendingVisitsFilterVisible = false;
+          pendingVisitsFilters = val;
+          getVisits();
+        }
+      "
+    />
+    <AdvanceSearch
+      v-if="completedVisitsFilterVisible"
+      :initialValue="completedVisitsFilters"
+      @close="completedVisitsFilterVisible = false"
+      @valueChanged="
+        (val) => {
+          completedVisitsFilterVisible = false;
+          completedVisitsFilters = val;
+          getCompletedVisits();
+        }
+      "
+    />
     <VisitDetails
       v-if="visitInfoVisible"
       :visit="currentVisit"
@@ -869,6 +746,9 @@ export default defineComponent({
     PrintoutVisitDetails: defineAsyncComponent(() =>
       import("src/components/printouts/VisitDetails.vue")
     ),
+    AdvanceSearch: defineAsyncComponent(() =>
+      import("src/components/visit-page/AdvanceSearch.vue")
+    ),
   },
   setup() {
     return {
@@ -954,9 +834,9 @@ export default defineComponent({
   },
   data() {
     return {
-      filters: {
+      pendingVisitsFilters: {
         limit: 50,
-        status: null,
+        status: "PENDING",
         year: new Date().getFullYear(),
         // visitDateRange: {
         //   from: jsDateToISOString(subtractDay(new Date(), 7), true).replace(
@@ -974,10 +854,19 @@ export default defineComponent({
         // patientYearLevel: null,
       },
 
+      completedVisitsFilters: {
+        limit: 50,
+        status: "COMPLETED",
+        year: new Date().getFullYear(),
+        patientCampusCode: campusesMap.CAL.code,
+        patientAffiliationCode: affiliationsMap.STU.code,
+      },
+
       pendingVisitsFilterStr: "",
       completedVisitsFilterStr: "",
 
-      loading: false,
+      pendingVisitsLoading: false,
+      completedVisitsLoading: false,
 
       pendingVisits: [],
       completedVisits: [],
@@ -988,7 +877,9 @@ export default defineComponent({
       visitInfoTabCode: null,
       visitInfoVisible: false,
 
-      filterDialogVisible: false,
+      pendingVisitsFilterVisible: false,
+      completedVisitsFilterVisible: false,
+
       currentVisit: null,
     };
   },
@@ -1010,7 +901,10 @@ export default defineComponent({
     },
   },
   mounted() {
-    if (this.user) this.getVisits();
+    if (this.user) {
+      this.getVisits();
+      this.getCompletedVisits();
+    }
   },
   methods: {
     getExamName(code) {
@@ -1048,51 +942,58 @@ export default defineComponent({
       });
     },
     async getVisits() {
-      this.loading = true;
+      this.pendingVisitsLoading = true;
 
-      const sanitizedFilters = Object.entries(this.filters).reduce((acc, e) => {
-        if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
-        return acc;
-      }, {});
-
-      const response1 = await this.$store.dispatch(
-        "ape/getVisitsPending",
-        sanitizedFilters
+      const response = await this.$store.dispatch(
+        "ape/getVisits",
+        this.pendingVisitsFilters
       );
 
-      const response2 = await this.$store.dispatch(
-        "ape/getVisitsCompleted",
-        sanitizedFilters
-      );
-
-      if (response1.error || response2.error) {
+      if (response.error) {
         showMessage(this.$q, false, "Unable to fetch visits. Please try again");
         return;
       }
 
       await delay(1000);
 
-      const response1Rows1 = response1.body[0];
-      const response1Rows2 = response1.body[1];
-      const response2Rows1 = response2.body[0];
-      const response2Rows2 = response2.body[1];
+      const responseRows1 = response.body[0];
+      const responseRows2 = response.body[1];
 
       const formattedResponse1 = this.formatResponse(
-        response1Rows1,
-        response1Rows2
-      );
-
-      const formattedResponse2 = this.formatResponse(
-        response2Rows1,
-        response2Rows2
+        responseRows1,
+        responseRows2
       );
 
       this.pendingVisits = formattedResponse1;
-      this.completedVisits = formattedResponse2;
-
       this.pendingVisitsFilterStr = "";
+      this.pendingVisitsLoading = false;
+    },
+    async getCompletedVisits() {
+      this.completedVisitsLoading = true;
+
+      const response = await this.$store.dispatch(
+        "ape/getVisits",
+        this.completedVisitsFilters
+      );
+
+      if (response.error) {
+        showMessage(this.$q, false, "Unable to fetch visits. Please try again");
+        return;
+      }
+
+      await delay(1000);
+
+      const responseRows1 = response.body[0];
+      const responseRows2 = response.body[1];
+
+      const formattedResponse = this.formatResponse(
+        responseRows1,
+        responseRows2
+      );
+
+      this.completedVisits = formattedResponse;
       this.completedVisitsFilterStr = "";
-      this.loading = false;
+      this.completedVisitsLoading = false;
     },
   },
 });

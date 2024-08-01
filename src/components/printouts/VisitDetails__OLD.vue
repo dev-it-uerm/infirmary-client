@@ -169,7 +169,7 @@ export default {
       const examCodesToTableColIndexMap = {
         MED_HIST: 0,
         PE: 0,
-        RAD_XRCHST: 0,
+        RAD_XR_CHST: 0,
         LAB_CBC: 1,
         LAB_URI: 1,
         LAB_FCL: 1,

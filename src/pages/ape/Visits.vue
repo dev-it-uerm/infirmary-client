@@ -35,7 +35,7 @@
                     round
                     flat
                     dense
-                    @click="getVisits"
+                    @click="getPendingVisits"
                   >
                     <q-icon
                       style="font-weight: bold"
@@ -641,7 +641,7 @@
         (val) => {
           pendingVisitsFilterVisible = false;
           pendingVisitsFilters = val;
-          getVisits();
+          getPendingVisits();
         }
       "
     />
@@ -667,7 +667,12 @@
           visitInfoVisible = false;
         }
       "
-      @visitCompleted="getVisits"
+      @visitCompleted="
+        () => {
+          getPendingVisits();
+          getCompletedVisits();
+        }
+      "
     />
     <MaximizedDialog
       v-if="visitPrintoutVisible"
@@ -747,7 +752,7 @@ export default defineComponent({
       import("src/components/printouts/VisitDetails.vue")
     ),
     AdvanceSearch: defineAsyncComponent(() =>
-      import("src/components/visit-page/AdvanceSearch.vue")
+      import("src/components/visit-page/AdvancedSearch.vue")
     ),
   },
   setup() {
@@ -902,7 +907,7 @@ export default defineComponent({
   },
   mounted() {
     if (this.user) {
-      this.getVisits();
+      this.getPendingVisits();
       this.getCompletedVisits();
     }
   },
@@ -941,7 +946,7 @@ export default defineComponent({
         };
       });
     },
-    async getVisits() {
+    async getPendingVisits() {
       this.pendingVisitsLoading = true;
 
       const response = await this.$store.dispatch(
@@ -963,6 +968,10 @@ export default defineComponent({
         responseRows1,
         responseRows2
       );
+
+      // const formattedResponse1 = Array(10)
+      //   .fill(this.formatResponse(responseRows1, responseRows2))
+      //   .flatMap((a) => a);
 
       this.pendingVisits = formattedResponse1;
       this.pendingVisitsFilterStr = "";

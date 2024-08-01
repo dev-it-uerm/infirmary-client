@@ -381,11 +381,11 @@ export default defineComponent({
           affiliationCode: this.affiliationCode,
           year: this.year,
 
-          examCode: examsMap.RAD_XRCHST.code,
+          examCode: examsMap.RAD_XR_CHST.code,
 
           details: [
             {
-              code: examFieldsMap[examsMap.RAD_XRCHST.code][0].code,
+              code: examFieldsMap[examsMap.RAD_XR_CHST.code][0].code,
               value: this.xrayImpression,
             },
           ],

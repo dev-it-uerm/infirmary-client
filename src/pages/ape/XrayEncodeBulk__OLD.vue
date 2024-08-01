@@ -515,10 +515,10 @@ export default defineComponent({
 
         const response = await this.$store.dispatch("ape/saveExamDetails", {
           visitId: row.id,
-          examCode: examsMap.RAD_XRCHST.code,
+          examCode: examsMap.RAD_XR_CHST.code,
           details: [
             {
-              code: examFieldsMap[examsMap.RAD_XRCHST.code][0].code,
+              code: examFieldsMap[examsMap.RAD_XR_CHST.code][0].code,
               value: this.xrayImpression,
             },
           ],

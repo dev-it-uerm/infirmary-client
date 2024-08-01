@@ -348,7 +348,7 @@ export default defineComponent({
         LAB_CBC: "text-grey-8",
         LAB_URI: "text-grey-8",
         LAB_FCL: "text-grey-8",
-        RAD_XRCHST: "text-grey-8",
+        RAD_XR_CHST: "text-grey-8",
         FIN: "text-positive",
       },
       requiredRule: inputRules.required,

@@ -1,6 +1,6 @@
 <template>
   <MinimizedDialog
-    title="ADVANCE SEARCH"
+    title="ADVANCED SEARCH"
     widthOnDesktop="400px"
     @close="$emit('close')"
   >

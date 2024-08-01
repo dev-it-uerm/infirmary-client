@@ -44,7 +44,7 @@ export const examsMap = {
     name: "Lab - Fecalysis",
     icon: "fa-solid fa-poop",
   },
-  RAD_XRCHST: {
+  RAD_XR_CHST: {
     name: "Rad - X-Ray (Chest)",
     icon: "fa-solid fa-x-ray",
   },
@@ -562,7 +562,7 @@ export const examFieldsMap = {
       type: "EXAMTEXTAREA",
     },
   ],
-  [examsMap.RAD_XRCHST.code]: [
+  [examsMap.RAD_XR_CHST.code]: [
     {
       code: `IMPRN`,
       name: "Impression",

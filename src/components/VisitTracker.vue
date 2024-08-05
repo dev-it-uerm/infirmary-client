@@ -82,20 +82,24 @@
           </div>
           <q-list v-if="exams && exams.length > 0" class="full-width" separator>
             <template v-for="(exam, idx) in exams" :key="idx">
-              <q-item>
+              <q-item class="q-py-sm q-px-md">
                 <q-item-section>
-                  <q-item-label caption>
-                    {{
-                      exam.dateTimeCompleted
-                        ? formatDate(exam.dateTimeCompleted)
-                        : "NOT YET COMPLETED"
-                    }}
-                  </q-item-label>
-                  <q-item-label>
+                  <q-item-label class="q-mb-sm">
                     {{ examsMap[exam.examCode].name }}
                   </q-item-label>
+                  <div>
+                    <q-item-label caption>
+                      {{
+                        exam.dateTimeCompleted
+                          ? formatDate(exam.dateTimeCompleted)
+                          : "NOT YET COMPLETED"
+                      }}
+                    </q-item-label>
+                    <q-item-label caption>
+                      {{ exam.completedBy }}
+                    </q-item-label>
+                  </div>
                 </q-item-section>
-
                 <q-item-section side>
                   <q-icon
                     :name="
@@ -110,7 +114,7 @@
               </q-item>
             </template>
             <div
-              v-if="visit?.dateTimeCompleted"
+              v-if="user && visit?.dateTimeCompleted"
               class="row justify-center q-mt-lg"
             >
               <q-btn

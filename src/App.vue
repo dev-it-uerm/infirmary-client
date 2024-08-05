@@ -50,12 +50,13 @@ export default defineComponent({
           "PRIVACY_POLICY",
           "LOGIN",
           "PASSWORD_RESET",
-          "VISIT_APPOINTMENT",
-          "VISIT_TRACKER",
-          "VISIT_APPOINTMENT_LINK",
+          "APE_VISIT_TRACKER",
+          // "APE_VISIT_APPOINTMENT",
+          // "APE_VISIT_APPOINTMENT_LINK",
         ].includes(routeName)
-      )
+      ) {
         return true;
+      }
 
       return false;
     },

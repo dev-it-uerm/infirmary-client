@@ -208,7 +208,7 @@ export const timeInOut = async (context, employeeCode) => {
 export const getXrayChestResultTemplates = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/misc/xray-chest-result-templates`,
+    `${context.rootState.app.apiHost}/ape/misc/xray-chest-result-templates`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,

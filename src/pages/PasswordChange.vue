@@ -179,6 +179,7 @@ export default defineComponent({
       this.loading = false;
 
       this.$router.push("/login");
+
       showMessage(
         this.$q,
         true,

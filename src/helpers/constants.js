@@ -319,7 +319,7 @@ export const examFieldsMap = {
   [examsMap.LAB_CBC.code]: [
     {
       code: `HGB`,
-      name: "HGB",
+      name: "Hemoglobin",
       type: "EXAM",
       default: {
         value: null,
@@ -329,7 +329,7 @@ export const examFieldsMap = {
     },
     {
       code: `HCT`,
-      name: "HCT",
+      name: "Hematocrit",
       type: "EXAM",
       default: {
         value: null,
@@ -399,7 +399,7 @@ export const examFieldsMap = {
     },
     {
       code: `NEUT`,
-      name: "NEUT",
+      name: "Neutrophils",
       type: "EXAM",
       default: {
         value: null,
@@ -409,7 +409,7 @@ export const examFieldsMap = {
     },
     {
       code: `LYMPH`,
-      name: "LYMPH",
+      name: "Lymphocytes",
       type: "EXAM",
       default: {
         value: null,
@@ -418,8 +418,18 @@ export const examFieldsMap = {
       },
     },
     {
+      code: `EOSINO`,
+      name: "Eosinophils",
+      type: "EXAM",
+      default: {
+        value: null,
+        unit: "",
+        normalRange: "",
+      },
+    },
+    {
       code: `MONO`,
-      name: "MONO",
+      name: "Monocytes",
       type: "EXAM",
       default: {
         value: null,
@@ -429,7 +439,7 @@ export const examFieldsMap = {
     },
     {
       code: `BASO`,
-      name: "BASO",
+      name: "Basophils",
       type: "EXAM",
       default: {
         value: null,
@@ -439,7 +449,7 @@ export const examFieldsMap = {
     },
     {
       code: `PLT`,
-      name: "PLT",
+      name: "Platelet",
       type: "EXAM",
       default: {
         value: null,
@@ -459,7 +469,7 @@ export const examFieldsMap = {
     },
     {
       code: `MORPH`,
-      name: "MORPH",
+      name: "Morphology",
       type: "EXAM",
       default: {
         value: null,

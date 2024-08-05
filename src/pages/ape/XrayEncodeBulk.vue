@@ -408,6 +408,15 @@ export default defineComponent({
         patient.loading = false;
       }
 
+      if (this.errorCount > 0) {
+        showMessage(
+          this.$q,
+          false,
+          "Saving done but there are errors encountered."
+        );
+      } else {
+        showMessage(this.$q, true, "Saving done. No errors.");
+      }
       this.saving = false;
     },
   },

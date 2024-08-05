@@ -177,7 +177,10 @@ export default defineComponent({
     },
     async register(registrationMode, patientCode) {
       let success = true;
-      let message = `Patient has been registered.`;
+      let message =
+        registrationMode === "REG"
+          ? `Patient has been registered.`
+          : "Employee attendance has been saved.";
 
       this.loading = true;
       await delay(2000);

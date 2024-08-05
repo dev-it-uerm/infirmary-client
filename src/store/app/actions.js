@@ -66,10 +66,10 @@ export const changePassword = async (context, payload) => {
   );
 };
 
-export const resetPassword = async (context, payload) => {
+export const changePasswordViaToken = async (context, payload) => {
   return await request(
     "put",
-    `${context.rootState.app.apiHost}/user/reset-pw`,
+    `${context.rootState.app.apiHost}/user/change-pw-via-token`,
     null,
     null,
     payload,
@@ -92,17 +92,6 @@ export const getUsers = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/user`,
-    payload,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context
-  );
-};
-
-export const getXrayChestResultTemplates = async (context, payload) => {
-  return await request(
-    "get",
-    `${context.rootState.app.apiHost}/xray-chest-result-templates`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,

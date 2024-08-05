@@ -278,7 +278,7 @@
                           :class="$q.screen.lt.md ? 'q-mt-md' : ''"
                         >
                           <span class="text-weight-bold">{{
-                            pendingVisits.length
+                            filteredPendingVisits.length
                           }}</span
                           >&nbsp;item/s
                         </q-badge>
@@ -300,7 +300,7 @@
                           border-left: 1px solid rgba(0, 0, 0, 0.1);
                           border-right: 1px solid rgba(0, 0, 0, 0.1);
                         "
-                        :items="pendingVisits"
+                        :items="filteredPendingVisits"
                         v-slot="{ item, index }"
                       >
                         <q-item
@@ -354,6 +354,16 @@
                                     collegesMap[item.patientCollegeCode]
                                       ?.name ??
                                     departmentsMap[item.patientDeptCode]?.name
+                                  }}</q-badge
+                                >
+                                <q-badge
+                                  v-if="item.patientYearLevel"
+                                  class="bg-grey"
+                                  >{{
+                                    yearLevels.find(
+                                      (l) =>
+                                        l.code === Number(item.patientYearLevel)
+                                    )?.name
                                   }}</q-badge
                                 >
                               </div>

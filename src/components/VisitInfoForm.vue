@@ -229,7 +229,9 @@ export default defineComponent({
 
       const response = await this.$store.dispatch("ape/updateVisit", {
         id: this.visitId,
-        physicianCode: this.value.physician.code,
+        ...(this.value.physician?.code
+          ? { physicianCode: this.value.physician?.code }
+          : {}),
         remarks: this.value.remarks,
       });
 

@@ -128,7 +128,7 @@ export default defineComponent({
       this.templateLoading = true;
 
       const response = await this.$store.dispatch(
-        "app/getXrayChestResultTemplates"
+        "ape/getXrayChestResultTemplates"
       );
       await delay(2000);
 

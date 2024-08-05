@@ -155,7 +155,10 @@ export default defineComponent({
         newPassword: this.newPassword1,
       };
 
-      const response = await this.$store.dispatch("app/resetPassword", payload);
+      const response = await this.$store.dispatch(
+        "app/changePasswordViaToken",
+        payload
+      );
 
       if (response.error) {
         this.showBanner(

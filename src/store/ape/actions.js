@@ -14,7 +14,7 @@ export const getVisits = async (context, urlQuery) => {
 export const sendVisitAppointmentLink = async (context, payload) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/send-visit-appointment-link`,
+    `${context.rootState.app.apiHost}/ape/visit/send-appointment-link`,
     null,
     null,
     payload
@@ -24,7 +24,7 @@ export const sendVisitAppointmentLink = async (context, payload) => {
 export const scheduleSelf = async (context, accessToken) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/schedule-visit-self`,
+    `${context.rootState.app.apiHost}/ape/visit/self-schedule`,
     { accessToken }
   );
 };
@@ -32,7 +32,7 @@ export const scheduleSelf = async (context, accessToken) => {
 export const schedule = async (context, patientCode) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/schedule-visit/${patientCode}`,
+    `${context.rootState.app.apiHost}/ape/visit/schedule/${patientCode}`,
     null,
     context.rootState.app?.user?.accessToken,
     null,
@@ -43,7 +43,7 @@ export const schedule = async (context, patientCode) => {
 export const acceptExam = async (context, payload) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/accept-visit-exam`,
+    `${context.rootState.app.apiHost}/ape/visit/accept-exam`,
     null,
     context.rootState.app?.user?.accessToken,
     payload,
@@ -54,7 +54,7 @@ export const acceptExam = async (context, payload) => {
 export const completeExam = async (context, payload) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/complete-visit-exam`,
+    `${context.rootState.app.apiHost}/ape/visit/complete-exam`,
     null,
     context.rootState.app?.user?.accessToken,
     payload,
@@ -62,10 +62,10 @@ export const completeExam = async (context, payload) => {
   );
 };
 
-export const track = async (context, visitCode) => {
+export const track = async (context, patientCode) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/track-visit/${visitCode}`,
+    `${context.rootState.app.apiHost}/ape/visit/track/${patientCode}`,
     null,
     context.rootState.app?.user?.accessToken,
     null,
@@ -76,7 +76,7 @@ export const track = async (context, visitCode) => {
 export const getVisitExamDetails = async (context, urlQuery) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/visit-exam-details`,
+    `${context.rootState.app.apiHost}/ape/visit/exam-details`,
     urlQuery,
     context.rootState.app?.user?.accessToken,
     null,
@@ -131,7 +131,7 @@ export const getVisitPdfJson = async (context, visitId) => {
 export const saveExamDetails = async (context, payload) => {
   return await request(
     "put",
-    `${context.rootState.app.apiHost}/ape/visit-exam-details`,
+    `${context.rootState.app.apiHost}/ape/visit/exam-details`,
     null,
     context.rootState.app?.user?.accessToken,
     payload,
@@ -161,21 +161,10 @@ export const addPatient = async (context, payload) => {
   );
 };
 
-export const timeInOut = async (context, employeeCode) => {
-  return await request(
-    "post",
-    `${context.rootState.app.apiHost}/ape/time-in-out/${employeeCode}`,
-    null,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context
-  );
-};
-
 export const getVisitExams = async (context, visitId) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/visit-exams/${visitId}`,
+    `${context.rootState.app.apiHost}/ape/visit/exams/${visitId}`,
     null,
     context.rootState.app?.user?.accessToken,
     null,
@@ -186,7 +175,7 @@ export const getVisitExams = async (context, visitId) => {
 export const getVisitsWithXray = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/visit-w-xray`,
+    `${context.rootState.app.apiHost}/ape/visit/w-xray`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -198,6 +187,28 @@ export const getAnalyticsCompletedVisitsPerDay = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/analytics/completed-visits-per-day`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const timeInOut = async (context, employeeCode) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/misc/time-in-out/${employeeCode}`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getXrayChestResultTemplates = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/misc/xray-chest-result-templates`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,

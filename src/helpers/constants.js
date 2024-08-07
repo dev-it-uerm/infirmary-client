@@ -102,6 +102,22 @@ export const departmentsMap = {
   PUBLSH: "TEXTBOOK EVALUATION & PUBLISHING OFFICE",
   UNIVREL: "UNIVERSITY RELATIONS OFFICE",
   UNIVTHEA: "UNIVERSITY THEATER",
+  GRAD: "Graduate School",
+  MED: "Medicine",
+  NURS: "Nursing",
+  MEDTECH: "Medical Technology",
+  ARTS: "Arts and Sciences",
+  BA: "Business Administration",
+  ENGR: "Engineering",
+  CSS: "Computer Studies and Systems",
+  DEN: "Dentistry",
+  EDUC: "Education",
+  FAAD: "Fine Arts, Architecture and Design",
+  LAW: "Law",
+  SHS: "Senior High School",
+  HS: "High School",
+  ELEM: "Elementary",
+  KNDR: "Kindergarten",
 };
 
 export const collegesMap = {

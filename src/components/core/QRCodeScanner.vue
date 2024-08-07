@@ -38,7 +38,7 @@
       maxlength="22"
       outlined
       stack-label
-      label="Visit Code"
+      label="Patient Code"
       v-model.trim="patientCode"
     />
   </div>

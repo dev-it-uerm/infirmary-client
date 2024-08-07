@@ -67,6 +67,14 @@
               stack-label
               outlined
               maxlength="255"
+              label="Extension Name (Jr., II, etc.)"
+              v-model.trim="extName"
+              hint=""
+            />
+            <q-input
+              stack-label
+              outlined
+              maxlength="255"
               label="Email Address"
               :rules="[requiredRule]"
               v-model.trim="emailAddress"
@@ -143,6 +151,7 @@ export default defineComponent({
       firstName: null,
       middleName: null,
       lastName: null,
+      extName: null,
 
       emailAddress: null,
       mobileNumber: null,
@@ -161,6 +170,7 @@ export default defineComponent({
       this.firstName = null;
       this.middleName = null;
       this.lastName = null;
+      this.extName = null;
 
       this.emailAddress = null;
       this.mobileNumber = null;
@@ -175,6 +185,7 @@ export default defineComponent({
         firstName: this.firstName,
         middleName: this.middleName,
         lastName: this.lastName,
+        extName: this.extName,
 
         roleCode: this.roleCode,
 

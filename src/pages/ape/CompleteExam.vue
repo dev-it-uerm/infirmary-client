@@ -58,8 +58,8 @@
                     style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
                   >
                     <div class="q-mb-sm">
-                      <span class="text-grey-7">Visit Code:</span>
-                      <span class="q-ml-sm">{{ visit.code }}</span>
+                      <span class="text-grey-7">Patient Code:</span>
+                      <span class="q-ml-sm">{{ patient.code }}</span>
                     </div>
                     <div>
                       <span class="text-grey-7">Patient Name:</span>

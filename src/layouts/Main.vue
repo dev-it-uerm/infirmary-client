@@ -42,7 +42,8 @@
         </div>
       </q-toolbar>
     </q-header>
-    <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered overlay>
+    <!-- <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered overlay> -->
+    <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered>
       <q-scroll-area style="height: 100%">
         <div
           class="column q-pa-lg justify-between fit no-wrap"
@@ -222,13 +223,14 @@
         "
       />
     </q-drawer>
-    <q-drawer
+    <!-- <q-drawer
       v-if="user"
       v-model="rightDrawerOpen"
       side="right"
       bordered
       overlay
-    >
+    > -->
+    <q-drawer v-if="user" v-model="rightDrawerOpen" side="right" bordered>
       <q-scroll-area style="height: 100%">
         <div
           class="column q-pa-lg justify-between fit no-wrap"

@@ -17,8 +17,8 @@
               :rules="[
                 requiredRule,
                 (val) =>
-                  Number(val) < 1 || Number(val) > 100
-                    ? 'Should be 1 to 100 only.'
+                  Number(val) < 1 || Number(val) > 99999
+                    ? 'Should be 1 to 99999 only.'
                     : undefined,
               ]"
               v-model.trim="limit"

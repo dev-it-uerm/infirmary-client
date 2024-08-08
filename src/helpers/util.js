@@ -224,12 +224,12 @@ export const request = async (
   try {
     return { body: (await axios(opts)).data };
   } catch (error) {
-    // if (
-    //   vuexContext &&
-    //   error.response?.status === httpResponseStatusCodesMap.UNAUTHORIZED.code
-    // ) {
-    //   await vuexContext.dispatch("app/clearUser", null, { root: true });
-    // }
+    if (
+      vuexContext &&
+      error.response?.status === httpResponseStatusCodesMap.UNAUTHORIZED.code
+    ) {
+      await vuexContext.dispatch("app/clearUser", null, { root: true });
+    }
 
     return {
       error: true,

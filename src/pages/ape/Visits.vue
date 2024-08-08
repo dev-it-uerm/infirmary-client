@@ -1,11 +1,12 @@
 <template>
   <!-- class="row justify-center" -->
   <q-page :class="$q.screen.gt.sm ? 'q-pa-lg' : 'q-pa-md'">
-    <CardComponent>
-      <template v-slot:header>
-        <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
-      </template>
-      <template v-slot:body>
+    <div
+      class="bg-white full-width"
+      style="border-radius: 6px; overflow: hidden"
+    >
+      <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
+      <div :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
         <div class="column full-width" style="gap: 36px">
           <div
             class="full-width"
@@ -596,8 +597,8 @@
             </div>
           </div>
         </div>
-      </template>
-    </CardComponent>
+      </div>
+    </div>
     <MinimizedDialog
       v-if="statusHistoryVisible"
       title="DIAGNOSITC EXAMS"
@@ -754,9 +755,6 @@ export default defineComponent({
     ),
     NoResult: defineAsyncComponent(() =>
       import("src/components/core/NoResult.vue")
-    ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
     ),
     PrintoutVisitDetails: defineAsyncComponent(() =>
       import("src/components/printouts/VisitDetails.vue")

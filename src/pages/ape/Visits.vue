@@ -850,7 +850,7 @@ export default defineComponent({
   data() {
     return {
       pendingVisitsFilters: {
-        limit: 50,
+        limit: 99999,
         status: "PENDING",
         year: new Date().getFullYear(),
         // visitDateRange: {
@@ -870,7 +870,7 @@ export default defineComponent({
       },
 
       completedVisitsFilters: {
-        limit: 50,
+        limit: 99999,
         status: "COMPLETED",
         year: new Date().getFullYear(),
         patientCampusCode: campusesMap.CAL.code,

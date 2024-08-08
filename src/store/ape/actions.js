@@ -194,6 +194,17 @@ export const getAnalyticsCompletedVisitsPerDay = async (context, payload) => {
   );
 };
 
+export const getAttendees = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/attendees`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
 export const timeInOut = async (context, employeeCode) => {
   return await request(
     "post",

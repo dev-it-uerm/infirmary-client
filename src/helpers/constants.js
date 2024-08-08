@@ -374,6 +374,16 @@ export const examFieldsMap = {
       },
     },
     {
+      code: `MCH`,
+      name: "MCH",
+      type: "EXAM",
+      default: {
+        value: null,
+        unit: "",
+        normalRange: "",
+      },
+    },
+    {
       code: `MCV`,
       name: "MCV",
       type: "EXAM",

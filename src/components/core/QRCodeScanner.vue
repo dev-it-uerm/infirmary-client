@@ -32,7 +32,7 @@
     ></div>
     <q-input
       v-if="inputMode !== 'QR'"
-      debounce="750"
+      debounce="2000"
       :loading="loading"
       :disable="loading"
       maxlength="22"
@@ -92,7 +92,7 @@ export default defineComponent({
     patientCode: {
       handler(val) {
         const v = val?.replace(/ /g, "");
-        this.$emit("patientCodeChanged", v && v.length > 3 ? v : null);
+        this.$emit("patientCodeChanged", v && v.length > 2 ? v : null);
       },
       immediate: true,
     },

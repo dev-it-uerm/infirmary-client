@@ -862,7 +862,7 @@ export default defineComponent({
         // },
 
         patientCampusCode: campusesMap.CAL.code,
-        patientAffiliationCode: affiliationsMap.STU.code,
+        patientAffiliationCode: affiliationsMap.EMP.code,
         // patientName: null,
 
         // patientCollegeCode: null,
@@ -874,7 +874,7 @@ export default defineComponent({
         status: "COMPLETED",
         year: new Date().getFullYear(),
         patientCampusCode: campusesMap.CAL.code,
-        patientAffiliationCode: affiliationsMap.STU.code,
+        patientAffiliationCode: affiliationsMap.EMP.code,
       },
 
       pendingVisitsFilterStr: "",

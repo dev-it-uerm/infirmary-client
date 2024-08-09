@@ -52,11 +52,19 @@ module.exports = configure(function (/* ctx */) {
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
       publicPath: "/infirmary",
+      // publicPath: "/apps/infirmary",
       // analyze: true,
+
       env: {
         apiHost: "https://localapi.uerm.edu.ph:8081/infirmary",
         apiHost__DEV: "http://10.107.0.24:4040/infirmary",
       },
+
+      // env: {
+      //   apiHost: "https://api.uerm.edu.ph/infirmary",
+      //   apiHost__DEV: "http://10.107.0.24:4040/infirmary",
+      // },
+
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

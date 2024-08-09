@@ -593,7 +593,7 @@ export const examFieldsMap = {
       required: false,
     },
     {
-      code: "CLR",
+      code: "COLOR",
       name: "Color",
       type: "EXAMTEXT",
       required: false,

@@ -587,6 +587,36 @@ export const examFieldsMap = {
   ],
   [examsMap.LAB_FCL.code]: [
     {
+      code: "CHAR",
+      name: "Character",
+      type: "EXAMTEXT",
+      required: false,
+    },
+    {
+      code: "CLR",
+      name: "Color",
+      type: "EXAMTEXT",
+      required: false,
+    },
+    {
+      code: "RBC",
+      name: "RBC",
+      type: "EXAMTEXT",
+      required: false,
+    },
+    {
+      code: "WBC",
+      name: "WBC",
+      type: "EXAMTEXT",
+      required: false,
+    },
+    {
+      code: "PRSTE",
+      name: "Parasite or Ova",
+      type: "EXAMTEXT",
+      required: false,
+    },
+    {
       code: `IMPRN`,
       name: "Impression",
       type: "EXAMTEXTAREA",

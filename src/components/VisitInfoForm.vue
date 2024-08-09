@@ -94,7 +94,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["busy", "ready", "success", "error"],
+  emits: ["busy", "ready", "saved", "error"],
   setup() {
     return {
       userRolesMap,
@@ -244,7 +244,7 @@ export default defineComponent({
 
       showMessage(this.$q, true, "Visit details have been saved successfully.");
       this.loading = false;
-      this.$emit("success");
+      this.$emit("saved");
     },
   },
 });

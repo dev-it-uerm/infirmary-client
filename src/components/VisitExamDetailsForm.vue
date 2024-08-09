@@ -216,7 +216,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["busy", "ready", "visitCompleted"],
+  emits: ["busy", "ready", "saved", "error"],
   setup() {
     return {
       userRolesMap,
@@ -307,6 +307,7 @@ export default defineComponent({
 
       if (response.error) {
         this.loading = false;
+        this.$emit("error");
         return;
       }
 
@@ -331,7 +332,13 @@ export default defineComponent({
     },
     async submitForm() {
       const valid = await this.$refs.qFormVisitDetails.validate();
-      if (valid) this.confDialogVisible = true;
+
+      if (!valid) {
+        // TO DO: SCROLL TO INVALID FIELD
+        return;
+      }
+
+      this.confDialogVisible = true;
     },
     async save() {
       this.confDialogVisible = false;
@@ -360,6 +367,7 @@ export default defineComponent({
       if (response.error) {
         showMessage(this.$q, false, response.body);
         this.loading = false;
+        this.$emit("error");
         return;
       }
 
@@ -370,8 +378,6 @@ export default defineComponent({
         this.markAsCompletedOnSave = null;
       }
 
-      if (this.visitIsCompleted) this.$emit("visitCompleted");
-
       showMessage(
         this.$q,
         true,
@@ -379,6 +385,7 @@ export default defineComponent({
       );
 
       this.loading = false;
+      this.$emit("saved");
     },
   },
 });

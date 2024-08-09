@@ -678,7 +678,7 @@
           visitInfoVisible = false;
         }
       "
-      @visitCompleted="
+      @saved="
         () => {
           getPendingVisits();
           getCompletedVisits();

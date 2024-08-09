@@ -55,6 +55,7 @@
           :visitId="visit.id"
           @busy="loading = true"
           @ready="loading = false"
+          @saved="$emit('saved')"
         />
         <VisitExamDetailsForm
           v-else
@@ -62,7 +63,7 @@
           :examCode="tab.code"
           @busy="loading = true"
           @ready="loading = false"
-          @visitCompleted="$emit('visitCompleted')"
+          @saved="$emit('saved')"
         />
       </template>
     </template>
@@ -101,7 +102,7 @@ export default defineComponent({
       default: null,
     },
   },
-  emits: ["close", "visitCompleted"],
+  emits: ["close", "saved"],
   setup() {
     return { formatName };
   },

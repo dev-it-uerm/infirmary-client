@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh LpR fFf">
     <q-header class="bg-primary text-white" height-hint="98">
       <q-toolbar class="row">
         <div class="row items-center col-auto">
@@ -42,8 +42,7 @@
         </div>
       </q-toolbar>
     </q-header>
-    <!-- <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered overlay> -->
-    <q-drawer v-if="user" v-model="leftDrawerOpen" side="left" bordered>
+    <q-drawer v-if="user" v-model="leftDrawerOpen" bordered>
       <q-scroll-area style="height: 100%">
         <div
           class="column q-pa-lg justify-between fit no-wrap"
@@ -203,12 +202,6 @@
               />
             </template>
           </div>
-          <!-- <q-separator class="q-my-md" />
-          <div class="bordered-grey q-pa-lg">
-            <UermCopyright />
-            <q-separator class="q-my-md full-width" />
-            <TermsAndConditions />
-          </div> -->
         </div>
       </q-scroll-area>
       <ConfirmationDialog

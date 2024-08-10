@@ -192,7 +192,7 @@ export default defineComponent({
 
       if (response.error) {
         success = false;
-        message = response.body.error ?? response.body;
+        message = response.body.errorMessage || response.body;
       } else {
         this.lastPatientRegistered = this.formatLastPatientRegistered(
           response.body

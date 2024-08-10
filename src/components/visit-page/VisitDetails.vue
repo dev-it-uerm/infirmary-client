@@ -86,10 +86,10 @@ export default defineComponent({
       import("src/components/core/MinimizedDialog.vue")
     ),
     VisitInfoForm: defineAsyncComponent(() =>
-      import("src/components/VisitInfoForm.vue")
+      import("src/components/visit-page/VisitInfoForm.vue")
     ),
     VisitExamDetailsForm: defineAsyncComponent(() =>
-      import("src/components/VisitExamDetailsForm.vue")
+      import("src/components/visit-page/VisitExamDetailsForm.vue")
     ),
   },
   props: {

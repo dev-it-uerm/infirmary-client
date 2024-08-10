@@ -61,9 +61,6 @@
                     style="gap: 6px; letter-spacing: 0.8pt"
                   >
                     <q-badge class="bg-grey" style="padding: 8px">
-                      SHOWING {{ pendingVisitsFilters.limit }} VISITS
-                    </q-badge>
-                    <q-badge class="bg-grey" style="padding: 8px">
                       {{
                         campusesMap[pendingVisitsFilters.patientCampusCode]
                           ?.name
@@ -751,7 +748,7 @@ export default defineComponent({
       import("src/components/core/MaximizedDialog.vue")
     ),
     VisitDetails: defineAsyncComponent(() =>
-      import("src/components/VisitDetails.vue")
+      import("src/components/visit-page/VisitDetails.vue")
     ),
     NoResult: defineAsyncComponent(() =>
       import("src/components/core/NoResult.vue")
@@ -848,7 +845,6 @@ export default defineComponent({
   data() {
     return {
       pendingVisitsFilters: {
-        limit: 99999,
         status: "PENDING",
         year: new Date().getFullYear(),
         // visitDateRange: {
@@ -860,7 +856,7 @@ export default defineComponent({
         // },
 
         patientCampusCode: campusesMap.CAL.code,
-        patientAffiliationCode: affiliationsMap.EMP.code,
+        patientAffiliationCode: affiliationsMap.STU.code,
         // patientName: null,
 
         // patientCollegeCode: null,
@@ -868,11 +864,10 @@ export default defineComponent({
       },
 
       completedVisitsFilters: {
-        limit: 99999,
         status: "COMPLETED",
         year: new Date().getFullYear(),
         patientCampusCode: campusesMap.CAL.code,
-        patientAffiliationCode: affiliationsMap.EMP.code,
+        patientAffiliationCode: affiliationsMap.STU.code,
       },
 
       pendingVisitsFilterStr: "",

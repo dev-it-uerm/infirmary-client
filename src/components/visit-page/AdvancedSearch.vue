@@ -8,7 +8,7 @@
       <div>
         <q-form @submit="emitValue">
           <div class="column q-pa-lg" style="padding: 36px">
-            <q-input
+            <!-- <q-input
               debounce="750"
               stack-label
               outlined
@@ -22,7 +22,7 @@
                     : undefined,
               ]"
               v-model.trim="limit"
-            />
+            /> -->
             <q-input
               debounce="750"
               stack-label
@@ -181,7 +181,7 @@ export default defineComponent({
   },
   data() {
     return {
-      limit: null,
+      // limit: null,
       status: null,
       year: null,
       // visitDateRange: null,
@@ -193,7 +193,7 @@ export default defineComponent({
       // patientYearLevel: null,
 
       filterProps: [
-        "limit",
+        // "limit",
         "status",
         "year",
         "patientCampusCode",

@@ -617,12 +617,6 @@ export const examFieldsMap = {
       required: false,
     },
     {
-      code: `IMPRN`,
-      name: "Impression",
-      type: "EXAMTEXTAREA",
-      default: { value: null },
-    },
-    {
       code: "REMARKS",
       name: "Remarks",
       type: "EXAMTEXTAREA",

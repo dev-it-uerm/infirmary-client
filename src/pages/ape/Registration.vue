@@ -50,8 +50,10 @@
                   <div>PATIENT/EMPLOYEE REGISTERED:</div>
                   <div>
                     <q-btn
+                      v-if="lastPatientRegistered['Student Number']"
+                      unelevated
                       label="PRINT"
-                      @click="this.bools.printoutDialog = true"
+                      @click="checklistDialogVisible = true"
                       size="sm"
                       color="primary"
                     ></q-btn>
@@ -77,10 +79,10 @@
         </template>
       </CardComponent>
     </div>
-    <q-dialog v-model="bools.printoutDialog">
+    <q-dialog v-model="checklistDialogVisible">
       <q-card class="fit">
         <q-card-section class="fit">
-          <Checklist :patientInfo="this.lastPatientRegistered" />
+          <Checklist :patientInfo="lastPatientRegistered" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -139,9 +141,7 @@ export default defineComponent({
   },
   data() {
     return {
-      bools: {
-        printoutDialog: false,
-      },
+      checklistDialogVisible: false,
       forbidden: false,
 
       registrationMode: "REG",
@@ -182,21 +182,26 @@ export default defineComponent({
     formatLastPatientRegistered(row) {
       const patient = row.patient || row.employee;
       const registration = row.visit || row.attendance;
+
       return {
-        [this.registrationMode === "REG"
-          ? "Student Number"
-          : "Employee Number"]: patient.code || patient.identificationCode,
         [this.registrationMode === "REG"
           ? "Date & Time Registered"
           : "Date & Time IN/OUT"]: formatDate(registration.dateTimeCreated),
+        [this.registrationMode === "REG"
+          ? "Student Number"
+          : "Employee Number"]: patient.code || patient.identificationCode,
         Fullname: formatName(
           patient.firstName,
           patient.middleName,
           patient.lastName,
           patient.extName
         ),
-        Type: patient.affiliationCode,
-        Location: patient.campusCode,
+        ...(this.registrationMode === "REG"
+          ? {
+              Affiliation: affiliationsMap[patient.affiliationCode].name,
+              Campus: campusesMap[patient.campusCode].name,
+            }
+          : {}),
       };
     },
     async register(registrationMode, patientCode) {
@@ -216,31 +221,17 @@ export default defineComponent({
 
       if (response.error) {
         success = false;
-        message = response.body.errorMessage || response.body.errorMessage;
-        const patientMap = {
-          ...response.body.visit,
-          ...response.body.patient,
-        };
+        message = response.body.errorMessage || response.body;
       }
 
-      const visit = response.body.visit;
-      const patient = response.body.patient;
-
-      this.lastPatientRegistered = this.formatLastPatientRegistered({
-        patient: {
-          code: patient.identificationCode,
-          identificationCode: patient.identificationCode,
-          lastName: patient.lastName,
-          firstName: patient.firstName,
-          middleName: patient.middleName,
-          extName: patient.extName,
-          affiliationCode: affiliationsMap[patient.affiliationCode].name,
-          campusCode: campusesMap[patient.campusCode].name,
-        },
-        visit: {
-          dateTimeCreated: visit.dateTimeCreated,
-        },
-      });
+      if (
+        (response.body.visit && response.body.patient) ||
+        (response.body.attendance && response.body.employee)
+      ) {
+        this.lastPatientRegistered = this.formatLastPatientRegistered(
+          response.body
+        );
+      }
 
       this.$refs.REGISTRATION_PAGE__qrCodeScanner.reset();
       showMessage(this.$q, success, message);

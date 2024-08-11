@@ -4,8 +4,8 @@
       <div class="text-overline">
         {{
           inputMode === "QR"
-            ? "SCAN VISIT QR CODE"
-            : "ENTER VISIT CODE MANUALLY"
+            ? "SCAN PATIENT QR CODE"
+            : "ENTER PATIENT CODE MANUALLY"
         }}
       </div>
       <q-toggle
@@ -92,7 +92,7 @@ export default defineComponent({
     },
     patientCode: {
       handler(val) {
-        const v = val?.replace(/ /g, "");
+        const v = val ? val.replace(/[^\w]/g, "").replace(/ /g, "") : null;
         this.$emit("patientCodeChanged", v && v.length > 2 ? v : null);
       },
       immediate: true,

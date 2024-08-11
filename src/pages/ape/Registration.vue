@@ -196,12 +196,8 @@ export default defineComponent({
           patient.lastName,
           patient.extName
         ),
-        ...(this.registrationMode === "REG"
-          ? {
-              Affiliation: affiliationsMap[patient.affiliationCode].name,
-              Campus: campusesMap[patient.campusCode].name,
-            }
-          : {}),
+        Affiliation: affiliationsMap[patient.affiliationCode].name,
+        Campus: campusesMap[patient.campusCode].name,
       };
     },
     async register(registrationMode, patientCode) {

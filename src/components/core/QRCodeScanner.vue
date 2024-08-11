@@ -38,6 +38,7 @@
       maxlength="22"
       outlined
       stack-label
+      autofocus
       label="Patient Code"
       v-model.trim="patientCode"
     />

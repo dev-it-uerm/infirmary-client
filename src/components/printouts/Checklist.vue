@@ -214,17 +214,6 @@ export default {
     createFooter(currentPage, pageCount, pageSize) {
       return [
         {
-          text: "TEST",
-          // table: {
-          //   widths: ["auto", "*"],
-          //   body: [
-          //     { text: "HEIGHT:", border: [false, true] },
-          //     {
-          //       text: "WIDTH",
-          //       border: [false, true],
-          //     },
-          //   ],
-          // },
           table: {
             widths: ["auto", "*", "auto", "auto", "*"],
             body: [

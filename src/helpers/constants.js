@@ -145,6 +145,8 @@ export const yearLevelsMap = {
   SECOND: { code: 2, name: "Second Year" },
   THIRD: { code: 3, name: "Third Year" },
   FOURTH: { code: 4, name: "Fourth Year" },
+  FIFTH: { code: 5, name: "Fifth Year" },
+  SIXTH: { code: 6, name: "Sixth Year" },
 };
 
 export const affiliationsMap = {

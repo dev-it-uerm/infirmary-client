@@ -241,13 +241,13 @@ export const examFieldsMap = {
     },
     {
       code: "HEIGHT",
-      name: "height",
+      name: "Height",
       type: "EXAMTEXT",
       required: true,
     },
     {
       code: "WEIGHT",
-      name: "weight",
+      name: "Weight",
       type: "EXAMTEXT",
       required: true,
     },

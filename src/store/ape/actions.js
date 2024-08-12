@@ -194,17 +194,6 @@ export const getAnalyticsCompletedVisitsPerDay = async (context, payload) => {
   );
 };
 
-export const getAttendees = async (context, payload) => {
-  return await request(
-    "get",
-    `${context.rootState.app.apiHost}/ape/analytics/attendees`,
-    payload,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context
-  );
-};
-
 export const timeInOut = async (context, employeeCode) => {
   return await request(
     "post",
@@ -220,6 +209,28 @@ export const getXrayChestResultTemplates = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/misc/xray-chest-result-templates`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getPatientsPerDateRange = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/patients-per-date-range`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getDoctorPatients = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/doctor-patients`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,

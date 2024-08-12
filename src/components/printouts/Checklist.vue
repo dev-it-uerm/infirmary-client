@@ -46,7 +46,7 @@ export default {
         },
         // pageSize: "LETTER",
         // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
-        pageMargins: [25, 100, 25, 25], // Body margins. Change top or bottom to resize the header or footer respectively.
+        pageMargins: [15, 80, 15, 70], // Body margins. Change top or bottom to resize the header or footer respectively.
         header: [
           {
             stack: [
@@ -59,6 +59,7 @@ export default {
                         text: "UERMMMCI INFIRMARY APE",
                         alignment: "center",
                         fontSize: 10,
+                        bold: true,
                         margin: [0, 0, 0, 5],
                       },
                     ],
@@ -67,7 +68,7 @@ export default {
                   { text: "", width: "*" },
                 ],
                 columnGap: 10,
-                margin: [0, 0, 0, 10],
+                margin: [0, 0, 0, 0],
               },
               // {
               //   table: {
@@ -97,6 +98,7 @@ export default {
                       {
                         text: this.patientInfo.Fullname,
                         border: [],
+                        bold: true,
                       },
                     ],
                     [
@@ -125,6 +127,7 @@ export default {
           style: ["fontBody"],
           margin: [0, 0, 0, 5],
         },
+        footer: this.createFooter(),
         styles: {
           fontHeader: {
             fontSize: 11,
@@ -132,7 +135,7 @@ export default {
             margin: [0, 10, 0, 10],
           },
           fontNormal: {
-            fontSize: 9,
+            fontSize: 8,
           },
           fontBody: {
             fontSize: 8,
@@ -207,6 +210,46 @@ export default {
       }
 
       return body;
+    },
+    createFooter(currentPage, pageCount, pageSize) {
+      return [
+        {
+          text: "TEST",
+          // table: {
+          //   widths: ["auto", "*"],
+          //   body: [
+          //     { text: "HEIGHT:", border: [false, true] },
+          //     {
+          //       text: "WIDTH",
+          //       border: [false, true],
+          //     },
+          //   ],
+          // },
+          table: {
+            widths: ["auto", "*", "auto", "auto", "*"],
+            body: [
+              [
+                { text: "HEIGHT:", border: [] },
+                {
+                  text: "",
+                  bold: true,
+                  border: [false, false, false, true],
+                },
+                { text: "   ", border: [] },
+                { text: "WEIGHT:", border: [] },
+                {
+                  text: "",
+                  bold: true,
+                  border: [false, false, false, true],
+                },
+              ],
+            ],
+          },
+
+          style: ["fontNormal"],
+          margin: [25, 10, 25, 0],
+        },
+      ];
     },
   },
 };

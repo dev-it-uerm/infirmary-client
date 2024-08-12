@@ -59,7 +59,7 @@ module.exports = configure(function (/* ctx */) {
         // apiHost: "https://api.uerm.edu.ph/infirmary",
         // apiHost__DEV: "https://api.uerm.edu.ph/infirmary",
         apiHost: "https://localapi.uerm.edu.ph:8081/infirmary",
-        apiHost__DEV: "http://10.107.0.24:4040/infirmary",
+        apiHost__DEV: "http://10.107.0.10:3000/infirmary",
       },
 
       // rawDefine: {}

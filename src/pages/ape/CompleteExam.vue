@@ -35,6 +35,7 @@
             <QRCodeScanner
               ref="visitCodeScanner"
               :scannerId="scannerId"
+              submitBtnLabel="COMPLETE"
               class="full-width"
               :loading="loading"
               @patientCodeChanged="(val) => (patientCode = val)"

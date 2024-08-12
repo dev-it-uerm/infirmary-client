@@ -4,6 +4,7 @@
       <QRCodeScanner
         ref="visitCodeScanner"
         :scannerId="scannerId"
+        submitBtnLabel="TRACK"
         class="full-width"
         :loading="loading"
         @patientCodeChanged="(val) => (patientCode = val)"
@@ -245,6 +246,7 @@ export default defineComponent({
         showMessage(this.$q, false, response.body.error ?? response.body);
         this.$refs.visitCodeScanner.reset();
         this.loading = false;
+        this.$emit("ready");
         return;
       }
 

@@ -30,18 +30,29 @@
       :id="scannerId"
       width="600px"
     ></div>
-    <q-input
-      v-if="inputMode !== 'QR'"
-      debounce="2000"
-      :loading="loading"
-      :disable="loading"
-      maxlength="22"
-      outlined
-      stack-label
-      autofocus
-      label="Patient Code"
-      v-model.trim="patientCode"
-    />
+    <div v-if="inputMode !== 'QR'">
+      <q-form @submit="submit">
+        <q-input
+          :loading="loading"
+          :disable="loading"
+          maxlength="22"
+          outlined
+          stack-label
+          autofocus
+          label="Patient Code"
+          v-model.trim="patientCode"
+        />
+        <div class="q-mt-md row justify-end">
+          <q-btn
+            :disable="loading"
+            unelevated
+            color="primary"
+            :label="submitBtnLabel"
+            type="submit"
+          />
+        </div>
+      </q-form>
+    </div>
   </div>
 </template>
 
@@ -59,6 +70,10 @@ export default defineComponent({
     scannerId: {
       type: String,
       required: true,
+    },
+    submitBtnLabel: {
+      type: String,
+      default: "SUBMIT",
     },
   },
   emits: ["patientCodeChanged", "inputModeChanged"],
@@ -90,13 +105,6 @@ export default defineComponent({
       },
       immediate: true,
     },
-    patientCode: {
-      handler(val) {
-        const v = val ? val.replace(/[^\w]/g, "").replace(/ /g, "") : null;
-        this.$emit("patientCodeChanged", v && v.length > 2 ? v : null);
-      },
-      immediate: true,
-    },
   },
   mounted() {
     // Initialize QR Code Scanner
@@ -110,7 +118,8 @@ export default defineComponent({
 
     this.scanner.render(
       (decodedText, decodedResult) => {
-        me.patientCode = decodedText;
+        // me.patientCode = decodedText;
+        me.$emit("patientCodeChanged", decodedText);
       },
       (error) => {
         // handle scan failure, usually better to ignore and keep scanning.
@@ -136,6 +145,14 @@ export default defineComponent({
     reset() {
       // this.scanner.clear();
       this.patientCode = null;
+      this.$emit("patientCodeChanged", null);
+    },
+    submit() {
+      const v = this.patientCode
+        ? this.patientCode.replace(/[^\w]/g, "").replace(/ /g, "")
+        : null;
+
+      this.$emit("patientCodeChanged", v && v.length > 2 ? v : null);
     },
   },
 });

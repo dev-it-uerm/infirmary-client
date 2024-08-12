@@ -38,6 +38,9 @@
                 v-show="!forbidden"
                 ref="REGISTRATION_PAGE__qrCodeScanner"
                 scannerId="qrCodeScanner__triage_page"
+                :submitBtnLabel="
+                  registrationMode === 'REG' ? 'REGISTER' : 'TIME IN/OUT'
+                "
                 :loading="loading"
                 @patientCodeChanged="(val) => (patientCode = val)"
                 @inputModeChanged="(val) => (inputMode = val)"

@@ -98,7 +98,7 @@
               <div class="q-pa-lg bordered-grey q-mb-lg full-width">
                 <div class="row items-center q-mb-lg">
                   <div class="col text-primary text-weight-medium">
-                    NUMBER OF PATIENTS ATTENDED
+                    NUMBER OF PATIENTS REGISTERED
                   </div>
                   <div class="col-auto">
                     <q-btn
@@ -113,7 +113,7 @@
                       label="EXPORT"
                       @click="
                         downloadExcel(
-                          'INFIRMARY-APE__PATIENTS-ATTENDED__',
+                          'INFIRMARY-APE__PATIENTS-REGISTERED__',
                           rowsChart1,
                           columnsChart1
                         )

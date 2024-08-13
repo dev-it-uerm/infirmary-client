@@ -2,11 +2,7 @@
   <div>
     <div class="row items-center q-mb-sm">
       <div class="text-overline">
-        {{
-          inputMode === "QR"
-            ? "SCAN PATIENT QR CODE"
-            : "ENTER PATIENT CODE MANUALLY"
-        }}
+        {{ inputMode === "QR" ? "SCAN QR" : "MANUAL ENTRY" }}
       </div>
       <q-toggle
         :disable="loading"

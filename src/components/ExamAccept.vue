@@ -224,6 +224,7 @@ export default defineComponent({
         identificationCode: patientCode,
         examCode: this.exam.code,
       });
+
       await delay(2000);
 
       if (response.error) {

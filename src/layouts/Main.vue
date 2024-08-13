@@ -245,26 +245,21 @@
                 class="row justify-center q-mb-md q-pa-md"
                 style="border: 1px solid rgba(0, 0, 0, 0.1)"
               >
-                <q-btn
-                  :disable="loading"
-                  unelevated
-                  label="TRACK"
-                  :color="tab === 1 ? 'accent' : 'transparent'"
-                  class="text-black"
-                  @click="tab = 1"
-                />
-                <q-btn
-                  :disable="loading"
-                  unelevated
-                  label="RECEIVE"
-                  :color="tab === 2 ? 'accent' : 'transparent'"
-                  class="text-black"
-                  @click="tab = 2"
-                />
+                <template v-for="(tabBtn, idx) in tabBtns" :key="idx">
+                  <q-btn
+                    :disable="loading"
+                    dense
+                    unelevated
+                    :label="tabBtn.label"
+                    :color="tab === tabBtn.value ? 'accent' : 'transparent'"
+                    class="text-black q-px-sm"
+                    @click="tab = tabBtn.value"
+                  />
+                </template>
               </div>
               <!-- `rightDrawerOpen` in the v-if is to force the scanner to unmount
               when the drawer is not visible, fixing the "double scanner" bug. -->
-              <VisitTracker
+              <VisitPageAttendance
                 v-if="rightDrawerOpen && tab === 1"
                 scannerId="qrCodeScanner__right-drawer-1"
                 @busy="loading = true"
@@ -273,6 +268,12 @@
               <ExamAccept
                 v-if="rightDrawerOpen && tab === 2"
                 scannerId="qrCodeScanner__right-drawer-2"
+                @busy="loading = true"
+                @ready="loading = false"
+              />
+              <VisitTracker
+                v-if="rightDrawerOpen && tab === 3"
+                scannerId="qrCodeScanner__right-drawer-1"
                 @busy="loading = true"
                 @ready="loading = false"
               />
@@ -317,11 +318,14 @@ export default defineComponent({
     AppLogo: defineAsyncComponent(() =>
       import("src/components/core/AppLogo.vue")
     ),
-    VisitTracker: defineAsyncComponent(() =>
-      import("src/components/VisitTracker.vue")
+    VisitPageAttendance: defineAsyncComponent(() =>
+      import("src/components/visit-page/Attendance.vue")
     ),
     ExamAccept: defineAsyncComponent(() =>
       import("src/components/ExamAccept.vue")
+    ),
+    VisitTracker: defineAsyncComponent(() =>
+      import("src/components/VisitTracker.vue")
     ),
     // UermCopyright: defineAsyncComponent(() =>
     //   import("src/components/UermCopyright.vue")
@@ -333,6 +337,20 @@ export default defineComponent({
   setup() {
     return {
       userRolesMap,
+      tabBtns: [
+        {
+          value: 1,
+          label: "REGISTER",
+        },
+        {
+          value: 2,
+          label: "RECEIVE",
+        },
+        {
+          value: 3,
+          label: "TRACK",
+        },
+      ],
     };
   },
   data() {

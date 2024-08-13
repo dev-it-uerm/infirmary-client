@@ -113,7 +113,7 @@
                       label="EXPORT"
                       @click="
                         downloadExcel(
-                          'INFIRMARY-APE-PATIENTS',
+                          'INFIRMARY-APE__PATIENTS-ATTENDED__',
                           rowsChart1,
                           columnsChart1
                         )
@@ -136,7 +136,7 @@
               >
                 <div class="row items-center q-mb-lg">
                   <div class="col text-primary text-weight-medium">
-                    PATIENTS SEEN BY PHYSICIANS
+                    NUMBER OF PATIENTS SEEN BY PHYSICIANS
                   </div>
                   <div class="col-auto">
                     <q-btn
@@ -151,7 +151,7 @@
                       label="EXPORT"
                       @click="
                         downloadExcel(
-                          'INFIRMARY-APE-PHYSICIAN-PATIENTS',
+                          'INFIRMARY-APE__PATIENTS-SEEN-BY-DR__',
                           rowsChart2,
                           columnsChart2
                         )
@@ -414,7 +414,7 @@ export default defineComponent({
       }
 
       // Download File
-      const fileName = `${fileNamePrefix}__${this.dateRangeStr
+      const fileName = `${fileNamePrefix}${this.dateRangeStr
         .replace(" - ", "-TO-")
         .replace(/\//g, "-")}`;
 

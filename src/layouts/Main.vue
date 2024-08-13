@@ -126,7 +126,7 @@
                   : 'text-black text-weight-bold bordered-grey'
               "
               icon="fa-solid fa-user-plus"
-              label="Add/Update User"
+              label="Add User"
               :disable="loading"
               unelevated
               align="left"

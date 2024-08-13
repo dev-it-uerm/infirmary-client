@@ -5,8 +5,10 @@
       style="gap: 16px"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <PageHeader text="ADD/UPDATE USER" icon="fa-solid fa-user" />
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader text="ADD USER" icon="fa-solid fa-user" />
+        </template>
         <template v-slot:body>
           <FetchingData v-if="loading" />
           <q-form
@@ -93,7 +95,8 @@
               <q-btn
                 :disable="loading"
                 unelevated
-                color="primary"
+                color="accent"
+                class="text-black"
                 label="SAVE"
                 type="submit"
               />

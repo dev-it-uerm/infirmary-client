@@ -98,7 +98,7 @@
               <div class="q-pa-lg bordered-grey q-mb-lg full-width">
                 <div class="row items-center q-mb-lg">
                   <div class="col text-primary text-weight-medium">
-                    NUMBER OF PATIENTS
+                    NUMBER OF PATIENTS ATTENDED
                   </div>
                   <div class="col-auto">
                     <q-btn
@@ -136,7 +136,7 @@
               >
                 <div class="row items-center q-mb-lg">
                   <div class="col text-primary text-weight-medium">
-                    PHYSICIAN PATIENTS
+                    PATIENTS SEEN BY PHYSICIANS
                   </div>
                   <div class="col-auto">
                     <q-btn

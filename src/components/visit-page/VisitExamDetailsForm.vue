@@ -177,6 +177,7 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
 import { examFieldsMap, userRolesMap } from "src/helpers/constants.js";
+import { mapGetters } from "vuex";
 
 export default defineComponent({
   name: "VisitExamDetailsForm",
@@ -246,6 +247,11 @@ export default defineComponent({
       visitIsCompleted: false,
       examIsCompleted: false,
     };
+  },
+  computed: {
+    ...mapGetters({
+      user: "app/user",
+    }),
   },
   watch: {
     examCode: {
@@ -341,6 +347,16 @@ export default defineComponent({
       this.confDialogVisible = true;
     },
     async save() {
+      // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [START]
+      if (
+        this.user?.roleCode === "RADTECH" &&
+        this.examCode === "RAD_XR_CHST"
+      ) {
+        showMessage(this.$q, false, "Please use the X-RAY BATCH ENCODE page.");
+        return;
+      }
+      // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [END]
+
       this.confDialogVisible = false;
       this.loading = true;
       await delay(2000);

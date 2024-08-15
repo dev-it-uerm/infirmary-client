@@ -40,6 +40,7 @@
                       <q-input
                         :disable="pendingVisitsLoading"
                         :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :style="$q.screen.gt.md ? { width: '100px' } : {}"
                         :dense="$q.screen.gt.md"
                         stack-label
                         outlined
@@ -84,7 +85,6 @@
                         :style="$q.screen.gt.md ? { width: '200px' } : {}"
                         :dense="$q.screen.gt.md"
                         outlined
-                        debounce="750"
                         label="Patient Name"
                         maxlength="255"
                         hint=""
@@ -175,7 +175,10 @@
                                 />
                               </q-td>
                               <q-td v-else-if="column.name === 'action'">
-                                <div class="row justify-center">
+                                <div
+                                  class="row justify-between"
+                                  style="width: 146px"
+                                >
                                   <q-btn
                                     outline
                                     dense
@@ -187,6 +190,17 @@
                                     unelevated
                                     label="DETAILS"
                                     @click.stop="showPxVisitInfo(props.row)"
+                                  />
+                                  <q-btn
+                                    dense
+                                    class="bg-accent text-black"
+                                    style="
+                                      padding-left: 10px;
+                                      padding-right: 10px;
+                                    "
+                                    unelevated
+                                    label="PRINT"
+                                    @click.stop="showPxVisitPrintout(props.row)"
                                   />
                                 </div>
                               </q-td>
@@ -393,10 +407,19 @@
                               dense
                               style="padding-left: 10px; padding-right: 10px"
                               unelevated
-                              class="text-black"
+                              class="q-mb-sm text-black"
                               color="accent"
                               label="DETAILS"
                               @click.stop="showPxVisitInfo(item)"
+                            />
+                            <q-btn
+                              dense
+                              style="padding-left: 10px; padding-right: 10px"
+                              unelevated
+                              class="text-black"
+                              color="accent"
+                              label="PRINT"
+                              @click.stop="showPxVisitPrintout(item)"
                             />
                           </q-item-section>
                         </q-item>
@@ -422,21 +445,6 @@
                 </div>
                 <div class="col-auto">
                   <q-btn
-                    class="col-auto"
-                    :disable="completedVisitsLoading"
-                    color="primary"
-                    round
-                    flat
-                    dense
-                    @click="getCompletedVisits"
-                  >
-                    <q-icon
-                      style="font-weight: bold"
-                      name="fa-solid fa-arrows-rotate"
-                      size="xs"
-                    />
-                  </q-btn>
-                  <q-btn
                     :disable="completedVisitsLoading"
                     color="primary"
                     round
@@ -455,31 +463,54 @@
               <div>
                 <FetchingData v-if="completedVisitsLoading" />
                 <template v-else>
-                  <q-input
-                    dense
-                    outlined
-                    debounce="750"
-                    label="Filter"
-                    maxlength="255"
-                    hint=""
-                    v-model.trim="completedVisitsFilterStr"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="completedVisitsFilterStr !== ''"
-                        size="xs"
-                        name="close"
-                        class="cursor-pointer"
-                        @click="completedVisitsFilterStr = ''"
+                  <q-form @submit="getCompletedVisits">
+                    <div
+                      :class="
+                        $q.screen.gt.md ? 'row items-start' : 'column q-mb-lg'
+                      "
+                      :style="$q.screen.gt.md ? { gap: '10px' } : {}"
+                    >
+                      <q-input
+                        :disable="completedVisitsLoading"
+                        class="col"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :style="$q.screen.gt.md ? { width: '200px' } : {}"
+                        :dense="$q.screen.gt.md"
+                        outlined
+                        label="Patient Name"
+                        maxlength="255"
+                        hint=""
+                        :rules="[
+                          (v) =>
+                            v.length > 0 && v.length < 3
+                              ? 'At least 3 letters is required.'
+                              : undefined,
+                        ]"
+                        v-model.trim="completedVisitsFilters.patientFullName"
+                      >
+                        <template v-slot:append>
+                          <q-icon
+                            v-if="completedVisitsFilters.patientFullName !== ''"
+                            size="xs"
+                            name="close"
+                            class="cursor-pointer"
+                            @click="completedVisitsFilters.patientFullName = ''"
+                          />
+                        </template>
+                      </q-input>
+                      <q-btn
+                        :disable="completedVisitsLoading"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        class="q-px-md q-py-sm col-auto"
+                        unelevated
+                        color="primary"
+                        label="SEARCH"
+                        type="submit"
                       />
-                      <q-icon name="filter_alt" size="xs" />
-                    </template>
-                  </q-input>
+                    </div>
+                  </q-form>
                   <template
-                    v-if="
-                      filteredCompletedVisits &&
-                      filteredCompletedVisits.length > 0
-                    "
+                    v-if="completedVisits && completedVisits.length > 0"
                   >
                     <div
                       class="relative-position bg-white"
@@ -502,7 +533,7 @@
                             ? { maxHeight: 'calc(100vh - 400px)' }
                             : {}
                         "
-                        :items="filteredCompletedVisits"
+                        :items="completedVisits"
                         v-slot="{ item, index }"
                       >
                         <q-item
@@ -644,28 +675,13 @@
       </template>
     </MinimizedDialog>
     <AdvanceSearch
-      v-if="pendingVisitsFilterVisible"
-      :initialValue="pendingVisitsFilters"
-      @close="pendingVisitsFilterVisible = false"
-      @valueChanged="
-        (val) => {
-          pendingVisitsFilterVisible = false;
-          pendingVisitsFilters = {
-            ...pendingVisitsFilters,
-            ...val,
-          };
-        }
-      "
-    />
-    <AdvanceSearch
       v-if="completedVisitsFilterVisible"
       :initialValue="completedVisitsFilters"
       @close="completedVisitsFilterVisible = false"
       @valueChanged="
         (val) => {
+          completedVisitsFilters = { ...completedVisitsFilters, ...val };
           completedVisitsFilterVisible = false;
-          completedVisitsFilters = val;
-          getCompletedVisits();
         }
       "
     />
@@ -870,11 +886,10 @@ export default defineComponent({
       completedVisitsFilters: {
         status: "COMPLETED",
         year: new Date().getFullYear(),
+        patientFullName: "",
         patientCampusCode: campusesMap.CAL.code,
         patientAffiliationCode: affiliationsMap.STU.code,
       },
-
-      completedVisitsFilterStr: "",
 
       pendingVisitsLoading: false,
       completedVisitsLoading: false,
@@ -888,7 +903,6 @@ export default defineComponent({
       visitInfoTabCode: null,
       visitInfoVisible: false,
 
-      pendingVisitsFilterVisible: false,
       completedVisitsFilterVisible: false,
 
       currentVisit: null,
@@ -898,12 +912,6 @@ export default defineComponent({
     ...mapGetters({
       user: "app/user",
     }),
-    filteredCompletedVisits() {
-      return this.getFilteredVisits(
-        this.completedVisits,
-        this.completedVisitsFilterStr
-      );
-    },
   },
   mounted() {
     if (this.user) {
@@ -923,28 +931,59 @@ export default defineComponent({
       this.currentVisit = visit;
       this.visitPrintoutVisible = true;
     },
-    getFilteredVisits(visits, searchStr) {
-      if (!searchStr || searchStr.length < 3) return [...visits];
+    // formatResponse(rows1, rows2) {
+    //   return rows1.map((row) => {
+    //     return {
+    //       ...row,
+    //       exams: rows2.filter((r) => r.visitId === row.id),
+    //     };
+    //   });
+    // },
+    formatResponse(rows) {
+      const map = {};
 
-      const lowerCasedSearchStr = searchStr.toLowerCase();
+      for (const row of rows) {
+        if (!map[row.id]) {
+          map[row.id] = {
+            id: row.id,
+            patientId: row.patientId,
+            physicianCode: row.physicianCode,
+            createdBy: row.createdBy,
+            dateTimeCreated: row.dateTimeCreated,
+            completedBy: row.completedBy,
+            dateTimeCompleted: row.dateTimeCompleted,
+            remarks: row.remarks,
 
-      return visits.filter((v) => {
-        return Boolean(
-          v.patientIdentificationCode.includes(searchStr) ||
-            v.patientFirstName.toLowerCase().includes(lowerCasedSearchStr) ||
-            v.patientMiddleName?.toLowerCase().includes(lowerCasedSearchStr) ||
-            v.patientLastName.toLowerCase().includes(lowerCasedSearchStr) ||
-            v.patientExtName?.toLowerCase().includes(lowerCasedSearchStr)
-        );
-      });
-    },
-    formatResponse(rows1, rows2) {
-      return rows1.map((row) => {
-        return {
-          ...row,
-          exams: rows2.filter((r) => r.visitId === row.id),
-        };
-      });
+            patientCampusCode: row.patientCampusCode,
+            patientAffiliationCode: row.patientAffiliationCode,
+            patientIdentificationCode: row.patientIdentificationCode,
+            patientFirstName: row.patientFirstName,
+            patientMiddleName: row.patientMiddleName,
+            patientLastName: row.patientLastName,
+            patientExtName: row.patientExtName,
+            patientGender: row.patientGender,
+            patientDeptCode: row.patientDeptCode,
+            patientCollegeCode: row.patientCollegeCode,
+            patientYearLevel: row.patientYearLevel,
+
+            exams: [],
+          };
+        }
+
+        map[row.id].exams.push({
+          id: row.visitExamId,
+          visitId: row.visitExamVisitId,
+          examCode: row.visitExamExamCode,
+          createdBy: row.visitExamCreatedBy,
+          dateTimeCreated: row.visitExamDateTimeCreated,
+          acceptedBy: row.visitExamAcceptedBy,
+          dateTimeAccepted: row.visitExamDateTimeAccepted,
+          completedBy: row.visitExamCompletedBy,
+          dateTimeCompleted: row.visitExamDateTimeCompleted,
+        });
+      }
+
+      return Object.values(map);
     },
     async getPendingVisits() {
       this.pendingVisitsLoading = true;
@@ -966,19 +1005,8 @@ export default defineComponent({
 
       await delay(1000);
 
-      const responseRows1 = response.body[0];
-      const responseRows2 = response.body[1];
-
-      const formattedResponse1 = this.formatResponse(
-        responseRows1,
-        responseRows2
-      );
-
-      // const formattedResponse1 = Array(10)
-      //   .fill(this.formatResponse(responseRows1, responseRows2))
-      //   .flatMap((a) => a);
-
-      this.pendingVisits = formattedResponse1;
+      const formattedResponse = this.formatResponse(response.body);
+      this.pendingVisits = formattedResponse;
       this.pendingVisitsLoading = false;
     },
     async getCompletedVisits() {
@@ -996,16 +1024,8 @@ export default defineComponent({
 
       await delay(1000);
 
-      const responseRows1 = response.body[0];
-      const responseRows2 = response.body[1];
-
-      const formattedResponse = this.formatResponse(
-        responseRows1,
-        responseRows2
-      );
-
+      const formattedResponse = this.formatResponse(response.body);
       this.completedVisits = formattedResponse;
-      this.completedVisitsFilterStr = "";
       this.completedVisitsLoading = false;
     },
   },

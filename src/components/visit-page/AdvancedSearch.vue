@@ -24,8 +24,8 @@
               v-model.trim="limit"
             /> -->
             <q-input
-              debounce="750"
               stack-label
+              maxlength="4"
               outlined
               label="Year"
               hint=""

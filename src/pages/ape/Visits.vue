@@ -176,8 +176,8 @@
                               </q-td>
                               <q-td v-else-if="column.name === 'action'">
                                 <div
-                                  class="row justify-between"
-                                  style="width: 146px"
+                                  class="row justify-center"
+                                  style="gap: 8px; width: 146px"
                                 >
                                   <q-btn
                                     outline
@@ -192,6 +192,11 @@
                                     @click.stop="showPxVisitInfo(props.row)"
                                   />
                                   <q-btn
+                                    v-if="
+                                      props.row.exams?.some(
+                                        (e) => e.dateTimeCompleted
+                                      )
+                                    "
                                     dense
                                     class="bg-accent text-black"
                                     style="
@@ -387,7 +392,7 @@
                             <q-btn
                               dense
                               style="padding-left: 10px; padding-right: 10px"
-                              class="q-mb-sm bg-white"
+                              class="bg-white"
                               unelevated
                               outline
                               :color="
@@ -407,16 +412,19 @@
                               dense
                               style="padding-left: 10px; padding-right: 10px"
                               unelevated
-                              class="q-mb-sm text-black"
+                              class="q-mt-sm text-black"
                               color="accent"
                               label="DETAILS"
                               @click.stop="showPxVisitInfo(item)"
                             />
                             <q-btn
+                              v-if="
+                                item.exams?.some((e) => e.dateTimeCompleted)
+                              "
                               dense
                               style="padding-left: 10px; padding-right: 10px"
                               unelevated
-                              class="text-black"
+                              class="q-mt-sm text-black"
                               color="accent"
                               label="PRINT"
                               @click.stop="showPxVisitPrintout(item)"
@@ -597,7 +605,6 @@
                           </q-item-section>
                           <q-item-section v-if="examsMap" side>
                             <q-btn
-                              class="q-mb-sm"
                               outline
                               dense
                               style="padding-left: 10px; padding-right: 10px"

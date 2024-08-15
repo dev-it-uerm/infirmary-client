@@ -1,6 +1,6 @@
 <template>
   <MinimizedDialog
-    title="ADVANCED SEARCH"
+    title="SEARCH FILTER"
     widthOnDesktop="400px"
     @close="$emit('close')"
   >
@@ -121,9 +121,8 @@
                 color="accent"
                 class="q-px-md q-py-xs text-black"
                 unelevated
-                icon="search"
                 stack-label
-                label="SEARCH"
+                label="CHANGE"
                 type="submit"
               />
             </div>

@@ -14,14 +14,13 @@
             style="gap: 56px"
           >
             <div :class="$q.screen.gt.md ? 'col' : 'full-width'">
-              <div class="row items-center q-mb-md" style="gap: 16px">
+              <div class="row items-start q-mb-md" style="gap: 16px">
                 <div
-                  class="row items-center no-wrap"
+                  class="col-auto"
                   :class="$q.screen.gt.md ? 'col' : 'col-12'"
-                  style="gap: 12px"
                 >
                   <div
-                    class="text-primary text-weight-medium text-uppercase"
+                    class="text-primary text-weight-medium text-uppercase q-pt-sm"
                     style="
                       font-size: 16px;
                       line-height: 16px;
@@ -30,97 +29,100 @@
                   >
                     PENDING VISITS:
                   </div>
-                  <q-btn
-                    :disable="pendingVisitsLoading"
-                    color="primary"
-                    round
-                    flat
-                    dense
-                    @click="getPendingVisits"
-                  >
-                    <q-icon
-                      style="font-weight: bold"
-                      name="fa-solid fa-arrows-rotate"
-                      size="xs"
-                    />
-                  </q-btn>
                 </div>
-                <div
-                  class="row items-center justify-end"
-                  :class="$q.screen.gt.md ? 'col-auto' : 'col-12'"
-                  style="gap: 10px; cursor: pointer"
-                  @click="
-                    () => {
-                      if (!pendingVisitsLoading)
-                        pendingVisitsFilterVisible = true;
-                    }
-                  "
-                >
-                  <div
-                    class="row text-uppercase"
-                    style="gap: 6px; letter-spacing: 0.8pt"
-                  >
-                    <q-badge class="bg-grey" style="padding: 8px">
-                      {{
-                        campusesMap[pendingVisitsFilters.patientCampusCode]
-                          ?.name
-                      }}
-                    </q-badge>
-                    <q-badge class="bg-grey" style="padding: 8px">
-                      {{
-                        affiliationsMap[
-                          pendingVisitsFilters.patientAffiliationCode
-                        ]?.name
-                      }}
-                    </q-badge>
-                  </div>
-                  <div class="col-auto">
-                    <q-btn
-                      :disable="pendingVisitsLoading"
-                      color="primary"
-                      round
-                      flat
-                      dense
-                      @click.stop="pendingVisitsFilterVisible = true"
+                <div class="col">
+                  <q-form @submit="getPendingVisits">
+                    <div
+                      class="row items-start justify-end"
+                      :class="$q.screen.gt.md ? '' : 'q-mb-lg'"
+                      :style="$q.screen.gt.md ? { gap: '8px' } : {}"
                     >
-                      <q-icon
-                        style="font-weight: bold"
-                        name="fa-solid fa-magnifying-glass"
-                        size="xs"
+                      <q-input
+                        :disable="pendingVisitsLoading"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :dense="$q.screen.gt.md"
+                        stack-label
+                        outlined
+                        label="Year"
+                        maxlength="4"
+                        :rules="[requiredRule, yearRule]"
+                        v-model.trim="pendingVisitsFilters.year"
                       />
-                    </q-btn>
-                  </div>
+                      <q-select
+                        :disable="pendingVisitsLoading"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :dense="$q.screen.gt.md"
+                        stack-label
+                        outlined
+                        emit-value
+                        map-options
+                        option-label="name"
+                        option-value="code"
+                        :options="campuses"
+                        label="Campus"
+                        hint=""
+                        v-model="pendingVisitsFilters.patientCampusCode"
+                      />
+                      <q-select
+                        :disable="pendingVisitsLoading"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :dense="$q.screen.gt.md"
+                        stack-label
+                        outlined
+                        emit-value
+                        map-options
+                        option-label="name"
+                        option-value="code"
+                        :options="affiliations"
+                        label="Affiliation"
+                        hint=""
+                        v-model="pendingVisitsFilters.patientAffiliationCode"
+                      />
+                      <q-input
+                        :disable="pendingVisitsLoading"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :style="$q.screen.gt.md ? { width: '200px' } : {}"
+                        :dense="$q.screen.gt.md"
+                        outlined
+                        debounce="750"
+                        label="Patient Name"
+                        maxlength="255"
+                        hint=""
+                        :rules="[
+                          (v) =>
+                            v.length > 0 && v.length < 3
+                              ? 'At least 3 letters is required.'
+                              : undefined,
+                        ]"
+                        v-model.trim="pendingVisitsFilters.patientFullName"
+                      >
+                        <template v-slot:append>
+                          <q-icon
+                            v-if="pendingVisitsFilters.patientFullName !== ''"
+                            size="xs"
+                            name="close"
+                            class="cursor-pointer"
+                            @click="pendingVisitsFilters.patientFullName = ''"
+                          />
+                        </template>
+                      </q-input>
+                      <q-btn
+                        :disable="pendingVisitsLoading"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        class="q-px-md q-py-sm"
+                        unelevated
+                        color="primary"
+                        label="SEARCH"
+                        type="submit"
+                      />
+                    </div>
+                  </q-form>
                 </div>
               </div>
               <div>
                 <FetchingData v-if="pendingVisitsLoading" />
                 <template v-else>
-                  <q-input
-                    :style="$q.screen.gt.md ? { maxWidth: '200px' } : {}"
-                    dense
-                    outlined
-                    debounce="750"
-                    label="Filter"
-                    maxlength="255"
-                    hint=""
-                    v-model.trim="pendingVisitsFilterStr"
-                  >
-                    <template v-slot:append>
-                      <q-icon
-                        v-if="pendingVisitsFilterStr !== ''"
-                        size="xs"
-                        name="close"
-                        class="cursor-pointer"
-                        @click="pendingVisitsFilterStr = ''"
-                      />
-                      <q-icon name="filter_alt" size="xs" />
-                    </template>
-                  </q-input>
-                  <template
-                    v-if="
-                      filteredPendingVisits && filteredPendingVisits.length > 0
-                    "
-                  >
+                  <template v-if="pendingVisits && pendingVisits.length > 0">
                     <div
                       class="full-width relative-position"
                       v-if="$q.screen.gt.md"
@@ -130,7 +132,7 @@
                         style="border-radius: 0"
                         id="uerm-infirmary__visits-page__q-table"
                         class="shadow-0"
-                        :rows="filteredPendingVisits"
+                        :rows="pendingVisits"
                         :columns="columns"
                         hide-bottom
                         :rows-per-page-options="[0]"
@@ -276,7 +278,7 @@
                           :class="$q.screen.lt.md ? 'q-mt-md' : ''"
                         >
                           <span class="text-weight-bold">{{
-                            filteredPendingVisits.length
+                            pendingVisits.length
                           }}</span
                           >&nbsp;item/s
                         </q-badge>
@@ -298,7 +300,7 @@
                           border-left: 1px solid rgba(0, 0, 0, 0.1);
                           border-right: 1px solid rgba(0, 0, 0, 0.1);
                         "
-                        :items="filteredPendingVisits"
+                        :items="pendingVisits"
                         v-slot="{ item, index }"
                       >
                         <q-item
@@ -648,8 +650,10 @@
       @valueChanged="
         (val) => {
           pendingVisitsFilterVisible = false;
-          pendingVisitsFilters = val;
-          getPendingVisits();
+          pendingVisitsFilters = {
+            ...pendingVisitsFilters,
+            ...val,
+          };
         }
       "
     />
@@ -854,7 +858,7 @@ export default defineComponent({
         //   ),
         //   to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
         // },
-
+        patientFullName: "",
         patientCampusCode: campusesMap.CAL.code,
         patientAffiliationCode: affiliationsMap.STU.code,
         // patientName: null,
@@ -870,7 +874,6 @@ export default defineComponent({
         patientAffiliationCode: affiliationsMap.STU.code,
       },
 
-      pendingVisitsFilterStr: "",
       completedVisitsFilterStr: "",
 
       pendingVisitsLoading: false,
@@ -895,12 +898,6 @@ export default defineComponent({
     ...mapGetters({
       user: "app/user",
     }),
-    filteredPendingVisits() {
-      return this.getFilteredVisits(
-        this.pendingVisits,
-        this.pendingVisitsFilterStr
-      );
-    },
     filteredCompletedVisits() {
       return this.getFilteredVisits(
         this.completedVisits,
@@ -952,10 +949,15 @@ export default defineComponent({
     async getPendingVisits() {
       this.pendingVisitsLoading = true;
 
-      const response = await this.$store.dispatch(
-        "ape/getVisits",
-        this.pendingVisitsFilters
+      const payload = Object.entries(this.pendingVisitsFilters).reduce(
+        (acc, e) => {
+          if (e[1] != null && e[1] !== "") acc[e[0]] = e[1];
+          return acc;
+        },
+        {}
       );
+
+      const response = await this.$store.dispatch("ape/getVisits", payload);
 
       if (response.error) {
         showMessage(this.$q, false, "Unable to fetch visits. Please try again");
@@ -977,7 +979,6 @@ export default defineComponent({
       //   .flatMap((a) => a);
 
       this.pendingVisits = formattedResponse1;
-      this.pendingVisitsFilterStr = "";
       this.pendingVisitsLoading = false;
     },
     async getCompletedVisits() {

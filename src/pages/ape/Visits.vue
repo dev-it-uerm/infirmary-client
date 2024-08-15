@@ -970,17 +970,19 @@ export default defineComponent({
           };
         }
 
-        map[row.id].exams.push({
-          id: row.visitExamId,
-          visitId: row.visitExamVisitId,
-          examCode: row.visitExamExamCode,
-          createdBy: row.visitExamCreatedBy,
-          dateTimeCreated: row.visitExamDateTimeCreated,
-          acceptedBy: row.visitExamAcceptedBy,
-          dateTimeAccepted: row.visitExamDateTimeAccepted,
-          completedBy: row.visitExamCompletedBy,
-          dateTimeCompleted: row.visitExamDateTimeCompleted,
-        });
+        if (row.visitExamId) {
+          map[row.id].exams.push({
+            id: row.visitExamId,
+            visitId: row.visitExamVisitId,
+            examCode: row.visitExamExamCode,
+            createdBy: row.visitExamCreatedBy,
+            dateTimeCreated: row.visitExamDateTimeCreated,
+            acceptedBy: row.visitExamAcceptedBy,
+            dateTimeAccepted: row.visitExamDateTimeAccepted,
+            completedBy: row.visitExamCompletedBy,
+            dateTimeCompleted: row.visitExamDateTimeCompleted,
+          });
+        }
       }
 
       return Object.values(map);

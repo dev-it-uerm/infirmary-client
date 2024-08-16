@@ -22,7 +22,7 @@
               { code: 'AFFILIATION', name: 'AFFILIATION' },
               { code: 'DEPARTMENT', name: 'DEPARTMENT' },
             ]"
-            label="COLUMNS"
+            label="Columns"
             emit-value
             map-options
             option-label="name"

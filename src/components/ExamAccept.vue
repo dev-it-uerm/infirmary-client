@@ -77,27 +77,19 @@
                 affiliationsMap[patient.affiliationCode].name
               }}</span>
             </div>
-            <div v-if="patient.deptCode">
-              <span class="text-grey-7">Patient Deparment:</span>
+            <div v-if="patient.deptCode || patient.collegeCode">
+              <span class="text-grey-7">Patient Deparment/College:</span>
               <span class="q-ml-sm">{{
-                departmentsMap[patient.deptCode].name
+                departmentsMap[patient.deptCode || patient.collegeCode]
               }}</span>
             </div>
-            <template v-if="patient.collegeCode">
-              <div>
-                <span class="text-grey-7">Patient College:</span>
-                <span class="q-ml-sm">{{
-                  collegesMap[patient.collegeCode].name
-                }}</span>
-              </div>
-              <div v-if="patient.yearLevel">
-                <span class="text-grey-7">Patient Year Level:</span>
-                <span class="q-ml-sm">{{
-                  yearLevels.find((l) => l.code === Number(patient.yearLevel))
-                    .name ?? ""
-                }}</span>
-              </div>
-            </template>
+            <div v-if="patient.yearLevel">
+              <span class="text-grey-7">Patient Year Level:</span>
+              <span class="q-ml-sm">{{
+                yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                  .name ?? ""
+              }}</span>
+            </div>
           </div>
         </div>
         <ReminderCard v-else bordered>
@@ -127,7 +119,6 @@ import { mapGetters } from "vuex";
 import {
   delay,
   showMessage,
-  sortStringArr,
   formatDate,
   formatName,
 } from "src/helpers/util.js";
@@ -137,9 +128,7 @@ import {
   exams,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
-  departmentsMap,
 } from "src/helpers/constants.js";
 
 export default defineComponent({
@@ -167,15 +156,15 @@ export default defineComponent({
       examsMap,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
-      departmentsMap,
       formatDate,
       formatName,
     };
   },
   data() {
     return {
+      departmentsMap: null,
+
       loading: false,
       inputMode: null,
 
@@ -199,8 +188,11 @@ export default defineComponent({
       if (val) this.accept(val);
     },
   },
-  mounted() {
+  async mounted() {
     if (!this.user) return;
+
+    this.loading = true;
+    this.$emit("busy");
 
     this.exams = exams.filter((e) => {
       return (
@@ -211,6 +203,12 @@ export default defineComponent({
     });
 
     if (this.exams.length > 0) this.exam = this.exams[0];
+
+    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+    await delay(500);
+
+    this.loading = false;
+    this.$emit("ready");
   },
   methods: {
     async accept(patientCode) {

@@ -85,11 +85,16 @@
                         affiliationsMap[patient.affiliationCode].name
                       }}</span>
                     </div>
-                    <div v-if="patient.collegeCode" class="q-mt-sm">
+                    <div
+                      v-if="patient.deptCode || patient.collegeCode"
+                      class="q-mt-sm"
+                    >
                       <div>
-                        <span class="text-grey-7">College:</span>
+                        <span class="text-grey-7">Department/College:</span>
                         <span class="q-ml-sm">{{
-                          collegesMap[patient.collegeCode].name
+                          departmentsMap[
+                            patient.deptCode || patient.collegeCode
+                          ]
                         }}</span>
                       </div>
                       <div v-if="patient.yearLevel">
@@ -202,18 +207,19 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
 import {
   delay,
   showMessage,
   formatName,
   formatDate,
 } from "src/helpers/util.js";
+
 import {
   examsMap,
   exams,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -250,13 +256,12 @@ export default defineComponent({
       exams,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
     };
   },
   data() {
     return {
-      // recentEntries: [],
+      departmentsMap: null,
       inputMode: null,
 
       exams: [],
@@ -294,7 +299,8 @@ export default defineComponent({
       }
     },
   },
-  mounted() {
+  async mounted() {
+    this.loading = true;
     if (!this.user || !this.user.examsHandled) return;
 
     const examsHandled = exams.filter((e) =>
@@ -303,6 +309,10 @@ export default defineComponent({
 
     this.exams = examsHandled;
     this.exam = examsHandled[0];
+
+    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+    await delay(1000);
+    this.loading = false;
   },
   methods: {
     async changeVisitPhase(visitCode, examCode) {

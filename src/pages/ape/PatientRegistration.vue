@@ -77,7 +77,9 @@
                     :disable="loading"
                     stack-label
                     outlined
-                    :options="colleges"
+                    :options="
+                      departments ? departments.filter((d) => d.isCollege) : []
+                    "
                     label="College"
                     emit-value
                     map-options
@@ -260,13 +262,10 @@ import { delay, showMessage, empty } from "src/helpers/util.js";
 import {
   campusesMap,
   campuses,
-  collegesMap,
-  colleges,
   yearLevelsMap,
   yearLevels,
   affiliationsMap,
   affiliations,
-  departments,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -293,17 +292,16 @@ export default defineComponent({
       campuses,
       affiliationsMap,
       affiliations,
-      collegesMap,
-      colleges,
       yearLevelsMap,
       yearLevels,
-      departments,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };
   },
   data() {
     return {
+      departments: null,
+
       loading: false,
       yesNoDialogVisible: false,
 
@@ -339,6 +337,14 @@ export default defineComponent({
         this.yearLevel = null;
       }
     },
+  },
+  async mounted() {
+    this.loading = true;
+
+    this.departments = (await this.$store.dispatch("ape/getDepartments"))[0];
+    await delay(1000);
+
+    this.loading = false;
   },
   methods: {
     reset() {

@@ -256,12 +256,12 @@
                                 }}
                               </q-td>
                               <q-td
-                                v-else-if="column.name === 'patientCollegeCode'"
+                                v-else-if="column.name === 'patientDeptCode'"
                                 class="text-center"
                               >
                                 {{
                                   props.row[column.name]
-                                    ? collegesMap[props.row[column.name]].name
+                                    ? departmentsMap[props.row[column.name]]
                                     : ""
                                 }}
                               </q-td>
@@ -364,17 +364,13 @@
                                   "
                                 />
                                 <q-badge
-                                  v-if="
-                                    item.patientCollegeCode ||
-                                    item.patientDeptCode
-                                  "
+                                  v-if="item.patientDeptCode"
                                   class="bg-grey"
-                                  >{{
-                                    collegesMap[item.patientCollegeCode]
-                                      ?.name ??
-                                    departmentsMap[item.patientDeptCode]?.name
-                                  }}</q-badge
                                 >
+                                  {{
+                                    departmentsMap[item.patientDeptCode]?.name
+                                  }}
+                                </q-badge>
                                 <q-badge
                                   v-if="item.patientYearLevel"
                                   class="bg-grey"
@@ -731,9 +727,6 @@ import {
   delay,
   formatDate,
   showMessage,
-  subtractDay,
-  jsDateToISOString,
-  allPropsEmpty,
   formatName,
 } from "src/helpers/util.js";
 
@@ -744,11 +737,8 @@ import {
   campuses,
   examsMap,
   exams,
-  collegesMap,
-  colleges,
   yearLevelsMap,
   yearLevels,
-  // departmentsMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -795,12 +785,9 @@ export default defineComponent({
       campusesMap,
       exams,
       examsMap,
-      collegesMap,
-      colleges,
+
       yearLevelsMap,
       yearLevels,
-
-      // departmentsMap,
 
       showMessage,
       formatDate,
@@ -849,9 +836,9 @@ export default defineComponent({
           align: "center",
         },
         {
-          name: "patientCollegeCode",
-          field: "patientCollegeCode",
-          label: "COLLEGE",
+          name: "patientDeptCode",
+          field: "patientDeptCode",
+          label: "DEPARTMENT",
           align: "center",
         },
         {
@@ -873,8 +860,7 @@ export default defineComponent({
   },
   data() {
     return {
-      departments: [],
-      departmentsMap: {},
+      departmentsMap: null,
 
       pendingVisitsFilters: {
         status: "PENDING",
@@ -889,9 +875,8 @@ export default defineComponent({
         patientFullName: "",
         patientCampusCode: campusesMap.CAL.code,
         patientAffiliationCode: affiliationsMap.STU.code,
-        // patientName: null,
 
-        // patientCollegeCode: null,
+        // patientDeptCode: null,
         // patientYearLevel: null,
       },
 
@@ -944,7 +929,7 @@ export default defineComponent({
       this.currentVisit = visit;
       this.visitPrintoutVisible = true;
     },
-    formatResponse(rows) {
+    formatRows(rows) {
       const map = {};
 
       for (const row of rows) {
@@ -959,17 +944,18 @@ export default defineComponent({
             dateTimeCompleted: row.dateTimeCompleted,
             remarks: row.remarks,
 
+            patientIdentificationCode: row.patientIdentificationCode,
+
             patientCampusCode: row.patientCampusCode,
             patientAffiliationCode: row.patientAffiliationCode,
-            patientIdentificationCode: row.patientIdentificationCode,
+            patientDeptCode: row.patientDeptCode || row.patientCollegeCode,
+            patientYearLevel: row.patientYearLevel,
+
             patientFirstName: row.patientFirstName,
             patientMiddleName: row.patientMiddleName,
             patientLastName: row.patientLastName,
             patientExtName: row.patientExtName,
             patientGender: row.patientGender,
-            patientDeptCode: row.patientDeptCode,
-            patientCollegeCode: row.patientCollegeCode,
-            patientYearLevel: row.patientYearLevel,
 
             exams: [],
           };
@@ -1012,7 +998,7 @@ export default defineComponent({
 
       await delay(1000);
 
-      const formattedResponse = this.formatResponse(response.body);
+      const formattedResponse = this.formatRows(response.body);
       this.pendingVisits = formattedResponse;
       this.pendingVisitsLoading = false;
     },
@@ -1031,7 +1017,7 @@ export default defineComponent({
 
       await delay(1000);
 
-      const formattedResponse = this.formatResponse(response.body);
+      const formattedResponse = this.formatRows(response.body);
       this.completedVisits = formattedResponse;
       this.completedVisitsLoading = false;
     },

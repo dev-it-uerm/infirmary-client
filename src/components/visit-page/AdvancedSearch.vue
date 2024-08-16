@@ -141,7 +141,6 @@ import {
   affiliationsMap,
   campuses,
   exams,
-  colleges,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -170,7 +169,6 @@ export default defineComponent({
       affiliationsMap,
       campuses,
       exams,
-      colleges,
       yearLevels,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,

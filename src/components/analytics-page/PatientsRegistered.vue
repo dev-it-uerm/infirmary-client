@@ -108,7 +108,7 @@
               color="accent"
               icon="download"
               class="text-black"
-              label="EXPORT"
+              label="DOWNLOAD"
               @click="
                 downloadExcel(
                   `INFIRMARY-APE__PATIENTS-REGISTERED__${Object.values(

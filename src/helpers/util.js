@@ -1,6 +1,8 @@
 import decodeJWT from "jwt-decode";
 import axios from "axios";
 import qs from "qs";
+import * as ExcelJS from "exceljs";
+import { Buffer } from "buffer";
 
 const COMMUNICATION_ERROR = {
   code: 0,
@@ -365,4 +367,64 @@ export const formatName = (firstName, middleName, lastName, extName) => {
   return `${lastName}, ${firstName}${extName ? " ".concat(extName) : ""}${
     middleName ? " ".concat(middleName[0]).concat(".") : ""
   }`;
+};
+
+export const downloadExcel = async (fileNamePrefix, rows, columns) => {
+  console.log(columns);
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("INFIRMARY APE REPORT");
+
+  sheet.columns = columns.map((c) => {
+    return {
+      key: c.field,
+      header: c.label,
+      width: 50,
+    };
+  });
+
+  // COLUMN STYLE
+  // const borderStyle = { style: "thin", color: { argb: "00000000" } };
+
+  sheet.columns.forEach((c, idx) => {
+    sheet.getColumn(idx + 1).numFmt = "@";
+
+    sheet.getColumn(idx + 1).alignment = {
+      vertical: "middle",
+      horizontal: "center",
+      wrapText: true,
+    };
+
+    // sheet.getColumn(idx + 1).border = {
+    //   top: borderStyle,
+    //   left: borderStyle,
+    //   bottom: borderStyle,
+    //   right: borderStyle,
+    // };
+  });
+
+  // COLUMN HEADER STYLE
+  sheet.getRow(1).font = { bold: true };
+
+  sheet.getRow(1).alignment = {
+    vertical: "middle",
+    horizontal: "center",
+  };
+
+  for (const row of rows) {
+    sheet.addRow(
+      columns.reduce((acc, c) => {
+        acc[c.field] = c.format ? c.format(row[c.field]) : row[c.field];
+        return acc;
+      }, {})
+    );
+  }
+
+  // DOWNLOAD FILE
+  const fileBuffer = await workbook.xlsx.writeBuffer();
+  const base64 = Buffer.from(fileBuffer).toString("base64");
+
+  const a = document.createElement("a");
+  a.href = "data:application/xlsx;base64," + base64;
+  a.download = `${fileNamePrefix}.xls`;
+  a.click();
 };

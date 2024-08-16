@@ -3,26 +3,13 @@
     <template v-slot:append>
       <q-icon name="event" class="cursor-pointer">
         <q-popup-proxy cover :breakpoint="600" ref="qPopUpProxy">
-          <div class="column">
-            <q-date
-              style="border-color: rgba(0, 0, 0, 0.25)"
-              v-model="dateRange"
-              range
-              minimal
-              mask="YYYY/MM/DD"
-            >
-              <div class="row justify-end">
-                <q-btn
-                  dense
-                  unelevated
-                  color="primary"
-                  label="CLOSE"
-                  class="q-px-sm"
-                  v-close-popup
-                />
-              </div>
-            </q-date>
-          </div>
+          <q-date
+            style="border-color: rgba(0, 0, 0, 0.25)"
+            v-model="dateRange"
+            range
+            minimal
+            mask="YYYY/MM/DD"
+          />
         </q-popup-proxy>
       </q-icon>
     </template>
@@ -75,6 +62,11 @@ export default defineComponent({
         this.$emit("valueChanged", val);
       },
       immediate: false,
+    },
+    dateRange: {
+      handler(val) {
+        this.$refs.qPopUpProxy.hide();
+      },
     },
   },
   created() {

@@ -216,10 +216,10 @@ export const getXrayChestResultTemplates = async (context, payload) => {
   );
 };
 
-export const getPatientsPerDateRange = async (context, payload) => {
+export const getAnalyticsPatientsVisited = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/analytics/patients-per-date-range`,
+    `${context.rootState.app.apiHost}/ape/analytics/patients-registered`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -227,7 +227,7 @@ export const getPatientsPerDateRange = async (context, payload) => {
   );
 };
 
-export const getDoctorPatients = async (context, payload) => {
+export const getAnalyticsDoctorPatients = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/analytics/doctor-patients`,

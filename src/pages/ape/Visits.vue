@@ -748,7 +748,7 @@ import {
   colleges,
   yearLevelsMap,
   yearLevels,
-  departmentsMap,
+  // departmentsMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -799,7 +799,9 @@ export default defineComponent({
       colleges,
       yearLevelsMap,
       yearLevels,
-      departmentsMap,
+
+      // departmentsMap,
+
       showMessage,
       formatDate,
       formatName,
@@ -871,6 +873,9 @@ export default defineComponent({
   },
   data() {
     return {
+      departments: [],
+      departmentsMap: {},
+
       pendingVisitsFilters: {
         status: "PENDING",
         year: new Date().getFullYear(),
@@ -920,11 +925,12 @@ export default defineComponent({
       user: "app/user",
     }),
   },
-  mounted() {
-    if (this.user) {
-      this.getPendingVisits();
-      this.getCompletedVisits();
-    }
+  async mounted() {
+    if (!this.user) return;
+
+    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+    this.getPendingVisits();
+    this.getCompletedVisits();
   },
   methods: {
     getExamName(code) {
@@ -938,14 +944,6 @@ export default defineComponent({
       this.currentVisit = visit;
       this.visitPrintoutVisible = true;
     },
-    // formatResponse(rows1, rows2) {
-    //   return rows1.map((row) => {
-    //     return {
-    //       ...row,
-    //       exams: rows2.filter((r) => r.visitId === row.id),
-    //     };
-    //   });
-    // },
     formatResponse(rows) {
       const map = {};
 

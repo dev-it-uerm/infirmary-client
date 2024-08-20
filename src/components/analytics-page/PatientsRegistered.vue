@@ -108,14 +108,16 @@
               color="accent"
               icon="download"
               class="text-black"
-              label="EXPORT"
+              label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-REGISTERED__${Object.values(
+                  `INFIRMARY-APE__PATIENTS-REGISTERED__${
                     filter.dateRange
-                  )
-                    .map((d) => d.replace(/\//g, '-'))
-                    .join('-TO-')}`,
+                      ? Object.values(filter.dateRange)
+                          .map((d) => d.replace(/\//g, '-'))
+                          .join('-TO-')
+                      : String(filter.year)
+                  }`,
                   rows,
                   columns
                 )

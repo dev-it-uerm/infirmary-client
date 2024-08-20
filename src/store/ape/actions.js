@@ -243,6 +243,16 @@ export const getXrayChestResultTemplates = async (context, payload) => {
   );
 };
 
+export const getAnalyticsPatientsSeenByDr = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/patients-seen-by-dr`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
 export const getAnalyticsPatientsVisited = async (context, payload) => {
   return await request(
     "get",

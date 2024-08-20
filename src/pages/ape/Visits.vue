@@ -613,7 +613,7 @@
                               dense
                               style="padding-left: 10px; padding-right: 10px"
                               unelevated
-                              class="text-black"
+                              class="text-black q-mt-sm"
                               color="accent"
                               label="PRINT"
                               @click.stop="showPxVisitPrintout(item)"

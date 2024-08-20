@@ -22,58 +22,17 @@
                 <div class="text-primary text-weight-medium q-mb-md row">
                   PATIENT LIST:
                 </div>
-                <div
-                  class="row items-center q-mb-md"
-                  :style="$q.screen.lt.md ? {} : { gap: '16px' }"
-                >
-                  <q-input
-                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                    :style="{
-                      minWidth: $q.screen.lt.md ? '100%' : '100px',
-                    }"
-                    :dense="$q.screen.gt.sm"
-                    :disable="saving"
-                    debounce="750"
-                    stack-label
-                    outlined
-                    label="Year"
-                    hint=""
-                    :rules="[requiredRule, yearRule]"
-                    v-model="year"
-                  />
-                  <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                    :dense="$q.screen.gt.sm"
-                    :disable="saving"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="campuses"
-                    label="Campus"
-                    :rules="[requiredRule]"
-                    v-model="campusCode"
-                    hint=""
-                  />
-                  <q-select
-                    :class="$q.screen.lt.md ? 'col-12' : 'col'"
-                    :dense="$q.screen.gt.sm"
-                    :disable="saving"
-                    stack-label
-                    outlined
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :options="affiliations"
-                    label="Affiliation"
-                    :rules="[requiredRule]"
-                    v-model="affiliationCode"
-                    hint=""
-                  />
-                </div>
+                <q-input
+                  :dense="$q.screen.gt.sm"
+                  :disable="saving"
+                  debounce="750"
+                  stack-label
+                  outlined
+                  label="Year"
+                  hint=""
+                  :rules="[requiredRule, yearRule]"
+                  v-model="year"
+                />
                 <div class="column" style="gap: 16px">
                   <q-input
                     debounce="750"
@@ -373,8 +332,6 @@ export default defineComponent({
 
         const response = await this.$store.dispatch("ape/saveExamDetails", {
           identificationCode: patient.identificationCode,
-          campusCode: this.campusCode,
-          affiliationCode: this.affiliationCode,
           year: this.year,
 
           examCode: examsMap.RAD_XR_CHST.code,

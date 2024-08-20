@@ -11,55 +11,24 @@
       <div class="text-primary text-weight-medium q-mb-lg">FILTER:</div>
       <div>
         <q-form @submit="getData">
-          <q-select
-            :disable="ready === false"
-            stack-label
-            outlined
-            multiple
-            use-chips
-            :options="[
-              { code: 'CAMPUS', name: 'CAMPUS' },
-              { code: 'AFFILIATION', name: 'AFFILIATION' },
-              { code: 'DEPARTMENT', name: 'DEPARTMENT' },
-            ]"
-            label="Columns"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            v-model="reportColumns"
-            hint=""
-          />
-          <q-select
-            :disable="ready === false"
-            stack-label
-            outlined
-            :options="[
-              { code: 'YEAR', name: 'YEAR' },
-              { code: 'DATERANGE', name: 'DATE RANGE' },
-            ]"
-            label="Date Type"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            v-model="dateType"
-            hint=""
-          />
           <FormFieldYear
-            v-if="dateType === 'YEAR'"
             :disable="ready === false"
+            :rules="[inputRuleRequired]"
             v-model="filter.year"
           />
-          <DateRange
-            v-if="dateType === 'DATERANGE'"
+          <q-select
             :disable="ready === false"
             stack-label
             outlined
-            label="Date Range"
+            :options="campuses"
+            label="Campus"
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            v-model="filter.campusCode"
+            :rules="[inputRuleRequired]"
             hint=""
-            :initialValue="filter.dateRange"
-            @valueChanged="(val) => (filter.dateRange = val)"
           />
           <div class="row justify-end">
             <q-btn
@@ -91,7 +60,7 @@
       <div v-else-if="ready === true" class="full-width">
         <div class="full-width">
           <div class="col text-primary text-weight-medium q-mb-lg">
-            NUMBER OF PATIENTS REGISTERED
+            NUMBER OF PATIENTS SEEN BY DR
           </div>
           <q-table
             style="max-height: 500px"
@@ -111,13 +80,9 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-REGISTERED__${
-                    filter.dateRange
-                      ? Object.values(filter.dateRange)
-                          .map((d) => d.replace(/\//g, '-'))
-                          .join('-TO-')
-                      : String(filter.year)
-                  }`,
+                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR__${String(
+                    filter.campusCode
+                  )}__${String(filter.year)}`,
                   rows,
                   columns
                 )
@@ -132,46 +97,33 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import { delay, showMessage, downloadExcel } from "src/helpers/util.js";
 import * as inputRules from "src/helpers/input-rules.js";
+import { campuses } from "src/helpers/constants.js";
 
-import {
-  isStr,
-  formatDate,
-  delay,
-  showMessage,
-  downloadExcel,
-} from "src/helpers/util.js";
-
-const columnsMap1 = {
-  visitDate: {
-    name: "visitDate",
-    field: "visitDate",
-    label: "DATE OF VISIT",
-    align: "center",
-    format: (v) => formatDate(v, { dateOnly: true }),
-  },
-  patientCampus: {
-    name: "patientCampus",
-    field: "patientCampus",
-    label: "CAMPUS",
-    align: "center",
-  },
-  patientAffiliation: {
-    name: "patientAffiliation",
-    field: "patientAffiliation",
-    label: "AFFILIATION",
-    align: "center",
-  },
-  patientDepartment: {
-    name: "patientDepartment",
-    field: "patientDepartment",
+const columnsMap = {
+  deptName: {
+    name: "deptName",
+    field: "deptName",
     label: "DEPARTMENT",
     align: "center",
   },
-  patientCount: {
-    name: "patientCount",
-    field: "patientCount",
-    label: "PATIENT COUNT",
+  patientsSeen: {
+    name: "patientsSeen",
+    field: "patientsSeen",
+    label: "SEEN",
+    align: "center",
+  },
+  patientsNotSeen: {
+    name: "patientsNotSeen",
+    field: "patientsNotSeen",
+    label: "NOT SEEN",
+    align: "center",
+  },
+  patientsAll: {
+    name: "patientsAll",
+    field: "patientsAll",
+    label: "ENROLLED",
     align: "center",
   },
 };
@@ -188,73 +140,51 @@ export default defineComponent({
     FormFieldYear: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Year.vue")
     ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
-    ),
   },
   setup() {
     return {
       inputRuleRequired: inputRules.required,
       downloadExcel,
+      campuses,
     };
   },
   data() {
     return {
       ready: null,
 
-      reportColumns: ["CAMPUS", "AFFILIATION", "DEPARTMENT"],
-      dateType: "YEAR",
-
       filter: {
+        campusCode: null,
         year: null,
-        dateRange: null,
       },
 
       columns: [],
       rows: [],
     };
   },
-  watch: {
-    dateType() {
-      this.filter.dateRange = null;
-      this.filter.year = null;
-    },
-  },
   methods: {
     async getData() {
       this.ready = false;
       this.columns = [];
 
-      const payload = {
-        columns: this.reportColumns,
-        filter: this.filter.dateRange
-          ? {
-              dateRange: isStr(this.filter.dateRange)
-                ? { from: this.filter.dateRange, to: this.filter.dateRange }
-                : this.filter.dateRange,
-            }
-          : { year: this.filter.year },
-      };
-
-      const response1 = await this.$store.dispatch(
-        "ape/getAnalyticsPatientsVisited",
-        payload
+      const response = await this.$store.dispatch(
+        "ape/getAnalyticsPatientsSeenByDr",
+        this.filter
       );
 
       await delay(1000);
 
-      if (response1.error) {
-        showMessage(this.$q, false, response1.body.error ?? response1.body);
+      if (response.error) {
+        showMessage(this.$q, false, response.body.error ?? response.body);
         this.ready = true;
         return;
       }
 
       await delay(1000);
 
-      this.rows = response1.body;
+      this.rows = response.body;
 
-      this.columns = response1.body[0]
-        ? Object.keys(response1.body[0]).map((k) => columnsMap1[k])
+      this.columns = response.body[0]
+        ? Object.keys(response.body[0]).map((k) => columnsMap[k])
         : [];
 
       this.ready = true;

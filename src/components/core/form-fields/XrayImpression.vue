@@ -54,7 +54,11 @@
           flat
           bordered
           class="q-pa-lg my-card cursor-pointer text-primary full-width"
-          style="border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 6px"
+          style="
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+            white-space: pre;
+          "
           @click="
             (val) => {
               value = template;

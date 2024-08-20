@@ -55,13 +55,17 @@
                   hint=""
                 />
                 <q-select
-                  v-if="affiliationCode === affiliationsMap.EMP.code"
+                  v-if="affiliationCode"
                   class="full-width"
                   :disable="loading"
                   stack-label
                   outlined
-                  :options="departments"
-                  label="Department"
+                  :options="
+                    affiliationCode === affiliationsMap.STU.code
+                      ? departments.filter((d) => d.isCollege)
+                      : departments
+                  "
+                  label="Department/College"
                   emit-value
                   map-options
                   option-label="name"
@@ -72,23 +76,6 @@
                 />
                 <template v-if="affiliationCode === affiliationsMap.STU.code">
                   <q-separator style="width: 50px; margin: 8px 0 24px 0" />
-                  <q-select
-                    class="full-width"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    :options="
-                      departments ? departments.filter((d) => d.isCollege) : []
-                    "
-                    label="College"
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :rules="[requiredRule]"
-                    v-model="collegeCode"
-                    hint=""
-                  />
                   <q-select
                     class="full-width"
                     :disable="loading"
@@ -310,7 +297,6 @@ export default defineComponent({
       code: null,
       deptCode: null,
 
-      collegeCode: null,
       yearLevel: null,
 
       firstName: null,
@@ -331,11 +317,8 @@ export default defineComponent({
   },
   watch: {
     affiliationCode(val) {
-      if (val === affiliationsMap.EMP.code) {
-        this.collegeCode = null;
-        this.deptCode = null;
-        this.yearLevel = null;
-      }
+      this.deptCode = null;
+      this.yearLevel = null;
     },
   },
   async mounted() {
@@ -353,7 +336,6 @@ export default defineComponent({
       this.code = null;
       this.deptCode = null;
 
-      this.collegeCode = null;
       this.yearLevel = null;
 
       this.firstName = null;
@@ -377,7 +359,6 @@ export default defineComponent({
         identificationCode: this.code,
         deptCode: this.deptCode,
 
-        collegeCode: this.collegeCode,
         yearLevel: this.yearLevel,
 
         firstName: this.firstName,

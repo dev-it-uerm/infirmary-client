@@ -57,11 +57,11 @@
                 affiliationsMap[patient.affiliationCode].name
               }}</span>
             </div>
-            <div v-if="patient.deptCode || patient.collegeCode" class="q-mt-sm">
+            <div class="q-mt-sm">
               <div>
                 <span class="text-grey-7">Deparment/College:</span>
                 <span class="q-ml-sm">{{
-                  departmentsMap[patient.deptCode || patient.collegeCode]
+                  departmentsMap[patient.deptCode]
                 }}</span>
               </div>
             </div>

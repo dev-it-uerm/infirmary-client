@@ -80,9 +80,9 @@
                       map-options
                       option-label="name"
                       option-value="code"
-                      :options="colleges"
-                      label="College"
-                      v-model="patientCollegeCode"
+                      :options="departments"
+                      label="College/Department"
+                      v-model="patientDeptCode"
                       hint=""
                     />
                     <q-select
@@ -141,7 +141,6 @@ import {
   affiliationsMap,
   campuses,
   exams,
-  colleges,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -170,7 +169,6 @@ export default defineComponent({
       affiliationsMap,
       campuses,
       exams,
-      colleges,
       yearLevels,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,

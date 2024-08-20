@@ -94,7 +94,6 @@ import {
   examsMap,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -134,7 +133,6 @@ export default defineComponent({
       examsMap,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
     };
   },

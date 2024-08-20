@@ -55,13 +55,12 @@
                   hint=""
                 />
                 <q-select
-                  v-if="affiliationCode === affiliationsMap.EMP.code"
                   class="full-width"
                   :disable="loading"
                   stack-label
                   outlined
                   :options="departments"
-                  label="Department"
+                  label="College/Department"
                   emit-value
                   map-options
                   option-label="name"
@@ -72,21 +71,6 @@
                 />
                 <template v-if="affiliationCode === affiliationsMap.STU.code">
                   <q-separator style="width: 50px; margin: 8px 0 24px 0" />
-                  <q-select
-                    class="full-width"
-                    :disable="loading"
-                    stack-label
-                    outlined
-                    :options="colleges"
-                    label="College"
-                    emit-value
-                    map-options
-                    option-label="name"
-                    option-value="code"
-                    :rules="[requiredRule]"
-                    v-model="collegeCode"
-                    hint=""
-                  />
                   <q-select
                     class="full-width"
                     :disable="loading"
@@ -260,13 +244,10 @@ import { delay, showMessage, empty } from "src/helpers/util.js";
 import {
   campusesMap,
   campuses,
-  collegesMap,
-  colleges,
   yearLevelsMap,
   yearLevels,
   affiliationsMap,
   affiliations,
-  departments,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -293,17 +274,16 @@ export default defineComponent({
       campuses,
       affiliationsMap,
       affiliations,
-      collegesMap,
-      colleges,
       yearLevelsMap,
       yearLevels,
-      departments,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };
   },
   data() {
     return {
+      departments: [],
+
       loading: false,
       yesNoDialogVisible: false,
 
@@ -312,7 +292,6 @@ export default defineComponent({
       code: null,
       deptCode: null,
 
-      collegeCode: null,
       yearLevel: null,
 
       firstName: null,
@@ -334,11 +313,18 @@ export default defineComponent({
   watch: {
     affiliationCode(val) {
       if (val === affiliationsMap.EMP.code) {
-        this.collegeCode = null;
-        this.deptCode = null;
         this.yearLevel = null;
       }
     },
+  },
+  async mounted() {
+    this.loading = true;
+
+    const [depts, deptsMap] = await this.$store.dispatch("ape/getDepartments");
+
+    this.departments = depts;
+    await delay(1000);
+    this.loading = false;
   },
   methods: {
     reset() {
@@ -347,7 +333,6 @@ export default defineComponent({
       this.code = null;
       this.deptCode = null;
 
-      this.collegeCode = null;
       this.yearLevel = null;
 
       this.firstName = null;
@@ -371,7 +356,6 @@ export default defineComponent({
         identificationCode: this.code,
         deptCode: this.deptCode,
 
-        collegeCode: this.collegeCode,
         yearLevel: this.yearLevel,
 
         firstName: this.firstName,

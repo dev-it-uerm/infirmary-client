@@ -57,19 +57,11 @@
                 affiliationsMap[patient.affiliationCode].name
               }}</span>
             </div>
-            <div v-if="patient.deptCode" class="q-mt-sm">
+            <div class="q-mt-sm">
               <div>
-                <span class="text-grey-7">Deparment:</span>
+                <span class="text-grey-7">Deparment/College:</span>
                 <span class="q-ml-sm">{{
-                  departmentsMap[patient.deptCode].name
-                }}</span>
-              </div>
-            </div>
-            <div v-if="patient.collegeCode" class="q-mt-sm">
-              <div>
-                <span class="text-grey-7">College:</span>
-                <span class="q-ml-sm">{{
-                  collegesMap[patient.collegeCode].name
+                  departmentsMap[patient.deptCode]
                 }}</span>
               </div>
               <div v-if="patient.yearLevel">
@@ -167,9 +159,7 @@ import {
   examsMap,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
-  departmentsMap,
 } from "src/helpers/constants.js";
 
 export default defineComponent({
@@ -200,15 +190,15 @@ export default defineComponent({
       examsMap,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
-      departmentsMap,
       formatDate,
       formatName,
     };
   },
   data() {
     return {
+      departmentsMap: {},
+
       // recentEntries: [],
       loading: false,
       inputMode: null,
@@ -230,6 +220,12 @@ export default defineComponent({
     patientCode(val) {
       if (val) this.track(val);
     },
+  },
+  async mounted() {
+    this.loading = true;
+    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+    await delay(1000);
+    this.loading = false;
   },
   methods: {
     async track(patientCode) {

@@ -748,7 +748,7 @@ import {
   colleges,
   yearLevelsMap,
   yearLevels,
-  // departmentsMap,
+  departmentsMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -800,7 +800,7 @@ export default defineComponent({
       yearLevelsMap,
       yearLevels,
 
-      // departmentsMap,
+      departmentsMap,
 
       showMessage,
       formatDate,
@@ -873,9 +873,6 @@ export default defineComponent({
   },
   data() {
     return {
-      departments: [],
-      departmentsMap: {},
-
       pendingVisitsFilters: {
         status: "PENDING",
         year: new Date().getFullYear(),
@@ -928,7 +925,6 @@ export default defineComponent({
   async mounted() {
     if (!this.user) return;
 
-    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
     this.getPendingVisits();
     this.getCompletedVisits();
   },

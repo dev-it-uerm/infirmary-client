@@ -910,7 +910,7 @@ export default defineComponent({
       user: "app/user",
     }),
   },
-  async mounted() {
+  mounted() {
     if (!this.user) return;
 
     this.getPendingVisits();

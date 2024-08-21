@@ -247,3 +247,14 @@ export const getAnalyticsDoctorPatients = async (context, payload) => {
     context
   );
 };
+
+export const getAnalyticsPatientVisitProgress = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/patient-visit-progress`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};

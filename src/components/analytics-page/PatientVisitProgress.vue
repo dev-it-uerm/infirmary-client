@@ -16,6 +16,7 @@
             :rules="[inputRuleRequired]"
             v-model="filter.year"
           />
+          <!-- :options="[{ code: null, name: 'ALL' }, ...campuses]" -->
           <q-select
             :disable="ready === false"
             stack-label
@@ -26,8 +27,33 @@
             map-options
             option-label="name"
             option-value="code"
-            v-model="filter.campusCode"
             :rules="[inputRuleRequired]"
+            v-model="filter.campusCode"
+          />
+          <q-select
+            :disable="ready === false"
+            stack-label
+            outlined
+            :options="[{ code: null, name: 'ALL' }, ...affiliations]"
+            label="Affiliation"
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            v-model="filter.affiliationCode"
+            hint=""
+          />
+          <q-select
+            :disable="ready === false"
+            stack-label
+            outlined
+            :options="[{ code: null, name: 'ALL' }, ...departments]"
+            label="Department"
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            v-model="filter.deptCode"
             hint=""
           />
           <div class="row justify-end">
@@ -60,7 +86,7 @@
       <div v-else-if="ready === true" class="full-width">
         <div class="full-width">
           <div class="col text-primary text-weight-medium q-mb-lg">
-            NUMBER OF PATIENTS SEEN BY DR
+            PATIENT VISIT PROGRESS
           </div>
           <q-table
             style="max-height: 500px"
@@ -80,9 +106,15 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR__${String(
-                    filter.campusCode
-                  )}__${String(filter.year)}`,
+                  `INFIRMARY-APE__PATIENT-VISIT-PROGRESS__${String(
+                    filter.year
+                  )}${
+                    filter.campusCode ? '-' + String(filter.campusCode) : ''
+                  }${
+                    filter.affiliationCode
+                      ? '-' + String(filter.affiliationCode)
+                      : ''
+                  }${filter.deptCode ? '-' + String(filter.deptCode) : ''}`,
                   rows,
                   columns
                 )
@@ -97,39 +129,105 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { delay, showMessage, downloadExcel } from "src/helpers/util.js";
+import {
+  delay,
+  showMessage,
+  downloadExcel,
+  formatDate,
+} from "src/helpers/util.js";
 import * as inputRules from "src/helpers/input-rules.js";
-import { campuses } from "src/helpers/constants.js";
+import { campuses, affiliations, departments } from "src/helpers/constants.js";
 
 const columnsMap = {
-  deptName: {
-    name: "deptName",
-    field: "deptName",
-    label: "DEPARTMENT",
+  patientCampusName: {
+    name: "patientCampusName",
+    field: "patientCampusName",
+    label: "CAMPUS",
     align: "center",
   },
-  patientsSeen: {
-    name: "patientsSeen",
-    field: "patientsSeen",
-    label: "SEEN",
+  patientAffiliationName: {
+    name: "patientAffiliationName",
+    field: "patientAffiliationName",
+    label: "AFFILIATION",
     align: "center",
   },
-  patientsNotSeen: {
-    name: "patientsNotSeen",
-    field: "patientsNotSeen",
-    label: "NOT SEEN",
+  patientDeptName: {
+    name: "patientDeptName",
+    field: "patientDeptName",
+    label: "AFFILIATION",
     align: "center",
   },
-  patientsAll: {
-    name: "patientsAll",
-    field: "patientsAll",
-    label: "ENROLLED",
+  patientCode: {
+    name: "patientCode",
+    field: "patientCode",
+    label: "PATIENT CODE",
     align: "center",
+  },
+  patientName: {
+    name: "patientName",
+    field: "patientName",
+    label: "PATIENT NAME",
+    align: "center",
+  },
+  visitDateTimeCreated: {
+    name: "visitDateTimeCreated",
+    field: "visitDateTimeCreated",
+    label: "DATE & TIME REGISTERED",
+    align: "center",
+    format: formatDate,
+  },
+  visitPhysicianName: {
+    name: "visitPhysicianName",
+    field: "visitPhysicianName",
+    label: "PHYSICIAN",
+    align: "center",
+  },
+  examMedicalHistory: {
+    name: "examMedicalHistory",
+    field: "examMedicalHistory",
+    label: "MEDICAL HISTORY",
+    align: "center",
+    format: formatDate,
+  },
+  examPhysicalExam: {
+    name: "examPhysicalExam",
+    field: "examPhysicalExam",
+    label: "PHYSICAL EXAM",
+    align: "center",
+    format: formatDate,
+  },
+  examLabCbc: {
+    name: "examLabCbc",
+    field: "examLabCbc",
+    label: "LAB - CBC",
+    align: "center",
+    format: formatDate,
+  },
+  examLabUrinalysis: {
+    name: "examLabUrinalysis",
+    field: "examLabUrinalysis",
+    label: "LAB - URINALYSIS",
+    align: "center",
+    format: formatDate,
+  },
+  examLabFecalysis: {
+    name: "examLabFecalysis",
+    field: "examLabFecalysis",
+    label: "LAB - FECALYSIS",
+    align: "center",
+    format: formatDate,
+  },
+  examRadXrayChest: {
+    name: "examRadXrayChest",
+    field: "examRadXrayChest",
+    label: "RAD - XRAY (CHEST)",
+    align: "center",
+    format: formatDate,
   },
 };
 
 export default defineComponent({
-  name: "AnalyticsPatientsSeen",
+  name: "AnalyticsPatientVisitProgress",
   components: {
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -146,6 +244,8 @@ export default defineComponent({
       inputRuleRequired: inputRules.required,
       downloadExcel,
       campuses,
+      affiliations,
+      departments,
     };
   },
   data() {
@@ -153,8 +253,10 @@ export default defineComponent({
       ready: null,
 
       filter: {
-        campusCode: null,
         year: null,
+        campusCode: null,
+        affiliationCode: null,
+        deptCode: null,
       },
 
       columns: [],
@@ -166,9 +268,15 @@ export default defineComponent({
       this.ready = false;
       this.columns = [];
 
+      const payload = Object.entries(this.filter).reduce((acc, e) => {
+        if (e[1] === null) return acc;
+        acc[e[0]] = e[1];
+        return acc;
+      }, {});
+
       const response = await this.$store.dispatch(
-        "ape/getAnalyticsPatientsSeenByDr",
-        this.filter
+        "ape/getAnalyticsPatientVisitProgress",
+        payload
       );
 
       await delay(1000);

@@ -15,6 +15,7 @@
           <q-tab name="patientsRegistered" label="Patients Registered" />
           <q-tab name="patientsSeen" label="Patients Seen by Doctors" />
           <q-tab name="doctorPatients" label="Doctor Patients" />
+          <q-tab name="patientVisitProgress" label="Patient Visit Progress" />
         </q-tabs>
         <q-tab-panels
           class="full-width"
@@ -41,6 +42,12 @@
             name="doctorPatients"
           >
             <DoctorPatients />
+          </q-tab-panel>
+          <q-tab-panel
+            class="full-width q-pa-none q-pt-xl no-scroll"
+            name="patientVisitProgress"
+          >
+            <PatientVisitProgress />
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -70,6 +77,9 @@ export default defineComponent({
     ),
     DoctorPatients: defineAsyncComponent(() =>
       import("src/components/analytics-page/DoctorPatients.vue")
+    ),
+    PatientVisitProgress: defineAsyncComponent(() =>
+      import("src/components/analytics-page/PatientVisitProgress.vue")
     ),
   },
   data() {

@@ -212,7 +212,6 @@
                   outlined
                   maxlength="255"
                   label="Email Address"
-                  :rules="[requiredRule]"
                   v-model.trim="emailAddress"
                   hint=""
                 />
@@ -223,7 +222,6 @@
                   outlined
                   maxlength="255"
                   label="Mobile Phone Number"
-                  :rules="[requiredRule]"
                   v-model.trim="mobileNumber"
                   hint=""
                 />

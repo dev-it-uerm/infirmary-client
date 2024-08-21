@@ -154,7 +154,7 @@ const columnsMap = {
   patientDeptName: {
     name: "patientDeptName",
     field: "patientDeptName",
-    label: "AFFILIATION",
+    label: "DEPARTMENT",
     align: "center",
   },
   patientCode: {

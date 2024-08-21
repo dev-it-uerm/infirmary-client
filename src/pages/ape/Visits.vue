@@ -910,9 +910,10 @@ export default defineComponent({
       user: "app/user",
     }),
   },
-  mounted() {
+  async mounted() {
     if (!this.user) return;
 
+    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
     this.getPendingVisits();
     this.getCompletedVisits();
   },

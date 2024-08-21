@@ -1,32 +1,5 @@
 import { request } from "src/helpers/util";
 
-export const getDepartments = async (context) => {
-  if (context.state.departments && context.state.departmentsMap) {
-    return [context.state.departments, context.state.departmentsMap];
-  }
-
-  const response = await request(
-    "get",
-    `${context.rootState.app.apiHost}/ape/misc/departments`,
-    null,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context
-  );
-
-  if (response.error) return [[], {}];
-
-  const departments = response.body;
-
-  const departmentsMap = departments.reduce((acc, e) => {
-    acc[e.code] = e.name;
-    return acc;
-  }, {});
-
-  context.commit("setDepartments", [departments, departmentsMap]);
-  return [departments, departmentsMap];
-};
-
 export const getVisits = async (context, urlQuery) => {
   return await request(
     "get",
@@ -268,6 +241,17 @@ export const getAnalyticsDoctorPatients = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/analytics/doctor-patients`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getAnalyticsPatientVisitProgress = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/patient-visit-progress`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,

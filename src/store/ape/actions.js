@@ -1,5 +1,12 @@
 import { request } from "src/helpers/util";
 
+const _toMap = (arr) => {
+  return arr.reduce((acc, e) => {
+    acc[e.code] = e.name;
+    return acc;
+  }, {});
+};
+
 export const getDepartments = async (context) => {
   if (context.state.departments && context.state.departmentsMap) {
     return [context.state.departments, context.state.departmentsMap];
@@ -16,15 +23,50 @@ export const getDepartments = async (context) => {
 
   if (response.error) return [[], {}];
 
-  const departments = response.body;
+  const ret = [response.body, _toMap(response.body)];
+  context.commit("setDepartments", ret);
+  return ret;
+};
 
-  const departmentsMap = departments.reduce((acc, e) => {
-    acc[e.code] = e.name;
+export const getExams = async (context) => {
+  if (context.state.exams && context.state.examsMap) {
+    return [context.state.exams, context.state.examsMap];
+  }
+
+  const response = await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/misc/exams`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+
+  if (response.error) return [[], {}];
+
+  const exams = response.body[0];
+  const examParams = response.body[1];
+
+  const examsMap = exams.reduce((acc, e) => {
+    acc[e.code] = {
+      ...e,
+      params: examParams
+        .filter((p) => p.examId === e.id)
+        .map((p) => ({
+          ...p,
+          ...(p.defaultValue == null || p.defaultValue === ""
+            ? {}
+            : { defaultValue: JSON.parse(p.defaultValue) }),
+        }))
+        .toSorted((a, b) => a.sequenceNumber - b.sequenceNumber),
+    };
+
     return acc;
   }, {});
 
-  context.commit("setDepartments", [departments, departmentsMap]);
-  return [departments, departmentsMap];
+  const ret = [Object.values(examsMap), examsMap];
+  context.commit("setExams", ret);
+  return ret;
 };
 
 export const getVisits = async (context, urlQuery) => {

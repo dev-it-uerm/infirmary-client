@@ -1,4 +1,5 @@
 <template>
+  <FetchingData v-if="!departmentsMap || !examsMap || !exams" />
   <div v-if="exams && exams.length > 0" class="column" style="gap: 16px">
     <q-select
       stack-label
@@ -104,7 +105,12 @@
       </div>
     </div>
   </div>
-  <ReminderCard v-else iconName="fa-solid fa-ban" iconColor="negative" bordered>
+  <ReminderCard
+    v-if="exams && exams.length === 0"
+    iconName="fa-solid fa-ban"
+    iconColor="negative"
+    bordered
+  >
     <template v-slot:body>
       <div class="text-negative">
         You are not allowed to receive any diagnostic exams.
@@ -124,8 +130,6 @@ import {
 } from "src/helpers/util.js";
 
 import {
-  examsMap,
-  exams,
   affiliationsMap,
   campusesMap,
   yearLevels,
@@ -134,6 +138,9 @@ import {
 export default defineComponent({
   name: "ExamAccept",
   components: {
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
+    ),
     QRCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/QRCodeScanner.vue")
     ),
@@ -153,7 +160,6 @@ export default defineComponent({
   emits: ["busy", "ready"],
   setup() {
     return {
-      examsMap,
       affiliationsMap,
       campusesMap,
       yearLevels,
@@ -164,6 +170,8 @@ export default defineComponent({
   data() {
     return {
       departmentsMap: null,
+      examsMap: null,
+      exams: null,
 
       loading: false,
       inputMode: null,
@@ -174,7 +182,6 @@ export default defineComponent({
       patient: null,
       dateTimeExamAccepted: null,
 
-      exams: [],
       exam: null,
     };
   },
@@ -191,21 +198,29 @@ export default defineComponent({
   async mounted() {
     if (!this.user) return;
 
-    this.loading = true;
     this.$emit("busy");
+    this.loading = true;
 
-    this.exams = exams.filter((e) => {
+    const [departments, departmentsMap] = await this.$store.dispatch(
+      "ape/getDepartments"
+    );
+
+    const [exams, examsMap] = await this.$store.dispatch("ape/getExams");
+    await delay(500);
+
+    const filteredExams = exams.filter((e) => {
       return (
-        e.code !== examsMap.MED_HIST.code &&
+        e.code !== "MED_HIST" &&
         this.user.examsHandled &&
         this.user.examsHandled.includes(e.code)
       );
     });
 
-    if (this.exams.length > 0) this.exam = this.exams[0];
+    if (filteredExams.length > 0) this.exam = filteredExams[0];
 
-    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
-    await delay(500);
+    this.departmentsMap = departmentsMap;
+    this.exams = filteredExams;
+    this.examsMap = examsMap;
 
     this.loading = false;
     this.$emit("ready");

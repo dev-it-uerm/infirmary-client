@@ -213,8 +213,6 @@ import {
   affiliations,
   yearLevelsMap,
   yearLevels,
-  examsMap,
-  examFieldsMap,
   userRolesMap,
 } from "src/helpers/constants.js";
 
@@ -272,6 +270,7 @@ export default defineComponent({
   },
   data() {
     return {
+      examsMap: null,
       columns: [],
 
       filtering: false,
@@ -320,10 +319,30 @@ export default defineComponent({
       this.errorCount = 0;
     },
   },
+  async mounted() {
+    this.saving = true;
+
+    await delay(1000);
+    this.examsMap = (await this.$store.dispatch("ape/getExams"))[1];
+
+    this.saving = false;
+  },
   methods: {
     async saveXrayImpression() {
-      this.saving = true;
+      const exam = this.examsMap["RAD_XR_CHST"];
+      const examParamImpression = exam?.params?.find((p) => p.code === "IMPRN");
 
+      if (!exam || !examParamImpression) {
+        showMessage(
+          this.$q,
+          false,
+          "RAD - X-ray (Chest) exam not found. Please refresh the page."
+        );
+
+        return;
+      }
+
+      this.saving = true;
       this.successCount = 0;
       this.errorCount = 0;
 
@@ -334,11 +353,10 @@ export default defineComponent({
           identificationCode: patient.identificationCode,
           year: this.year,
 
-          examCode: examsMap.RAD_XR_CHST.code,
-
+          examCode: exam.code,
           details: [
             {
-              code: examFieldsMap[examsMap.RAD_XR_CHST.code][0].code,
+              code: examParamImpression.code,
               value: this.xrayImpression,
             },
           ],

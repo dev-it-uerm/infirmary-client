@@ -73,8 +73,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import { examsMap } from "src/helpers/constants.js";
-import { formatName } from "src/helpers/util.js";
+import { formatName, delay } from "src/helpers/util.js";
 
 export default defineComponent({
   name: "VisitDetails",
@@ -108,6 +107,7 @@ export default defineComponent({
   },
   data() {
     return {
+      examsMap: null,
       loading: false,
       tab: null,
       tabs: [],
@@ -121,6 +121,8 @@ export default defineComponent({
   async mounted() {
     if (!this.user) return;
 
+    this.loading = true;
+
     const tabs = [
       {
         code: "VISIT",
@@ -129,22 +131,28 @@ export default defineComponent({
       },
     ];
 
+    await delay(1000);
+
     if (this.user.examsHandled) {
-      const response = await this.$store.dispatch(
-        "ape/getVisitExams",
-        this.visit.id
-      );
+      const [exams, examsMap] = await this.$store.dispatch("ape/getExams");
 
-      if (!response.error && response.body?.length > 0) {
-        const examsAllowedForPx = response.body.map((e) => {
-          return examsMap[e.examCode];
-        });
+      if (exams.length > 0) {
+        const response = await this.$store.dispatch(
+          "ape/getVisitExams",
+          this.visit.id
+        );
 
-        const examsToShow = examsAllowedForPx.filter((e) => {
-          return this.user.examsHandled.includes(e.code);
-        });
+        if (!response.error && response.body?.length > 0) {
+          const examsAllowedForPx = response.body.map((e) => {
+            return examsMap[e.examCode];
+          });
 
-        tabs.push(...examsToShow);
+          const examsToShow = examsAllowedForPx.filter((e) => {
+            return this.user.examsHandled.includes(e.code);
+          });
+
+          tabs.push(...examsToShow);
+        }
       }
     }
 
@@ -153,6 +161,8 @@ export default defineComponent({
     this.tab = this.tabCode
       ? this.tabs.find((t) => t.code === this.tabCode) ?? this.tabs[0]
       : this.tabs[0];
+
+    this.loading = false;
   },
 });
 </script>

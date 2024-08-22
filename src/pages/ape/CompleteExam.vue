@@ -50,7 +50,7 @@
                 <q-spinner-dots size="lg" />
               </div>
               <div v-else class="fit column">
-                <template v-if="patient && visit && phase">
+                <template v-if="patient && visit && visitExam">
                   <span class="text-primary text-weight-medium q-mb-md"
                     >LAST SCAN:</span
                   >
@@ -87,7 +87,7 @@
                     </div>
                     <div class="q-mt-sm">
                       <div>
-                        <span class="text-grey-7">Department/College:</span>
+                        <span class="text-grey-7">Department:</span>
                         <span class="q-ml-sm">{{
                           departmentsMap[patient.deptCode]
                         }}</span>
@@ -105,7 +105,7 @@
                       <div>
                         <span class="text-grey-7">Exam:</span>
                         <span class="q-ml-sm">{{
-                          examsMap[phase.phaseCode].name
+                          examsMap[visitExam.code].name
                         }}</span>
                       </div>
                       <div>
@@ -113,7 +113,7 @@
                           >Date & Time Exam Completed:</span
                         >
                         <span class="q-ml-sm">{{
-                          formatDate(phase.dateTimeCreated)
+                          formatDate(visitExam.dateTimeCreated)
                         }}</span>
                       </div>
                     </div>
@@ -211,8 +211,6 @@ import {
 } from "src/helpers/util.js";
 
 import {
-  examsMap,
-  exams,
   affiliationsMap,
   campusesMap,
   yearLevels,
@@ -247,8 +245,6 @@ export default defineComponent({
     return {
       formatName,
       formatDate,
-      examsMap,
-      exams,
       affiliationsMap,
       campusesMap,
       yearLevels,
@@ -257,16 +253,18 @@ export default defineComponent({
   data() {
     return {
       departmentsMap: null,
+      examsMap: null,
+      exams: [],
+
       inputMode: null,
 
-      exams: [],
       exam: null,
       loading: false,
       visitCode: null,
 
       patient: null,
       visit: null,
-      phase: null,
+      visitExam: null,
     };
   },
   computed: {
@@ -290,27 +288,34 @@ export default defineComponent({
   watch: {
     value(val) {
       if (val) {
-        this.changeVisitPhase(val.visitCode, val.examCode);
+        this.changeVisitExam(val.visitCode, val.examCode);
       }
     },
   },
   async mounted() {
-    this.loading = true;
     if (!this.user || !this.user.examsHandled) return;
+
+    this.loading = true;
+
+    const [departments, departmentsMap] = await this.$store.dispatch(
+      "ape/getDepartments"
+    );
+
+    const [exams, examsMap] = await this.$store.dispatch("ape/getExams");
+    await delay(1000);
 
     const examsHandled = exams.filter((e) =>
       this.user.examsHandled.includes(e.code)
     );
 
+    this.departmentsMap = departmentsMap;
+    this.examsMap = examsMap;
     this.exams = examsHandled;
-    this.exam = examsHandled[0];
-
-    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
-    await delay(1000);
+    this.exam = examsHandled[0] ?? null;
     this.loading = false;
   },
   methods: {
-    async changeVisitPhase(visitCode, examCode) {
+    async changeVisitExam(visitCode, examCode) {
       let success = true;
       let message = `Patient has been marked as done in the ${examCode} exam.`;
 
@@ -340,7 +345,7 @@ export default defineComponent({
 
       this.patient = response.body.patient;
       this.visit = response.body.visit;
-      this.phase = response.body.phase;
+      this.visitExam = response.body.exam;
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;

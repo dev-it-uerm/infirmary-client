@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="column" style="gap: 16px">
+    <FetchingData v-if="!departmentsMap || !examsMap" />
+    <div v-else class="column" style="gap: 16px">
       <QRCodeScanner
         ref="visitCodeScanner"
         :scannerId="scannerId"
@@ -59,7 +60,7 @@
             </div>
             <div class="q-mt-sm">
               <div>
-                <span class="text-grey-7">Deparment/College:</span>
+                <span class="text-grey-7">Department:</span>
                 <span class="q-ml-sm">{{
                   departmentsMap[patient.deptCode]
                 }}</span>
@@ -156,7 +157,6 @@ import {
 } from "src/helpers/util.js";
 
 import {
-  examsMap,
   affiliationsMap,
   campusesMap,
   yearLevels,
@@ -165,6 +165,9 @@ import {
 export default defineComponent({
   name: "VisitTracker",
   components: {
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
+    ),
     QRCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/QRCodeScanner.vue")
     ),
@@ -187,7 +190,6 @@ export default defineComponent({
   emits: ["busy", "ready"],
   setup() {
     return {
-      examsMap,
       affiliationsMap,
       campusesMap,
       yearLevels,
@@ -198,6 +200,7 @@ export default defineComponent({
   data() {
     return {
       departmentsMap: null,
+      examsMap: null,
 
       loading: false,
       inputMode: null,
@@ -221,10 +224,13 @@ export default defineComponent({
     },
   },
   async mounted() {
-    this.loading = true;
     this.$emit("busy");
-    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+    this.loading = true;
+
     await delay(500);
+    this.examsMap = (await this.$store.dispatch("ape/getExams"))[1];
+    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+
     this.loading = false;
     this.$emit("ready");
   },

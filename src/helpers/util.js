@@ -370,7 +370,6 @@ export const formatName = (firstName, middleName, lastName, extName) => {
 };
 
 export const downloadExcel = async (fileNamePrefix, rows, columns) => {
-  console.log(columns);
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("INFIRMARY APE REPORT");
 

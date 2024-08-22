@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div>
+    <FetchingData v-if="!examsMap" />
+    <div v-else>
       <MessageBanner v-if="forbidden" :success="false">
         <template v-slot:error-body>
           <div>You are not allowed to access this page.</div>
@@ -84,14 +85,15 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
 import {
   delay,
   showMessage,
   formatName,
   formatDate,
 } from "src/helpers/util.js";
+
 import {
-  examsMap,
   affiliationsMap,
   campusesMap,
   yearLevels,
@@ -100,14 +102,14 @@ import {
 export default defineComponent({
   name: "VisitPageAttendance",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
-    ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
     MessageBanner: defineAsyncComponent(() =>
       import("src/components/core/MessageBanner.vue")
+    ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
     ),
     QRCodeScanner: defineAsyncComponent(() =>
       import("src/components/core/QRCodeScanner.vue")
@@ -130,7 +132,6 @@ export default defineComponent({
     return {
       formatName,
       formatDate,
-      examsMap,
       affiliationsMap,
       campusesMap,
       yearLevels,
@@ -138,6 +139,8 @@ export default defineComponent({
   },
   data() {
     return {
+      examsMap: null,
+
       checklistDialogVisible: false,
       forbidden: false,
 
@@ -174,6 +177,16 @@ export default defineComponent({
         this.register(val.registrationMode, val.patientCode);
       }
     },
+  },
+  async mounted() {
+    this.$emit("busy");
+    this.loading = true;
+
+    await delay(500);
+    this.examsMap = (await this.$store.dispatch("ape/getExams"))[1];
+
+    this.loading = false;
+    this.$emit("ready");
   },
   methods: {
     formatLastPatientRegistered(row) {

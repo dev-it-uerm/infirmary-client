@@ -7,7 +7,8 @@
     >
       <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
       <div :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
-        <div class="column full-width" style="gap: 36px">
+        <FetchingData v-if="!departmentsMap || !exams || !examsMap" />
+        <div v-else class="column full-width" style="gap: 36px">
           <div
             class="full-width"
             :class="$q.screen.gt.md ? 'row' : 'column'"
@@ -735,8 +736,6 @@ import {
   affiliations,
   campusesMap,
   campuses,
-  examsMap,
-  exams,
   yearLevelsMap,
   yearLevels,
 } from "src/helpers/constants.js";
@@ -783,8 +782,6 @@ export default defineComponent({
       affiliationsMap,
       campuses,
       campusesMap,
-      exams,
-      examsMap,
 
       yearLevelsMap,
       yearLevels,
@@ -861,6 +858,8 @@ export default defineComponent({
   data() {
     return {
       departmentsMap: null,
+      exams: null,
+      examsMap: null,
 
       pendingVisitsFilters: {
         status: "PENDING",
@@ -913,7 +912,16 @@ export default defineComponent({
   async mounted() {
     if (!this.user) return;
 
-    this.departmentsMap = (await this.$store.dispatch("ape/getDepartments"))[1];
+    await delay(500);
+    const [departments, departmentsMap] = await this.$store.dispatch(
+      "ape/getDepartments"
+    );
+    const [exams, examsMap] = await this.$store.dispatch("ape/getExams");
+
+    this.departmentsMap = departmentsMap;
+    this.exams = exams;
+    this.examsMap = examsMap;
+
     this.getPendingVisits();
     this.getCompletedVisits();
   },

@@ -4,7 +4,11 @@
       <q-spinner-dots color="black" size="md" />
     </div> -->
     <FetchingData v-if="loading" />
-    <q-form v-else ref="qFormVisitDetails" @submit="save">
+    <q-form
+      v-if="!loading && examCode && examsMap && examsMap[examCode]"
+      ref="qFormVisitDetails"
+      @submit="save"
+    >
       <div
         class="fit"
         style="display: grid; grid-template-rows: auto min-content"
@@ -13,118 +17,121 @@
           class="q-pa-lg scroll"
           style="height: auto; max-height: 70vh; min-height: 100px"
         >
-          <template v-for="field in examFieldsMap[examCode]" :key="field.code">
+          <template
+            v-for="param in examsMap[examCode].params"
+            :key="param.code"
+          >
             <div>
               <q-input
-                v-if="field.type === 'TEXT'"
+                v-if="param.fieldType === 'TEXT'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
                 stack-label
                 outlined
-                :rules="generateRules(field.required)"
-                :label="field.name"
-                v-model.trim="value[field.code]"
+                :rules="generateRules(param.required)"
+                :label="param.name"
+                v-model.trim="value[param.code]"
                 hint=""
               />
               <q-input
-                v-if="field.type === 'TEXTAREA'"
+                v-if="param.fieldType === 'TEXTAREA'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
                 type="textarea"
                 stack-label
                 outlined
-                :rules="generateRules(field.required)"
-                :label="field.name"
-                v-model.trim="value[field.code]"
+                :rules="generateRules(param.required)"
+                :label="param.name"
+                v-model.trim="value[param.code]"
                 hint=""
               />
               <UserSelect
-                v-if="field.type === 'PHYSICIANSELECT'"
+                v-if="param.fieldType === 'PHYSICIANSELECT'"
                 label="Physician"
                 :roleCode="userRolesMap.DR.code"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
+                :initialValue="value[param.code]"
+                @valueChanged="(val) => (value[param.code] = val)"
               />
               <FormFieldExam
-                v-if="field.type === 'EXAM'"
+                v-if="param.fieldType === 'EXAM'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
+                :label="param.name"
+                :initialValue="value[param.code]"
+                @valueChanged="(val) => (value[param.code] = val)"
               />
               <FormFieldExamText
-                v-if="field.type === 'EXAMTEXT'"
+                v-if="param.fieldType === 'EXAMTEXT'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
-                :required="field.required"
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
+                :required="param.required"
+                :label="param.name"
+                :initialValue="value[param.code]"
+                @valueChanged="(val) => (value[param.code] = val)"
               />
               <FormFieldExamTextArea
-                v-if="field.type === 'EXAMTEXTAREA'"
+                v-if="param.fieldType === 'EXAMTEXTAREA'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
-                :required="field.required"
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
+                :required="param.required"
+                :label="param.name"
+                :initialValue="value[param.code]"
+                @valueChanged="(val) => (value[param.code] = val)"
               />
               <FormFieldExamSelect
-                v-if="field.type === 'EXAMSELECT'"
+                v-if="param.fieldType === 'EXAMSELECT'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
-                :options="field.options"
-                :required="field.required"
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
+                :options="param.options"
+                :required="param.required"
+                :label="param.name"
+                :initialValue="value[param.code]"
+                @valueChanged="(val) => (value[param.code] = val)"
               />
               <FormFieldXrayImpression
-                v-if="field.type === 'XRAYIMPRESSION'"
+                v-if="param.fieldType === 'XRAYIMPRESSION'"
                 :disable="
                   visitIsCompleted ||
                   examIsCompleted ||
-                  field.disable ||
+                  param.disable ||
                   loading
                 "
-                :label="field.name"
-                :required="field.required"
-                :initialValue="value[field.code]?.value || null"
+                :label="param.name"
+                :required="param.required"
+                :initialValue="value[param.code]?.value || null"
                 @valueChanged="
                   (val) => {
-                    value[field.code] = { code: field.code, value: val };
+                    value[param.code] = { code: param.code, value: val };
                   }
                 "
               />
@@ -176,7 +183,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
-import { examFieldsMap, userRolesMap } from "src/helpers/constants.js";
+import { userRolesMap } from "src/helpers/constants.js";
 import { mapGetters } from "vuex";
 
 export default defineComponent({
@@ -232,13 +239,14 @@ export default defineComponent({
       },
       showMessage,
       formatDate,
-      examFieldsMap,
       // inputRule: (val) =>
       //   val == null || val === "" ? "Field is required." : undefined,
     };
   },
   data() {
     return {
+      examsMap: null,
+
       loading: false,
       value: {},
       markAsCompletedOnSave: null,
@@ -255,8 +263,19 @@ export default defineComponent({
   },
   watch: {
     examCode: {
-      handler(val) {
-        this.getInitialValue();
+      async handler(val) {
+        if (!this.examsMap) {
+          this.loading = true;
+          const examsMap = (await this.$store.dispatch("ape/getExams"))[1];
+          await delay(500);
+          this.loading = false;
+
+          await this.getInitialValue(val, examsMap);
+          this.examsMap = examsMap;
+          return;
+        }
+
+        await this.getInitialValue(val, this.examsMap);
       },
       immediate: true,
     },
@@ -284,7 +303,7 @@ export default defineComponent({
     mergeFieldsAndVal(fields, obj) {
       return fields.reduce((acc, field) => {
         if (obj[field.code] == null || obj[field.code] === "") {
-          acc[field.code] = field.default ?? null;
+          acc[field.code] = field.defaultValue ?? null;
           return acc;
         }
 
@@ -295,18 +314,18 @@ export default defineComponent({
         return acc;
       }, {});
     },
-    async getInitialValue() {
+    async getInitialValue(examCode, examsMap) {
       this.loading = true;
 
       // SUPPLY DEFAULT VALUE
       this.value = this.mergeFieldsAndVal(
-        this.examFieldsMap[this.examCode],
+        examsMap[examCode].params,
         this.formatResponseBody([])
       );
 
       const response = await this.$store.dispatch("ape/getVisitExamDetails", {
         visitId: this.visitId,
-        examCode: this.examCode,
+        examCode,
       });
 
       await delay(1000);
@@ -326,7 +345,7 @@ export default defineComponent({
       this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
 
       this.value = this.mergeFieldsAndVal(
-        this.examFieldsMap[this.examCode],
+        examsMap[examCode].params,
         this.formatResponseBody(response.body.details)
       );
 

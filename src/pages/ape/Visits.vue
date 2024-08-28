@@ -6,7 +6,8 @@
       style="border-radius: 6px; overflow: hidden"
     >
       <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
-      <div :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
+      <FetchingData v-if="loading" />
+      <div v-else :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
         <div class="column full-width" style="gap: 36px">
           <div
             class="full-width"
@@ -873,6 +874,8 @@ export default defineComponent({
   },
   data() {
     return {
+      loading: false,
+
       pendingVisitsFilters: {
         status: "PENDING",
         year: new Date().getFullYear(),
@@ -922,8 +925,26 @@ export default defineComponent({
       user: "app/user",
     }),
   },
-  mounted() {
+  async mounted() {
     if (!this.user) return;
+
+    this.loading = true;
+    const appConfig = await this.$store.dispatch("ape/getConfig");
+
+    if (appConfig?.visitsDefaultFiltersMap) {
+      this.pendingVisitsFilters = {
+        ...this.pendingVisitsFilters,
+        ...appConfig.visitsDefaultFiltersMap,
+      };
+
+      this.completedVisitsFilters = {
+        ...this.completedVisitsFilters,
+        ...appConfig.visitsDefaultFiltersMap,
+      };
+    }
+
+    await delay(1000);
+    this.loading = false;
 
     this.getPendingVisits();
     this.getCompletedVisits();

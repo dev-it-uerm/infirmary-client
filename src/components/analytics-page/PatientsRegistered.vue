@@ -49,6 +49,7 @@
           <FormFieldYear
             v-if="dateType === 'YEAR'"
             :disable="ready === false"
+            :required="true"
             v-model="filter.year"
           />
           <DateRange
@@ -149,30 +150,35 @@ const columnsMap1 = {
     label: "DATE OF VISIT",
     align: "center",
     format: (v) => formatDate(v, { dateOnly: true }),
+    type: "string", // FOR `downloadExcel` UTIL
   },
   patientCampus: {
     name: "patientCampus",
     field: "patientCampus",
     label: "CAMPUS",
-    align: "center",
+    align: "left",
+    type: "string",
   },
   patientAffiliation: {
     name: "patientAffiliation",
     field: "patientAffiliation",
     label: "AFFILIATION",
-    align: "center",
+    align: "left",
+    type: "string",
   },
   patientDepartment: {
     name: "patientDepartment",
     field: "patientDepartment",
     label: "DEPARTMENT",
-    align: "center",
+    align: "left",
+    type: "string",
   },
   patientCount: {
     name: "patientCount",
     field: "patientCount",
     label: "PATIENT COUNT",
     align: "center",
+    type: "integer",
   },
 };
 
@@ -248,8 +254,6 @@ export default defineComponent({
         this.ready = true;
         return;
       }
-
-      await delay(1000);
 
       this.rows = response1.body;
 

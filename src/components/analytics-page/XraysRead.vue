@@ -7,14 +7,10 @@
       <div class="text-primary text-weight-medium q-mb-lg">FILTER:</div>
       <div>
         <q-form @submit="getData">
-          <DateRange
+          <FormFieldYear
             :disable="ready === false"
-            stack-label
-            outlined
-            label="Date Range"
-            hint=""
-            :initialValue="filter.dateRange"
-            @valueChanged="(val) => (filter.dateRange = val)"
+            :required="true"
+            v-model="filter.year"
           />
           <div class="row justify-end">
             <q-btn
@@ -47,7 +43,7 @@
         <div class="full-width" :class="$q.screen.gt.md ? 'col' : ''">
           <div class="col column q-mb-lg">
             <div class="text-primary text-weight-medium">
-              NUMBER OF PATIENTS SEEN BY PHYSICIANS
+              NUMBER OF X-RAYS READ BY RADIOLOGISTS
             </div>
             <div class="text-caption text-grey-8">
               {{
@@ -75,11 +71,7 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR__${Object.values(
-                    filter.dateRange
-                  )
-                    .map((d) => d.replace(/\//g, '-'))
-                    .join('-TO-')}`,
+                  `INFIRMARY-APE__XRAYS-READ-BY-DR__${String(filter.year)}`,
                   rows,
                   columns
                 )
@@ -95,10 +87,10 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import * as inputRules from "src/helpers/input-rules.js";
-import { isStr, delay, showMessage, downloadExcel } from "src/helpers/util.js";
+import { delay, showMessage, downloadExcel } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "AnalyticsDoctorPatients",
+  name: "AnalyticsXraysRead",
   components: {
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -106,8 +98,8 @@ export default defineComponent({
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")
     ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
+    FormFieldYear: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/Year.vue")
     ),
   },
   setup() {
@@ -121,16 +113,16 @@ export default defineComponent({
       ready: null,
 
       filter: {
-        dateRange: null,
+        year: null,
       },
 
       columns: [
         {
-          name: "physician",
-          field: "physician",
-          label: "PHYSICIAN",
+          name: "radiologist",
+          field: "radiologist",
+          label: "RADIOLOGIST",
           align: "left",
-          type: "string", // FOR `downloadExcel` UTIL
+          type: "text", // FOR `downloadExcel` UTIL
         },
         {
           name: "patientCount",
@@ -149,7 +141,7 @@ export default defineComponent({
       this.ready = false;
 
       const response = await this.$store.dispatch(
-        "ape/getAnalyticsDoctorPatients",
+        "ape/getAnalyticsXraysReadByDr",
         this.filter
       );
 

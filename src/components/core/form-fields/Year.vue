@@ -5,14 +5,13 @@
     outlined
     label="Year"
     maxlength="4"
-    :rules="[requiredRule, yearRule]"
+    :rules="[yearRule, ...(required ? [requiredRule] : [])]"
     v-model.trim="value"
   />
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
   name: "FormFieldYear",
@@ -21,6 +20,10 @@ export default defineComponent({
       type: String,
       // default: String(new Date().getFullYear()),
       default: "",
+    },
+    required: {
+      type: String,
+      default: false,
     },
   },
   emits: ["update:modelValue"],
@@ -36,8 +39,13 @@ export default defineComponent({
   },
   setup() {
     return {
-      requiredRule: inputRules.required,
-      yearRule: inputRules.year,
+      yearRule: (val) => {
+        if (!val || /[1-9]{1}[0-9]{3}/.test(val)) return;
+        return "Invalid year.";
+      },
+      requiredRule: (val) => {
+        return val ? undefined : "This field is required.";
+      },
     };
   },
 });

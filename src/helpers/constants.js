@@ -160,8 +160,8 @@ export const userRolesMap = {
   NURSE: "Nurse",
   RAD: "Radiologist",
   LAB: "Pathologist",
-  RADTECH: "Radiology Technician",
-  LABTECH: "Laboratory Technician",
+  RADTECH: "Radiologic Technologist",
+  LABTECH: "Laboratory Technologist",
   STAFF: "Staff",
   FAC: "Faculty",
 };

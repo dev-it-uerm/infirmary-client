@@ -370,7 +370,6 @@ export const formatName = (firstName, middleName, lastName, extName) => {
 };
 
 export const downloadExcel = async (fileNamePrefix, rows, columns) => {
-  console.log(columns);
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("INFIRMARY APE REPORT");
 
@@ -382,24 +381,29 @@ export const downloadExcel = async (fileNamePrefix, rows, columns) => {
     };
   });
 
-  // COLUMN STYLE
-  // const borderStyle = { style: "thin", color: { argb: "00000000" } };
+  const typesToNumFmtsMap = {
+    text: "@",
+    decimal: "0.00",
+    integer: "0",
+  };
 
+  // APPLY COLUMN STYLES BASED ON COLUMN TYPE
   sheet.columns.forEach((c, idx) => {
-    sheet.getColumn(idx + 1).numFmt = "@";
+    sheet.getColumn(idx + 1).numFmt = columns[idx].type
+      ? typesToNumFmtsMap[columns[idx].type] || typesToNumFmtsMap.text
+      : "@";
 
     sheet.getColumn(idx + 1).alignment = {
-      vertical: "middle",
-      horizontal: "center",
       wrapText: true,
+      horizontal: columns[idx].align || "left",
     };
 
-    // sheet.getColumn(idx + 1).border = {
-    //   top: borderStyle,
-    //   left: borderStyle,
-    //   bottom: borderStyle,
-    //   right: borderStyle,
-    // };
+    //   sheet.getColumn(idx + 1).border = {
+    //     top: borderStyle,
+    //     left: borderStyle,
+    //     bottom: borderStyle,
+    //     right: borderStyle,
+    //   };
   });
 
   // COLUMN HEADER STYLE

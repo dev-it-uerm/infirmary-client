@@ -13,7 +13,7 @@
         <q-form @submit="getData">
           <FormFieldYear
             :disable="ready === false"
-            :rules="[inputRuleRequired]"
+            :required="true"
             v-model="filter.year"
           />
           <!-- :options="[{ code: null, name: 'ALL' }, ...campuses]" -->
@@ -138,94 +138,6 @@ import {
 import * as inputRules from "src/helpers/input-rules.js";
 import { campuses, affiliations, departments } from "src/helpers/constants.js";
 
-const columnsMap = {
-  patientCampusName: {
-    name: "patientCampusName",
-    field: "patientCampusName",
-    label: "CAMPUS",
-    align: "center",
-  },
-  patientAffiliationName: {
-    name: "patientAffiliationName",
-    field: "patientAffiliationName",
-    label: "AFFILIATION",
-    align: "center",
-  },
-  patientDeptName: {
-    name: "patientDeptName",
-    field: "patientDeptName",
-    label: "DEPARTMENT",
-    align: "center",
-  },
-  patientCode: {
-    name: "patientCode",
-    field: "patientCode",
-    label: "PATIENT CODE",
-    align: "center",
-  },
-  patientName: {
-    name: "patientName",
-    field: "patientName",
-    label: "PATIENT NAME",
-    align: "center",
-  },
-  visitDateTimeCreated: {
-    name: "visitDateTimeCreated",
-    field: "visitDateTimeCreated",
-    label: "DATE & TIME REGISTERED",
-    align: "center",
-    format: formatDate,
-  },
-  visitPhysicianName: {
-    name: "visitPhysicianName",
-    field: "visitPhysicianName",
-    label: "PHYSICIAN",
-    align: "center",
-  },
-  examMedicalHistory: {
-    name: "examMedicalHistory",
-    field: "examMedicalHistory",
-    label: "MEDICAL HISTORY",
-    align: "center",
-    format: formatDate,
-  },
-  examPhysicalExam: {
-    name: "examPhysicalExam",
-    field: "examPhysicalExam",
-    label: "PHYSICAL EXAM",
-    align: "center",
-    format: formatDate,
-  },
-  examLabCbc: {
-    name: "examLabCbc",
-    field: "examLabCbc",
-    label: "LAB - CBC",
-    align: "center",
-    format: formatDate,
-  },
-  examLabUrinalysis: {
-    name: "examLabUrinalysis",
-    field: "examLabUrinalysis",
-    label: "LAB - URINALYSIS",
-    align: "center",
-    format: formatDate,
-  },
-  examLabFecalysis: {
-    name: "examLabFecalysis",
-    field: "examLabFecalysis",
-    label: "LAB - FECALYSIS",
-    align: "center",
-    format: formatDate,
-  },
-  examRadXrayChest: {
-    name: "examRadXrayChest",
-    field: "examRadXrayChest",
-    label: "RAD - XRAY (CHEST)",
-    align: "center",
-    format: formatDate,
-  },
-};
-
 export default defineComponent({
   name: "AnalyticsPatientVisitProgress",
   components: {
@@ -259,14 +171,99 @@ export default defineComponent({
         deptCode: null,
       },
 
-      columns: [],
+      columns: [
+        {
+          name: "patientCampusName",
+          field: "patientCampusName",
+          label: "CAMPUS",
+          align: "center",
+        },
+        {
+          name: "patientAffiliationName",
+          field: "patientAffiliationName",
+          label: "AFFILIATION",
+          align: "center",
+        },
+        {
+          name: "patientDeptName",
+          field: "patientDeptName",
+          label: "DEPARTMENT",
+          align: "center",
+        },
+        {
+          name: "patientCode",
+          field: "patientCode",
+          label: "PATIENT CODE",
+          align: "center",
+        },
+        {
+          name: "patientName",
+          field: "patientName",
+          label: "PATIENT NAME",
+          align: "center",
+        },
+        {
+          name: "visitPhysicianName",
+          field: "visitPhysicianName",
+          label: "PHYSICIAN",
+          align: "center",
+        },
+        {
+          name: "visitDateTimeCreated",
+          field: "visitDateTimeCreated",
+          label: "DATE & TIME REGISTERED",
+          align: "center",
+          format: formatDate,
+        },
+        {
+          name: "examMedicalHistory",
+          field: "examMedicalHistory",
+          label: "MEDICAL HISTORY",
+          align: "center",
+          format: formatDate,
+        },
+        {
+          name: "examPhysicalExam",
+          field: "examPhysicalExam",
+          label: "PHYSICAL EXAM",
+          align: "center",
+          format: formatDate,
+        },
+        {
+          name: "examLabCbc",
+          field: "examLabCbc",
+          label: "LAB - CBC",
+          align: "center",
+          format: formatDate,
+        },
+        {
+          name: "examLabUrinalysis",
+          field: "examLabUrinalysis",
+          label: "LAB - URINALYSIS",
+          align: "center",
+          format: formatDate,
+        },
+        {
+          name: "examLabFecalysis",
+          field: "examLabFecalysis",
+          label: "LAB - FECALYSIS",
+          align: "center",
+          format: formatDate,
+        },
+        {
+          name: "examRadXrayChest",
+          field: "examRadXrayChest",
+          label: "RAD - XRAY (CHEST)",
+          align: "center",
+          format: formatDate,
+        },
+      ],
       rows: [],
     };
   },
   methods: {
     async getData() {
       this.ready = false;
-      this.columns = [];
 
       const payload = Object.entries(this.filter).reduce((acc, e) => {
         if (e[1] === null) return acc;
@@ -287,14 +284,7 @@ export default defineComponent({
         return;
       }
 
-      await delay(1000);
-
       this.rows = response.body;
-
-      this.columns = response.body[0]
-        ? Object.keys(response.body[0]).map((k) => columnsMap[k])
-        : [];
-
       this.ready = true;
     },
   },

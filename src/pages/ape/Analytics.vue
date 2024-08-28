@@ -14,6 +14,7 @@
         >
           <q-tab name="patientsRegistered" label="Patients Registered" />
           <q-tab name="patientsSeen" label="Patients Seen by Doctors" />
+          <q-tab name="xraysRead" label="Xrays Read by Doctors" />
           <q-tab name="doctorPatients" label="Doctor Patients" />
           <q-tab name="patientVisitProgress" label="Patient Visit Progress" />
         </q-tabs>
@@ -36,6 +37,12 @@
             name="patientsSeen"
           >
             <PatientsSeen />
+          </q-tab-panel>
+          <q-tab-panel
+            class="full-width q-pa-none q-pt-xl no-scroll"
+            name="xraysRead"
+          >
+            <XraysRead />
           </q-tab-panel>
           <q-tab-panel
             class="full-width q-pa-none q-pt-xl no-scroll"
@@ -74,6 +81,9 @@ export default defineComponent({
     ),
     PatientsSeen: defineAsyncComponent(() =>
       import("src/components/analytics-page/PatientsSeen.vue")
+    ),
+    XraysRead: defineAsyncComponent(() =>
+      import("src/components/analytics-page/XraysRead.vue")
     ),
     DoctorPatients: defineAsyncComponent(() =>
       import("src/components/analytics-page/DoctorPatients.vue")

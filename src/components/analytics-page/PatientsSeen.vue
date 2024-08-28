@@ -13,21 +13,20 @@
         <q-form @submit="getData">
           <FormFieldYear
             :disable="ready === false"
-            :rules="[inputRuleRequired]"
+            :required="true"
             v-model="filter.year"
           />
           <q-select
             :disable="ready === false"
             stack-label
             outlined
-            :options="campuses"
+            :options="[{ code: null, name: 'ALL' }, ...campuses]"
             label="Campus"
             emit-value
             map-options
             option-label="name"
             option-value="code"
             v-model="filter.campusCode"
-            :rules="[inputRuleRequired]"
             hint=""
           />
           <div class="row justify-end">
@@ -80,9 +79,9 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR__${String(
-                    filter.campusCode
-                  )}__${String(filter.year)}`,
+                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR${
+                    filter.campusCode ? '__' + filter.campusCode : ''
+                  }__${String(filter.year)}`,
                   rows,
                   columns
                 )
@@ -100,33 +99,6 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, showMessage, downloadExcel } from "src/helpers/util.js";
 import * as inputRules from "src/helpers/input-rules.js";
 import { campuses } from "src/helpers/constants.js";
-
-const columnsMap = {
-  deptName: {
-    name: "deptName",
-    field: "deptName",
-    label: "DEPARTMENT",
-    align: "center",
-  },
-  patientsSeen: {
-    name: "patientsSeen",
-    field: "patientsSeen",
-    label: "SEEN",
-    align: "center",
-  },
-  patientsNotSeen: {
-    name: "patientsNotSeen",
-    field: "patientsNotSeen",
-    label: "NOT SEEN",
-    align: "center",
-  },
-  patientsAll: {
-    name: "patientsAll",
-    field: "patientsAll",
-    label: "ENROLLED",
-    align: "center",
-  },
-};
 
 export default defineComponent({
   name: "AnalyticsPatientsSeen",
@@ -157,14 +129,43 @@ export default defineComponent({
         year: null,
       },
 
-      columns: [],
+      columns: [
+        {
+          name: "deptName",
+          field: "deptName",
+          label: "DEPARTMENT",
+          align: "left",
+          type: "string", // FOR `downloadExcel` UTIL
+        },
+        {
+          name: "patientsSeen",
+          field: "patientsSeen",
+          label: "SEEN",
+          align: "center",
+          type: "integer", // FOR `downloadExcel` UTIL
+        },
+        {
+          name: "patientsNotSeen",
+          field: "patientsNotSeen",
+          label: "NOT SEEN",
+          align: "center",
+          type: "integer", // FOR `downloadExcel` UTIL
+        },
+        {
+          name: "patientsAll",
+          field: "patientsAll",
+          label: "ENROLLED/HIRED",
+          align: "center",
+          type: "integer", // FOR `downloadExcel` UTIL
+        },
+      ],
+
       rows: [],
     };
   },
   methods: {
     async getData() {
       this.ready = false;
-      this.columns = [];
 
       const response = await this.$store.dispatch(
         "ape/getAnalyticsPatientsSeenByDr",
@@ -179,14 +180,7 @@ export default defineComponent({
         return;
       }
 
-      await delay(1000);
-
       this.rows = response.body;
-
-      this.columns = response.body[0]
-        ? Object.keys(response.body[0]).map((k) => columnsMap[k])
-        : [];
-
       this.ready = true;
     },
   },

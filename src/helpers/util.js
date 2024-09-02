@@ -423,7 +423,6 @@ export const downloadExcel = async (fileNamePrefix, rows, columns) => {
     );
   }
 
-  // DOWNLOAD FILE
   const fileBuffer = await workbook.xlsx.writeBuffer();
   const base64 = Buffer.from(fileBuffer).toString("base64");
 
@@ -432,3 +431,78 @@ export const downloadExcel = async (fileNamePrefix, rows, columns) => {
   a.download = `${fileNamePrefix}.xls`;
   a.click();
 };
+
+// export const downloadExcel = async (fileNamePrefix, rows, columns) => {
+//   const workbook = new ExcelJS.Workbook();
+//   const sheet = workbook.addWorksheet("INFIRMARY APE REPORT");
+
+//   sheet.columns = columns.map((c) => {
+//     return {
+//       key: c.field,
+//       header: c.label,
+//       width: 50,
+//     };
+//   });
+
+//   const typesToNumFmtsMap = {
+//     text: "@",
+//     decimal: "0.00",
+//     integer: "0",
+//   };
+
+//   // APPLY COLUMN STYLES BASED ON COLUMN TYPE
+//   sheet.columns.forEach((c, idx) => {
+//     sheet.getColumn(idx + 1).numFmt = columns[idx].type
+//       ? typesToNumFmtsMap[columns[idx].type] || typesToNumFmtsMap.text
+//       : "@";
+
+//     sheet.getColumn(idx + 1).alignment = {
+//       wrapText: true,
+//       horizontal: columns[idx].align || "left",
+//     };
+
+//     //   sheet.getColumn(idx + 1).border = {
+//     //     top: borderStyle,
+//     //     left: borderStyle,
+//     //     bottom: borderStyle,
+//     //     right: borderStyle,
+//     //   };
+//   });
+
+//   // COLUMN HEADER STYLE
+//   sheet.getRow(1).font = { bold: true };
+
+//   sheet.getRow(1).alignment = {
+//     vertical: "middle",
+//     horizontal: "center",
+//   };
+
+//   for (const row of rows) {
+//     sheet.addRow(
+//       columns.reduce((acc, c) => {
+//         acc[c.field] = c.format ? c.format(row[c.field]) : row[c.field];
+//         return acc;
+//       }, {})
+//     );
+//   }
+
+//   workbook.xlsx
+//     .writeBuffer()
+//     .then((fileBuffer) => {
+//       // DOWNLOAD FILE
+//       const base64 = Buffer.from(fileBuffer).toString("base64");
+
+//       const a = document.createElement("a");
+//       a.href = `data:application/xlsx;base64,${base64}`;
+//       a.download = `${fileNamePrefix}.xls`;
+//       a.click();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// };
+
+// export const downloadExcelOnMessage = (args) => {
+//   const [fileNamePrefix, rows, columns] = args;
+//   downloadExcel(fileNamePrefix, rows, columns);
+// };

@@ -22,7 +22,7 @@ export default defineComponent({
       default: "",
     },
     required: {
-      type: String,
+      type: Boolean,
       default: false,
     },
   },

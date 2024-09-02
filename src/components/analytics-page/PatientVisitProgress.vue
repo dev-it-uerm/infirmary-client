@@ -34,12 +34,13 @@
             :disable="ready === false"
             stack-label
             outlined
-            :options="[{ code: null, name: 'ALL' }, ...affiliations]"
+            :options="affiliations"
             label="Affiliation"
             emit-value
             map-options
             option-label="name"
             option-value="code"
+            :rules="[inputRuleRequired]"
             v-model="filter.affiliationCode"
             hint=""
           />
@@ -77,7 +78,7 @@
       <ReminderCard v-if="ready === null">
         <template v-slot:body>
           <div class="full-width">
-            Choose a year or date range then click the
+            Complete the filter controls then click the
             <strong>GENERATE</strong> button to see the report.
           </div>
         </template>

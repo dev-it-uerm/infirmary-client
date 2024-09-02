@@ -50,7 +50,7 @@
       <ReminderCard v-if="ready === null">
         <template v-slot:body>
           <div class="full-width">
-            Choose a year or date range then click the
+            Complete the filter controls then click the
             <strong>GENERATE</strong> button to see the report.
           </div>
         </template>
@@ -58,9 +58,6 @@
       <FetchingData v-else-if="ready === false" />
       <div v-else-if="ready === true" class="full-width">
         <div class="full-width">
-          <div class="col text-primary text-weight-medium q-mb-lg">
-            NUMBER OF PATIENTS SEEN BY DR
-          </div>
           <q-table
             style="max-height: 500px"
             class="shadow-0"
@@ -79,9 +76,9 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR${
-                    filter.campusCode ? '__' + filter.campusCode : ''
-                  }__${String(filter.year)}`,
+                  `INFIRMARY-APE__SEEN-PATIENT-COUNT__${String(filter.year)}${
+                    filter.campusCode ? '-' + filter.campusCode : ''
+                  }`,
                   rows,
                   columns
                 )
@@ -101,7 +98,7 @@ import * as inputRules from "src/helpers/input-rules.js";
 import { campuses } from "src/helpers/constants.js";
 
 export default defineComponent({
-  name: "AnalyticsPatientsSeen",
+  name: "AnalyticsSeenNotSeenPxCount",
   components: {
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -168,7 +165,7 @@ export default defineComponent({
       this.ready = false;
 
       const response = await this.$store.dispatch(
-        "ape/getAnalyticsPatientsSeenByDr",
+        "ape/getAnalyticsSeenPatientCount",
         this.filter
       );
 

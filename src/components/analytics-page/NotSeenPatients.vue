@@ -1,20 +1,34 @@
 <template>
   <div
+    class="full-width"
     :class="$q.screen.gt.md ? 'row items-start' : 'column'"
     style="gap: 36px"
   >
-    <div class="bordered-grey q-pa-lg" :class="$q.screen.gt.md ? 'col-2' : ''">
+    <div
+      class="bordered-grey q-pa-lg"
+      :class="$q.screen.gt.md ? 'col-2' : 'full-width'"
+    >
       <div class="text-primary text-weight-medium q-mb-lg">FILTER:</div>
       <div>
         <q-form @submit="getData">
-          <DateRange
+          <FormFieldYear
+            :disable="ready === false"
+            :required="true"
+            v-model="filter.year"
+          />
+          <q-select
             :disable="ready === false"
             stack-label
             outlined
-            label="Date Range"
+            :options="campuses"
+            label="Campus"
+            emit-value
+            map-options
+            option-label="name"
+            option-value="code"
+            v-model="filter.campusCode"
+            :rules="[inputRules.required]"
             hint=""
-            :initialValue="filter.dateRange"
-            @valueChanged="(val) => (filter.dateRange = val)"
           />
           <div class="row justify-end">
             <q-btn
@@ -30,33 +44,21 @@
       </div>
     </div>
     <div
-      class="full-width q-pa-lg bordered-grey flex flex-center"
-      :class="$q.screen.gt.md ? 'col' : ''"
+      class="q-pa-lg bordered-grey flex flex-center"
+      :class="$q.screen.gt.md ? 'col' : 'full-width'"
       style="min-height: 100px"
     >
       <ReminderCard v-if="ready === null">
         <template v-slot:body>
           <div class="full-width">
-            Choose a date range then click the
+            Complete the filter controls then click the
             <strong>GENERATE</strong> button to see the report.
           </div>
         </template>
       </ReminderCard>
       <FetchingData v-else-if="ready === false" />
       <div v-else-if="ready === true" class="full-width">
-        <div class="full-width" :class="$q.screen.gt.md ? 'col' : ''">
-          <div class="col column q-mb-lg">
-            <div class="text-primary text-weight-medium">
-              NUMBER OF PATIENTS SEEN BY PHYSICIANS
-            </div>
-            <div class="text-caption text-grey-8">
-              {{
-                filter.dateRange
-                  ? `${filter.dateRange.from} - ${filter.dateRange.to}`
-                  : ""
-              }}
-            </div>
-          </div>
+        <div class="full-width">
           <q-table
             style="max-height: 500px"
             class="shadow-0"
@@ -65,21 +67,17 @@
             :rows-per-page-options="[0]"
             hide-bottom
           />
-          <div class="row justify-end">
+          <div class="row justify-end q-mt-lg">
             <q-btn
-              :disable="ready === false || !rows || rows.length === 0"
+              :disable="!rows || rows.length === 0"
               unelevated
               color="accent"
               icon="download"
-              class="text-black q-mt-lg"
+              class="text-black"
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-SEEN-BY-DR__${Object.values(
-                    filter.dateRange
-                  )
-                    .map((d) => d.replace(/\//g, '-'))
-                    .join('-TO-')}`,
+                  `INFIRMARY-APE__NOT-SEEN-PATIENTS__${String(filter.year)}`,
                   rows,
                   columns
                 )
@@ -94,11 +92,18 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import {
+  delay,
+  showMessage,
+  downloadExcel,
+  // downloadExcelOnMessage,
+  formatDate,
+} from "src/helpers/util.js";
 import * as inputRules from "src/helpers/input-rules.js";
-import { isStr, delay, showMessage, downloadExcel } from "src/helpers/util.js";
+import { campuses } from "src/helpers/constants.js";
 
 export default defineComponent({
-  name: "AnalyticsDoctorPatients",
+  name: "AnalyticsNotSeenPatients",
   components: {
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -106,13 +111,14 @@ export default defineComponent({
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")
     ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
+    FormFieldYear: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/Year.vue")
     ),
   },
   setup() {
     return {
-      inputRuleRequired: inputRules.required,
+      campuses,
+      inputRules: inputRules,
       downloadExcel,
     };
   },
@@ -121,23 +127,39 @@ export default defineComponent({
       ready: null,
 
       filter: {
-        dateRange: null,
+        campusCode: null,
+        year: null,
       },
 
       columns: [
         {
-          name: "physician",
-          field: "physician",
-          label: "PHYSICIAN",
+          name: "affiliationName",
+          field: "affiliationName",
+          label: "AFFILIATION",
           align: "left",
           type: "string", // FOR `downloadExcel` UTIL
         },
         {
-          name: "patientCount",
-          field: "patientCount",
-          label: "PATIENT COUNT",
-          align: "center",
-          type: "integer", // FOR `downloadExcel` UTIL
+          name: "deptName",
+          field: "deptName",
+          label: "DEPARTMENT",
+          align: "left",
+          type: "string", // FOR `downloadExcel` UTIL
+        },
+        {
+          name: "patientName",
+          field: "patientName",
+          label: "PATIENT",
+          align: "left",
+          type: "string", // FOR `downloadExcel` UTIL
+        },
+        {
+          name: "dateTimeRegistered",
+          field: "dateTimeRegistered",
+          label: "DATE & TIME REGISTERED",
+          align: "left",
+          type: "string", // FOR `downloadExcel` UTIL
+          format: formatDate,
         },
       ],
 
@@ -149,7 +171,7 @@ export default defineComponent({
       this.ready = false;
 
       const response = await this.$store.dispatch(
-        "ape/getAnalyticsDoctorPatients",
+        "ape/getNotSeenPatients",
         this.filter
       );
 

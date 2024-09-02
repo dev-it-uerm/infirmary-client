@@ -7,3 +7,7 @@ export function setExams(state, val) {
   state.exams = val[0];
   state.examsMap = val[1];
 }
+
+export function setConfig(state, payload) {
+  state.config = payload;
+}

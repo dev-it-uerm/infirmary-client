@@ -861,6 +861,8 @@ export default defineComponent({
       exams: null,
       examsMap: null,
 
+      loading: false,
+
       pendingVisitsFilters: {
         status: "PENDING",
         year: new Date().getFullYear(),
@@ -911,16 +913,34 @@ export default defineComponent({
   },
   async mounted() {
     if (!this.user) return;
+    this.loading = true;
 
-    await delay(500);
+    const appConfig = await this.$store.dispatch("ape/getConfig");
+
+    if (appConfig?.visitsDefaultFiltersMap) {
+      this.pendingVisitsFilters = {
+        ...this.pendingVisitsFilters,
+        ...appConfig.visitsDefaultFiltersMap,
+      };
+
+      this.completedVisitsFilters = {
+        ...this.completedVisitsFilters,
+        ...appConfig.visitsDefaultFiltersMap,
+      };
+    }
+
     const [departments, departmentsMap] = await this.$store.dispatch(
       "ape/getDepartments"
     );
     const [exams, examsMap] = await this.$store.dispatch("ape/getExams");
 
+    await delay(1000);
+
     this.departmentsMap = departmentsMap;
     this.exams = exams;
     this.examsMap = examsMap;
+
+    this.loading = false;
 
     this.getPendingVisits();
     this.getCompletedVisits();

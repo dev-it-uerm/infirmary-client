@@ -5,5 +5,7 @@ export default function () {
 
     exams: null,
     examsMap: null,
+
+    config: null,
   };
 }

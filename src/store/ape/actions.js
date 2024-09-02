@@ -339,3 +339,25 @@ export const getAnalyticsPatientVisitProgress = async (context, payload) => {
     context
   );
 };
+
+export const getConfig = async (context, payload) => {
+  if (context.state.config) {
+    return context.state.config;
+  }
+
+  const response = await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/misc/app-config`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+
+  if (response.error) {
+    return null;
+  }
+
+  context.commit("setConfig", response.body);
+  return response.body;
+};

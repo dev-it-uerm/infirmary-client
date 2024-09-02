@@ -245,7 +245,7 @@
                 class="row justify-center q-mb-md q-pa-md"
                 style="border: 1px solid rgba(0, 0, 0, 0.1)"
               >
-                <template v-for="(tabBtn, idx) in tabBtns" :key="idx">
+                <template v-for="tabBtn in tabBtns" :key="idx">
                   <q-btn
                     :disable="loading"
                     dense
@@ -257,7 +257,7 @@
                   />
                 </template>
               </div>
-              <!-- `rightDrawerOpen` in the v-if is to force the scanner to unmount
+              <!-- v-if in the `rightDrawerOpen` is to force the scanner to unmount
               when the drawer is not visible, fixing the "double scanner" bug. -->
               <VisitPageAttendance
                 v-if="rightDrawerOpen && tab === 1"
@@ -265,12 +265,12 @@
                 @busy="loading = true"
                 @ready="loading = false"
               />
-              <ExamAccept
+              <!-- <ExamAccept
                 v-if="rightDrawerOpen && tab === 2"
                 scannerId="qrCodeScanner__right-drawer-2"
                 @busy="loading = true"
                 @ready="loading = false"
-              />
+              /> -->
               <VisitTracker
                 v-if="rightDrawerOpen && tab === 3"
                 scannerId="qrCodeScanner__right-drawer-1"
@@ -321,9 +321,9 @@ export default defineComponent({
     VisitPageAttendance: defineAsyncComponent(() =>
       import("src/components/visit-page/Attendance.vue")
     ),
-    ExamAccept: defineAsyncComponent(() =>
-      import("src/components/ExamAccept.vue")
-    ),
+    // ExamAccept: defineAsyncComponent(() =>
+    //   import("src/components/ExamAccept.vue")
+    // ),
     VisitTracker: defineAsyncComponent(() =>
       import("src/components/VisitTracker.vue")
     ),
@@ -342,10 +342,10 @@ export default defineComponent({
           value: 1,
           label: "REGISTER",
         },
-        {
-          value: 2,
-          label: "RECEIVE",
-        },
+        // {
+        //   value: 2,
+        //   label: "RECEIVE",
+        // },
         {
           value: 3,
           label: "TRACK",

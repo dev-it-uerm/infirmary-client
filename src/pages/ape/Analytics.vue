@@ -12,10 +12,17 @@
           mobile-arrows
           class="text-primary"
         >
-          <q-tab name="patientsRegistered" label="Patients Registered" />
-          <q-tab name="patientsSeen" label="Patients Seen by Doctors" />
-          <q-tab name="xraysRead" label="Xrays Read by Doctors" />
-          <q-tab name="doctorPatients" label="Doctor Patients" />
+          <q-tab
+            name="registeredPatientCount"
+            label="Registered Patient Count"
+          />
+          <q-tab
+            name="seenNotSeenPatientCount"
+            label="Seen/Not Seen Patient Count"
+          />
+          <q-tab name="notSeenPatientNames" label="Not Seen Patients" />
+          <q-tab name="xraysRead" label="Xrays Read Count" />
+          <q-tab name="doctorPatientCount" label="Doctor Patient Count" />
           <q-tab name="patientVisitProgress" label="Patient Visit Progress" />
         </q-tabs>
         <q-tab-panels
@@ -28,27 +35,33 @@
         >
           <q-tab-panel
             class="full-width q-pa-none q-pt-xl no-scroll"
-            name="patientsRegistered"
+            name="registeredPatientCount"
           >
-            <PatientsRegistered />
+            <RegisteredPatientCount />
           </q-tab-panel>
           <q-tab-panel
             class="full-width q-pa-none q-pt-xl no-scroll"
-            name="patientsSeen"
+            name="seenNotSeenPatientCount"
           >
-            <PatientsSeen />
+            <SeenNotSeenPxCount />
+          </q-tab-panel>
+          <q-tab-panel
+            class="full-width q-pa-none q-pt-xl no-scroll"
+            name="notSeenPatientNames"
+          >
+            <NotSeenPatients />
           </q-tab-panel>
           <q-tab-panel
             class="full-width q-pa-none q-pt-xl no-scroll"
             name="xraysRead"
           >
-            <XraysRead />
+            <DoctorXraysReadCount />
           </q-tab-panel>
           <q-tab-panel
             class="full-width q-pa-none q-pt-xl no-scroll"
-            name="doctorPatients"
+            name="doctorPatientCount"
           >
-            <DoctorPatients />
+            <DoctorPatientCount />
           </q-tab-panel>
           <q-tab-panel
             class="full-width q-pa-none q-pt-xl no-scroll"
@@ -76,17 +89,20 @@ export default defineComponent({
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")
     ),
-    PatientsRegistered: defineAsyncComponent(() =>
-      import("src/components/analytics-page/PatientsRegistered.vue")
+    RegisteredPatientCount: defineAsyncComponent(() =>
+      import("src/components/analytics-page/RegisteredPatientCount.vue")
     ),
-    PatientsSeen: defineAsyncComponent(() =>
-      import("src/components/analytics-page/PatientsSeen.vue")
+    SeenNotSeenPxCount: defineAsyncComponent(() =>
+      import("src/components/analytics-page/SeenNotSeenPxCount.vue")
     ),
-    XraysRead: defineAsyncComponent(() =>
-      import("src/components/analytics-page/XraysRead.vue")
+    NotSeenPatients: defineAsyncComponent(() =>
+      import("src/components/analytics-page/NotSeenPatients.vue")
     ),
-    DoctorPatients: defineAsyncComponent(() =>
-      import("src/components/analytics-page/DoctorPatients.vue")
+    DoctorXraysReadCount: defineAsyncComponent(() =>
+      import("src/components/analytics-page/DoctorXraysReadCount.vue")
+    ),
+    DoctorPatientCount: defineAsyncComponent(() =>
+      import("src/components/analytics-page/DoctorPatientCount.vue")
     ),
     PatientVisitProgress: defineAsyncComponent(() =>
       import("src/components/analytics-page/PatientVisitProgress.vue")
@@ -94,7 +110,7 @@ export default defineComponent({
   },
   data() {
     return {
-      tab: "patientsRegistered",
+      tab: "registeredPatientCount",
 
       // chartOptions: {
       //   chart: {

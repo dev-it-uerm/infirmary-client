@@ -33,7 +33,7 @@
       <ReminderCard v-if="ready === null">
         <template v-slot:body>
           <div class="full-width">
-            Choose a date range then click the
+            Enter a year then click the
             <strong>GENERATE</strong> button to see the report.
           </div>
         </template>
@@ -41,18 +41,6 @@
       <FetchingData v-else-if="ready === false" />
       <div v-else-if="ready === true" class="full-width">
         <div class="full-width" :class="$q.screen.gt.md ? 'col' : ''">
-          <div class="col column q-mb-lg">
-            <div class="text-primary text-weight-medium">
-              NUMBER OF X-RAYS READ BY RADIOLOGISTS
-            </div>
-            <div class="text-caption text-grey-8">
-              {{
-                filter.dateRange
-                  ? `${filter.dateRange.from} - ${filter.dateRange.to}`
-                  : ""
-              }}
-            </div>
-          </div>
           <q-table
             style="max-height: 500px"
             class="shadow-0"
@@ -71,7 +59,7 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__XRAYS-READ-BY-DR__${String(filter.year)}`,
+                  `INFIRMARY-APE__DR-XRAYS-READ-COUNT__${String(filter.year)}`,
                   rows,
                   columns
                 )
@@ -90,7 +78,7 @@ import * as inputRules from "src/helpers/input-rules.js";
 import { delay, showMessage, downloadExcel } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "AnalyticsXraysRead",
+  name: "AnalyticsDrXraysReadCount",
   components: {
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -141,7 +129,7 @@ export default defineComponent({
       this.ready = false;
 
       const response = await this.$store.dispatch(
-        "ape/getAnalyticsXraysReadByDr",
+        "ape/getAnalyticsDrXraysReadCount",
         this.filter
       );
 

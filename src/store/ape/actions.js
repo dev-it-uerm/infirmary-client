@@ -285,10 +285,10 @@ export const getXrayChestResultTemplates = async (context, payload) => {
   );
 };
 
-export const getAnalyticsPatientsSeenByDr = async (context, payload) => {
+export const getAnalyticsSeenPatientCount = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/analytics/patients-seen-by-dr`,
+    `${context.rootState.app.apiHost}/ape/analytics/seen-patient-count`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -296,10 +296,10 @@ export const getAnalyticsPatientsSeenByDr = async (context, payload) => {
   );
 };
 
-export const getAnalyticsXraysReadByDr = async (context, payload) => {
+export const getAnalyticsDrXraysReadCount = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/analytics/xrays-read-by-dr`,
+    `${context.rootState.app.apiHost}/ape/analytics/doctor-xrays-read-count`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -307,10 +307,10 @@ export const getAnalyticsXraysReadByDr = async (context, payload) => {
   );
 };
 
-export const getAnalyticsPatientsVisited = async (context, payload) => {
+export const getAnalyticsRegisteredPatientCount = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/analytics/patients-registered`,
+    `${context.rootState.app.apiHost}/ape/analytics/registered-patient-count`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -318,10 +318,10 @@ export const getAnalyticsPatientsVisited = async (context, payload) => {
   );
 };
 
-export const getAnalyticsDoctorPatients = async (context, payload) => {
+export const getAnalyticsDoctorPatientCount = async (context, payload) => {
   return await request(
     "get",
-    `${context.rootState.app.apiHost}/ape/analytics/doctor-patients`,
+    `${context.rootState.app.apiHost}/ape/analytics/doctor-patient-count`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -333,6 +333,17 @@ export const getAnalyticsPatientVisitProgress = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/analytics/patient-visit-progress`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+};
+
+export const getNotSeenPatients = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/analytics/not-seen-patients`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,

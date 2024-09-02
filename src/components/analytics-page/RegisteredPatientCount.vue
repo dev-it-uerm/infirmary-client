@@ -83,7 +83,7 @@
       <ReminderCard v-if="ready === null">
         <template v-slot:body>
           <div class="full-width">
-            Choose a year or date range then click the
+            Complete the filter controls then click the
             <strong>GENERATE</strong> button to see the report.
           </div>
         </template>
@@ -91,9 +91,6 @@
       <FetchingData v-else-if="ready === false" />
       <div v-else-if="ready === true" class="full-width">
         <div class="full-width">
-          <div class="col text-primary text-weight-medium q-mb-lg">
-            NUMBER OF PATIENTS REGISTERED
-          </div>
           <q-table
             style="max-height: 500px"
             class="shadow-0"
@@ -112,7 +109,7 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__PATIENTS-REGISTERED__${
+                  `INFIRMARY-APE__REGISTERED-PATIENT-COUNT__${
                     filter.dateRange
                       ? Object.values(filter.dateRange)
                           .map((d) => d.replace(/\//g, '-'))
@@ -183,7 +180,7 @@ const columnsMap1 = {
 };
 
 export default defineComponent({
-  name: "AnalyticsPatientsRegistered",
+  name: "AnalyticsRegisteredPatientCount",
   components: {
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
@@ -243,7 +240,7 @@ export default defineComponent({
       };
 
       const response1 = await this.$store.dispatch(
-        "ape/getAnalyticsPatientsVisited",
+        "ape/getAnalyticsRegisteredPatientCount",
         payload
       );
 

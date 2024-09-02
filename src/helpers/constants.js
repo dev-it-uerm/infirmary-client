@@ -121,12 +121,12 @@ const navMenuAPEXrayEncodeBulk = {
 //   icon: "fa-solid fa-user-tag",
 // };
 
-const navMenuAPEExamAccept = {
-  code: "APE_EXAM_ACCEPT",
-  name: "Receive Patient",
-  url: "/ape/exam-accept",
-  icon: "fa-solid fa-door-open",
-};
+// const navMenuAPEExamAccept = {
+//   code: "APE_EXAM_ACCEPT",
+//   name: "Receive Patient",
+//   url: "/ape/exam-accept",
+//   icon: "fa-solid fa-door-open",
+// };
 
 const navMenuAPEAnalytics = {
   code: "APE_ANALYTICS",
@@ -154,7 +154,7 @@ export const apeNavMenus = [
   // },
   // navMenuAPEVisitAppointmentBulk,
   navMenuAPEVisits,
-  navMenuAPEExamAccept,
+  // navMenuAPEExamAccept,
   navMenuAPEVisitTracker,
   // navMenuAPECompleteExam,
   navMenuAPEXrayEncodeBulk,

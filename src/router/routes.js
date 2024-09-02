@@ -81,11 +81,11 @@ const routes = [
       //   path: "/ape/complete-exam",
       //   component: () => import("pages/ape/CompleteExam.vue"),
       // },
-      {
-        name: "APE_EXAM_ACCEPT",
-        path: "/ape/exam-accept",
-        component: () => import("pages/ape/ExamAccept.vue"),
-      },
+      // {
+      //   name: "APE_EXAM_ACCEPT",
+      //   path: "/ape/exam-accept",
+      //   component: () => import("pages/ape/ExamAccept.vue"),
+      // },
       {
         name: "APE_VISIT_TRACKER",
         path: "/ape/track-visit",

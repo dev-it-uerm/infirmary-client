@@ -368,9 +368,7 @@
                                   v-if="item.patientDeptCode"
                                   class="bg-grey"
                                 >
-                                  {{
-                                    departmentsMap[item.patientDeptCode]?.name
-                                  }}
+                                  {{ departmentsMap[item.patientDeptCode] }}
                                 </q-badge>
                                 <q-badge
                                   v-if="item.patientYearLevel"

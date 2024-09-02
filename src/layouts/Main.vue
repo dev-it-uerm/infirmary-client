@@ -245,7 +245,7 @@
                 class="row justify-center q-mb-md q-pa-md"
                 style="border: 1px solid rgba(0, 0, 0, 0.1)"
               >
-                <template v-for="tabBtn in tabBtns" :key="idx">
+                <template v-for="(tabBtn, idx) in tabBtns" :key="idx">
                   <q-btn
                     :disable="loading"
                     dense

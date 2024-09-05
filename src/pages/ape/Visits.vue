@@ -842,7 +842,7 @@ export default defineComponent({
         {
           name: "patientDeptCode",
           field: "patientDeptCode",
-          label: "DEPARTMENT/COLLEGE",
+          label: "DEPT/COLLEGE",
           align: "center",
         },
         {

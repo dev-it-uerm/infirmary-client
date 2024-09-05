@@ -59,7 +59,7 @@
             </div>
             <div class="q-mt-sm">
               <div>
-                <span class="text-grey-7">Patient Deparment/College:</span>
+                <span class="text-grey-7">Patient Dept/College:</span>
                 <span class="q-ml-sm">{{
                   departmentsMap[patient.deptCode].name
                 }}</span>

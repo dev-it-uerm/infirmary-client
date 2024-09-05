@@ -94,7 +94,7 @@ import {
   examsMap,
   affiliationsMap,
   campusesMap,
-  collegesMap,
+  departmentsMap,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -134,7 +134,7 @@ export default defineComponent({
       examsMap,
       affiliationsMap,
       campusesMap,
-      collegesMap,
+      departmentsMap,
       yearLevels,
     };
   },
@@ -195,8 +195,9 @@ export default defineComponent({
           patient.lastName,
           patient.extName
         ),
-        Affiliation: affiliationsMap[patient.affiliationCode].name,
         Campus: campusesMap[patient.campusCode].name,
+        Affiliation: affiliationsMap[patient.affiliationCode].name,
+        Department: departmentsMap[patient.deptCode].name,
       };
     },
     async register(registrationMode, patientCode) {

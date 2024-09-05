@@ -57,28 +57,20 @@
                 affiliationsMap[patient.affiliationCode].name
               }}</span>
             </div>
-            <div v-if="patient.deptCode" class="q-mt-sm">
+            <div class="q-mt-sm">
               <div>
-                <span class="text-grey-7">Deparment:</span>
+                <span class="text-grey-7">Patient Deparment/College:</span>
                 <span class="q-ml-sm">{{
                   departmentsMap[patient.deptCode].name
                 }}</span>
               </div>
             </div>
-            <div v-if="patient.collegeCode" class="q-mt-sm">
-              <div>
-                <span class="text-grey-7">College:</span>
-                <span class="q-ml-sm">{{
-                  collegesMap[patient.collegeCode].name
-                }}</span>
-              </div>
-              <div v-if="patient.yearLevel">
-                <span class="text-grey-7">Year Level:</span>
-                <span class="q-ml-sm">{{
-                  yearLevels.find((l) => l.code === Number(patient.yearLevel))
-                    .name ?? ""
-                }}</span>
-              </div>
+            <div v-if="patient.yearLevel" class="q-mt-sm">
+              <span class="text-grey-7">Year Level:</span>
+              <span class="q-ml-sm">{{
+                yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                  .name ?? ""
+              }}</span>
             </div>
           </div>
           <q-list v-if="exams && exams.length > 0" class="full-width" separator>
@@ -167,7 +159,6 @@ import {
   examsMap,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
   departmentsMap,
 } from "src/helpers/constants.js";
@@ -200,7 +191,6 @@ export default defineComponent({
       examsMap,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
       departmentsMap,
       formatDate,

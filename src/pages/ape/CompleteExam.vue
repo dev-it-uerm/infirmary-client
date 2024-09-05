@@ -85,21 +85,21 @@
                         affiliationsMap[patient.affiliationCode].name
                       }}</span>
                     </div>
-                    <div v-if="patient.collegeCode" class="q-mt-sm">
-                      <div>
-                        <span class="text-grey-7">College:</span>
-                        <span class="q-ml-sm">{{
-                          collegesMap[patient.collegeCode].name
-                        }}</span>
-                      </div>
-                      <div v-if="patient.yearLevel">
-                        <span class="text-grey-7">Year Level:</span>
-                        <span class="q-ml-sm">{{
-                          yearLevels.find(
-                            (l) => l.code === Number(patient.yearLevel)
-                          ).name ?? ""
-                        }}</span>
-                      </div>
+                    <div>
+                      <span class="text-grey-7">
+                        Patient Department/College:
+                      </span>
+                      <span class="q-ml-sm">{{
+                        departmentsMap[patient.deptCode].name
+                      }}</span>
+                    </div>
+                    <div v-if="patient.yearLevel" class="q-mt-sm">
+                      <span class="text-grey-7">Patient Year Level:</span>
+                      <span class="q-ml-sm">{{
+                        yearLevels.find(
+                          (l) => l.code === Number(patient.yearLevel)
+                        ).name ?? ""
+                      }}</span>
                     </div>
                     <div class="q-mt-sm">
                       <div>
@@ -213,7 +213,6 @@ import {
   exams,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -250,7 +249,6 @@ export default defineComponent({
       exams,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
     };
   },

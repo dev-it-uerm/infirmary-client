@@ -47,24 +47,24 @@
                 v-model="filters.affiliationCode"
                 hint=""
               />
+              <q-select
+                :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
+                :dense="$q.screen.gt.sm"
+                :disable="filtering || scheduling"
+                stack-label
+                outlined
+                emit-value
+                map-options
+                option-label="name"
+                option-value="code"
+                :options="departments"
+                label="Department"
+                v-model="filters.deptCode"
+                hint=""
+              />
               <template
                 v-if="filters.affiliationCode === affiliationsMap.STU.code"
               >
-                <q-select
-                  :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
-                  :dense="$q.screen.gt.sm"
-                  :disable="filtering || scheduling"
-                  stack-label
-                  outlined
-                  emit-value
-                  map-options
-                  option-label="name"
-                  option-value="code"
-                  :options="colleges"
-                  label="College"
-                  v-model="filters.collegeCode"
-                  hint=""
-                />
                 <q-select
                   :class="$q.screen.lt.md ? 'col-12' : 'col-auto'"
                   :dense="$q.screen.gt.sm"
@@ -293,8 +293,8 @@ import {
   campuses,
   affiliationsMap,
   affiliations,
-  collegesMap,
-  colleges,
+  departments,
+  departmentsMap,
   yearLevelsMap,
   yearLevels,
 } from "src/helpers/constants.js";
@@ -335,10 +335,10 @@ export default defineComponent({
       campusesMap,
       affiliations,
       affiliationsMap,
-      collegesMap,
-      colleges,
-      yearLevelsMap,
+      departments,
+      departmentsMap,
       yearLevels,
+      yearLevelsMap,
       showMessage,
       formatDate,
       formatName,
@@ -361,8 +361,7 @@ export default defineComponent({
         campusCode: campusesMap.UERM.code,
         affiliationCode: affiliationsMap.STU.code,
         fullName: "",
-
-        collegeCode: null,
+        deptCode: null,
         yearLevel: null,
       },
 
@@ -385,12 +384,12 @@ export default defineComponent({
     "filters.affiliationCode": {
       handler(val) {
         if (val === affiliationsMap.STU.code) {
-          this.filters.collegeCode = collegesMap.MED.code;
+          this.filters.deptCode = departmentsMap.MED.code;
           this.filters.yearLevel = yearLevelsMap.FIRST.code;
           return;
         }
 
-        this.filters.collegeCode = null;
+        this.filters.deptCode = null;
         this.filters.yearLevel = null;
       },
       immediate: true,
@@ -423,14 +422,17 @@ export default defineComponent({
               : "EMPLOYEE NO.",
           align: "left",
         },
+        {
+          name: "deptCode",
+          field: "deptCode",
+          label:
+            this.filters.affiliationCode === this.affiliationsMap.STU.code
+              ? "COLLEGE"
+              : "DEPARTMENT",
+          align: "left",
+        },
         ...(this.filters.affiliationCode === this.affiliationsMap.STU.code
           ? [
-              {
-                name: "collegeCode",
-                field: "collegeCode",
-                label: "COLLEGE",
-                align: "center",
-              },
               {
                 name: "yearLevel",
                 field: "yearLevel",

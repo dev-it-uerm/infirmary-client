@@ -120,25 +120,6 @@ export const departmentsMap = {
   KNDR: "Kindergarten",
 };
 
-export const collegesMap = {
-  GRAD: "Graduate School",
-  MED: "Medicine",
-  NURS: "Nursing",
-  MEDTECH: "Medical Technology",
-  ARTS: "Arts and Sciences",
-  BA: "Business Administration",
-  ENGR: "Engineering",
-  CSS: "Computer Studies and Systems",
-  DEN: "Dentistry",
-  EDUC: "Education",
-  FAAD: "Fine Arts, Architecture and Design",
-  LAW: "Law",
-  SHS: "Senior High School",
-  HS: "High School",
-  ELEM: "Elementary",
-  KNDR: "Kindergarten",
-};
-
 export const yearLevelsMap = {
   NA: { code: null, name: "N/A" },
   FIRST: { code: 1, name: "First Year" },
@@ -169,7 +150,6 @@ export const userRolesMap = {
 _formatMap(examsMap);
 _formatMap(campusesMap);
 _formatMap(departmentsMap);
-_formatMap(collegesMap);
 _formatMap(yearLevelsMap);
 _formatMap(affiliationsMap);
 _formatMap(userRolesMap);
@@ -177,7 +157,6 @@ _formatMap(userRolesMap);
 export const exams = Object.values(examsMap);
 export const campuses = Object.values(campusesMap);
 export const departments = Object.values(departmentsMap);
-export const colleges = Object.values(collegesMap);
 export const yearLevels = Object.values(yearLevelsMap);
 export const affiliations = Object.values(affiliationsMap);
 export const userRoles = Object.values(userRolesMap);

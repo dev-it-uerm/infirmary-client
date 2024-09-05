@@ -70,21 +70,21 @@
               hint=""
               v-model="patientAffiliationCode"
             />
+            <!-- <q-select
+              stack-label
+              outlined
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :options="departments"
+              label="Department"
+              v-model="patientDeptCode"
+              hint=""
+            /> -->
             <!-- <template
                     v-if="patientAffiliationCode === affiliationsMap.STU.code"
                   >
-                    <q-select
-                      stack-label
-                      outlined
-                      emit-value
-                      map-options
-                      option-label="name"
-                      option-value="code"
-                      :options="colleges"
-                      label="College"
-                      v-model="patientCollegeCode"
-                      hint=""
-                    />
                     <q-select
                       stack-label
                       outlined
@@ -141,7 +141,6 @@ import {
   affiliationsMap,
   campuses,
   exams,
-  colleges,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -170,7 +169,6 @@ export default defineComponent({
       affiliationsMap,
       campuses,
       exams,
-      colleges,
       yearLevels,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
@@ -188,7 +186,7 @@ export default defineComponent({
       patientAffiliationCode: null,
       // patientName: null,
 
-      // patientCollegeCode: null,
+      // patientDeptCode: null,
       // patientYearLevel: null,
 
       filterProps: [

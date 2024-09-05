@@ -77,27 +77,19 @@
                 affiliationsMap[patient.affiliationCode].name
               }}</span>
             </div>
-            <div v-if="patient.deptCode">
-              <span class="text-grey-7">Patient Deparment:</span>
+            <div>
+              <span class="text-grey-7">Patient Deparment/College:</span>
               <span class="q-ml-sm">{{
                 departmentsMap[patient.deptCode].name
               }}</span>
             </div>
-            <template v-if="patient.collegeCode">
-              <div>
-                <span class="text-grey-7">Patient College:</span>
-                <span class="q-ml-sm">{{
-                  collegesMap[patient.collegeCode].name
-                }}</span>
-              </div>
-              <div v-if="patient.yearLevel">
-                <span class="text-grey-7">Patient Year Level:</span>
-                <span class="q-ml-sm">{{
-                  yearLevels.find((l) => l.code === Number(patient.yearLevel))
-                    .name ?? ""
-                }}</span>
-              </div>
-            </template>
+            <div v-if="patient.yearLevel">
+              <span class="text-grey-7">Patient Year Level:</span>
+              <span class="q-ml-sm">{{
+                yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                  .name ?? ""
+              }}</span>
+            </div>
           </div>
         </div>
         <ReminderCard v-else bordered>
@@ -137,7 +129,6 @@ import {
   exams,
   affiliationsMap,
   campusesMap,
-  collegesMap,
   yearLevels,
   departmentsMap,
 } from "src/helpers/constants.js";
@@ -167,7 +158,6 @@ export default defineComponent({
       examsMap,
       affiliationsMap,
       campusesMap,
-      collegesMap,
       yearLevels,
       departmentsMap,
       formatDate,

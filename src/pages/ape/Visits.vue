@@ -257,12 +257,13 @@
                                 }}
                               </q-td>
                               <q-td
-                                v-else-if="column.name === 'patientCollegeCode'"
+                                v-else-if="column.name === 'patientDeptCode'"
                                 class="text-center"
                               >
                                 {{
                                   props.row[column.name]
-                                    ? collegesMap[props.row[column.name]].name
+                                    ? departmentsMap[props.row[column.name]]
+                                        .name
                                     : ""
                                 }}
                               </q-td>
@@ -364,18 +365,11 @@
                                       : 'fa-solid fa-venus'
                                   "
                                 />
-                                <q-badge
-                                  v-if="
-                                    item.patientCollegeCode ||
-                                    item.patientDeptCode
-                                  "
-                                  class="bg-grey"
-                                  >{{
-                                    collegesMap[item.patientCollegeCode]
-                                      ?.name ??
+                                <q-badge class="bg-grey">
+                                  {{
                                     departmentsMap[item.patientDeptCode]?.name
-                                  }}</q-badge
-                                >
+                                  }}
+                                </q-badge>
                                 <q-badge
                                   v-if="item.patientYearLevel"
                                   class="bg-grey"
@@ -745,8 +739,6 @@ import {
   campuses,
   examsMap,
   exams,
-  collegesMap,
-  colleges,
   yearLevelsMap,
   yearLevels,
   departmentsMap,
@@ -796,8 +788,6 @@ export default defineComponent({
       campusesMap,
       exams,
       examsMap,
-      collegesMap,
-      colleges,
       yearLevelsMap,
       yearLevels,
 
@@ -850,9 +840,9 @@ export default defineComponent({
           align: "center",
         },
         {
-          name: "patientCollegeCode",
-          field: "patientCollegeCode",
-          label: "COLLEGE",
+          name: "patientDeptCode",
+          field: "patientDeptCode",
+          label: "DEPARTMENT/COLLEGE",
           align: "center",
         },
         {
@@ -891,7 +881,7 @@ export default defineComponent({
         patientAffiliationCode: affiliationsMap.STU.code,
         // patientName: null,
 
-        // patientCollegeCode: null,
+        // patientDeptCode: null,
         // patientYearLevel: null,
       },
 
@@ -985,7 +975,6 @@ export default defineComponent({
             patientExtName: row.patientExtName,
             patientGender: row.patientGender,
             patientDeptCode: row.patientDeptCode,
-            patientCollegeCode: row.patientCollegeCode,
             patientYearLevel: row.patientYearLevel,
 
             exams: [],

@@ -7,15 +7,22 @@
       <div class="text-primary text-weight-medium q-mb-lg">FILTER:</div>
       <div>
         <q-form @submit="getData">
-          <DateRange
+          <FormFieldYear
             :disable="ready === false"
-            stack-label
-            outlined
-            label="Date Range"
-            hint=""
-            :initialValue="filter.dateRange"
-            @valueChanged="(val) => (filter.dateRange = val)"
+            :required="true"
+            v-model="filter.year"
           />
+          <div class="row justify-end q-mb-md">
+            <q-toggle
+              :disable="ready === false"
+              class="text-overline"
+              :true-value="1"
+              :false-value="0"
+              label="INCLUDE DATE"
+              left-label
+              v-model="filter.includeDate"
+            />
+          </div>
           <div class="row justify-end">
             <q-btn
               :disable="ready === false"
@@ -70,11 +77,7 @@
               label="DOWNLOAD"
               @click="
                 downloadExcel(
-                  `INFIRMARY-APE__DR-PATIENT-COUNT__${Object.values(
-                    filter.dateRange
-                  )
-                    .map((d) => d.replace(/\//g, '-'))
-                    .join('-TO-')}`,
+                  `INFIRMARY-APE__DR-PATIENT-COUNT__${String(filter.year)}`,
                   rows,
                   columns
                 )
@@ -90,7 +93,39 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import * as inputRules from "src/helpers/input-rules.js";
-import { isStr, delay, showMessage, downloadExcel } from "src/helpers/util.js";
+import {
+  delay,
+  showMessage,
+  downloadExcel,
+  formatDate,
+} from "src/helpers/util.js";
+
+const allColumnsMap = {
+  physician: {
+    name: "physician",
+    field: "physician",
+    label: "PHYSICIAN",
+    align: "left",
+    type: "string", // FOR `downloadExcel` UTIL
+  },
+  date: {
+    name: "date",
+    field: "date",
+    label: "DATE",
+    align: "left",
+    format: (v) => formatDate(v, { dateOnly: true }),
+    type: "string", // FOR `downloadExcel` UTIL
+  },
+  patientCount: {
+    name: "patientCount",
+    field: "patientCount",
+    label: "PATIENT COUNT",
+    align: "center",
+    type: "integer", // FOR `downloadExcel` UTIL
+  },
+};
+
+const allColumns = Object.values(allColumnsMap);
 
 export default defineComponent({
   name: "AnalyticsDoctorPatientCount",
@@ -101,8 +136,8 @@ export default defineComponent({
     ReminderCard: defineAsyncComponent(() =>
       import("src/components/core/ReminderCard.vue")
     ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
+    FormFieldYear: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/Year.vue")
     ),
   },
   setup() {
@@ -116,32 +151,18 @@ export default defineComponent({
       ready: null,
 
       filter: {
-        dateRange: null,
+        includeDate: 0,
+        year: null,
       },
 
-      columns: [
-        {
-          name: "physician",
-          field: "physician",
-          label: "PHYSICIAN",
-          align: "left",
-          type: "string", // FOR `downloadExcel` UTIL
-        },
-        {
-          name: "patientCount",
-          field: "patientCount",
-          label: "PATIENT COUNT",
-          align: "center",
-          type: "integer", // FOR `downloadExcel` UTIL
-        },
-      ],
-
+      columns: [],
       rows: [],
     };
   },
   methods: {
     async getData() {
       this.ready = false;
+      this.columns = allColumns;
 
       const response = await this.$store.dispatch(
         "ape/getAnalyticsDoctorPatientCount",
@@ -154,6 +175,12 @@ export default defineComponent({
         showMessage(this.$q, false, response.body.error ?? response.body);
         this.ready = true;
         return;
+      }
+
+      if (response.body.length > 0) {
+        this.columns = Object.keys(response.body[0]).map(
+          (c) => allColumnsMap[c]
+        );
       }
 
       this.rows = response.body;

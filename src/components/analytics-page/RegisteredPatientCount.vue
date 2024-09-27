@@ -12,7 +12,7 @@
       <div>
         <q-form @submit="getData">
           <q-select
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             stack-label
             outlined
             multiple
@@ -31,7 +31,7 @@
             hint=""
           />
           <q-select
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             stack-label
             outlined
             :options="[
@@ -48,13 +48,13 @@
           />
           <FormFieldYear
             v-if="dateType === 'YEAR'"
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             :required="true"
             v-model="filter.year"
           />
           <DateRange
             v-if="dateType === 'DATERANGE'"
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             stack-label
             outlined
             label="Date Range"
@@ -64,7 +64,7 @@
           />
           <div class="row justify-end">
             <q-btn
-              :disable="ready === false"
+              :disable="ready === false || downloading"
               type="submit"
               label="GENERATE"
               class="text-black"
@@ -101,25 +101,14 @@
           />
           <div class="row justify-end q-mt-lg">
             <q-btn
-              :disable="!ready || !rows || rows.length === 0"
+              :disable="!ready || !rows || rows.length === 0 || downloading"
               unelevated
+              :loading="downloading"
               color="accent"
               icon="download"
               class="text-black"
               label="DOWNLOAD"
-              @click="
-                downloadExcel(
-                  `INFIRMARY-APE__REGISTERED-PATIENT-COUNT__${
-                    filter.dateRange
-                      ? Object.values(filter.dateRange)
-                          .map((d) => d.replace(/\//g, '-'))
-                          .join('-TO-')
-                      : String(filter.year)
-                  }`,
-                  rows,
-                  columns
-                )
-              "
+              @click="download"
             />
           </div>
         </div>
@@ -138,9 +127,10 @@ import {
   delay,
   showMessage,
   downloadExcel,
+  downloadExcelAsync,
 } from "src/helpers/util.js";
 
-const columnsMap1 = {
+const columnsMap = {
   visitDate: {
     name: "visitDate",
     field: "visitDate",
@@ -148,6 +138,7 @@ const columnsMap1 = {
     align: "center",
     format: (v) => formatDate(v, { dateOnly: true }),
     type: "string", // FOR `downloadExcel` UTIL
+    isISODate: true, // FOR `excel-gen` WEB WORKER
   },
   patientCampus: {
     name: "patientCampus",
@@ -198,12 +189,12 @@ export default defineComponent({
   setup() {
     return {
       inputRuleRequired: inputRules.required,
-      downloadExcel,
     };
   },
   data() {
     return {
       ready: null,
+      downloading: false,
 
       reportColumns: ["CAMPUS", "AFFILIATION", "DEPARTMENT"],
       dateType: "YEAR",
@@ -255,10 +246,36 @@ export default defineComponent({
       this.rows = response1.body;
 
       this.columns = response1.body[0]
-        ? Object.keys(response1.body[0]).map((k) => columnsMap1[k])
+        ? Object.keys(response1.body[0]).map((k) => columnsMap[k])
         : [];
 
       this.ready = true;
+    },
+    async download() {
+      this.downloading = true;
+      await delay(1000);
+
+      const fileName = `INFIRMARY-APE__REGISTERED-PATIENT-COUNT__${
+        this.filter.dateRange
+          ? Object.values(this.filter.dateRange)
+              .map((d) => d.replace(/\//g, "-"))
+              .join("-TO-")
+          : String(this.filter.year)
+      }.xls`;
+
+      // USE WEB WORKER IF AVAILABLE
+      if (window.Worker) {
+        const me = this;
+
+        downloadExcelAsync(fileName, this.rows, this.columns, () => {
+          me.downloading = false;
+        });
+
+        return;
+      }
+
+      await downloadExcel(fileName, this.rows, this.columns);
+      this.downloading = false;
     },
   },
 });

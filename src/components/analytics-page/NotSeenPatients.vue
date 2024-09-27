@@ -69,19 +69,14 @@
           />
           <div class="row justify-end q-mt-lg">
             <q-btn
-              :disable="!rows || rows.length === 0"
+              :disable="!rows || rows.length === 0 || downloading"
+              :loading="downloading"
               unelevated
               color="accent"
               icon="download"
               class="text-black"
               label="DOWNLOAD"
-              @click="
-                downloadExcel(
-                  `INFIRMARY-APE__NOT-SEEN-PATIENTS__${String(filter.year)}`,
-                  rows,
-                  columns
-                )
-              "
+              @click="download"
             />
           </div>
         </div>
@@ -92,13 +87,15 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+
 import {
   delay,
   showMessage,
   downloadExcel,
-  // downloadExcelOnMessage,
+  downloadExcelAsync,
   formatDate,
 } from "src/helpers/util.js";
+
 import * as inputRules from "src/helpers/input-rules.js";
 import { campuses } from "src/helpers/constants.js";
 
@@ -119,12 +116,12 @@ export default defineComponent({
     return {
       campuses,
       inputRules: inputRules,
-      downloadExcel,
     };
   },
   data() {
     return {
       ready: null,
+      downloading: false,
 
       filter: {
         campusCode: null,
@@ -159,6 +156,7 @@ export default defineComponent({
           label: "DATE & TIME REGISTERED",
           align: "left",
           type: "string", // FOR `downloadExcel` UTIL
+          isISODate: true, // FOR `excel-gen` WEB WORKER
           format: formatDate,
         },
       ],
@@ -185,6 +183,28 @@ export default defineComponent({
 
       this.rows = response.body;
       this.ready = true;
+    },
+    async download() {
+      this.downloading = true;
+      await delay(1000);
+
+      const fileName = `INFIRMARY-APE__NOT-SEEN-PATIENTS__${String(
+        this.filter.year
+      )}.xls`;
+
+      // USE WEB WORKER IF AVAILABLE
+      if (window.Worker) {
+        const me = this;
+
+        downloadExcelAsync(fileName, this.rows, this.columns, () => {
+          me.downloading = false;
+        });
+
+        return;
+      }
+
+      await downloadExcel(fileName, this.rows, this.columns);
+      this.downloading = false;
     },
   },
 });

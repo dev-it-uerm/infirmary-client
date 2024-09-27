@@ -12,13 +12,13 @@
       <div>
         <q-form @submit="getData">
           <FormFieldYear
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             :required="true"
             v-model="filter.year"
           />
           <!-- :options="[{ code: null, name: 'ALL' }, ...campuses]" -->
           <q-select
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             stack-label
             outlined
             :options="campuses"
@@ -31,7 +31,7 @@
             v-model="filter.campusCode"
           />
           <q-select
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             stack-label
             outlined
             :options="affiliations"
@@ -45,7 +45,7 @@
             hint=""
           />
           <q-select
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             stack-label
             outlined
             :options="[{ code: null, name: 'ALL' }, ...departments]"
@@ -59,7 +59,7 @@
           />
           <div class="row justify-end">
             <q-btn
-              :disable="ready === false"
+              :disable="ready === false || downloading"
               type="submit"
               label="GENERATE"
               class="text-black"
@@ -99,27 +99,14 @@
           />
           <div class="row justify-end q-mt-lg">
             <q-btn
-              :disable="!ready || !rows || rows.length === 0"
+              :disable="!ready || !rows || rows.length === 0 || downloading"
+              :loading="downloading"
               unelevated
               color="accent"
               icon="download"
               class="text-black"
               label="DOWNLOAD"
-              @click="
-                downloadExcel(
-                  `INFIRMARY-APE__PATIENT-VISIT-PROGRESS__${String(
-                    filter.year
-                  )}${
-                    filter.campusCode ? '-' + String(filter.campusCode) : ''
-                  }${
-                    filter.affiliationCode
-                      ? '-' + String(filter.affiliationCode)
-                      : ''
-                  }${filter.deptCode ? '-' + String(filter.deptCode) : ''}`,
-                  rows,
-                  columns
-                )
-              "
+              @click="download"
             />
           </div>
         </div>
@@ -130,12 +117,15 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+
 import {
   delay,
   showMessage,
   downloadExcel,
+  downloadExcelAsync,
   formatDate,
 } from "src/helpers/util.js";
+
 import * as inputRules from "src/helpers/input-rules.js";
 import { campuses, affiliations, departments } from "src/helpers/constants.js";
 
@@ -155,7 +145,6 @@ export default defineComponent({
   setup() {
     return {
       inputRuleRequired: inputRules.required,
-      downloadExcel,
       campuses,
       affiliations,
       departments,
@@ -164,6 +153,7 @@ export default defineComponent({
   data() {
     return {
       ready: null,
+      downloading: false,
 
       filter: {
         year: null,
@@ -215,6 +205,7 @@ export default defineComponent({
           label: "DATE & TIME REGISTERED",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
         {
           name: "examMedicalHistory",
@@ -222,6 +213,7 @@ export default defineComponent({
           label: "MEDICAL HISTORY",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
         {
           name: "examPhysicalExam",
@@ -229,6 +221,7 @@ export default defineComponent({
           label: "PHYSICAL EXAM",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
         {
           name: "examLabCbc",
@@ -236,6 +229,7 @@ export default defineComponent({
           label: "LAB - CBC",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
         {
           name: "examLabUrinalysis",
@@ -243,6 +237,7 @@ export default defineComponent({
           label: "LAB - URINALYSIS",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
         {
           name: "examLabFecalysis",
@@ -250,6 +245,7 @@ export default defineComponent({
           label: "LAB - FECALYSIS",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
         {
           name: "examRadXrayChest",
@@ -257,6 +253,7 @@ export default defineComponent({
           label: "RAD - XRAY (CHEST)",
           align: "center",
           format: formatDate,
+          isISODate: true, // FOR `excel-gen` WEB WORKER
         },
       ],
       rows: [],
@@ -287,6 +284,32 @@ export default defineComponent({
 
       this.rows = response.body;
       this.ready = true;
+    },
+    async download() {
+      this.downloading = true;
+      await delay(1000);
+
+      const fileName = `INFIRMARY-APE__PATIENT-VISIT-PROGRESS__${String(
+        this.filter.year
+      )}${this.filter.campusCode ? "-" + String(this.filter.campusCode) : ""}${
+        this.filter.affiliationCode
+          ? "-" + String(this.filter.affiliationCode)
+          : ""
+      }${this.filter.deptCode ? "-" + String(this.filter.deptCode) : ""}.xls`;
+
+      // USE WEB WORKER IF AVAILABLE
+      if (window.Worker) {
+        const me = this;
+
+        downloadExcelAsync(fileName, this.rows, this.columns, () => {
+          me.downloading = false;
+        });
+
+        return;
+      }
+
+      await downloadExcel(fileName, this.rows, this.columns);
+      this.downloading = false;
     },
   },
 });

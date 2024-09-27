@@ -28,7 +28,6 @@
         <q-tab-panels
           class="full-width"
           animated
-          swipeable
           transition-prev="jump-up"
           transition-next="jump-up"
           v-model="tab"

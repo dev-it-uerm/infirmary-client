@@ -8,13 +8,13 @@
       <div>
         <q-form @submit="getData">
           <FormFieldYear
-            :disable="ready === false"
+            :disable="ready === false || downloading"
             :required="true"
             v-model="filter.year"
           />
           <div class="row justify-end q-mb-md">
             <q-toggle
-              :disable="ready === false"
+              :disable="ready === false || downloading"
               class="text-overline"
               :true-value="1"
               :false-value="0"
@@ -25,7 +25,7 @@
           </div>
           <div class="row justify-end">
             <q-btn
-              :disable="ready === false"
+              :disable="ready === false || downloading"
               type="submit"
               label="GENERATE"
               class="text-black"
@@ -69,19 +69,16 @@
           />
           <div class="row justify-end">
             <q-btn
-              :disable="ready === false || !rows || rows.length === 0"
+              :disable="
+                ready === false || !rows || rows.length === 0 || downloading
+              "
               unelevated
+              :loading="downloading"
               color="accent"
               icon="download"
               class="text-black q-mt-lg"
               label="DOWNLOAD"
-              @click="
-                downloadExcel(
-                  `INFIRMARY-APE__DR-PATIENT-COUNT__${String(filter.year)}`,
-                  rows,
-                  columns
-                )
-              "
+              @click="download"
             />
           </div>
         </div>
@@ -97,6 +94,7 @@ import {
   delay,
   showMessage,
   downloadExcel,
+  downloadExcelAsync,
   formatDate,
 } from "src/helpers/util.js";
 
@@ -115,6 +113,7 @@ const allColumnsMap = {
     align: "left",
     format: (v) => formatDate(v, { dateOnly: true }),
     type: "string", // FOR `downloadExcel` UTIL
+    isISODate: true, // FOR `excel-gen` WEB WORKER
   },
   patientCount: {
     name: "patientCount",
@@ -143,12 +142,12 @@ export default defineComponent({
   setup() {
     return {
       inputRuleRequired: inputRules.required,
-      downloadExcel,
     };
   },
   data() {
     return {
       ready: null,
+      downloading: false,
 
       filter: {
         includeDate: 0,
@@ -185,6 +184,28 @@ export default defineComponent({
 
       this.rows = response.body;
       this.ready = true;
+    },
+    async download() {
+      this.downloading = true;
+      await delay(1000);
+
+      const fileName = `INFIRMARY-APE__DR-PATIENT-COUNT__${String(
+        this.filter.year
+      )}.xls`;
+
+      // USE WEB WORKER IF AVAILABLE
+      if (window.Worker) {
+        const me = this;
+
+        downloadExcelAsync(fileName, this.rows, this.columns, () => {
+          me.downloading = false;
+        });
+
+        return;
+      }
+
+      await downloadExcel(fileName, this.rows, this.columns);
+      this.downloading = false;
     },
   },
 });

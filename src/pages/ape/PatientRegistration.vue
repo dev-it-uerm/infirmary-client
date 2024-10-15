@@ -239,9 +239,8 @@
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 import { delay, showMessage, empty } from "src/helpers/util.js";
+
 import {
-  campusesMap,
-  campuses,
   yearLevelsMap,
   yearLevels,
   affiliationsMap,
@@ -269,8 +268,6 @@ export default defineComponent({
   },
   setup() {
     return {
-      campusesMap,
-      campuses,
       affiliationsMap,
       affiliations,
       yearLevelsMap,
@@ -282,6 +279,9 @@ export default defineComponent({
   },
   data() {
     return {
+      campuses: [],
+      campusesMap: {},
+
       loading: false,
       yesNoDialogVisible: false,
 
@@ -315,6 +315,20 @@ export default defineComponent({
         this.yearLevel = null;
       }
     },
+  },
+  async mounted() {
+    this.loading = true;
+
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
+
+    this.loading = false;
   },
   methods: {
     reset() {

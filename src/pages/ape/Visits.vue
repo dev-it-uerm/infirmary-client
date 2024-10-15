@@ -726,17 +726,14 @@ import {
   delay,
   formatDate,
   showMessage,
-  subtractDay,
-  jsDateToISOString,
-  allPropsEmpty,
+  // subtractDay,
+  // jsDateToISOString,
   formatName,
 } from "src/helpers/util.js";
 
 import {
   affiliationsMap,
   affiliations,
-  campusesMap,
-  campuses,
   examsMap,
   exams,
   yearLevelsMap,
@@ -784,8 +781,6 @@ export default defineComponent({
     return {
       affiliations,
       affiliationsMap,
-      campuses,
-      campusesMap,
       exams,
       examsMap,
       yearLevelsMap,
@@ -858,13 +853,14 @@ export default defineComponent({
           align: "center",
         },
       ],
-      // inputRule: (val) =>
-      //   val == null || val === "" ? "Field is required." : undefined,
     };
   },
   data() {
     return {
       loading: false,
+
+      campuses: [],
+      campusesMap: {},
 
       pendingVisitsFilters: {
         status: "PENDING",
@@ -877,8 +873,8 @@ export default defineComponent({
         //   to: jsDateToISOString(new Date(), true).replace(/-/g, "/"),
         // },
         patientFullName: "",
-        patientCampusCode: campusesMap.CAL.code,
-        patientAffiliationCode: affiliationsMap.STU.code,
+        patientCampusCode: null,
+        patientAffiliationCode: null,
         // patientName: null,
 
         // patientDeptCode: null,
@@ -889,8 +885,8 @@ export default defineComponent({
         status: "COMPLETED",
         year: new Date().getFullYear(),
         patientFullName: "",
-        patientCampusCode: campusesMap.CAL.code,
-        patientAffiliationCode: affiliationsMap.STU.code,
+        patientCampusCode: null,
+        patientAffiliationCode: null,
       },
 
       pendingVisitsLoading: false,
@@ -919,7 +915,25 @@ export default defineComponent({
     if (!this.user) return;
 
     this.loading = true;
+
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
     const appConfig = await this.$store.dispatch("ape/getConfig");
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
+
+    this.pendingVisitsFilters.patientCampusCode = this.campusesMap.CAL?.code;
+    this.pendingVisitsFilters.patientAffiliationCode =
+      affiliationsMap.STU?.code;
+
+    this.completedVisitsFilters.patientCampusCode = this.campusesMap.CAL?.code;
+    this.completedVisitsFilters.patientAffiliationCode =
+      affiliationsMap.STU?.code;
 
     if (appConfig?.visitsDefaultFiltersMap) {
       this.pendingVisitsFilters = {
@@ -933,7 +947,6 @@ export default defineComponent({
       };
     }
 
-    await delay(1000);
     this.loading = false;
 
     this.getPendingVisits();

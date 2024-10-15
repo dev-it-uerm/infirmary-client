@@ -62,21 +62,6 @@ const routes = [
         component: () => import("pages/ape/Visits.vue"),
       },
       // {
-      //   name: "APE_VISIT_APPOINTMENT_LINK",
-      //   path: "/ape/visit-appointment-link",
-      //   component: () => import("pages/ape/VisitAppointmentLink.vue"),
-      // },
-      // {
-      //   name: "APE_VISIT_APPOINTMENT",
-      //   path: "/ape/visit-appointment",
-      //   component: () => import("pages/ape/VisitAppointment.vue"),
-      // },
-      // {
-      //   name: "APE_VISIT_APPOINTMENT_BULK",
-      //   path: "/ape/visit-appointment-bulk",
-      //   component: () => import("pages/ape/VisitAppointmentBulk.vue"),
-      // },
-      // {
       //   name: "APE_COMPLETE_EXAM",
       //   path: "/ape/complete-exam",
       //   component: () => import("pages/ape/CompleteExam.vue"),

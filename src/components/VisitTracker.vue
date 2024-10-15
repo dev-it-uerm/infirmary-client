@@ -158,7 +158,6 @@ import {
 import {
   examsMap,
   affiliationsMap,
-  campusesMap,
   yearLevels,
   departmentsMap,
 } from "src/helpers/constants.js";
@@ -190,7 +189,6 @@ export default defineComponent({
     return {
       examsMap,
       affiliationsMap,
-      campusesMap,
       yearLevels,
       departmentsMap,
       formatDate,
@@ -199,6 +197,9 @@ export default defineComponent({
   },
   data() {
     return {
+      campuses: [],
+      campusesMap: {},
+
       // recentEntries: [],
       loading: false,
       inputMode: null,
@@ -220,6 +221,20 @@ export default defineComponent({
     patientCode(val) {
       if (val) this.track(val);
     },
+  },
+  async mounted() {
+    this.loading = true;
+
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
+
+    this.loading = false;
   },
   methods: {
     async track(patientCode) {

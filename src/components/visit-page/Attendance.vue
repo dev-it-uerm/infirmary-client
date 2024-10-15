@@ -93,7 +93,6 @@ import {
 import {
   examsMap,
   affiliationsMap,
-  campusesMap,
   departmentsMap,
   yearLevels,
 } from "src/helpers/constants.js";
@@ -133,13 +132,15 @@ export default defineComponent({
       formatDate,
       examsMap,
       affiliationsMap,
-      campusesMap,
       departmentsMap,
       yearLevels,
     };
   },
   data() {
     return {
+      campuses: [],
+      campusesMap: {},
+
       checklistDialogVisible: false,
       forbidden: false,
 
@@ -177,6 +178,20 @@ export default defineComponent({
       }
     },
   },
+  async mounted() {
+    this.loading = true;
+
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
+
+    this.loading = false;
+  },
   methods: {
     formatLastPatientRegistered(row) {
       const patient = row.patient || row.employee;
@@ -195,7 +210,7 @@ export default defineComponent({
           patient.lastName,
           patient.extName
         ),
-        Campus: campusesMap[patient.campusCode].name,
+        Campus: this.campusesMap[patient.campusCode]?.name || "Unknown",
         Affiliation: affiliationsMap[patient.affiliationCode].name,
         Department: departmentsMap[patient.deptCode].name,
       };

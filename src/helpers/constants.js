@@ -50,12 +50,6 @@ export const examsMap = {
   },
 };
 
-export const campusesMap = {
-  MNL: "Manila",
-  CAL: "Caloocan",
-  UERM: null, // `name` is the same as the `code`
-};
-
 export const departmentsMap = {
   ADMSSN: "ADMISSIONS OFFICE",
   BBM: "BACHELOR OF BUSINESS MANAGEMENT",
@@ -148,14 +142,12 @@ export const userRolesMap = {
 };
 
 _formatMap(examsMap);
-_formatMap(campusesMap);
 _formatMap(departmentsMap);
 _formatMap(yearLevelsMap);
 _formatMap(affiliationsMap);
 _formatMap(userRolesMap);
 
 export const exams = Object.values(examsMap);
-export const campuses = Object.values(campusesMap);
 export const departments = Object.values(departmentsMap);
 export const yearLevels = Object.values(yearLevelsMap);
 export const affiliations = Object.values(affiliationsMap);

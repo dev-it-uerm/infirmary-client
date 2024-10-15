@@ -5,7 +5,7 @@
     @close="$emit('close')"
   >
     <template v-slot:body>
-      <div>
+      <div v-if="ready">
         <q-form @submit="emitValue">
           <div class="column q-pa-lg" style="padding: 36px">
             <!-- <q-input
@@ -129,17 +129,18 @@
           </div>
         </q-form>
       </div>
+      <FetchingData v-else />
     </template>
   </MinimizedDialog>
 </template>
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import { delay } from "src/helpers/util.js";
 
 import {
   affiliations,
   affiliationsMap,
-  campuses,
   exams,
   yearLevels,
 } from "src/helpers/constants.js";
@@ -152,6 +153,9 @@ export default defineComponent({
     // DateRange: defineAsyncComponent(() =>
     //   import("src/components/core/form-fields/DateRange.vue")
     // ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
+    ),
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")
     ),
@@ -167,7 +171,6 @@ export default defineComponent({
     return {
       affiliations,
       affiliationsMap,
-      campuses,
       exams,
       yearLevels,
       requiredRule: inputRules.required,
@@ -178,6 +181,10 @@ export default defineComponent({
   },
   data() {
     return {
+      ready: false,
+      campuses: [],
+      campusesMap: {},
+
       // limit: null,
       status: null,
       year: null,
@@ -202,6 +209,18 @@ export default defineComponent({
     for (const prop of Object.keys(this.initialValue)) {
       this[prop] = this.initialValue[prop];
     }
+  },
+  async mounted() {
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
+
+    this.ready = true;
   },
   methods: {
     addToObjIfNotEmpty(obj, propName, val) {

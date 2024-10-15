@@ -169,14 +169,17 @@ export const sortStringArr = (arr, key = null, descending = false) => {
   );
 };
 
-export const buildHashTable = (arr, keyProp = "key", valueProp = null) => {
-  if (arr == null || !Array.isArray(arr))
+export const createMap = (arr, keyProp, valueProp) => {
+  if (arr == null || !Array.isArray(arr)) {
     throw "`arr` argument is required and should be an array.";
+  }
+
+  if (!keyProp) keyProp = "key";
 
   // If valueProp is not supplied, whole item will be the value.
   // To avoid headache, supply only array of FLAT objects to the `arr` argument.
   return arr.reduce((map, item) => {
-    map[item[keyProp]] = valueProp === null ? { ...item } : item[valueProp];
+    map[item[keyProp]] = valueProp ? item[valueProp] : { ...item };
     return map;
   }, {});
 };

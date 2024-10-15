@@ -207,8 +207,6 @@ import {
 } from "src/helpers/util.js";
 
 import {
-  campusesMap,
-  campuses,
   affiliationsMap,
   affiliations,
   yearLevelsMap,
@@ -229,11 +227,11 @@ export default defineComponent({
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
+    // FetchingData: defineAsyncComponent(() =>
+    //   import("src/components/core/FetchingData.vue")
+    // ),
     DateRange: defineAsyncComponent(() =>
       import("src/components/core/form-fields/DateRange.vue")
-    ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
     ),
     NoResult: defineAsyncComponent(() =>
       import("src/components/core/NoResult.vue")
@@ -244,9 +242,6 @@ export default defineComponent({
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
-    ),
     UserSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/UserSelect.vue")
     ),
@@ -256,8 +251,6 @@ export default defineComponent({
   },
   setup() {
     return {
-      campuses,
-      campusesMap,
       affiliations,
       affiliationsMap,
       yearLevelsMap,
@@ -274,10 +267,8 @@ export default defineComponent({
     return {
       columns: [],
 
-      filtering: false,
       saving: false,
 
-      campusCode: campusesMap.CAL.code,
       affiliationCode: affiliationsMap.STU.code,
       year: new Date().getFullYear(),
 

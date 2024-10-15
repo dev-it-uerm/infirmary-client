@@ -1,113 +1,117 @@
 <template>
-  <div
-    class="full-width"
-    :class="$q.screen.gt.md ? 'row items-start' : 'column'"
-    style="gap: 36px"
-  >
+  <div>
+    <FetchingData v-if="ready === null" />
     <div
-      class="bordered-grey q-pa-lg"
-      :class="$q.screen.gt.md ? 'col-2' : 'full-width'"
+      v-else
+      class="full-width"
+      :class="$q.screen.gt.md ? 'row items-start' : 'column'"
+      style="gap: 36px"
     >
-      <div class="text-primary text-weight-medium q-mb-lg">FILTER:</div>
-      <div>
-        <q-form @submit="getData">
-          <FormFieldYear
-            :disable="ready === false || downloading"
-            :required="true"
-            v-model="filter.year"
-          />
-          <!-- :options="[{ code: null, name: 'ALL' }, ...campuses]" -->
-          <q-select
-            :disable="ready === false || downloading"
-            stack-label
-            outlined
-            :options="campuses"
-            label="Campus"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :rules="[inputRuleRequired]"
-            v-model="filter.campusCode"
-          />
-          <q-select
-            :disable="ready === false || downloading"
-            stack-label
-            outlined
-            :options="affiliations"
-            label="Affiliation"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            :rules="[inputRuleRequired]"
-            v-model="filter.affiliationCode"
-            hint=""
-          />
-          <q-select
-            :disable="ready === false || downloading"
-            stack-label
-            outlined
-            :options="[{ code: null, name: 'ALL' }, ...departments]"
-            label="Department"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            v-model="filter.deptCode"
-            hint=""
-          />
-          <div class="row justify-end">
-            <q-btn
+      <div
+        class="bordered-grey q-pa-lg"
+        :class="$q.screen.gt.md ? 'col-2' : 'full-width'"
+      >
+        <div class="text-primary text-weight-medium q-mb-lg">FILTER:</div>
+        <div>
+          <q-form @submit="getData">
+            <FormFieldYear
               :disable="ready === false || downloading"
-              type="submit"
-              label="GENERATE"
-              class="text-black"
-              color="accent"
-              unelevated
+              :required="true"
+              v-model="filter.year"
             />
-          </div>
-        </q-form>
+            <!-- :options="[{ code: null, name: 'ALL' }, ...campuses]" -->
+            <q-select
+              :disable="ready === false || downloading"
+              stack-label
+              outlined
+              :options="campuses"
+              label="Campus"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :rules="[inputRuleRequired]"
+              v-model="filter.campusCode"
+            />
+            <q-select
+              :disable="ready === false || downloading"
+              stack-label
+              outlined
+              :options="affiliations"
+              label="Affiliation"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              :rules="[inputRuleRequired]"
+              v-model="filter.affiliationCode"
+              hint=""
+            />
+            <q-select
+              :disable="ready === false || downloading"
+              stack-label
+              outlined
+              :options="[{ code: null, name: 'ALL' }, ...departments]"
+              label="Department"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              v-model="filter.deptCode"
+              hint=""
+            />
+            <div class="row justify-end">
+              <q-btn
+                :disable="ready === false || downloading"
+                type="submit"
+                label="GENERATE"
+                class="text-black"
+                color="accent"
+                unelevated
+              />
+            </div>
+          </q-form>
+        </div>
       </div>
-    </div>
-    <div
-      class="q-pa-lg bordered-grey flex flex-center"
-      :class="$q.screen.gt.md ? 'col' : 'full-width'"
-      style="min-height: 100px"
-    >
-      <ReminderCard v-if="ready === null">
-        <template v-slot:body>
+      <div
+        class="q-pa-lg bordered-grey flex flex-center"
+        :class="$q.screen.gt.md ? 'col' : 'full-width'"
+        style="min-height: 100px"
+      >
+        <ReminderCard v-if="ready === null">
+          <template v-slot:body>
+            <div class="full-width">
+              Complete the filter controls then click the
+              <strong>GENERATE</strong> button to see the report.
+            </div>
+          </template>
+        </ReminderCard>
+        <FetchingData v-else-if="ready === false" />
+        <div v-else-if="ready === true" class="full-width">
           <div class="full-width">
-            Complete the filter controls then click the
-            <strong>GENERATE</strong> button to see the report.
-          </div>
-        </template>
-      </ReminderCard>
-      <FetchingData v-else-if="ready === false" />
-      <div v-else-if="ready === true" class="full-width">
-        <div class="full-width">
-          <div class="col text-primary text-weight-medium q-mb-lg">
-            PATIENT VISIT PROGRESS
-          </div>
-          <q-table
-            style="max-height: 500px"
-            class="shadow-0"
-            :rows="rows"
-            :columns="columns"
-            :rows-per-page-options="[0]"
-            hide-bottom
-          />
-          <div class="row justify-end q-mt-lg">
-            <q-btn
-              :disable="!ready || !rows || rows.length === 0 || downloading"
-              :loading="downloading"
-              unelevated
-              color="accent"
-              icon="download"
-              class="text-black"
-              label="DOWNLOAD"
-              @click="download"
+            <div class="col text-primary text-weight-medium q-mb-lg">
+              PATIENT VISIT PROGRESS
+            </div>
+            <q-table
+              style="max-height: 500px"
+              class="shadow-0"
+              :rows="rows"
+              :columns="columns"
+              :rows-per-page-options="[0]"
+              hide-bottom
             />
+            <div class="row justify-end q-mt-lg">
+              <q-btn
+                :disable="!ready || !rows || rows.length === 0 || downloading"
+                :loading="downloading"
+                unelevated
+                color="accent"
+                icon="download"
+                class="text-black"
+                label="DOWNLOAD"
+                @click="download"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -127,7 +131,7 @@ import {
 } from "src/helpers/util.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
-import { campuses, affiliations, departments } from "src/helpers/constants.js";
+import { affiliations, departments } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "AnalyticsPatientVisitProgress",
@@ -145,13 +149,15 @@ export default defineComponent({
   setup() {
     return {
       inputRuleRequired: inputRules.required,
-      campuses,
       affiliations,
       departments,
     };
   },
   data() {
     return {
+      campuses: [],
+      campusesMap: {},
+
       ready: null,
       downloading: false,
 
@@ -258,6 +264,18 @@ export default defineComponent({
       ],
       rows: [],
     };
+  },
+  async mounted() {
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
+
+    this.ready = true;
   },
   methods: {
     async getData() {

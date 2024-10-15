@@ -210,7 +210,6 @@ import {
   examsMap,
   exams,
   affiliationsMap,
-  campusesMap,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -246,12 +245,14 @@ export default defineComponent({
       examsMap,
       exams,
       affiliationsMap,
-      campusesMap,
       yearLevels,
     };
   },
   data() {
     return {
+      campuses: [],
+      campusesMap: {},
+
       // recentEntries: [],
       inputMode: null,
 
@@ -290,8 +291,18 @@ export default defineComponent({
       }
     },
   },
-  mounted() {
+  async mounted() {
     if (!this.user || !this.user.examsHandled) return;
+    this.loading = true;
+
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
 
     const examsHandled = exams.filter((e) =>
       this.user.examsHandled.includes(e.code)
@@ -299,6 +310,8 @@ export default defineComponent({
 
     this.exams = examsHandled;
     this.exam = examsHandled[0];
+
+    this.loading = false;
   },
   methods: {
     async changeVisitPhase(visitCode, examCode) {

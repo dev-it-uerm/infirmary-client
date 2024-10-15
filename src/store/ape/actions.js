@@ -1,4 +1,4 @@
-import { request } from "src/helpers/util";
+import { request, createMap } from "src/helpers/util";
 
 export const getVisits = async (context, urlQuery) => {
   return await request(
@@ -302,4 +302,27 @@ export const getConfig = async (context, payload) => {
 
   context.commit("setConfig", response.body);
   return response.body;
+};
+
+export const getCampuses = async (context, payload) => {
+  if (context.state.campuses && context.state.campusesMap) {
+    return [context.state.campuses, context.state.campusesMap];
+  }
+
+  const response = await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/misc/campuses`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+
+  if (response.error) {
+    return [[], {}];
+  }
+
+  const ret = [response.body, createMap(response.body, "code")];
+  context.commit("setCampuses", ret);
+  return ret;
 };

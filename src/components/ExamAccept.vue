@@ -128,7 +128,6 @@ import {
   examsMap,
   exams,
   affiliationsMap,
-  campusesMap,
   yearLevels,
   departmentsMap,
 } from "src/helpers/constants.js";
@@ -157,7 +156,6 @@ export default defineComponent({
     return {
       examsMap,
       affiliationsMap,
-      campusesMap,
       yearLevels,
       departmentsMap,
       formatDate,
@@ -166,6 +164,9 @@ export default defineComponent({
   },
   data() {
     return {
+      campuses: [],
+      campusesMap: {},
+
       loading: false,
       inputMode: null,
 
@@ -189,8 +190,19 @@ export default defineComponent({
       if (val) this.accept(val);
     },
   },
-  mounted() {
+  async mounted() {
     if (!this.user) return;
+
+    this.loading = true;
+
+    const [campuses, campusesMap] = await this.$store.dispatch(
+      "ape/getCampuses"
+    );
+
+    await delay(1000);
+
+    this.campuses = campuses;
+    this.campusesMap = campusesMap;
 
     this.exams = exams.filter((e) => {
       return (
@@ -200,7 +212,11 @@ export default defineComponent({
       );
     });
 
-    if (this.exams.length > 0) this.exam = this.exams[0];
+    if (this.exams.length > 0) {
+      this.exam = this.exams[0];
+    }
+
+    this.loading = false;
   },
   methods: {
     async accept(patientCode) {

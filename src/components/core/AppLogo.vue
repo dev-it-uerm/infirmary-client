@@ -78,6 +78,7 @@ export default defineComponent({
   },
   data() {
     return {
+      dimension: {},
       titleClass: "",
       titleStyle: null,
     };

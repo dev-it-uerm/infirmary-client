@@ -6,7 +6,7 @@
           <PageHeader text="ADD PATIENT" icon="fa-solid fa-user" />
         </template>
         <template v-slot:body>
-          <div>
+          <div v-if="initialized">
             <q-form
               ref="qForm"
               @submit="(evt) => (yesNoDialogVisible = true)"
@@ -223,6 +223,7 @@
               </div>
             </q-form>
           </div>
+          <FetchingData v-else />
         </template>
       </CardComponent>
     </div>
@@ -245,7 +246,6 @@ import {
   yearLevels,
   affiliationsMap,
   affiliations,
-  departments,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -256,9 +256,9 @@ export default defineComponent({
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
-    // FetchingData: defineAsyncComponent(() =>
-    //   import("src/components/core/FetchingData.vue")
-    // ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
+    ),
     ConfirmationDialog: defineAsyncComponent(() =>
       import("src/components/core/ConfirmationDialog.vue")
     ),
@@ -272,16 +272,12 @@ export default defineComponent({
       affiliations,
       yearLevelsMap,
       yearLevels,
-      departments,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
     };
   },
   data() {
     return {
-      campuses: [],
-      campusesMap: {},
-
       loading: false,
       yesNoDialogVisible: false,
 
@@ -306,7 +302,22 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
+      campuses: "ape/campuses",
+      campusesMap: "ape/campusesMap",
+      departments: "ape/departments",
+      departmentsMap: "ape/departmentsMap",
     }),
+    initialized() {
+      return (
+        this.user &&
+        this.campuses &&
+        this.campuses.length > 0 &&
+        this.campusesMap &&
+        this.departments &&
+        this.departments.length > 0 &&
+        this.departmentsMap
+      );
+    },
   },
   watch: {
     affiliationCode(val) {
@@ -315,20 +326,6 @@ export default defineComponent({
         this.yearLevel = null;
       }
     },
-  },
-  async mounted() {
-    this.loading = true;
-
-    const [campuses, campusesMap] = await this.$store.dispatch(
-      "ape/getCampuses"
-    );
-
-    await delay(1000);
-
-    this.campuses = campuses;
-    this.campusesMap = campusesMap;
-
-    this.loading = false;
   },
   methods: {
     reset() {

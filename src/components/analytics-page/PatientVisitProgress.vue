@@ -1,8 +1,7 @@
 <template>
   <div>
-    <FetchingData v-if="ready === null" />
     <div
-      v-else
+      v-if="initialized"
       class="full-width"
       :class="$q.screen.gt.md ? 'row items-start' : 'column'"
       style="gap: 36px"
@@ -116,11 +115,13 @@
         </div>
       </div>
     </div>
+    <FetchingData v-else />
   </div>
 </template>
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
+import { mapGetters } from "vuex";
 
 import {
   delay,
@@ -131,7 +132,7 @@ import {
 } from "src/helpers/util.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
-import { affiliations, departments } from "src/helpers/constants.js";
+import { affiliations } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "AnalyticsPatientVisitProgress",
@@ -150,14 +151,10 @@ export default defineComponent({
     return {
       inputRuleRequired: inputRules.required,
       affiliations,
-      departments,
     };
   },
   data() {
     return {
-      campuses: [],
-      campusesMap: {},
-
       ready: null,
       downloading: false,
 
@@ -265,17 +262,25 @@ export default defineComponent({
       rows: [],
     };
   },
-  async mounted() {
-    const [campuses, campusesMap] = await this.$store.dispatch(
-      "ape/getCampuses"
-    );
-
-    await delay(1000);
-
-    this.campuses = campuses;
-    this.campusesMap = campusesMap;
-
-    this.ready = true;
+  computed: {
+    ...mapGetters({
+      user: "app/user",
+      campuses: "ape/campuses",
+      campusesMap: "ape/campusesMap",
+      departments: "ape/departments",
+      departmentsMap: "ape/departmentsMap",
+    }),
+    initialized() {
+      return (
+        this.user &&
+        this.campuses &&
+        this.campuses.length > 0 &&
+        this.campusesMap &&
+        this.departments &&
+        this.departments.length > 0 &&
+        this.departmentsMap
+      );
+    },
   },
   methods: {
     async getData() {

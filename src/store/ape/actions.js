@@ -1,4 +1,4 @@
-import { request, createMap } from "src/helpers/util";
+import { request, camelToKebab, createMap } from "src/helpers/util";
 
 export const getVisits = async (context, urlQuery) => {
   return await request(
@@ -282,47 +282,32 @@ export const getNotSeenPatients = async (context, payload) => {
   );
 };
 
-export const getConfig = async (context, payload) => {
-  if (context.state.config) {
-    return context.state.config;
+export const getAppData = async (context) => {
+  for (const dataName of ["appConfig", "campuses", "departments"]) {
+    if (context.state[dataName]) {
+      continue;
+    }
+
+    const response = await request(
+      "get",
+      `${context.rootState.app.apiHost}/ape/misc/${camelToKebab(dataName)}`,
+      null,
+      context.rootState.app?.user?.accessToken,
+      null,
+      context
+    );
+
+    if (response.error) {
+      console.log("Error fetching one of the app data.");
+      continue;
+    }
+
+    context.commit("setAppData", {
+      [dataName]: response.body,
+      // ADD MAP VERSION OF AN APP DATA IF IT IS AN ARRAY
+      ...(Array.isArray(response.body)
+        ? { [`${dataName}Map`]: createMap(response.body, "code") }
+        : {}),
+    });
   }
-
-  const response = await request(
-    "get",
-    `${context.rootState.app.apiHost}/ape/misc/app-config`,
-    payload,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context
-  );
-
-  if (response.error) {
-    return null;
-  }
-
-  context.commit("setConfig", response.body);
-  return response.body;
-};
-
-export const getCampuses = async (context, payload) => {
-  if (context.state.campuses && context.state.campusesMap) {
-    return [context.state.campuses, context.state.campusesMap];
-  }
-
-  const response = await request(
-    "get",
-    `${context.rootState.app.apiHost}/ape/misc/campuses`,
-    payload,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context
-  );
-
-  if (response.error) {
-    return [[], {}];
-  }
-
-  const ret = [response.body, createMap(response.body, "code")];
-  context.commit("setCampuses", ret);
-  return ret;
 };

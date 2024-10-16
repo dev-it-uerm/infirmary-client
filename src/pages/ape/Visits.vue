@@ -6,8 +6,7 @@
       style="border-radius: 6px; overflow: hidden"
     >
       <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
-      <FetchingData v-if="loading" />
-      <div v-else :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
+      <div v-if="initialized" :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
         <div class="column full-width" style="gap: 36px">
           <div
             class="full-width"
@@ -365,10 +364,12 @@
                                       : 'fa-solid fa-venus'
                                   "
                                 />
-                                <q-badge class="bg-grey">
-                                  {{
-                                    departmentsMap[item.patientDeptCode]?.name
-                                  }}
+                                <q-badge class="bg-grey overflow-hidden">
+                                  <span class="ellipsis">
+                                    {{
+                                      departmentsMap[item.patientDeptCode].name
+                                    }}
+                                  </span>
                                 </q-badge>
                                 <q-badge
                                   v-if="item.patientYearLevel"
@@ -630,6 +631,7 @@
           </div>
         </div>
       </div>
+      <FetchingData v-else />
     </div>
     <MinimizedDialog
       v-if="statusHistoryVisible"
@@ -722,6 +724,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
 import {
   delay,
   formatDate,
@@ -738,7 +741,6 @@ import {
   exams,
   yearLevelsMap,
   yearLevels,
-  departmentsMap,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -785,8 +787,6 @@ export default defineComponent({
       examsMap,
       yearLevelsMap,
       yearLevels,
-
-      departmentsMap,
 
       showMessage,
       formatDate,
@@ -857,11 +857,6 @@ export default defineComponent({
   },
   data() {
     return {
-      loading: false,
-
-      campuses: [],
-      campusesMap: {},
-
       pendingVisitsFilters: {
         status: "PENDING",
         year: new Date().getFullYear(),
@@ -909,48 +904,59 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
+      appConfig: "ape/appConfig",
+      campuses: "ape/campuses",
+      campusesMap: "ape/campusesMap",
+      departments: "ape/departments",
+      departmentsMap: "ape/departmentsMap",
     }),
+    initialized() {
+      return (
+        this.user &&
+        this.appConfig &&
+        this.campuses &&
+        this.campuses.length > 0 &&
+        this.campusesMap &&
+        this.departments &&
+        this.departments.length > 0 &&
+        this.departmentsMap
+      );
+    },
   },
-  async mounted() {
-    if (!this.user) return;
+  watch: {
+    initialized: {
+      async handler(val) {
+        if (!val) return;
 
-    this.loading = true;
+        this.pendingVisitsFilters.patientCampusCode =
+          this.campusesMap.CAL?.code;
 
-    const [campuses, campusesMap] = await this.$store.dispatch(
-      "ape/getCampuses"
-    );
+        this.pendingVisitsFilters.patientAffiliationCode =
+          affiliationsMap.STU?.code;
 
-    const appConfig = await this.$store.dispatch("ape/getConfig");
+        this.completedVisitsFilters.patientCampusCode =
+          this.campusesMap.CAL?.code;
 
-    await delay(1000);
+        this.completedVisitsFilters.patientAffiliationCode =
+          affiliationsMap.STU?.code;
 
-    this.campuses = campuses;
-    this.campusesMap = campusesMap;
+        if (this.appConfig.visitsDefaultFiltersMap) {
+          this.pendingVisitsFilters = {
+            ...this.pendingVisitsFilters,
+            ...this.appConfig.visitsDefaultFiltersMap,
+          };
 
-    this.pendingVisitsFilters.patientCampusCode = this.campusesMap.CAL?.code;
-    this.pendingVisitsFilters.patientAffiliationCode =
-      affiliationsMap.STU?.code;
+          this.completedVisitsFilters = {
+            ...this.completedVisitsFilters,
+            ...this.appConfig.visitsDefaultFiltersMap,
+          };
+        }
 
-    this.completedVisitsFilters.patientCampusCode = this.campusesMap.CAL?.code;
-    this.completedVisitsFilters.patientAffiliationCode =
-      affiliationsMap.STU?.code;
-
-    if (appConfig?.visitsDefaultFiltersMap) {
-      this.pendingVisitsFilters = {
-        ...this.pendingVisitsFilters,
-        ...appConfig.visitsDefaultFiltersMap,
-      };
-
-      this.completedVisitsFilters = {
-        ...this.completedVisitsFilters,
-        ...appConfig.visitsDefaultFiltersMap,
-      };
-    }
-
-    this.loading = false;
-
-    this.getPendingVisits();
-    this.getCompletedVisits();
+        this.getPendingVisits();
+        this.getCompletedVisits();
+      },
+      immediate: true,
+    },
   },
   methods: {
     getExamName(code) {

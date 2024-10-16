@@ -375,6 +375,10 @@ export const formatName = (firstName, middleName, lastName, extName) => {
   }`;
 };
 
+export const camelToKebab = (v) => {
+  return v.replace(/([A-Z])/g, (m, c) => `-${c.toLowerCase()}`);
+};
+
 export const downloadExcel = async (fileNamePrefix, rows, columns) => {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("INFIRMARY APE REPORT");

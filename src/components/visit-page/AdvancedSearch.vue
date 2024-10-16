@@ -5,7 +5,7 @@
     @close="$emit('close')"
   >
     <template v-slot:body>
-      <div v-if="ready">
+      <div v-if="initialized">
         <q-form @submit="emitValue">
           <div class="column q-pa-lg" style="padding: 36px">
             <!-- <q-input
@@ -136,7 +136,7 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { delay } from "src/helpers/util.js";
+import { mapGetters } from "vuex";
 
 import {
   affiliations,
@@ -175,16 +175,10 @@ export default defineComponent({
       yearLevels,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
-      // inputRule: (val) =>
-      //   val == null || val === "" ? "Field is required." : undefined,
     };
   },
   data() {
     return {
-      ready: false,
-      campuses: [],
-      campusesMap: {},
-
       // limit: null,
       status: null,
       year: null,
@@ -205,22 +199,37 @@ export default defineComponent({
       ],
     };
   },
-  created() {
-    for (const prop of Object.keys(this.initialValue)) {
-      this[prop] = this.initialValue[prop];
-    }
+  computed: {
+    ...mapGetters({
+      user: "app/user",
+      campuses: "ape/campuses",
+      campusesMap: "ape/campusesMap",
+      departments: "ape/departments",
+      departmentsMap: "ape/departmentsMap",
+    }),
+    initialized() {
+      return (
+        this.user &&
+        this.campuses &&
+        this.campuses.length > 0 &&
+        this.campusesMap &&
+        this.departments &&
+        this.departments.length > 0 &&
+        this.departmentsMap
+      );
+    },
   },
-  async mounted() {
-    const [campuses, campusesMap] = await this.$store.dispatch(
-      "ape/getCampuses"
-    );
+  watch: {
+    initialized: {
+      handler(v) {
+        if (!v) return;
 
-    await delay(1000);
-
-    this.campuses = campuses;
-    this.campusesMap = campusesMap;
-
-    this.ready = true;
+        for (const prop of Object.keys(this.initialValue)) {
+          this[prop] = this.initialValue[prop];
+        }
+      },
+      immediate: true,
+    },
   },
   methods: {
     addToObjIfNotEmpty(obj, propName, val) {

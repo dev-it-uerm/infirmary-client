@@ -1,7 +1,11 @@
 export default function () {
   return {
-    config: null,
+    appConfig: null,
+
     campuses: null,
     campusesMap: null,
+
+    departments: null,
+    departmentsMap: null,
   };
 }

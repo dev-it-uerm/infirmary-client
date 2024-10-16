@@ -1,75 +1,78 @@
 <template>
   <div>
     <div>
-      <MessageBanner v-if="forbidden" :success="false">
-        <template v-slot:error-body>
-          <div>You are not allowed to access this page.</div>
-        </template>
-      </MessageBanner>
-      <div>
-        <div
-          class="row justify-center q-mb-md q-pa-md"
-          style="border: 1px solid rgba(0, 0, 0, 0.1)"
-        >
-          <q-btn
-            :disable="loading"
-            unelevated
-            label="REGISTRATION"
-            :color="registrationMode === 'REG' ? 'accent' : 'transparent'"
-            class="text-black"
-            @click="() => (registrationMode = 'REG')"
-          />
-          <q-btn
-            :disable="loading"
-            unelevated
-            label="ATTENDANCE"
-            :color="registrationMode === 'ATT' ? 'accent' : 'transparent'"
-            class="text-black"
-            @click="() => (registrationMode = 'ATT')"
+      <div v-if="initialized">
+        <MessageBanner v-if="forbidden" :success="false">
+          <template v-slot:error-body>
+            <div>You are not allowed to access this page.</div>
+          </template>
+        </MessageBanner>
+        <div>
+          <div
+            class="row justify-center q-mb-md q-pa-md"
+            style="border: 1px solid rgba(0, 0, 0, 0.1)"
+          >
+            <q-btn
+              :disable="loading"
+              unelevated
+              label="REGISTRATION"
+              :color="registrationMode === 'REG' ? 'accent' : 'transparent'"
+              class="text-black"
+              @click="() => (registrationMode = 'REG')"
+            />
+            <q-btn
+              :disable="loading"
+              unelevated
+              label="ATTENDANCE"
+              :color="registrationMode === 'ATT' ? 'accent' : 'transparent'"
+              class="text-black"
+              @click="() => (registrationMode = 'ATT')"
+            />
+          </div>
+          <QRCodeScanner
+            v-show="!forbidden"
+            ref="REGISTRATION_PAGE__qrCodeScanner"
+            :scannerId="scannerId"
+            :submitBtnLabel="
+              registrationMode === 'REG' ? 'REGISTER' : 'TIME IN/OUT'
+            "
+            :loading="loading"
+            @patientCodeChanged="(val) => (patientCode = val)"
+            @inputModeChanged="(val) => (inputMode = val)"
           />
         </div>
-        <QRCodeScanner
-          v-show="!forbidden"
-          ref="REGISTRATION_PAGE__qrCodeScanner"
-          :scannerId="scannerId"
-          :submitBtnLabel="
-            registrationMode === 'REG' ? 'REGISTER' : 'TIME IN/OUT'
-          "
-          :loading="loading"
-          @patientCodeChanged="(val) => (patientCode = val)"
-          @inputModeChanged="(val) => (inputMode = val)"
-        />
+        <div v-if="lastPatientRegistered">
+          <q-separator class="q-my-lg" />
+          <div class="text-primary text-weight-medium q-mb-md">
+            <div>PATIENT/EMPLOYEE REGISTERED:</div>
+          </div>
+          <table class="full-width" style="border-collapse: collapse">
+            <tr v-for="(val, key) in lastPatientRegistered" :key="key">
+              <td
+                v-for="(v, idx) in [key, val]"
+                :key="idx"
+                class="q-pa-sm"
+                :class="idx === 0 ? 'text-grey-8' : ''"
+                :style="{ width: idx === 0 ? '40%' : '60%' }"
+                style="border: 1px solid #dddddd"
+              >
+                {{ v }}
+              </td>
+            </tr>
+          </table>
+          <div class="row justify-end">
+            <q-btn
+              v-if="lastPatientRegistered['Student Number']"
+              class="q-mt-md"
+              unelevated
+              label="PRINT CHECKLIST"
+              color="primary"
+              @click="checklistDialogVisible = true"
+            />
+          </div>
+        </div>
       </div>
-      <div v-if="lastPatientRegistered">
-        <q-separator class="q-my-lg" />
-        <div class="text-primary text-weight-medium q-mb-md">
-          <div>PATIENT/EMPLOYEE REGISTERED:</div>
-        </div>
-        <table class="full-width" style="border-collapse: collapse">
-          <tr v-for="(val, key) in lastPatientRegistered" :key="key">
-            <td
-              v-for="(v, idx) in [key, val]"
-              :key="idx"
-              class="q-pa-sm"
-              :class="idx === 0 ? 'text-grey-8' : ''"
-              :style="{ width: idx === 0 ? '40%' : '60%' }"
-              style="border: 1px solid #dddddd"
-            >
-              {{ v }}
-            </td>
-          </tr>
-        </table>
-        <div class="row justify-end">
-          <q-btn
-            v-if="lastPatientRegistered['Student Number']"
-            class="q-mt-md"
-            unelevated
-            label="PRINT CHECKLIST"
-            color="primary"
-            @click="checklistDialogVisible = true"
-          />
-        </div>
-      </div>
+      <FetchingData v-else />
     </div>
     <q-dialog v-model="checklistDialogVisible">
       <q-card class="fit">
@@ -84,16 +87,17 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
 import {
   delay,
   showMessage,
   formatName,
   formatDate,
 } from "src/helpers/util.js";
+
 import {
   examsMap,
   affiliationsMap,
-  departmentsMap,
   yearLevels,
 } from "src/helpers/constants.js";
 
@@ -115,6 +119,9 @@ export default defineComponent({
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")
     ),
+    FetchingData: defineAsyncComponent(() =>
+      import("src/components/core/FetchingData.vue")
+    ),
     Checklist: defineAsyncComponent(() =>
       import("src/components/printouts/Checklist.vue")
     ),
@@ -132,15 +139,11 @@ export default defineComponent({
       formatDate,
       examsMap,
       affiliationsMap,
-      departmentsMap,
       yearLevels,
     };
   },
   data() {
     return {
-      campuses: [],
-      campusesMap: {},
-
       checklistDialogVisible: false,
       forbidden: false,
 
@@ -156,7 +159,22 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
+      campuses: "ape/campuses",
+      campusesMap: "ape/campusesMap",
+      departments: "ape/departments",
+      departmentsMap: "ape/departmentsMap",
     }),
+    initialized() {
+      return (
+        this.user &&
+        this.campuses &&
+        this.campuses.length > 0 &&
+        this.campusesMap &&
+        this.departments &&
+        this.departments.length > 0 &&
+        this.departmentsMap
+      );
+    },
     qrCodeMode() {
       return this.inputMode === "QR";
     },
@@ -178,20 +196,6 @@ export default defineComponent({
       }
     },
   },
-  async mounted() {
-    this.loading = true;
-
-    const [campuses, campusesMap] = await this.$store.dispatch(
-      "ape/getCampuses"
-    );
-
-    await delay(1000);
-
-    this.campuses = campuses;
-    this.campusesMap = campusesMap;
-
-    this.loading = false;
-  },
   methods: {
     formatLastPatientRegistered(row) {
       const patient = row.patient || row.employee;
@@ -212,7 +216,7 @@ export default defineComponent({
         ),
         Campus: this.campusesMap[patient.campusCode]?.name || "Unknown",
         Affiliation: affiliationsMap[patient.affiliationCode].name,
-        Department: departmentsMap[patient.deptCode].name,
+        Department: this.departmentsMap[patient.deptCode].name,
       };
     },
     async register(registrationMode, patientCode) {

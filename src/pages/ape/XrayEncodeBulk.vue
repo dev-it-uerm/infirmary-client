@@ -28,23 +28,33 @@
                   debounce="750"
                   stack-label
                   outlined
-                  label="Year"
+                  label-slot
                   hint=""
                   :rules="[requiredRule, yearRule]"
                   v-model="year"
-                />
+                >
+                  <template v-slot:label>
+                    Year
+                    <span class="text-weight-bold text-red">*</span>
+                  </template>
+                </q-input>
                 <div class="column" style="gap: 16px">
                   <q-input
                     debounce="750"
                     :disable="saving"
                     bordered
                     stack-label
+                    label-slot
                     outlined
                     type="textarea"
-                    label="Student/Employee Numbers (separated by new line)"
                     :rules="[requiredRule]"
                     v-model="studempNumbersStr"
-                  />
+                  >
+                    <template v-slot:label>
+                      Student/Employee Numbers (separated by new line)
+                      <span class="text-weight-bold text-red">*</span>
+                    </template>
+                  </q-input>
                   <q-list
                     v-if="patients && patients.length > 0"
                     bordered

@@ -5,7 +5,6 @@
   >
     <div>
       <div
-        v-if="ready"
         class="column justify-start"
         style="gap: 16px"
         :style="$q.screen.gt.md ? { minWidth: '1080px' } : { minWidth: '100%' }"
@@ -19,7 +18,7 @@
           </template>
           <template v-slot:body>
             <!-- :class="$q.screen.gt.md ? 'row' : 'column'" -->
-            <div class="column" style="gap: 46px">
+            <div v-if="initialized" class="column" style="gap: 46px">
               <!-- <div class="q-mb-lg">
                     <div class="text-primary text-weight-medium q-mb-md">
                       FILTER:
@@ -345,10 +344,10 @@
                 </q-form>
               </div>
             </div>
+            <FetchingData v-else />
           </template>
         </CardComponent>
       </div>
-      <FetchingData v-else />
     </div>
     <ConfirmationDialog
       v-if="confirmationDialogVisible"
@@ -367,6 +366,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
 import {
   delay,
   formatDate,
@@ -434,10 +434,6 @@ export default defineComponent({
   },
   data() {
     return {
-      campuses: [],
-      campusesMap: {},
-      ready: false,
-
       filters: {
         identificationCode: "",
         campusCode: campusesMap.UERM.code,
@@ -463,20 +459,31 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       user: "app/user",
+      campuses: "ape/campuses",
+      campusesMap: "ape/campusesMap",
+      departments: "ape/departments",
+      departmentsMap: "ape/departmentsMap",
     }),
+    initialized() {
+      return (
+        this.user &&
+        this.campuses &&
+        this.campuses.length > 0 &&
+        this.campusesMap &&
+        this.departments &&
+        this.departments.length > 0 &&
+        this.departmentsMap
+      );
+    },
   },
-  async mounted() {
-    const [campuses, campusesMap] = await this.$store.dispatch(
-      "ape/getCampuses"
-    );
-
-    await delay(1000);
-
-    this.campuses = campuses;
-    this.campusesMap = campusesMap;
-
-    this.ready = true;
-    this.getVisits();
+  watch: {
+    initialized: {
+      handler(v) {
+        if (!v) return;
+        this.getVisits();
+      },
+      immediate: true,
+    },
   },
   methods: {
     async getVisits() {

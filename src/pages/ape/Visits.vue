@@ -958,6 +958,9 @@ export default defineComponent({
       immediate: true,
     },
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
   methods: {
     getExamName(code) {
       return this.examsMap[code].name;

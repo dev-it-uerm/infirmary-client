@@ -33,5 +33,8 @@ export default defineComponent({
       import("src/components/ExamAccept.vue")
     ),
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
 });
 </script>

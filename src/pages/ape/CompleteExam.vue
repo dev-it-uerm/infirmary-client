@@ -324,6 +324,9 @@ export default defineComponent({
       immediate: true,
     },
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
   methods: {
     async changeVisitPhase(visitCode, examCode) {
       let success = true;

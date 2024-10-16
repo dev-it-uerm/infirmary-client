@@ -327,6 +327,9 @@ export default defineComponent({
       }
     },
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
   methods: {
     reset() {
       this.campusCode = null;

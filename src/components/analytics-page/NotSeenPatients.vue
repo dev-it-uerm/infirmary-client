@@ -187,6 +187,9 @@ export default defineComponent({
       );
     },
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
   methods: {
     async getData() {
       this.ready = false;

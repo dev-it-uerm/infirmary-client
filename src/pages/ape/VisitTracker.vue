@@ -36,5 +36,8 @@ export default defineComponent({
       import("src/components/VisitTracker.vue")
     ),
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
 });
 </script>

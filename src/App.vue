@@ -37,11 +37,11 @@ export default defineComponent({
       immediate: true,
     },
   },
-  async created() {
+  created() {
     const userCookie = Cookies.get("uerm_infirmary__user");
     if (userCookie) this.$store.dispatch("app/setUser", userCookie);
-    await this.$store.dispatch("ape/getAppData");
     this.initialized = true;
+    this.$store.dispatch("ape/getAppData");
   },
   methods: {
     routeIsPublic(routeName) {

@@ -196,6 +196,9 @@ export default defineComponent({
       }
     },
   },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
+  },
   methods: {
     formatLastPatientRegistered(row) {
       const patient = row.patient || row.employee;

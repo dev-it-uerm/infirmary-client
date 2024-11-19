@@ -192,11 +192,6 @@
                                     @click.stop="showPxVisitInfo(props.row)"
                                   />
                                   <q-btn
-                                    v-if="
-                                      props.row.exams?.some(
-                                        (e) => e.dateTimeCompleted
-                                      )
-                                    "
                                     dense
                                     class="bg-accent text-black"
                                     style="

@@ -1,34 +1,51 @@
 <template>
-  <div class="column full-width">
-    <div style="color: rgba(0, 0, 0, 0.65)">{{ label }}</div>
-    <div class="row items-center full-width" style="gap: 12px">
+  <div
+    class="column full-width q-px-md q-pt-md q-pb-sm"
+    style="
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 4px;
+      margin-bottom: 20px;
+    "
+  >
+    <div class="q-mb-sm" style="color: rgba(0, 0, 0, 0.65)">{{ label }}</div>
+    <div
+      class="full-width"
+      :class="$q.screen.lt.md ? 'column' : 'row'"
+      :style="$q.screen.lt.md ? {} : { gap: '20px' }"
+    >
       <q-input
-        class="col"
-        dense
         :disable="disable"
+        filled
+        borderless
+        square
+        :class="$q.screen.lt.md ? 'col-12' : 'col'"
+        dense
         stack-label
-        outlined
         label="Result"
         v-model.trim="value.value"
         hint=""
       />
       <q-input
-        class="col"
-        dense
         :disable="disable"
+        filled
+        borderless
+        square
+        :class="$q.screen.lt.md ? 'col-12' : 'col'"
+        dense
         stack-label
-        outlined
         :rules="rules"
         label="Unit"
         v-model.trim="value.unit"
         hint=""
       />
       <q-input
-        class="col"
-        dense
         :disable="disable"
+        filled
+        borderless
+        square
+        :class="$q.screen.lt.md ? 'col-12' : 'col'"
+        dense
         stack-label
-        outlined
         :rules="rules"
         label="Reference Normal Range"
         v-model.trim="value.normalRange"

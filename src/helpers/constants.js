@@ -440,9 +440,8 @@ export const examFieldsMap = {
     {
       code: `LEU`,
       name: "Leukocytes",
-      type: "EXAMSELECT",
-      options: [],
-      default: { value: null },
+      type: "EXAM",
+      default: { value: null, unit: "", normalRange: "" },
     },
     {
       code: `NIT`,
@@ -482,9 +481,8 @@ export const examFieldsMap = {
     {
       code: `SPGR`,
       name: "SP GR",
-      type: "EXAMSELECT",
-      options: ["1.000", "1.005", "1.010", "1.015", "1.020", "1.025", "1.030"],
-      default: { value: null },
+      type: "EXAM",
+      default: { value: null, unit: "", normalRange: "" },
     },
     {
       code: `KET`,
@@ -510,16 +508,14 @@ export const examFieldsMap = {
     {
       code: `RBC`,
       name: "RBC",
-      type: "EXAMSELECT",
-      options: ["None"],
-      default: { value: null },
+      type: "EXAM",
+      default: { value: null, unit: "", normalRange: "" },
     },
     {
       code: `WBC`,
       name: "WBC",
-      type: "EXAMSELECT",
-      options: [],
-      default: { value: null },
+      type: "EXAM",
+      default: { value: null, unit: "", normalRange: "" },
     },
     {
       code: `BACT`,

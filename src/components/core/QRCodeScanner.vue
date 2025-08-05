@@ -26,7 +26,7 @@
       :id="scannerId"
       width="600px"
     ></div>
-    <div v-if="inputMode !== 'QR'">
+    <div v-if="inputMode === 'MANUAL'">
       <q-form @submit="submit">
         <q-input
           :loading="loading"
@@ -40,7 +40,7 @@
         />
         <div class="q-mt-md row justify-end">
           <q-btn
-            :disable="loading"
+            :disable="loading || !patientCode"
             unelevated
             color="accent"
             class="text-black"

@@ -190,7 +190,7 @@ export default defineComponent({
       let message = "Patient attendance has been recorded.";
 
       const response = await this.$store.dispatch("ape/schedule", patientCode);
-      await delay(2000);
+      await delay(1000);
 
       if (response.error) {
         success = false;

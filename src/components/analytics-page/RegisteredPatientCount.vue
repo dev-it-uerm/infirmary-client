@@ -52,7 +52,7 @@
             :required="true"
             v-model="filter.year"
           />
-          <DateRange
+          <FormFieldDateRange
             v-if="dateType === 'DATERANGE'"
             :disable="ready === false || downloading"
             stack-label
@@ -182,7 +182,7 @@ export default defineComponent({
     FormFieldYear: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Year.vue")
     ),
-    DateRange: defineAsyncComponent(() =>
+    FormFieldDateRange: defineAsyncComponent(() =>
       import("src/components/core/form-fields/DateRange.vue")
     ),
   },

@@ -12,6 +12,20 @@
             :required="true"
             v-model="filter.year"
           />
+          <FormFieldDateRange
+            :disable="!filter.year || ready === false || downloading"
+            stack-label
+            outlined
+            label="Date Range"
+            hint=""
+            :options="
+              (v) =>
+                filter.year && Number(v.substring(0, 4)) === Number(filter.year)
+            "
+            :required="true"
+            :initialValue="filter.dateRange"
+            @valueChanged="(v) => (filter.dateRange = v)"
+          />
           <div class="row justify-end q-mb-md">
             <q-toggle
               :disable="ready === false || downloading"
@@ -90,12 +104,14 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import * as inputRules from "src/helpers/input-rules.js";
+
 import {
   delay,
   showMessage,
   downloadExcel,
   downloadExcelAsync,
   formatDate,
+  isStr,
 } from "src/helpers/util.js";
 
 const allColumnsMap = {
@@ -138,6 +154,9 @@ export default defineComponent({
     FormFieldYear: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Year.vue")
     ),
+    FormFieldDateRange: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/DateRange.vue")
+    ),
   },
   setup() {
     return {
@@ -152,6 +171,7 @@ export default defineComponent({
       filter: {
         includeDate: 0,
         year: null,
+        dateRange: null,
       },
 
       columns: [],
@@ -165,7 +185,13 @@ export default defineComponent({
 
       const response = await this.$store.dispatch(
         "ape/getAnalyticsDoctorPatientCount",
-        this.filter
+        {
+          includeDate: this.filter.includeDate,
+          year: this.filter.year,
+          dateRange: isStr(this.filter.dateRange)
+            ? { from: this.filter.dateRange, to: this.filter.dateRange }
+            : this.filter.dateRange,
+        }
       );
 
       await delay(1000);

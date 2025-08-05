@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header class="bg-primary text-white" height-hint="98">
+    <q-header class="bg-primary text-white shadow-3" height-hint="98">
       <q-toolbar class="row">
         <div class="row items-center col-auto">
           <q-btn
@@ -391,7 +391,7 @@ export default defineComponent({
             }
 
             if (
-              menu.code === "APE_REGISTRATION" &&
+              menu.code === "APE_PATIENT_ATTENDANCE" &&
               ![
                 userRolesMap.ADMIN.code,
                 userRolesMap.DR.code,

@@ -35,6 +35,7 @@ module.exports = configure(function (/* ctx */) {
 
       "roboto-font", // optional, you are not bound to it
       "material-icons", // optional, you are not bound to it
+      "material-symbols-outlined",
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
@@ -59,7 +60,7 @@ module.exports = configure(function (/* ctx */) {
         // apiHost: "https://api.uerm.edu.ph/infirmary",
         // apiHost__DEV: "https://api.uerm.edu.ph/infirmary",
         apiHost: "https://localapi.uerm.edu.ph:8081/infirmary",
-        apiHost__DEV: "http://10.107.0.24:4141/infirmary",
+        apiHost__DEV: "http://10.107.0.24:4242/infirmary",
       },
 
       // rawDefine: {}

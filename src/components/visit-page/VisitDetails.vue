@@ -125,7 +125,7 @@ export default defineComponent({
       {
         code: "VISIT",
         name: "Visit Info.",
-        icon: "fa-solid fa-notes-medical",
+        icon: "fa-solid fa-circle-info",
       },
     ];
 

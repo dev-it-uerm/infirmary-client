@@ -22,7 +22,7 @@
                 <div class="text-primary text-weight-medium q-mb-md row">
                   PATIENT LIST:
                 </div>
-                <q-input
+                <!-- <q-input
                   :dense="$q.screen.gt.sm"
                   :disable="saving"
                   debounce="750"
@@ -37,7 +37,28 @@
                     Year
                     <span class="text-weight-bold text-red">*</span>
                   </template>
-                </q-input>
+                </q-input> -->
+                <q-select
+                  :dense="$q.screen.gt.sm"
+                  :disable="saving"
+                  debounce="750"
+                  stack-label
+                  outlined
+                  :options="
+                    Array(1000)
+                      .fill(null)
+                      .map((e, idx) => 2024 + idx)
+                  "
+                  label-slot
+                  hint=""
+                  :rules="[requiredRule, yearRule]"
+                  v-model="year"
+                >
+                  <template v-slot:label>
+                    Year
+                    <span class="text-weight-bold text-red">*</span>
+                  </template>
+                </q-select>
                 <div class="column" style="gap: 16px">
                   <q-input
                     debounce="750"
@@ -276,7 +297,6 @@ export default defineComponent({
   data() {
     return {
       columns: [],
-
       saving: false,
 
       affiliationCode: affiliationsMap.STU.code,

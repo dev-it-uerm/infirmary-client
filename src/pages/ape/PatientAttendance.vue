@@ -8,7 +8,9 @@
         <template v-slot:body>
           <!-- @busy="loading = true"
           @ready="loading = false" -->
-          <VisitPageAttendance scannerId="REGISTRATION_PAGE__qrCodeScanner" />
+          <VisitPageAttendance
+            scannerId="PATIENT_ATTENDANCE_PAGE__qrCodeScanner"
+          />
         </template>
       </CardComponent>
     </div>
@@ -20,7 +22,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 
 export default defineComponent({
-  name: "RegistrationPage",
+  name: "PatientAttendancePage",
   components: {
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")

@@ -610,9 +610,9 @@ const navMenuAPEPxRegistration = {
 };
 
 const navMenuRegistration = {
-  code: "APE_REGISTRATION",
+  code: "APE_PATIENT_ATTENDANCE",
   name: "Triage",
-  url: "/ape/registration",
+  url: "/ape/patient-attendance",
   icon: "fa-solid fa-list-check",
 };
 

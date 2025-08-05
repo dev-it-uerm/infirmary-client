@@ -7,16 +7,40 @@
             <div>You are not allowed to access this page.</div>
           </template>
         </MessageBanner>
-        <QRCodeScanner
-          v-show="!forbidden"
-          ref="PATIENT_ATTENDANCE_PAGE__qrCodeScanner"
-          submitBtnIcon="sym_o_how_to_reg"
-          submitBtnLabel="REGISTER"
-          :scannerId="scannerId"
-          :loading="loading"
-          @patientCodeChanged="(val) => (patientCode = val)"
-          @inputModeChanged="(val) => (inputMode = val)"
-        />
+        <div>
+          <div
+            class="row justify-center q-mb-md q-pa-md"
+            style="border: 1px solid rgba(0, 0, 0, 0.1)"
+          >
+            <q-btn
+              :disable="loading"
+              unelevated
+              label="REGISTRATION"
+              :color="registrationMode === 'REG' ? 'accent' : 'transparent'"
+              class="text-black"
+              @click="() => (registrationMode = 'REG')"
+            />
+            <q-btn
+              :disable="loading"
+              unelevated
+              label="ATTENDANCE"
+              :color="registrationMode === 'ATT' ? 'accent' : 'transparent'"
+              class="text-black"
+              @click="() => (registrationMode = 'ATT')"
+            />
+          </div>
+          <QRCodeScanner
+            v-show="!forbidden"
+            ref="PATIENT_ATTENDANCE_PAGE__qrCodeScanner"
+            :scannerId="scannerId"
+            :submitBtnLabel="
+              registrationMode === 'REG' ? 'REGISTER' : 'TIME IN/OUT'
+            "
+            :loading="loading"
+            @patientCodeChanged="(val) => (patientCode = val)"
+            @inputModeChanged="(val) => (inputMode = val)"
+          />
+        </div>
         <div v-if="lastPatientRegistered">
           <q-separator class="q-my-lg" />
           <div class="text-primary text-weight-medium q-mb-md">
@@ -122,9 +146,11 @@ export default defineComponent({
     return {
       checklistDialogVisible: false,
       forbidden: false,
-      loading: false,
 
+      registrationMode: "REG",
       inputMode: null,
+
+      loading: false,
       patientCode: null,
 
       lastPatientRegistered: null,
@@ -152,11 +178,21 @@ export default defineComponent({
     qrCodeMode() {
       return this.inputMode === "QR";
     },
+    value() {
+      if (this.registrationMode && this.patientCode) {
+        return {
+          registrationMode: this.registrationMode,
+          patientCode: this.patientCode,
+        };
+      }
+
+      return null;
+    },
   },
   watch: {
-    patientCode(v) {
-      if (v) {
-        this.register(v);
+    value(val) {
+      if (val) {
+        this.register(val.registrationMode, val.patientCode);
       }
     },
   },
@@ -169,8 +205,12 @@ export default defineComponent({
       const registration = row.visit || row.attendance;
 
       return {
-        ["Date & Time Registered"]: formatDate(registration.dateTimeCreated),
-        ["Student Number"]: patient.code || patient.identificationCode,
+        [this.registrationMode === "REG"
+          ? "Date & Time Registered"
+          : "Date & Time IN/OUT"]: formatDate(registration.dateTimeCreated),
+        [this.registrationMode === "REG"
+          ? "Student Number"
+          : "Employee Number"]: patient.code || patient.identificationCode,
         Fullname: formatName(
           patient.firstName,
           patient.middleName,
@@ -182,16 +222,22 @@ export default defineComponent({
         Department: this.departmentsMap[patient.deptCode].name,
       };
     },
-    async register(patientCode) {
+    async register(registrationMode, patientCode) {
       this.loading = true;
       this.$emit("busy");
 
       let success = true;
-      let message = "Patient attendance has been recorded.";
+      let message =
+        registrationMode === "REG"
+          ? `Patient has been registered.`
+          : "Employee attendance has been saved.";
 
-      const response = await this.$store.dispatch("ape/schedule", patientCode);
+      const vuexAction =
+        registrationMode === "REG" ? "ape/schedule" : "ape/timeInOut";
+
+      const response = await this.$store.dispatch(vuexAction, patientCode);
+
       await delay(2000);
-
       if (response.error) {
         success = false;
         message = response.body.errorMessage || response.body;

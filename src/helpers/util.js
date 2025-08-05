@@ -55,8 +55,13 @@ export const httpResponseStatusCodesMap = {
 
 export const formatDate = (date, options) => {
   // `date` can be a JS date or an ISO date string
-  if (!date) return "";
-  if (!options) options = {};
+  if (!date) {
+    return "";
+  }
+
+  if (!options) {
+    options = {};
+  }
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const dt = isDate(date) ? date : new Date(date);
@@ -206,9 +211,17 @@ export const request = async (
   payload,
   vuexContext
 ) => {
-  if (!method) method = "get";
-  if (!url) throw "`url` is required.";
-  if (!accessToken) accessToken = null;
+  if (!method) {
+    method = "get";
+  }
+
+  if (!url) {
+    throw "`url` is required.";
+  }
+
+  if (!accessToken) {
+    accessToken = null;
+  }
 
   const opts = {
     timeout: 30000,
@@ -239,12 +252,24 @@ export const request = async (
       await vuexContext.dispatch("app/clearUser", null, { root: true });
     }
 
+    if (
+      error.response?.status === 500 &&
+      !error.response?.data &&
+      !error.response?.data
+    ) {
+      return {
+        error: true,
+        status: error.response?.status,
+        body: "Internal Server Error",
+      };
+    }
+
     return {
       error: true,
-      status: error.response?.status ?? 0,
+      status: error.response?.status || 0,
       body:
-        error.response?.data ??
-        error.response?.statusText ??
+        error.response?.data ||
+        error.response?.statusText ||
         "Unable to connect to the REST API server.",
     };
   }

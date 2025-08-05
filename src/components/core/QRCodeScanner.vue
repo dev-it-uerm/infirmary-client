@@ -42,7 +42,9 @@
           <q-btn
             :disable="loading"
             unelevated
-            color="primary"
+            color="accent"
+            class="text-black"
+            :icon="submitBtnIcon"
             :label="submitBtnLabel"
             type="submit"
           />
@@ -67,6 +69,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    submitBtnIcon: {
+      type: String,
+      default: null,
+    },
     submitBtnLabel: {
       type: String,
       default: "SUBMIT",
@@ -75,7 +81,7 @@ export default defineComponent({
   emits: ["patientCodeChanged", "inputModeChanged"],
   data() {
     return {
-      inputMode: "QR",
+      inputMode: "MANUAL",
       patientCode: null,
       scanner: null,
     };
@@ -86,8 +92,11 @@ export default defineComponent({
         this.$emit("inputModeChanged", val);
 
         if (this.scanner) {
-          if (val === "QR") this.resumeScanner();
-          else this.pauseScanner();
+          if (val === "QR") {
+            this.resumeScanner();
+          } else {
+            this.pauseScanner();
+          }
         }
       },
       immediate: true,
@@ -95,8 +104,11 @@ export default defineComponent({
     loading: {
       handler(val) {
         if (this.inputMode === "QR") {
-          if (val) this.pauseScanner();
-          else this.resumeScanner();
+          if (val) {
+            this.pauseScanner();
+          } else {
+            this.resumeScanner();
+          }
         }
       },
       immediate: true,

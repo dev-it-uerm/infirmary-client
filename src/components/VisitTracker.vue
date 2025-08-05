@@ -4,9 +4,10 @@
       <div v-if="initialized" class="column" style="gap: 16px">
         <QRCodeScanner
           ref="visitCodeScanner"
-          :scannerId="scannerId"
+          submitBtnIcon="sym_o_track_changes"
           submitBtnLabel="TRACK"
           class="full-width"
+          :scannerId="scannerId"
           :loading="loading"
           @patientCodeChanged="(val) => (patientCode = val)"
           @inputModeChanged="(val) => (inputMode = val)"
@@ -21,15 +22,15 @@
           </div>
           <div v-else class="fit flex flex-center">
             <div
-              v-if="patient && visit"
+              v-if="patient && lastVisit"
               class="full-width column q-pa-lg q-mb-md"
               style="gap: 2px; border: solid rgba(0, 0, 0, 0.15) 1px"
             >
               <div>
-                <span class="text-grey-7">Visit Date & Time:</span>
-                <span class="q-ml-sm">{{
-                  formatDate(visit.dateTimeCreated)
-                }}</span>
+                <span class="text-grey-7">Last Visit Date & Time:</span>
+                <span class="q-ml-sm">
+                  {{ formatDate(lastVisit.dateTimeCreated) }}
+                </span>
               </div>
               <div class="q-mt-sm">
                 <span class="text-grey-7">Patient Code:</span>
@@ -54,65 +55,67 @@
               </div>
               <div>
                 <span class="text-grey-7">Patient Affiliation:</span>
-                <span class="q-ml-sm">{{
-                  affiliationsMap[patient.affiliationCode].name
-                }}</span>
+                <span class="q-ml-sm">
+                  {{ affiliationsMap[patient.affiliationCode].name }}
+                </span>
               </div>
               <div class="q-mt-sm">
                 <div>
                   <span class="text-grey-7">Patient Dept/College:</span>
-                  <span class="q-ml-sm">{{
-                    departmentsMap[patient.deptCode].name
-                  }}</span>
+                  <span class="q-ml-sm">
+                    {{ departmentsMap[patient.deptCode].name }}
+                  </span>
                 </div>
               </div>
               <div v-if="patient.yearLevel" class="q-mt-sm">
                 <span class="text-grey-7">Year Level:</span>
-                <span class="q-ml-sm">{{
-                  yearLevels.find((l) => l.code === Number(patient.yearLevel))
-                    .name ?? ""
-                }}</span>
+                <span class="q-ml-sm">
+                  {{
+                    yearLevels.find((l) => l.code === Number(patient.yearLevel))
+                      .name ?? ""
+                  }}
+                </span>
               </div>
             </div>
             <q-list
-              v-if="exams && exams.length > 0"
+              v-if="lastVisitExams && lastVisitExams.length > 0"
               class="full-width"
               separator
             >
-              <template v-for="(exam, idx) in exams" :key="idx">
+              <template v-for="ve in lastVisitExams" :key="ve.id">
                 <q-item class="q-py-sm q-px-md">
                   <q-item-section>
                     <q-item-label class="q-mb-sm">
-                      {{ examsMap[exam.examCode].name }}
+                      {{ examsMap[ve.examCode].name }}
                     </q-item-label>
                     <div>
                       <q-item-label caption>
                         {{
-                          exam.dateTimeCompleted
-                            ? formatDate(exam.dateTimeCompleted)
-                            : "NOT YET COMPLETED"
+                          ve.dateTimeAccepted
+                            ? formatDate(ve.dateTimeAccepted)
+                            : "NO RESULT YET"
                         }}
                       </q-item-label>
                       <q-item-label caption>
-                        {{ exam.completedBy }}
+                        {{ ve.acceptedBy }}
                       </q-item-label>
                     </div>
                   </q-item-section>
                   <q-item-section side>
                     <q-icon
                       :name="
-                        exam.dateTimeCompleted
+                        ve.dateTimeAccepted
                           ? 'fa-solid fa-circle-check'
                           : 'fa-solid fa-circle-xmark'
                       "
-                      :color="exam.dateTimeCompleted ? 'positive' : 'negative'"
+                      :color="ve.dateTimeAccepted ? 'positive' : 'negative'"
                       size="xs"
                     />
                   </q-item-section>
                 </q-item>
               </template>
               <div
-                v-if="user && visit?.dateTimeCompleted"
+                v-if="user && lastVisit?.dateTimeAccepted"
                 class="row justify-center q-mt-lg"
               >
                 <q-btn
@@ -143,8 +146,8 @@
     >
       <template v-slot:body>
         <PrintoutVisitDetails
-          v-if="visit && visitPrintoutVisible"
-          :visitId="visit.id"
+          v-if="lastVisit && visitPrintoutVisible"
+          :visitId="lastVisit.id"
         />
       </template>
     </MaximizedDialog>
@@ -210,10 +213,10 @@ export default defineComponent({
       loading: false,
       inputMode: null,
       patientCode: null,
-      exams: [],
 
       patient: null,
-      visit: null,
+      lastVisit: null,
+      lastVisitExams: [],
 
       visitPrintoutVisible: false,
     };
@@ -239,8 +242,10 @@ export default defineComponent({
     },
   },
   watch: {
-    patientCode(val) {
-      if (val) this.track(val);
+    patientCode(v) {
+      if (v) {
+        this.track(v);
+      }
     },
   },
   methods: {
@@ -248,8 +253,8 @@ export default defineComponent({
       this.loading = true;
       this.$emit("busy");
       this.patient = null;
-      this.visit = null;
-      this.exams = [];
+      this.lastVisit = null;
+      this.lastVisitExams = [];
 
       const response = await this.$store.dispatch("ape/track", patientCode);
       await delay(2000);
@@ -263,12 +268,12 @@ export default defineComponent({
       }
 
       this.patient = response.body.patient;
-      this.visit = response.body.visit;
+      this.lastVisit = response.body.visit;
 
-      const exams = response.body.exams;
-      sortStringArr(exams, "dateTimeCompleted");
+      const lastVisitExams = response.body.exams;
+      sortStringArr(lastVisitExams, "dateTimeAccepted");
 
-      this.exams = exams;
+      this.lastVisitExams = lastVisitExams;
 
       this.$refs.visitCodeScanner.reset();
       this.loading = false;

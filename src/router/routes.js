@@ -47,9 +47,9 @@ const routes = [
       },
       // UE ANNUAL DIAGNOSTIC EXAM
       {
-        name: "APE_REGISTRATION",
-        path: "/ape/registration",
-        component: () => import("pages/ape/Registration.vue"),
+        name: "APE_PATIENT_ATTENDANCE",
+        path: "/ape/patient-attendance",
+        component: () => import("pages/ape/PatientAttendance.vue"),
       },
       {
         name: "APE_PATIENT_REGISTRATION",

@@ -37,7 +37,7 @@
                       :class="$q.screen.gt.md ? '' : 'q-mb-lg'"
                       :style="$q.screen.gt.md ? { gap: '8px' } : {}"
                     >
-                      <q-input
+                      <!-- <q-input
                         :disable="visitsLoading"
                         :class="$q.screen.gt.md ? '' : 'full-width'"
                         :style="$q.screen.gt.md ? { width: '100px' } : {}"
@@ -48,6 +48,24 @@
                         maxlength="4"
                         :rules="[requiredRule, yearRule]"
                         v-model.trim="visitsFilters.year"
+                      /> -->
+                      <q-select
+                        :disable="visitsLoading"
+                        debounce="750"
+                        :class="$q.screen.gt.md ? '' : 'full-width'"
+                        :style="$q.screen.gt.md ? { width: '100px' } : {}"
+                        :dense="$q.screen.gt.md"
+                        stack-label
+                        outlined
+                        :options="
+                          Array(1000)
+                            .fill(null)
+                            .map((e, idx) => 2024 + idx)
+                        "
+                        label="Year"
+                        hint=""
+                        :rules="[requiredRule, yearRule]"
+                        v-model="visitsFilters.year"
                       />
                       <q-select
                         :disable="visitsLoading"
@@ -111,6 +129,7 @@
                         :class="$q.screen.gt.md ? '' : 'full-width'"
                         class="q-px-md q-py-sm"
                         unelevated
+                        icon="sym_o_search"
                         color="primary"
                         label="SEARCH"
                         type="submit"
@@ -148,31 +167,32 @@
                                   {{ formatDate(props.row.dateTimeCreated) }}
                                 </span>
                               </q-td>
-                              <q-td
-                                v-else-if="column.name === 'visitExams'"
-                                class="row items-center no-wrap"
-                                style="gap: 6px"
-                              >
-                                <q-btn
-                                  v-for="(item, idx) in props.row.exams"
-                                  :key="idx"
-                                  dense
-                                  unelevated
-                                  class="q-px-sm"
-                                  style="font-size: 9pt"
-                                  :class="
-                                    item.dateTimeAccepted
-                                      ? 'text-positive'
-                                      : 'text-negative'
-                                  "
-                                  @click.stop="
-                                    () => {
-                                      visitInfoTabCode = item.examCode;
-                                      showPxVisitInfo(props.row);
-                                    }
-                                  "
-                                  :label="examsMap[item.examCode].name"
-                                />
+                              <q-td v-else-if="column.name === 'visitExams'">
+                                <div
+                                  class="row items-center no-wrap"
+                                  style="gap: 6px"
+                                >
+                                  <q-btn
+                                    v-for="(item, idx) in props.row.exams"
+                                    :key="idx"
+                                    dense
+                                    unelevated
+                                    class="q-px-sm"
+                                    style="font-size: 9pt"
+                                    :class="
+                                      item.dateTimeAccepted
+                                        ? 'text-positive'
+                                        : 'text-negative'
+                                    "
+                                    @click.stop="
+                                      () => {
+                                        visitInfoTabCode = item.examCode;
+                                        showPxVisitInfo(props.row);
+                                      }
+                                    "
+                                    :label="examsMap[item.examCode].name"
+                                  />
+                                </div>
                               </q-td>
                               <q-td v-else-if="column.name === 'action'">
                                 <div
@@ -188,7 +208,7 @@
                                       padding-right: 10px;
                                     "
                                     unelevated
-                                    label="DETAILS"
+                                    label="EXAMS"
                                     @click.stop="showPxVisitInfo(props.row)"
                                   />
                                   <q-btn
@@ -401,11 +421,16 @@
                             /> -->
                             <q-btn
                               dense
-                              style="padding-left: 10px; padding-right: 10px"
+                              style="
+                                padding-left: 10px;
+                                padding-right: 10px;
+                                min-width: 110px;
+                              "
                               unelevated
                               class="q-mt-sm text-black"
                               color="accent"
-                              label="DETAILS"
+                              icon="sym_o_checklist"
+                              label="EXAMS"
                               @click.stop="showPxVisitInfo(item)"
                             />
                             <q-btn
@@ -415,10 +440,15 @@
                                 )
                               "
                               dense
-                              style="padding-left: 10px; padding-right: 10px"
+                              style="
+                                padding-left: 10px;
+                                padding-right: 10px;
+                                min-width: 110px;
+                              "
                               unelevated
                               class="q-mt-sm text-black"
                               color="accent"
+                              icon="sym_o_print"
                               label="PRINT"
                               @click.stop="showPxVisitPrintout(item)"
                             />

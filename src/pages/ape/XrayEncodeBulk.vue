@@ -56,7 +56,7 @@
                 >
                   <template v-slot:label>
                     Year
-                    <span class="text-weight-bold text-red">*</span>
+                    <span class="text-weight-bold text-red"> *</span>
                   </template>
                 </q-select>
                 <div class="column" style="gap: 16px">

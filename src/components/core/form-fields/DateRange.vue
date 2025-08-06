@@ -53,7 +53,7 @@ export default defineComponent({
     },
     options: {
       type: [Array, Function],
-      default: null,
+      default: undefined,
     },
     initialValue: {
       type: Object,

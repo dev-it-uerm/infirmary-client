@@ -3,7 +3,7 @@
     debounce="500"
     stack-label
     outlined
-    label="Year"
+    :label="label"
     maxlength="4"
     :rules="[yearRule, ...(required ? [requiredRule] : [])]"
     v-model.trim="value"
@@ -16,6 +16,10 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "FormFieldYear",
   props: {
+    label: {
+      type: String,
+      default: "Year",
+    },
     modelValue: {
       type: String,
       // default: String(new Date().getFullYear()),

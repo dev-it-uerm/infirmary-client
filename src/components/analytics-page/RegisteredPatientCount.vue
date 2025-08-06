@@ -30,37 +30,21 @@
             v-model="reportColumns"
             hint=""
           />
-          <q-select
-            :disable="ready === false || downloading"
-            stack-label
-            outlined
-            :options="[
-              { code: 'YEAR', name: 'YEAR' },
-              { code: 'DATERANGE', name: 'DATE RANGE' },
-            ]"
-            label="Date Type"
-            emit-value
-            map-options
-            option-label="name"
-            option-value="code"
-            v-model="dateType"
-            hint=""
-          />
           <FormFieldYear
-            v-if="dateType === 'YEAR'"
             :disable="ready === false || downloading"
+            label="APE Year"
             :required="true"
             v-model="filter.year"
           />
           <FormFieldDateRange
-            v-if="dateType === 'DATERANGE'"
-            :disable="ready === false || downloading"
+            :disable="!filter.year || ready === false || downloading"
             stack-label
             outlined
-            label="Date Range"
+            label="Visit Date"
             hint=""
+            :required="true"
             :initialValue="filter.dateRange"
-            @valueChanged="(val) => (filter.dateRange = val)"
+            @valueChanged="(v) => (filter.dateRange = v)"
           />
           <div class="row justify-end">
             <q-btn
@@ -198,7 +182,6 @@ export default defineComponent({
       downloading: false,
 
       reportColumns: ["CAMPUS", "AFFILIATION", "DEPARTMENT"],
-      dateType: "YEAR",
 
       filter: {
         year: null,
@@ -209,12 +192,6 @@ export default defineComponent({
       rows: [],
     };
   },
-  watch: {
-    dateType() {
-      this.filter.dateRange = null;
-      this.filter.year = null;
-    },
-  },
   methods: {
     async getData() {
       this.ready = false;
@@ -222,13 +199,12 @@ export default defineComponent({
 
       const payload = {
         columns: this.reportColumns,
-        filter: this.filter.dateRange
-          ? {
-              dateRange: isStr(this.filter.dateRange)
-                ? { from: this.filter.dateRange, to: this.filter.dateRange }
-                : this.filter.dateRange,
-            }
-          : { year: this.filter.year },
+        filter: {
+          year: this.filter.year,
+          dateRange: isStr(this.filter.dateRange)
+            ? { from: this.filter.dateRange, to: this.filter.dateRange }
+            : this.filter.dateRange,
+        },
       };
 
       const response1 = await this.$store.dispatch(

@@ -9,6 +9,7 @@
         <q-form @submit="getData">
           <FormFieldYear
             :disable="ready === false || downloading"
+            label="APE Year"
             :required="true"
             v-model="filter.year"
           />
@@ -16,12 +17,8 @@
             :disable="!filter.year || ready === false || downloading"
             stack-label
             outlined
-            label="Date Range"
+            label="Visit Date"
             hint=""
-            :options="
-              (v) =>
-                filter.year && Number(v.substring(0, 4)) === Number(filter.year)
-            "
             :required="true"
             :initialValue="filter.dateRange"
             @valueChanged="(v) => (filter.dateRange = v)"

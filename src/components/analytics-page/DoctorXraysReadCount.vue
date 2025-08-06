@@ -9,6 +9,7 @@
         <q-form @submit="getData">
           <FormFieldYear
             :disable="ready === false || downloading"
+            label="APE Year"
             :required="true"
             v-model="filter.year"
           />

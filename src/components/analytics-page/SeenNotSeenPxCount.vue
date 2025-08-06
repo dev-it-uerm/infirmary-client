@@ -35,6 +35,7 @@
               <q-btn
                 :disable="ready === false || downloading"
                 type="submit"
+                icon="sym_o_insert_chart"
                 label="GENERATE"
                 class="text-black"
                 color="accent"

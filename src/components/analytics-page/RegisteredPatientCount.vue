@@ -67,6 +67,7 @@
               :disable="ready === false || downloading"
               type="submit"
               label="GENERATE"
+              icon="sym_o_insert_chart"
               class="text-black"
               color="accent"
               unelevated

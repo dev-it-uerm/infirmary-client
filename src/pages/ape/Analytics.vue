@@ -21,7 +21,7 @@
             label="Seen/Not Seen Patient Count"
           />
           <q-tab name="notSeenPatientNames" label="Not Seen Patients" />
-          <q-tab name="xraysRead" label="Xrays Read Count" />
+          <q-tab name="xraysRead" label="X-rays Read Count" />
           <q-tab name="doctorPatientCount" label="Doctor Patient Count" />
           <q-tab name="patientVisitProgress" label="Patient Visit Progress" />
         </q-tabs>

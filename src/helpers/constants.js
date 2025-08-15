@@ -98,6 +98,7 @@ export const examFieldsMap = {
       code: "PASTILLNESSES",
       name: "Past Illnesses",
       type: "EXAMTEXTAREA",
+      required: true,
     },
     {
       code: "ALLERGIES",

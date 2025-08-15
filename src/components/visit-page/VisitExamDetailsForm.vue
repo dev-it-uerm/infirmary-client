@@ -1,10 +1,7 @@
 <template>
   <div>
-    <!-- <div class="bg-white flex flex-center" style="height: 200px; opacity: 0.8">
-      <q-spinner-dots color="black" size="md" />
-    </div> -->
     <FetchingData v-if="loading" />
-    <q-form v-else ref="qFormVisitDetails" @submit="save">
+    <q-form v-else ref="qFormVisitDetails" @submit="confDialogVisible = true">
       <div
         class="fit"
         style="display: grid; grid-template-rows: auto min-content"
@@ -132,26 +129,7 @@
           </template>
         </div>
         <q-separator />
-        <div
-          class="row q-pa-lg"
-          :class="
-            markAsCompletedOnSave != null &&
-            !visitIsCompleted &&
-            !examIsCompleted
-              ? 'justify-between'
-              : 'justify-end'
-          "
-          style="gap: 12px"
-        >
-          <q-checkbox
-            v-if="
-              markAsCompletedOnSave != null &&
-              !visitIsCompleted &&
-              !examIsCompleted
-            "
-            v-model="markAsCompletedOnSave"
-            label="Mark Exam As COMPLETED On Save"
-          />
+        <div class="row q-pa-lg justify-end" style="gap: 12px">
           <q-btn
             unelevated
             icon="save"
@@ -159,7 +137,7 @@
             class="text-white bg-primary"
             :loading="loading"
             :label="visitIsCompleted || examIsCompleted ? 'COMPLETED' : 'SAVE'"
-            @click="submitForm"
+            type="submit"
           />
         </div>
       </div>
@@ -167,7 +145,7 @@
     <ConfirmationDialog
       v-if="confDialogVisible"
       question="Are you sure you want to save visit details?"
-      @ok="this.$refs.qFormVisitDetails.submit"
+      @ok="save"
       @cancel="confDialogVisible = false"
     />
   </div>
@@ -241,7 +219,6 @@ export default defineComponent({
     return {
       loading: false,
       value: {},
-      markAsCompletedOnSave: null,
       confDialogVisible: false,
 
       visitIsCompleted: false,
@@ -268,8 +245,10 @@ export default defineComponent({
     },
   },
   methods: {
-    formatResponseBody(arr) {
-      if (!arr) return {};
+    getVisitExamDetailsMap(arr) {
+      if (!arr || arr.length === 0) {
+        return {};
+      }
 
       return arr.reduce((acc, row) => {
         acc[row.code] = {
@@ -281,7 +260,7 @@ export default defineComponent({
         return acc;
       }, {});
     },
-    mergeFieldsAndVal(fields, obj) {
+    getMergedExamFieldsAndDetails(fields, obj) {
       return fields.reduce((acc, field) => {
         if (obj[field.code] == null || obj[field.code] === "") {
           acc[field.code] = field.default ?? null;
@@ -299,9 +278,9 @@ export default defineComponent({
       this.loading = true;
 
       // SUPPLY DEFAULT VALUE
-      this.value = this.mergeFieldsAndVal(
+      this.value = this.getMergedExamFieldsAndDetails(
         this.examFieldsMap[this.examCode],
-        this.formatResponseBody([])
+        this.getVisitExamDetailsMap([])
       );
 
       const response = await this.$store.dispatch("ape/getVisitExamDetails", {
@@ -325,26 +304,12 @@ export default defineComponent({
       this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
       this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
 
-      this.value = this.mergeFieldsAndVal(
+      this.value = this.getMergedExamFieldsAndDetails(
         this.examFieldsMap[this.examCode],
-        this.formatResponseBody(response.body.details)
+        this.getVisitExamDetailsMap(response.body.details)
       );
 
-      if (!this.visitIsCompleted && !this.examIsCompleted) {
-        this.markAsCompletedOnSave = false;
-      }
-
       this.loading = false;
-    },
-    async submitForm() {
-      const valid = await this.$refs.qFormVisitDetails.validate();
-
-      if (!valid) {
-        // TO DO: SCROLL TO INVALID FIELD
-        return;
-      }
-
-      this.confDialogVisible = true;
     },
     async save() {
       // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [START]
@@ -359,26 +324,24 @@ export default defineComponent({
 
       this.confDialogVisible = false;
       this.loading = true;
-      await delay(2000);
 
       // MAKE SURE EVERY `detail` HAS A `code` PROP
       const payload = {
         visitId: this.visitId,
         examCode: this.examCode,
+        markAsCompletedOnSave: false,
         details: Object.entries(this.value).map((e) => ({
           code: e[0],
           ...e[1],
         })),
       };
 
-      if (this.markAsCompletedOnSave === true) {
-        payload.markAsCompletedOnSave = true;
-      }
-
       const response = await this.$store.dispatch(
         "ape/saveExamDetails",
         payload
       );
+
+      await delay(2000);
 
       if (response.error) {
         showMessage(this.$q, false, response.body);
@@ -389,10 +352,6 @@ export default defineComponent({
 
       this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
       this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
-
-      if (this.visitIsCompleted || this.examIsCompleted) {
-        this.markAsCompletedOnSave = null;
-      }
 
       showMessage(
         this.$q,

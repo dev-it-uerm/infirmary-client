@@ -134,7 +134,7 @@ export default defineComponent({
       const response = await this.$store.dispatch(
         "ape/getXrayChestResultTemplates"
       );
-      await delay(2000);
+      await delay(1000);
 
       if (response.error) {
         this.templateLoading = false;

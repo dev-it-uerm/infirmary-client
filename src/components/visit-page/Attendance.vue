@@ -14,7 +14,7 @@
           submitBtnLabel="REGISTER"
           :scannerId="scannerId"
           :loading="loading"
-          @patientCodeChanged="(val) => (patientCode = val)"
+          @patientCodeChanged="(v) => register(v)"
           @inputModeChanged="(val) => (inputMode = val)"
         />
         <div v-if="lastPatientRegistered">
@@ -125,8 +125,6 @@ export default defineComponent({
       loading: false,
 
       inputMode: null,
-      patientCode: null,
-
       lastPatientRegistered: null,
     };
   },
@@ -153,13 +151,6 @@ export default defineComponent({
       return this.inputMode === "QR";
     },
   },
-  watch: {
-    patientCode(v) {
-      if (v) {
-        this.register(v);
-      }
-    },
-  },
   mounted() {
     this.$store.dispatch("ape/getAppData");
   },
@@ -183,6 +174,10 @@ export default defineComponent({
       };
     },
     async register(patientCode) {
+      if (!patientCode) {
+        return;
+      }
+
       this.loading = true;
       this.$emit("busy");
 

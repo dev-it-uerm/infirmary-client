@@ -7,16 +7,29 @@
     >
       <CardComponent>
         <template v-slot:header>
-          <PageHeader text="ADD USER" icon="fa-solid fa-user" />
+          <PageHeader text="ADD/UPDATE USER" icon="fa-solid fa-user" />
         </template>
         <template v-slot:body>
           <FetchingData v-if="loading" />
           <q-form
             v-show="!loading"
             ref="qForm"
-            @submit="(evt) => (yesNoDialogVisible = true)"
+            @submit="yesNoDialogVisible = true"
             @reset="reset"
           >
+            <div
+              class="row items-center bordered-grey q-pa-md text-grey-9 q-mb-lg gap-sm"
+            >
+              <q-icon
+                class="col-auto"
+                name="sym_o_info"
+                size="sm"
+                color="grey-9"
+              />
+              <div class="col">
+                If user already exists, his/her record will be updated.
+              </div>
+            </div>
             <q-input
               stack-label
               outlined
@@ -96,6 +109,7 @@
                 :disable="loading"
                 unelevated
                 color="accent"
+                icon="sym_o_save"
                 class="text-black"
                 label="SAVE"
                 type="submit"

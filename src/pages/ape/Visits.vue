@@ -127,10 +127,10 @@
                       <q-btn
                         :disable="visitsLoading"
                         :class="$q.screen.gt.md ? '' : 'full-width'"
-                        class="q-px-md q-py-sm"
+                        class="text-black q-px-md q-py-sm"
                         unelevated
                         icon="sym_o_search"
-                        color="primary"
+                        color="accent"
                         label="SEARCH"
                         type="submit"
                       />
@@ -312,10 +312,10 @@
                           class="text-black q-pa-sm"
                           :class="$q.screen.lt.md ? 'q-mt-md' : ''"
                         >
-                          <span class="text-weight-bold">{{
-                            visits.length
-                          }}</span
-                          >&nbsp;item/s
+                          <span class="text-weight-bold">
+                            {{ visits.length }}
+                          </span>
+                          &nbsp;item/s
                         </q-badge>
                       </div>
                     </div>

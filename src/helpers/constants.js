@@ -101,6 +101,11 @@ export const examFieldsMap = {
       required: true,
     },
     {
+      code: "OPERATIONS",
+      name: "Surgeries/Operations",
+      type: "EXAMTEXTAREA",
+    },
+    {
       code: "ALLERGIES",
       name: "Allergies",
       type: "EXAMTEXTAREA",
@@ -116,8 +121,8 @@ export const examFieldsMap = {
       type: "EXAMTEXTAREA",
     },
     {
-      code: "OPERATIONS",
-      name: "Surgeries/Operations",
+      code: "FAMHIST",
+      name: "Family History",
       type: "EXAMTEXTAREA",
     },
     {

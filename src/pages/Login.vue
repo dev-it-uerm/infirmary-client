@@ -24,10 +24,17 @@
       style="gap: 16px; z-index: 999"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <AppLogo size="md" :inverted="true" />
+      <AppLogo size="md" :inverted="true" :showTitle="false" />
       <CardComponent>
         <template v-slot:header>
-          <PageHeader icon="fa-solid fa-unlock-keyhole" text="LOG IN" />
+          <div class="bg-primary q-pa-md column items-center justify-center">
+            <div
+              class="text-white text-weight-bold text-h6 text-center text-uppercase"
+              style="letter-spacing: 1pt"
+            >
+              UE INFIRMARY
+            </div>
+          </div>
         </template>
         <template v-slot:body>
           <div class="column" style="gap: 16px">
@@ -87,14 +94,15 @@
                   flat
                   label="Forgot Password?"
                   class="text-black q-mr-sm"
-                  @click="(evt) => (forgotPasswordDialogVisible = true)"
+                  @click="forgotPasswordDialogVisible = true"
                 />
                 <q-btn
                   :disable="loading"
                   unelevated
+                  icon="sym_o_login"
                   color="accent"
                   class="text-black"
-                  label="LOGIN"
+                  label="LOG IN"
                   type="submit"
                 />
               </div>
@@ -171,9 +179,6 @@ import { delay, decodeUserJWT, showMessage } from "src/helpers/util.js";
 export default defineComponent({
   name: "LoginPage",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
-    ),
     FormFieldPassword: defineAsyncComponent(() =>
       import("src/components/core/form-fields/Password.vue")
     ),

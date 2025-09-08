@@ -32,6 +32,19 @@
               v-model="filter.campusCode"
               hint=""
             />
+            <q-select
+              :disable="ready === false || downloading"
+              stack-label
+              outlined
+              :options="[{ code: null, name: 'ALL' }, ...affiliations]"
+              label="Affiliation"
+              emit-value
+              map-options
+              option-label="name"
+              option-value="code"
+              v-model="filter.affiliationCode"
+              hint=""
+            />
             <div class="row justify-end">
               <q-btn
                 :disable="ready === false || downloading"
@@ -93,6 +106,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+import { affiliations } from "src/helpers/constants.js";
 
 import {
   delay,
@@ -119,6 +133,7 @@ export default defineComponent({
   setup() {
     return {
       inputRuleRequired: inputRules.required,
+      affiliations,
     };
   },
   data() {
@@ -127,8 +142,9 @@ export default defineComponent({
       downloading: false,
 
       filter: {
-        campusCode: null,
         year: null,
+        campusCode: null,
+        affiliationCode: null,
       },
 
       columns: [

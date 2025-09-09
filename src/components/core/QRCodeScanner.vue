@@ -35,7 +35,7 @@
           outlined
           stack-label
           autofocus
-          label="Patient Code"
+          :label="inputLabel"
           v-model.trim="patientCode"
         />
         <div class="q-mt-md row justify-end">
@@ -68,6 +68,10 @@ export default defineComponent({
     scannerId: {
       type: String,
       required: true,
+    },
+    inputLabel: {
+      type: String,
+      default: "Patient Code",
     },
     submitBtnIcon: {
       type: String,

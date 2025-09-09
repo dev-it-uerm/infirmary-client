@@ -615,6 +615,13 @@ const navMenuAPEPxRegistration = {
   icon: "fa-solid fa-person-circle-plus",
 };
 
+const navMenuAPEEmployeeAttendance = {
+  code: "APE_EMPLOYEE_ATTENDANCE",
+  name: "Employee Attendance",
+  url: "/ape/employee-attendance",
+  icon: "fa-solid fa-calendar-days",
+};
+
 const navMenuRegistration = {
   code: "APE_PATIENT_ATTENDANCE",
   name: "Triage",
@@ -682,6 +689,7 @@ const navMenuPxRegistration = {
 export const apeNavMenus = [
   navMenuRegistration,
   navMenuAPEPxRegistration,
+  navMenuAPEEmployeeAttendance,
   // {
   //   code: "VISIT_APPOINTMENT_LINK",
   //   name: "Visit Appointment",

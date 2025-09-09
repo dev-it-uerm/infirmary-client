@@ -57,6 +57,11 @@ const routes = [
         component: () => import("pages/ape/PatientRegistration.vue"),
       },
       {
+        name: "APE_EMPLOYEE_ATTENDANCE",
+        path: "/ape/employee-attendance",
+        component: () => import("pages/ape/EmployeeAttendance.vue"),
+      },
+      {
         name: "APE_VISITS",
         path: "/ape/visits",
         component: () => import("pages/ape/Visits.vue"),

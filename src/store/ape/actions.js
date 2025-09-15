@@ -16,7 +16,15 @@ export const getExams = async (context) => {
 
   if (!response.error) {
     const exams = response.body[0].map((e) => {
-      const params = response.body[1].filter((f) => f.examId === e.id);
+      const params = response.body[1]
+        .filter((f) => f.examId === e.id)
+        .map((f) => {
+          return {
+            ...f,
+            default: JSON.parse(f.defaultValue),
+            options: JSON.parse(f.options),
+          };
+        });
 
       return {
         ...e,

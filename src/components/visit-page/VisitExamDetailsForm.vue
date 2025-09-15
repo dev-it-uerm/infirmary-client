@@ -310,7 +310,6 @@ export default defineComponent({
         this.getVisitExamDetailsMap(response.body.details)
       );
 
-      console.log(this.value);
       this.loading = false;
     },
     async save() {

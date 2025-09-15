@@ -29,7 +29,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "FormFieldMultiSelect",
+  name: "FormFieldExamMultiSelect",
   props: {
     label: {
       type: String,

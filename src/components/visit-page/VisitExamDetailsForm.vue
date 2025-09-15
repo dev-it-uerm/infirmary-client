@@ -110,7 +110,7 @@
                   "
                 />
                 <FormFieldExamMultiSelect
-                  v-if="p.fieldType === 'MULTISELECT'"
+                  v-if="p.fieldType === 'EXAMMULTISELECT'"
                   :disable="
                     visitIsCompleted || examIsCompleted || p.disable || loading
                   "
@@ -310,6 +310,7 @@ export default defineComponent({
         this.getVisitExamDetailsMap(response.body.details)
       );
 
+      console.log(this.value);
       this.loading = false;
     },
     async save() {

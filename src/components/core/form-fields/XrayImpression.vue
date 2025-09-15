@@ -80,7 +80,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { delay } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "XrayImpression",
+  name: "FormFieldXrayImpression",
   components: {
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")

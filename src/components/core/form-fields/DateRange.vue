@@ -41,7 +41,7 @@ import {
 } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "DateRange",
+  name: "FormFieldDateRange",
   props: {
     // subtractDaysCount: {
     //   type: Number,

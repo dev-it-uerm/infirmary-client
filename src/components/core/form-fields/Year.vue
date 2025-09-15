@@ -5,7 +5,7 @@
     outlined
     :label="label"
     maxlength="4"
-    :rules="[yearRule, ...(required ? [requiredRule] : [])]"
+    :rules="required ? [yearRule] : []"
     v-model.trim="value"
   />
 </template>
@@ -31,26 +31,30 @@ export default defineComponent({
     },
   },
   emits: ["update:modelValue"],
-  computed: {
-    value: {
-      get() {
-        return this.modelValue;
+  data() {
+    return {
+      value: null,
+    };
+  },
+  watch: {
+    modelValue: {
+      handler(v) {
+        this.value = v;
       },
-      set(value) {
-        this.$emit("update:modelValue", value);
-      },
+      immediate: true,
+    },
+    value(v) {
+      this.$emit("update:modelValue", v);
     },
   },
-  setup() {
-    return {
-      yearRule: (val) => {
-        if (!val || /[1-9]{1}[0-9]{3}/.test(val)) return;
-        return "Invalid year.";
-      },
-      requiredRule: (val) => {
-        return val ? undefined : "This field is required.";
-      },
-    };
+  methods: {
+    yearRule(v) {
+      if (v && /[1-9]{1}[0-9]{3}/.test(v)) {
+        return true;
+      }
+
+      return "Invalid year.";
+    },
   },
 });
 </script>

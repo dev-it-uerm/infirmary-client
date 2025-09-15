@@ -55,7 +55,9 @@ export default defineComponent({
     };
   },
   created() {
-    if (this.initialValue) this.value = this.initialValue;
+    if (this.initialValue) {
+      this.value = this.initialValue;
+    }
   },
   watch: {
     value: {

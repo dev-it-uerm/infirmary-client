@@ -119,7 +119,9 @@ export default defineComponent({
     }),
   },
   async mounted() {
-    if (!this.user) return;
+    if (!this.user) {
+      return;
+    }
 
     const tabs = [
       {

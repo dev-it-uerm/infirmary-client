@@ -125,6 +125,24 @@
                   }
                 "
               />
+              <FormFieldExamMultiSelect
+                v-if="field.type === 'MULTISELECT'"
+                :disable="
+                  visitIsCompleted ||
+                  examIsCompleted ||
+                  field.disable ||
+                  loading
+                "
+                :options="field.options"
+                :label="field.name"
+                :required="field.required"
+                :model-value="value[field.code]?.value || null"
+                @update:model-value="
+                  (v) => {
+                    value[field.code] = { code: field.code, value: v };
+                  }
+                "
+              />
             </div>
           </template>
         </div>
@@ -177,6 +195,9 @@ export default defineComponent({
     ),
     FormFieldXrayImpression: defineAsyncComponent(() =>
       import("src/components/core/form-fields/XrayImpression.vue")
+    ),
+    FormFieldExamMultiSelect: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamMultiSelect.vue")
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")

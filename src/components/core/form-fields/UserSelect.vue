@@ -87,7 +87,7 @@ import { debounce } from "quasar";
 import { delay } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "UserSelect",
+  name: "FormFieldUserSelect",
   props: {
     initialValue: {
       type: Object,

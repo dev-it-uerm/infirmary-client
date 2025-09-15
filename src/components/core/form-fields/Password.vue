@@ -5,8 +5,9 @@
     maxlength="255"
     :type="isPwdMasked ? 'password' : 'text'"
     :rules="[
-      (val) =>
-        val == null || val === '' ? 'This field is required.' : undefined,
+      (v) => {
+        return v == null || v === '' ? 'This field is required.' : true;
+      },
     ]"
   >
     <template v-if="showIcon" v-slot:prepend>
@@ -16,7 +17,7 @@
       <q-icon
         :name="isPwdMasked ? 'visibility_off' : 'visibility'"
         class="cursor-pointer"
-        @click="(evt) => (isPwdMasked = !isPwdMasked)"
+        @click="isPwdMasked = !isPwdMasked"
       />
     </template>
   </q-input>

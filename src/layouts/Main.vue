@@ -259,7 +259,7 @@
               </div>
               <!-- v-if in the `rightDrawerOpen` is to force the scanner to unmount
               when the drawer is not visible, fixing the "double scanner" bug. -->
-              <VisitPageAttendance
+              <PatientAttendanceCard
                 v-if="rightDrawerOpen && tab === 1"
                 scannerId="qrCodeScanner__right-drawer-1"
                 @busy="loading = true"
@@ -318,8 +318,8 @@ export default defineComponent({
     AppLogo: defineAsyncComponent(() =>
       import("src/components/core/AppLogo.vue")
     ),
-    VisitPageAttendance: defineAsyncComponent(() =>
-      import("src/components/visit-page/Attendance.vue")
+    PatientAttendanceCard: defineAsyncComponent(() =>
+      import("src/components/PatientAttendanceCard.vue")
     ),
     // ExamAccept: defineAsyncComponent(() =>
     //   import("src/components/ExamAccept.vue")

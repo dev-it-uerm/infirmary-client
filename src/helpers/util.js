@@ -252,11 +252,7 @@ export const request = async (
       await vuexContext.dispatch("app/clearUser", null, { root: true });
     }
 
-    if (
-      error.response?.status === 500 &&
-      !error.response?.data &&
-      !error.response?.data
-    ) {
+    if (error.response?.status === 500 && !error.response?.data) {
       return {
         error: true,
         status: error.response?.status,

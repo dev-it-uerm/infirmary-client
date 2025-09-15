@@ -1,5 +1,45 @@
 import { request, camelToKebab, createMap } from "src/helpers/util";
 
+export const getExams = async (context) => {
+  if (context.rootState.ape.exams?.length > 0) {
+    return [context.rootState.ape.exams, context.rootState.ape.examsMap];
+  }
+
+  const response = await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/misc/exams`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context
+  );
+
+  if (!response.error) {
+    const exams = response.body[0].map((e) => {
+      const params = response.body[1].filter((f) => f.examId === e.id);
+
+      return {
+        ...e,
+        params,
+        paramsMap: params.reduce((a, p) => {
+          a[p.code] = p;
+          return a;
+        }, {}),
+      };
+    });
+
+    const examsMap = exams.reduce((a, e) => {
+      a[e.code] = e;
+      return a;
+    }, {});
+
+    context.commit("setExams", [exams, examsMap]);
+    return [context.rootState.ape.exams, context.rootState.ape.examsMap];
+  }
+
+  return response;
+};
+
 export const getVisits = async (context, urlQuery) => {
   return await request(
     "get",

@@ -8,7 +8,7 @@
         <template v-slot:body>
           <!-- @busy="loading = true"
           @ready="loading = false" -->
-          <VisitPageAttendance
+          <PatientAttendanceCard
             scannerId="PATIENT_ATTENDANCE_PAGE__qrCodeScanner"
           />
         </template>
@@ -33,8 +33,8 @@ export default defineComponent({
     CardComponent: defineAsyncComponent(() =>
       import("src/components/core/Card.vue")
     ),
-    VisitPageAttendance: defineAsyncComponent(() =>
-      import("src/components/visit-page/Attendance.vue")
+    PatientAttendanceCard: defineAsyncComponent(() =>
+      import("src/components/PatientAttendanceCard.vue")
     ),
   },
   data() {

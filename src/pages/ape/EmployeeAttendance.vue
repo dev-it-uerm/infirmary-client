@@ -69,11 +69,7 @@ import {
   formatDate,
 } from "src/helpers/util.js";
 
-import {
-  examsMap,
-  affiliationsMap,
-  yearLevels,
-} from "src/helpers/constants.js";
+import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "EmployeeAttendancePage",
@@ -106,9 +102,9 @@ export default defineComponent({
   emits: ["busy", "ready"],
   setup() {
     return {
+      showMessage,
       formatName,
       formatDate,
-      examsMap,
       affiliationsMap,
       yearLevels,
     };
@@ -209,7 +205,7 @@ export default defineComponent({
       }
 
       this.$refs.EMPLOYEE_ATTENDANCE_PAGE__qrCodeScanner.reset();
-      showMessage(this.$q, success, message);
+      this.showMessage(this.$q, success, message);
       this.loading = false;
       this.$emit("ready");
     },

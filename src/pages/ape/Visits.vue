@@ -519,6 +519,7 @@
       v-if="visitInfoVisible"
       :visit="currentVisit"
       :tabCode="visitInfoTabCode"
+      :examsMap="examsMap"
       @close="
         () => {
           visitInfoTabCode = null;
@@ -558,8 +559,6 @@ import {
 import {
   affiliationsMap,
   affiliations,
-  examsMap,
-  exams,
   yearLevelsMap,
   yearLevels,
 } from "src/helpers/constants.js";
@@ -604,8 +603,6 @@ export default defineComponent({
     return {
       affiliations,
       affiliationsMap,
-      exams,
-      examsMap,
       yearLevelsMap,
       yearLevels,
 
@@ -678,6 +675,7 @@ export default defineComponent({
   },
   data() {
     return {
+      examsMap: null,
       visitsFilters: {
         year: new Date().getFullYear(),
         // visitDateRange: {
@@ -746,6 +744,17 @@ export default defineComponent({
             ...this.visitsFilters,
             ...this.appConfig.visitsDefaultFiltersMap,
           };
+        }
+
+        if (this.examsMap === null) {
+          const examsResponse = await this.$store.dispatch("ape/getExams");
+
+          if (examsResponse?.error) {
+            this.showMessage(this.$q, false, "Error fetching exams.");
+            return;
+          }
+
+          this.examsMap = examsResponse[1];
         }
 
         this.getVisits();
@@ -826,7 +835,11 @@ export default defineComponent({
       const response = await this.$store.dispatch("ape/getVisits", payload);
 
       if (response.error) {
-        showMessage(this.$q, false, "Unable to fetch visits. Please try again");
+        this.showMessage(
+          this.$q,
+          false,
+          "Unable to fetch visits. Please try again"
+        );
         return;
       }
 

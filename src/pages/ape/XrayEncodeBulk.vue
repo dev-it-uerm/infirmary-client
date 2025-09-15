@@ -242,8 +242,6 @@ import {
   affiliations,
   yearLevelsMap,
   yearLevels,
-  examsMap,
-  examFieldsMap,
   userRolesMap,
 } from "src/helpers/constants.js";
 
@@ -354,12 +352,10 @@ export default defineComponent({
         const response = await this.$store.dispatch("ape/saveExamDetails", {
           identificationCode: patient.identificationCode,
           year: this.year,
-
-          examCode: examsMap.RAD_XR_CHST.code,
-
+          examCode: "RAD_XR_CHST",
           details: [
             {
-              code: examFieldsMap[examsMap.RAD_XR_CHST.code][0].code,
+              code: "IMPRN",
               value: this.xrayImpression,
             },
           ],

@@ -71,14 +71,10 @@ import {
   formatDate,
 } from "src/helpers/util.js";
 
-import {
-  examsMap,
-  affiliationsMap,
-  yearLevels,
-} from "src/helpers/constants.js";
+import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 
 export default defineComponent({
-  name: "VisitPageAttendance",
+  name: "PatientAttendanceCard",
   components: {
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
@@ -113,7 +109,6 @@ export default defineComponent({
     return {
       formatName,
       formatDate,
-      examsMap,
       affiliationsMap,
       yearLevels,
     };

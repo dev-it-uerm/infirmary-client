@@ -1,165 +1,149 @@
 <template>
   <div>
     <FetchingData v-if="loading" />
-    <q-form v-else ref="qFormVisitDetails" @submit="confDialogVisible = true">
-      <div
-        class="fit"
-        style="display: grid; grid-template-rows: auto min-content"
+    <template v-else>
+      <q-form
+        v-if="examsMap"
+        ref="qFormVisitDetails"
+        @submit="confDialogVisible = true"
       >
         <div
-          class="q-pa-lg scroll"
-          style="height: auto; max-height: 70vh; min-height: 100px"
+          class="fit"
+          style="display: grid; grid-template-rows: auto min-content"
         >
-          <template v-for="field in examFieldsMap[examCode]" :key="field.code">
-            <div>
-              <q-input
-                v-if="field.type === 'TEXT'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                stack-label
-                outlined
-                :rules="generateRules(field.required)"
-                :label="field.name"
-                v-model.trim="value[field.code]"
-                hint=""
-              />
-              <q-input
-                v-if="field.type === 'TEXTAREA'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                type="textarea"
-                stack-label
-                outlined
-                :rules="generateRules(field.required)"
-                :label="field.name"
-                v-model.trim="value[field.code]"
-                hint=""
-              />
-              <UserSelect
-                v-if="field.type === 'PHYSICIANSELECT'"
-                label="Physician"
-                :roleCode="userRolesMap.DR.code"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
-              />
-              <FormFieldExam
-                v-if="field.type === 'EXAM'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
-              />
-              <FormFieldExamText
-                v-if="field.type === 'EXAMTEXT'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :required="field.required"
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
-              />
-              <FormFieldExamTextArea
-                v-if="field.type === 'EXAMTEXTAREA'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :required="field.required"
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
-              />
-              <FormFieldExamSelect
-                v-if="field.type === 'EXAMSELECT'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :options="field.options"
-                :required="field.required"
-                :label="field.name"
-                :initialValue="value[field.code]"
-                @valueChanged="(val) => (value[field.code] = val)"
-              />
-              <FormFieldXrayImpression
-                v-if="field.type === 'XRAYIMPRESSION'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :label="field.name"
-                :required="field.required"
-                :initialValue="value[field.code]?.value || null"
-                @valueChanged="
-                  (val) => {
-                    value[field.code] = { code: field.code, value: val };
-                  }
-                "
-              />
-              <FormFieldExamMultiSelect
-                v-if="field.type === 'MULTISELECT'"
-                :disable="
-                  visitIsCompleted ||
-                  examIsCompleted ||
-                  field.disable ||
-                  loading
-                "
-                :options="field.options"
-                :label="field.name"
-                :required="field.required"
-                :model-value="value[field.code]?.value || null"
-                @update:model-value="
-                  (v) => {
-                    value[field.code] = { code: field.code, value: v };
-                  }
-                "
-              />
-            </div>
-          </template>
+          <div
+            class="q-pa-lg scroll"
+            style="height: auto; max-height: 70vh; min-height: 100px"
+          >
+            <template
+              v-for="p in examsMap[examCode]?.params || []"
+              :key="p.code"
+            >
+              <div>
+                <q-input
+                  v-if="p.fieldType === 'TEXT'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  stack-label
+                  outlined
+                  :rules="generateRules(p.required)"
+                  :label="p.name"
+                  v-model.trim="value[p.code]"
+                  hint=""
+                />
+                <q-input
+                  v-if="p.fieldType === 'TEXTAREA'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  type="textarea"
+                  stack-label
+                  outlined
+                  :rules="generateRules(p.required)"
+                  :label="p.name"
+                  v-model.trim="value[p.code]"
+                  hint=""
+                />
+                <UserSelect
+                  v-if="p.fieldType === 'PHYSICIANSELECT'"
+                  label="Physician"
+                  roleCode="DR"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :initialValue="value[p.code]"
+                  @valueChanged="(val) => (value[p.code] = val)"
+                />
+                <FormFieldExam
+                  v-if="p.fieldType === 'EXAM'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :label="p.name"
+                  :initialValue="value[p.code]"
+                  @valueChanged="(val) => (value[p.code] = val)"
+                />
+                <FormFieldExamText
+                  v-if="p.fieldType === 'EXAMTEXT'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :required="p.required"
+                  :label="p.name"
+                  :initialValue="value[p.code]"
+                  @valueChanged="(val) => (value[p.code] = val)"
+                />
+                <FormFieldExamTextArea
+                  v-if="p.fieldType === 'EXAMTEXTAREA'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :required="p.required"
+                  :label="p.name"
+                  :initialValue="value[p.code]"
+                  @valueChanged="(val) => (value[p.code] = val)"
+                />
+                <FormFieldExamSelect
+                  v-if="p.fieldType === 'EXAMSELECT'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :options="p.options"
+                  :required="p.required"
+                  :label="p.name"
+                  :initialValue="value[p.code]"
+                  @valueChanged="(val) => (value[p.code] = val)"
+                />
+                <FormFieldXrayImpression
+                  v-if="p.fieldType === 'XRAYIMPRESSION'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :label="p.name"
+                  :required="p.required"
+                  :initialValue="value[p.code]?.value || null"
+                  @valueChanged="
+                    (val) => {
+                      value[p.code] = { code: p.code, value: val };
+                    }
+                  "
+                />
+                <FormFieldExamMultiSelect
+                  v-if="p.fieldType === 'MULTISELECT'"
+                  :disable="
+                    visitIsCompleted || examIsCompleted || p.disable || loading
+                  "
+                  :options="p.options"
+                  :label="p.name"
+                  :required="p.required"
+                  :model-value="value[p.code]?.value || null"
+                  @update:model-value="
+                    (v) => {
+                      value[p.code] = { code: p.code, value: v };
+                    }
+                  "
+                />
+              </div>
+            </template>
+          </div>
+          <q-separator />
+          <div class="row q-pa-lg justify-end" style="gap: 12px">
+            <q-btn
+              unelevated
+              icon="save"
+              :disable="visitIsCompleted || examIsCompleted"
+              class="text-white bg-primary"
+              :loading="loading"
+              :label="
+                visitIsCompleted || examIsCompleted ? 'COMPLETED' : 'SAVE'
+              "
+              type="submit"
+            />
+          </div>
         </div>
-        <q-separator />
-        <div class="row q-pa-lg justify-end" style="gap: 12px">
-          <q-btn
-            unelevated
-            icon="save"
-            :disable="visitIsCompleted || examIsCompleted"
-            class="text-white bg-primary"
-            :loading="loading"
-            :label="visitIsCompleted || examIsCompleted ? 'COMPLETED' : 'SAVE'"
-            type="submit"
-          />
-        </div>
-      </div>
-    </q-form>
+      </q-form>
+    </template>
     <ConfirmationDialog
       v-if="confDialogVisible"
       question="Are you sure you want to save visit details?"
@@ -172,7 +156,6 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
-import { examFieldsMap, userRolesMap } from "src/helpers/constants.js";
 import { mapGetters } from "vuex";
 
 export default defineComponent({
@@ -211,6 +194,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    examsMap: {
+      type: Object,
+      required: true,
+    },
     examCode: {
       type: String,
       required: true,
@@ -219,7 +206,6 @@ export default defineComponent({
   emits: ["busy", "ready", "saved", "error"],
   setup() {
     return {
-      userRolesMap,
       generateRules(required) {
         return required
           ? [
@@ -231,9 +217,6 @@ export default defineComponent({
       },
       showMessage,
       formatDate,
-      examFieldsMap,
-      // inputRule: (val) =>
-      //   val == null || val === "" ? "Field is required." : undefined,
     };
   },
   data() {
@@ -253,14 +236,14 @@ export default defineComponent({
   },
   watch: {
     examCode: {
-      handler(val) {
+      handler() {
         this.getInitialValue();
       },
       immediate: true,
     },
     loading: {
-      handler(val) {
-        this.$emit(val ? "busy" : "ready");
+      handler(v) {
+        this.$emit(v ? "busy" : "ready");
       },
       immediate: true,
     },
@@ -282,17 +265,14 @@ export default defineComponent({
       }, {});
     },
     getMergedExamFieldsAndDetails(fields, obj) {
-      return fields.reduce((acc, field) => {
-        if (obj[field.code] == null || obj[field.code] === "") {
-          acc[field.code] = field.default ?? null;
-          return acc;
+      return fields.reduce((a, e) => {
+        if (obj[e.code] == null || obj[e.code] === "") {
+          a[e.code] = e.default ?? null;
+          return a;
         }
 
-        acc[field.code] = field.format
-          ? field.format(obj[field.code])
-          : obj[field.code];
-
-        return acc;
+        a[e.code] = e.format ? e.format(obj[e.code]) : obj[e.code];
+        return a;
       }, {});
     },
     async getInitialValue() {
@@ -300,7 +280,7 @@ export default defineComponent({
 
       // SUPPLY DEFAULT VALUE
       this.value = this.getMergedExamFieldsAndDetails(
-        this.examFieldsMap[this.examCode],
+        this.examsMap[this.examCode]?.params || [],
         this.getVisitExamDetailsMap([])
       );
 
@@ -326,7 +306,7 @@ export default defineComponent({
       this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
 
       this.value = this.getMergedExamFieldsAndDetails(
-        this.examFieldsMap[this.examCode],
+        this.examsMap[this.examCode]?.params || [],
         this.getVisitExamDetailsMap(response.body.details)
       );
 

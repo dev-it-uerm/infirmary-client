@@ -7,5 +7,8 @@ export default function () {
 
     departments: null,
     departmentsMap: null,
+
+    exams: null,
+    examsMap: null,
   };
 }

@@ -58,9 +58,10 @@
           @saved="$emit('saved')"
         />
         <VisitExamDetailsForm
-          v-else
+          v-if="examsMap && tab.code !== 'VISIT'"
           :visitId="visit.id"
           :examCode="tab.code"
+          :examsMap="examsMap"
           @busy="loading = true"
           @ready="loading = false"
           @saved="$emit('saved')"
@@ -73,7 +74,6 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
-import { examsMap } from "src/helpers/constants.js";
 import { formatName } from "src/helpers/util.js";
 
 export default defineComponent({
@@ -101,10 +101,16 @@ export default defineComponent({
       type: String,
       default: null,
     },
+    examsMap: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ["close", "saved"],
   setup() {
-    return { formatName };
+    return {
+      formatName,
+    };
   },
   data() {
     return {
@@ -139,7 +145,7 @@ export default defineComponent({
 
       if (!response.error && response.body?.length > 0) {
         const examsAllowedForPx = response.body.map((e) => {
-          return examsMap[e.examCode];
+          return this.examsMap[e.examCode];
         });
 
         const examsToShow = examsAllowedForPx.filter((e) => {

@@ -17,13 +17,13 @@
           @patientCodeChanged="(v) => register(v)"
           @inputModeChanged="(val) => (inputMode = val)"
         />
-        <div v-if="lastPatientRegistered">
+        <div v-if="lastPatientAttended">
           <q-separator class="q-my-lg" />
           <div class="text-primary text-weight-medium q-mb-md">
             <div>PATIENT/EMPLOYEE REGISTERED:</div>
           </div>
           <table class="full-width" style="border-collapse: collapse">
-            <tr v-for="(val, key) in lastPatientRegistered" :key="key">
+            <tr v-for="(val, key) in lastPatientAttended" :key="key">
               <td
                 v-for="(v, idx) in [key, val]"
                 :key="idx"
@@ -38,9 +38,10 @@
           </table>
           <div class="row justify-end">
             <q-btn
-              v-if="lastPatientRegistered['Student Number']"
+              v-if="lastPatientAttended['Student Number']"
               class="q-mt-md"
               unelevated
+              icon="print"
               label="PRINT CHECKLIST"
               color="primary"
               @click="checklistDialogVisible = true"
@@ -53,7 +54,7 @@
     <q-dialog v-model="checklistDialogVisible">
       <q-card class="fit">
         <q-card-section class="fit">
-          <Checklist :patientInfo="lastPatientRegistered" />
+          <PrintoutChecklist :patient="lastPatientAttended" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -94,7 +95,7 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")
     ),
-    Checklist: defineAsyncComponent(() =>
+    PrintoutChecklist: defineAsyncComponent(() =>
       import("src/components/printouts/Checklist.vue")
     ),
   },
@@ -120,7 +121,7 @@ export default defineComponent({
       loading: false,
 
       inputMode: null,
-      lastPatientRegistered: null,
+      lastPatientAttended: null,
     };
   },
   computed: {
@@ -191,7 +192,7 @@ export default defineComponent({
         (response.body.visit && response.body.patient) ||
         (response.body.attendance && response.body.employee)
       ) {
-        this.lastPatientRegistered = this.formatLastPatientRegistered(
+        this.lastPatientAttended = this.formatLastPatientRegistered(
           response.body
         );
       }

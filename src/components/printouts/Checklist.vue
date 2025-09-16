@@ -16,7 +16,7 @@ import pdfMakeFonts from "src/helpers/pdfmake-vfs.js";
 export default {
   name: "PrintoutChecklist",
   props: {
-    patientInfo: {
+    patient: {
       type: Object,
       required: true,
     },
@@ -46,7 +46,7 @@ export default {
         },
         // pageSize: "LETTER",
         // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
-        pageMargins: [15, 80, 15, 70], // Body margins. Change top or bottom to resize the header or footer respectively.
+        pageMargins: [15, 80, 15, 45], // Body margins. Change top or bottom to resize the header or footer respectively.
         header: [
           {
             stack: [
@@ -70,12 +70,6 @@ export default {
                 columnGap: 10,
                 margin: [0, 0, 0, 0],
               },
-              // {
-              //   table: {
-              //     widths: ["100%"],
-              //     body: [[{ text: "", border: [false, true] }]],
-              //   },
-              // },
               {
                 table: {
                   widths: ["auto", "*"],
@@ -84,8 +78,8 @@ export default {
                       { text: "ID:", border: [] },
                       {
                         text:
-                          this.patientInfo["Student Number"] ??
-                          this.patientInfo["Employee Number"],
+                          this.patient["Student Number"] ??
+                          this.patient["Employee Number"],
                         bold: true,
                         border: [],
                       },
@@ -96,7 +90,7 @@ export default {
                         border: [],
                       },
                       {
-                        text: this.patientInfo.Fullname,
+                        text: this.patient.Fullname,
                         border: [],
                         bold: true,
                       },
@@ -104,7 +98,7 @@ export default {
                     [
                       { text: "Date:", border: [] },
                       {
-                        text: this.patientInfo["Date & Time Registered"],
+                        text: this.patient["Date & Time Registered"],
                         bold: true,
                         border: [],
                       },
@@ -116,7 +110,7 @@ export default {
               },
             ],
             style: ["fontNormal"],
-            margin: [25, 10, 25, 0],
+            margin: [10, 10, 10, 0],
           },
         ],
         content: {
@@ -125,29 +119,16 @@ export default {
             body: this.createContentBody(),
           },
           style: ["fontBody"],
-          margin: [0, 0, 0, 5],
+          margin: [0, 0, 0, 0],
         },
         footer: this.createFooter(),
         styles: {
-          fontHeader: {
-            fontSize: 11,
-            bold: true,
-            margin: [0, 10, 0, 10],
-          },
           fontNormal: {
             fontSize: 8,
           },
           fontBody: {
             fontSize: 8,
           },
-          leftAlign: {
-            alignment: "left",
-          },
-          footerStyle: {
-            bold: true,
-            alignment: "left",
-          },
-          tableStyle: {},
         },
       };
 
@@ -197,12 +178,22 @@ export default {
       ];
 
       if (
-        this.patientInfo.Affiliation === "Employee/Faculty" &&
-        this.patientInfo.Campus === "Caloocan"
+        this.patient.Affiliation === "Employee/Faculty" &&
+        this.patient.Campus === "UE Caloocan"
       ) {
         body.push([
           {
             text: "STOOL",
+            alignment: "center",
+          },
+          { text: "     " },
+        ]);
+      }
+
+      if (this.patient.Campus === "UE Caloocan") {
+        body.push([
+          {
+            text: "DENTAL",
             alignment: "center",
           },
           { text: "     " },

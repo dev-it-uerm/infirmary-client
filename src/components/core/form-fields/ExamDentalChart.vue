@@ -94,7 +94,6 @@ export default defineComponent({
   watch: {
     value: {
       handler(v) {
-        console.log(v);
         this.$emit("update:modelValue", v);
       },
       immediate: false,

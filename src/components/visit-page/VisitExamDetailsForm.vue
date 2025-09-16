@@ -13,7 +13,7 @@
         >
           <div
             class="q-pa-lg scroll"
-            style="height: auto; max-height: 70vh; min-height: 100px"
+            style="height: auto; max-height: 65vh; min-height: 100px"
           >
             <template
               v-for="p in examsMap[examCode]?.params || []"

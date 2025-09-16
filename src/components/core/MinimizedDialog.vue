@@ -28,15 +28,11 @@
           </q-btn>
         </div>
       </div>
-
       <q-separator />
-
       <slot name="header"></slot>
-
       <slot name="body">
         <!-- fallback content -->
       </slot>
-
       <slot name="footer"></slot>
     </q-card>
   </q-dialog>

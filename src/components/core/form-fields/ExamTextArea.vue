@@ -17,7 +17,7 @@
   >
     <template v-slot:label>
       {{ label }}
-      <span class="text-weight-bold text-red" v-if="required"> *</span>
+      <span v-if="required" class="text-weight-bold text-red"> *</span>
     </template>
   </q-input>
 </template>

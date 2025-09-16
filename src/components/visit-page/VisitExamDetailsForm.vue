@@ -139,6 +139,16 @@
                     }
                   "
                 />
+                <FormFieldExamIllnesses
+                  v-if="p.fieldType === 'EXAMILLNESSES'"
+                  :disable="
+                    p.disable || visitIsCompleted || examIsCompleted || loading
+                  "
+                  :required="p.required"
+                  :label="p.name"
+                  :model-value="value[p.code]"
+                  @update:model-value="(val) => (value[p.code] = val)"
+                />
               </div>
             </template>
           </div>
@@ -199,6 +209,9 @@ export default defineComponent({
     ),
     FormFieldExamDentalChart: defineAsyncComponent(() =>
       import("src/components/core/form-fields/ExamDentalChart.vue")
+    ),
+    FormFieldExamIllnesses: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamIllnesses.vue")
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")

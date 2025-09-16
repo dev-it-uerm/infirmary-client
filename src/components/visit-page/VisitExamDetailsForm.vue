@@ -23,7 +23,7 @@
                 <q-input
                   v-if="p.fieldType === 'TEXT'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   stack-label
                   outlined
@@ -35,7 +35,7 @@
                 <q-input
                   v-if="p.fieldType === 'TEXTAREA'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   type="textarea"
                   stack-label
@@ -50,7 +50,7 @@
                   label="Physician"
                   roleCode="DR"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :initialValue="value[p.code]"
                   @valueChanged="(val) => (value[p.code] = val)"
@@ -58,7 +58,7 @@
                 <FormFieldExam
                   v-if="p.fieldType === 'EXAM'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :label="p.name"
                   :initialValue="value[p.code]"
@@ -67,7 +67,7 @@
                 <FormFieldExamText
                   v-if="p.fieldType === 'EXAMTEXT'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :required="p.required"
                   :label="p.name"
@@ -77,7 +77,7 @@
                 <FormFieldExamTextArea
                   v-if="p.fieldType === 'EXAMTEXTAREA'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :required="p.required"
                   :label="p.name"
@@ -87,7 +87,7 @@
                 <FormFieldExamSelect
                   v-if="p.fieldType === 'EXAMSELECT'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :options="p.options"
                   :required="p.required"
@@ -98,7 +98,7 @@
                 <FormFieldXrayImpression
                   v-if="p.fieldType === 'XRAYIMPRESSION'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :label="p.name"
                   :required="p.required"
@@ -112,7 +112,22 @@
                 <FormFieldExamMultiSelect
                   v-if="p.fieldType === 'EXAMMULTISELECT'"
                   :disable="
-                    visitIsCompleted || examIsCompleted || p.disable || loading
+                    p.disable || visitIsCompleted || examIsCompleted || loading
+                  "
+                  :options="p.options"
+                  :label="p.name"
+                  :required="p.required"
+                  :model-value="value[p.code]?.value || null"
+                  @update:model-value="
+                    (v) => {
+                      value[p.code] = { code: p.code, value: v };
+                    }
+                  "
+                />
+                <FormFieldExamDentalChart
+                  v-if="p.fieldType === 'EXAMDENTALCHART'"
+                  :disable="
+                    p.disable || visitIsCompleted || examIsCompleted || loading
                   "
                   :options="p.options"
                   :label="p.name"
@@ -155,7 +170,7 @@
 
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
-import { delay, formatDate, showMessage, isObj } from "src/helpers/util.js";
+import { delay, formatDate, showMessage } from "src/helpers/util.js";
 import { mapGetters } from "vuex";
 
 export default defineComponent({
@@ -181,6 +196,9 @@ export default defineComponent({
     ),
     FormFieldExamMultiSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/ExamMultiSelect.vue")
+    ),
+    FormFieldExamDentalChart: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamDentalChart.vue")
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")

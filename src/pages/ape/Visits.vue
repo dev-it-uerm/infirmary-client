@@ -1,47 +1,47 @@
 <template>
   <!-- class="row justify-center" -->
   <q-page :class="$q.screen.gt.sm ? 'q-pa-lg' : 'q-pa-md'">
-    <div
-      class="bg-white full-width"
-      style="border-radius: 6px; overflow: hidden"
-    >
-      <PageHeader icon="fa-solid fa-house-medical" text="VISITS" />
-      <div v-if="initialized" :class="$q.screen.gt.md ? 'q-pa-xl' : 'q-pa-lg'">
-        <div class="column full-width" style="gap: 36px">
-          <div
-            class="full-width"
-            :class="$q.screen.gt.md ? 'row' : 'column'"
-            style="gap: 56px"
-          >
-            <div class="full-width">
-              <div class="row items-start q-mb-md" style="gap: 16px">
-                <div
-                  class="col-auto"
-                  :class="$q.screen.gt.md ? 'col' : 'col-12'"
-                >
+    <CardComponent class="full-width">
+      <template v-slot:header>
+        <PageHeader text="VISITS" icon="fa-solid fa-house-medical" />
+      </template>
+      <template v-slot:body>
+        <div v-if="initialized">
+          <div class="column full-width" style="gap: 36px">
+            <div
+              class="full-width"
+              :class="$q.screen.gt.sm ? 'row' : 'column'"
+              style="gap: 56px"
+            >
+              <div class="full-width">
+                <div class="row items-start q-mb-md" style="gap: 16px">
                   <div
-                    class="text-primary text-weight-medium text-uppercase q-pt-sm"
-                    style="
-                      font-size: 16px;
-                      line-height: 16px;
-                      letter-spacing: 0.8pt;
-                    "
+                    class="col-auto"
+                    :class="$q.screen.gt.sm ? 'col' : 'col-12'"
                   >
-                    FILTER:
-                  </div>
-                </div>
-                <div class="col">
-                  <q-form @submit="getVisits">
                     <div
-                      class="row items-start justify-end"
-                      :class="$q.screen.gt.md ? '' : 'q-mb-lg'"
-                      :style="$q.screen.gt.md ? { gap: '8px' } : {}"
+                      class="text-primary text-weight-medium text-uppercase q-pt-sm"
+                      style="
+                        font-size: 16px;
+                        line-height: 16px;
+                        letter-spacing: 0.8pt;
+                      "
                     >
-                      <!-- <q-input
+                      FILTER:
+                    </div>
+                  </div>
+                  <div class="col">
+                    <q-form @submit="getVisits">
+                      <div
+                        class="row items-start justify-end"
+                        :class="$q.screen.gt.sm ? '' : 'q-mb-lg'"
+                        :style="$q.screen.gt.sm ? { gap: '8px' } : {}"
+                      >
+                        <!-- <q-input
                         :disable="visitsLoading"
-                        :class="$q.screen.gt.md ? '' : 'full-width'"
-                        :style="$q.screen.gt.md ? { width: '100px' } : {}"
-                        :dense="$q.screen.gt.md"
+                        :class="$q.screen.gt.sm ? '' : 'full-width'"
+                        :style="$q.screen.gt.sm ? { width: '100px' } : {}"
+                        dense
                         stack-label
                         outlined
                         label="Year"
@@ -49,182 +49,186 @@
                         :rules="[requiredRule, yearRule]"
                         v-model.trim="visitsFilters.year"
                       /> -->
-                      <q-select
-                        :disable="visitsLoading"
-                        debounce="750"
-                        :class="$q.screen.gt.md ? '' : 'full-width'"
-                        :style="$q.screen.gt.md ? { width: '100px' } : {}"
-                        :dense="$q.screen.gt.md"
-                        stack-label
-                        outlined
-                        :options="
-                          Array(1000)
-                            .fill(null)
-                            .map((e, idx) => 2024 + idx)
-                        "
-                        label="Year"
-                        hint=""
-                        :rules="[requiredRule, yearRule]"
-                        v-model="visitsFilters.year"
-                      />
-                      <q-select
-                        :disable="visitsLoading"
-                        :class="$q.screen.gt.md ? '' : 'full-width'"
-                        :dense="$q.screen.gt.md"
-                        stack-label
-                        outlined
-                        emit-value
-                        map-options
-                        option-label="name"
-                        option-value="code"
-                        :options="campuses"
-                        label="Campus"
-                        hint=""
-                        v-model="visitsFilters.patientCampusCode"
-                      />
-                      <q-select
-                        :disable="visitsLoading"
-                        :class="$q.screen.gt.md ? '' : 'full-width'"
-                        :dense="$q.screen.gt.md"
-                        stack-label
-                        outlined
-                        emit-value
-                        map-options
-                        option-label="name"
-                        option-value="code"
-                        :options="affiliations"
-                        label="Affiliation"
-                        hint=""
-                        v-model="visitsFilters.patientAffiliationCode"
-                      />
-                      <q-input
-                        :disable="visitsLoading"
-                        :class="$q.screen.gt.md ? '' : 'full-width'"
-                        :style="$q.screen.gt.md ? { width: '200px' } : {}"
-                        :dense="$q.screen.gt.md"
-                        outlined
-                        label="Patient Name"
-                        maxlength="255"
-                        hint=""
-                        :rules="[
-                          (v) =>
-                            v.length > 0 && v.length < 3
-                              ? 'At least 3 letters is required.'
-                              : undefined,
-                        ]"
-                        v-model.trim="visitsFilters.patientFullName"
-                      >
-                        <template v-slot:append>
-                          <q-icon
-                            v-if="visitsFilters.patientFullName !== ''"
-                            size="xs"
-                            name="close"
-                            class="cursor-pointer"
-                            @click="visitsFilters.patientFullName = ''"
-                          />
-                        </template>
-                      </q-input>
-                      <q-btn
-                        :disable="visitsLoading"
-                        :class="$q.screen.gt.md ? '' : 'full-width'"
-                        class="text-black q-px-md q-py-sm"
-                        unelevated
-                        icon="sym_o_search"
-                        color="accent"
-                        label="SEARCH"
-                        type="submit"
-                      />
-                    </div>
-                  </q-form>
+                        <q-select
+                          :disable="visitsLoading"
+                          debounce="750"
+                          :class="$q.screen.gt.sm ? '' : 'full-width'"
+                          :style="$q.screen.gt.sm ? { width: '100px' } : {}"
+                          dense
+                          stack-label
+                          outlined
+                          :options="
+                            Array(1000)
+                              .fill(null)
+                              .map((e, idx) => 2024 + idx)
+                          "
+                          label="Year"
+                          hint=""
+                          :rules="[requiredRule, yearRule]"
+                          v-model="visitsFilters.year"
+                        />
+                        <q-select
+                          :disable="visitsLoading"
+                          :class="$q.screen.gt.sm ? '' : 'full-width'"
+                          dense
+                          stack-label
+                          outlined
+                          emit-value
+                          map-options
+                          option-label="name"
+                          option-value="code"
+                          :options="campuses"
+                          label="Campus"
+                          hint=""
+                          v-model="visitsFilters.patientCampusCode"
+                        />
+                        <q-select
+                          :disable="visitsLoading"
+                          :class="$q.screen.gt.sm ? '' : 'full-width'"
+                          dense
+                          stack-label
+                          outlined
+                          emit-value
+                          map-options
+                          option-label="name"
+                          option-value="code"
+                          :options="affiliations"
+                          label="Affiliation"
+                          hint=""
+                          v-model="visitsFilters.patientAffiliationCode"
+                        />
+                        <q-input
+                          :disable="visitsLoading"
+                          :class="$q.screen.gt.sm ? '' : 'full-width'"
+                          :style="$q.screen.gt.sm ? { width: '200px' } : {}"
+                          dense
+                          outlined
+                          label="Patient Name"
+                          maxlength="255"
+                          debounce="250"
+                          hint=""
+                          :rules="[
+                            (v) =>
+                              v.length > 0 && v.length < 3
+                                ? 'At least 3 letters is required.'
+                                : undefined,
+                          ]"
+                          v-model.trim="visitsFilters.patientFullName"
+                        >
+                          <template v-slot:append>
+                            <q-icon
+                              v-if="visitsFilters.patientFullName !== ''"
+                              size="xs"
+                              name="close"
+                              class="cursor-pointer"
+                              @click="visitsFilters.patientFullName = ''"
+                            />
+                          </template>
+                        </q-input>
+                        <q-btn
+                          :disable="visitsLoading"
+                          :class="$q.screen.gt.sm ? '' : 'full-width'"
+                          dense
+                          class="text-black q-px-md q-py-sm"
+                          unelevated
+                          icon="sym_o_search"
+                          color="accent"
+                          label="SEARCH"
+                          type="submit"
+                        />
+                      </div>
+                    </q-form>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <FetchingData v-if="visitsLoading" />
-                <template v-else>
-                  <template v-if="visits && visits.length > 0">
-                    <div
-                      class="full-width relative-position"
-                      v-if="$q.screen.gt.md"
-                    >
-                      <q-table
-                        bordered
-                        style="border-radius: 0"
-                        id="uerm-infirmary__visits-page__q-table"
-                        class="shadow-0"
-                        :rows="visits"
-                        :columns="columns"
-                        hide-bottom
-                        :rows-per-page-options="[0]"
+                <div>
+                  <FetchingData v-if="visitsLoading" />
+                  <template v-else>
+                    <template v-if="visits && visits.length > 0">
+                      <div
+                        v-if="$q.screen.gt.sm"
+                        class="full-width relative-position"
                       >
-                        <template v-slot:body="props">
-                          <q-tr
-                            class="cursor-pointer"
-                            @click.stop="showPxVisitInfo(props.row)"
-                          >
-                            <template v-for="column of columns">
-                              <q-td v-if="column.name === 'dateTimeCreated'">
-                                <span class="text-grey-7">
-                                  {{ formatDate(props.row.dateTimeCreated) }}
-                                </span>
-                              </q-td>
-                              <q-td v-else-if="column.name === 'visitExams'">
-                                <div
-                                  class="row items-center no-wrap"
-                                  style="gap: 6px"
-                                >
-                                  <q-btn
-                                    v-for="(item, idx) in props.row.exams"
-                                    :key="idx"
-                                    dense
-                                    unelevated
-                                    class="q-px-sm"
-                                    style="font-size: 9pt"
-                                    :class="
-                                      item.dateTimeAccepted
-                                        ? 'text-positive'
-                                        : 'text-negative'
-                                    "
-                                    @click.stop="
-                                      () => {
-                                        visitInfoTabCode = item.examCode;
-                                        showPxVisitInfo(props.row);
-                                      }
-                                    "
-                                    :label="examsMap[item.examCode].name"
-                                  />
-                                </div>
-                              </q-td>
-                              <q-td v-else-if="column.name === 'action'">
-                                <div
-                                  class="row justify-center"
-                                  style="gap: 8px; width: 146px"
-                                >
-                                  <q-btn
-                                    outline
-                                    dense
-                                    class="text-primary"
-                                    style="
-                                      padding-left: 10px;
-                                      padding-right: 10px;
-                                    "
-                                    unelevated
-                                    label="EXAMS"
-                                    @click.stop="showPxVisitInfo(props.row)"
-                                  />
-                                  <q-btn
-                                    dense
-                                    class="bg-accent text-black"
-                                    style="
-                                      padding-left: 10px;
-                                      padding-right: 10px;
-                                    "
-                                    unelevated
-                                    label="PRINT"
-                                    @click.stop="showPxVisitPrintout(props.row)"
-                                  />
-                                </div>
-                              </q-td>
-                              <!-- <q-td
+                        <q-table
+                          bordered
+                          style="border-radius: 0"
+                          id="uerm-infirmary__visits-page__q-table"
+                          class="shadow-0"
+                          :rows="visits"
+                          :columns="columns"
+                          hide-bottom
+                          :rows-per-page-options="[0]"
+                        >
+                          <template v-slot:body="props">
+                            <q-tr
+                              class="cursor-pointer"
+                              @click.stop="showPxVisitInfo(props.row)"
+                            >
+                              <template v-for="column of columns">
+                                <q-td v-if="column.name === 'dateTimeCreated'">
+                                  <span class="text-grey-7">
+                                    {{ formatDate(props.row.dateTimeCreated) }}
+                                  </span>
+                                </q-td>
+                                <q-td v-else-if="column.name === 'visitExams'">
+                                  <div
+                                    class="row items-center no-wrap"
+                                    style="gap: 6px"
+                                  >
+                                    <q-btn
+                                      v-for="(item, idx) in props.row.exams"
+                                      :key="idx"
+                                      dense
+                                      unelevated
+                                      class="q-px-sm"
+                                      style="font-size: 9pt"
+                                      :class="
+                                        item.dateTimeAccepted
+                                          ? 'text-positive'
+                                          : 'text-negative'
+                                      "
+                                      @click.stop="
+                                        () => {
+                                          visitInfoTabCode = item.examCode;
+                                          showPxVisitInfo(props.row);
+                                        }
+                                      "
+                                      :label="examsMap[item.examCode].name"
+                                    />
+                                  </div>
+                                </q-td>
+                                <q-td v-else-if="column.name === 'action'">
+                                  <div
+                                    class="row justify-center"
+                                    style="gap: 8px; width: 146px"
+                                  >
+                                    <q-btn
+                                      outline
+                                      dense
+                                      class="text-primary"
+                                      style="
+                                        padding-left: 10px;
+                                        padding-right: 10px;
+                                      "
+                                      unelevated
+                                      label="EXAMS"
+                                      @click.stop="showPxVisitInfo(props.row)"
+                                    />
+                                    <q-btn
+                                      dense
+                                      class="bg-accent text-black"
+                                      style="
+                                        padding-left: 10px;
+                                        padding-right: 10px;
+                                      "
+                                      unelevated
+                                      label="PRINT"
+                                      @click.stop="
+                                        showPxVisitPrintout(props.row)
+                                      "
+                                    />
+                                  </div>
+                                </q-td>
+                                <!-- <q-td
                                 v-else-if="column.name === 'patientCampusCode'"
                               >
                                 <div class="row justify-center">
@@ -257,150 +261,140 @@
                                   </q-badge>
                                 </div>
                               </q-td> -->
-                              <q-td
-                                v-else-if="column.name === 'patientFullName'"
-                                class="text-weight-bold text-uppercase"
+                                <q-td
+                                  v-else-if="column.name === 'patientFullName'"
+                                  class="text-weight-bold text-uppercase"
+                                >
+                                  {{
+                                    formatName(
+                                      props.row.patientFirstName,
+                                      props.row.patientMiddleName,
+                                      props.row.patientLastName,
+                                      props.row.patientExtName
+                                    )
+                                  }}
+                                </q-td>
+                                <q-td
+                                  v-else-if="column.name === 'patientDeptCode'"
+                                  class="text-center"
+                                >
+                                  {{
+                                    props.row[column.name]
+                                      ? departmentsMap[props.row[column.name]]
+                                          .name
+                                      : ""
+                                  }}
+                                </q-td>
+                                <q-td
+                                  v-else-if="column.name === 'patientYearLevel'"
+                                  class="text-center"
+                                >
+                                  {{
+                                    props.row[column.name]
+                                      ? Object.values(yearLevelsMap).find(
+                                          (y) =>
+                                            y.code ===
+                                            Number(props.row[column.name])
+                                        ).name
+                                      : ""
+                                  }}
+                                </q-td>
+                                <q-td v-else class="text-center">
+                                  {{
+                                    column.format
+                                      ? column.format(props.row[column.name])
+                                      : props.row[column.name]
+                                  }}
+                                </q-td>
+                              </template>
+                            </q-tr>
+                          </template>
+                        </q-table>
+                      </div>
+                      <div
+                        v-else
+                        class="relative-position bg-white"
+                        style="
+                          overflow-y: auto;
+                          display: grid;
+                          grid-template-rows: min-content auto;
+                        "
+                      >
+                        <q-virtual-scroll
+                          style="
+                            height: auto;
+                            border-top: 1px solid rgba(0, 0, 0, 0.1);
+                            border-left: 1px solid rgba(0, 0, 0, 0.1);
+                            border-right: 1px solid rgba(0, 0, 0, 0.1);
+                          "
+                          :items="visits"
+                          v-slot="{ item, index }"
+                        >
+                          <q-item
+                            class="full-width q-pa-md"
+                            :key="index"
+                            clickable
+                            @click="showPxVisitInfo(item)"
+                          >
+                            <q-item-section>
+                              <q-item-label caption class="ellipsis">{{
+                                formatDate(item.dateTimeCreated)
+                              }}</q-item-label>
+                              <q-item-label overline class="q-mb-sm">{{
+                                item.patientIdentificationCode
+                              }}</q-item-label>
+                              <q-item-label
+                                class="text-weight-medium text-uppercase"
+                                style="gap: 8px"
                               >
                                 {{
                                   formatName(
-                                    props.row.patientFirstName,
-                                    props.row.patientMiddleName,
-                                    props.row.patientLastName,
-                                    props.row.patientExtName
+                                    item.patientFirstName,
+                                    item.patientMiddleName,
+                                    item.patientLastName,
+                                    item.patientExtName
                                   )
                                 }}
-                              </q-td>
-                              <q-td
-                                v-else-if="column.name === 'patientDeptCode'"
-                                class="text-center"
-                              >
-                                {{
-                                  props.row[column.name]
-                                    ? departmentsMap[props.row[column.name]]
-                                        .name
-                                    : ""
-                                }}
-                              </q-td>
-                              <q-td
-                                v-else-if="column.name === 'patientYearLevel'"
-                                class="text-center"
-                              >
-                                {{
-                                  props.row[column.name]
-                                    ? Object.values(yearLevelsMap).find(
-                                        (y) =>
-                                          y.code ===
-                                          Number(props.row[column.name])
-                                      ).name
-                                    : ""
-                                }}
-                              </q-td>
-                              <q-td v-else class="text-center">
-                                {{
-                                  column.format
-                                    ? column.format(props.row[column.name])
-                                    : props.row[column.name]
-                                }}
-                              </q-td>
-                            </template>
-                          </q-tr>
-                        </template>
-                      </q-table>
-                      <div class="row justify-start q-mt-md">
-                        <q-badge
-                          color="accent"
-                          class="text-black q-pa-sm"
-                          :class="$q.screen.lt.md ? 'q-mt-md' : ''"
-                        >
-                          <span class="text-weight-bold">
-                            {{ visits.length }}
-                          </span>
-                          &nbsp;item/s
-                        </q-badge>
-                      </div>
-                    </div>
-                    <div
-                      v-else
-                      class="relative-position bg-white"
-                      style="
-                        overflow-y: auto;
-                        display: grid;
-                        grid-template-rows: min-content auto;
-                      "
-                    >
-                      <q-virtual-scroll
-                        style="
-                          height: auto;
-                          border-top: 1px solid rgba(0, 0, 0, 0.1);
-                          border-left: 1px solid rgba(0, 0, 0, 0.1);
-                          border-right: 1px solid rgba(0, 0, 0, 0.1);
-                        "
-                        :items="visits"
-                        v-slot="{ item, index }"
-                      >
-                        <q-item
-                          class="full-width q-pa-md"
-                          :key="index"
-                          clickable
-                          @click="showPxVisitInfo(item)"
-                        >
-                          <q-item-section>
-                            <q-item-label caption class="ellipsis">{{
-                              formatDate(item.dateTimeCreated)
-                            }}</q-item-label>
-                            <q-item-label overline class="q-mb-sm">{{
-                              item.patientIdentificationCode
-                            }}</q-item-label>
-                            <q-item-label
-                              class="text-weight-medium text-uppercase"
-                              style="gap: 8px"
-                            >
-                              {{
-                                formatName(
-                                  item.patientFirstName,
-                                  item.patientMiddleName,
-                                  item.patientLastName,
-                                  item.patientExtName
-                                )
-                              }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              <div class="row items-center" style="gap: 6px">
-                                <q-icon
-                                  size="xs"
-                                  :color="
-                                    item.patientGender === 'M'
-                                      ? 'blue-4'
-                                      : 'pink-4'
-                                  "
-                                  :name="
-                                    item.patientGender === 'M'
-                                      ? 'fa-solid fa-mars'
-                                      : 'fa-solid fa-venus'
-                                  "
-                                />
-                                <q-badge class="bg-grey overflow-hidden">
-                                  <span class="ellipsis">
-                                    {{
-                                      departmentsMap[item.patientDeptCode].name
-                                    }}
-                                  </span>
-                                </q-badge>
-                                <q-badge
-                                  v-if="item.patientYearLevel"
-                                  class="bg-grey"
-                                  >{{
-                                    yearLevels.find(
-                                      (l) =>
-                                        l.code === Number(item.patientYearLevel)
-                                    )?.name
-                                  }}</q-badge
-                                >
-                              </div>
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section v-if="examsMap" side>
-                            <!-- <q-btn
+                              </q-item-label>
+                              <q-item-label caption>
+                                <div class="row items-center" style="gap: 6px">
+                                  <q-icon
+                                    size="xs"
+                                    :color="
+                                      item.patientGender === 'M'
+                                        ? 'blue-4'
+                                        : 'pink-4'
+                                    "
+                                    :name="
+                                      item.patientGender === 'M'
+                                        ? 'fa-solid fa-mars'
+                                        : 'fa-solid fa-venus'
+                                    "
+                                  />
+                                  <q-badge class="bg-grey overflow-hidden">
+                                    <span class="ellipsis">
+                                      {{
+                                        departmentsMap[item.patientDeptCode]
+                                          .name
+                                      }}
+                                    </span>
+                                  </q-badge>
+                                  <q-badge
+                                    v-if="item.patientYearLevel"
+                                    class="bg-grey"
+                                    >{{
+                                      yearLevels.find(
+                                        (l) =>
+                                          l.code ===
+                                          Number(item.patientYearLevel)
+                                      )?.name
+                                    }}</q-badge
+                                  >
+                                </div>
+                              </q-item-label>
+                            </q-item-section>
+                            <q-item-section v-if="examsMap" side>
+                              <!-- <q-btn
                               dense
                               style="padding-left: 10px; padding-right: 10px"
                               class="bg-white"
@@ -419,54 +413,70 @@
                               "
                               label="DIAG EXAMS"
                             /> -->
-                            <q-btn
-                              dense
-                              style="
-                                padding-left: 10px;
-                                padding-right: 10px;
-                                min-width: 110px;
-                              "
-                              unelevated
-                              class="q-mt-sm text-black"
-                              color="accent"
-                              icon="sym_o_checklist"
-                              label="EXAMS"
-                              @click.stop="showPxVisitInfo(item)"
-                            />
-                            <q-btn
-                              v-if="
-                                item.exams?.some((e) =>
-                                  Boolean(e.dateTimeAccepted)
-                                )
-                              "
-                              dense
-                              style="
-                                padding-left: 10px;
-                                padding-right: 10px;
-                                min-width: 110px;
-                              "
-                              unelevated
-                              class="q-mt-sm text-black"
-                              color="accent"
-                              icon="sym_o_print"
-                              label="PRINT"
-                              @click.stop="showPxVisitPrintout(item)"
-                            />
-                          </q-item-section>
-                        </q-item>
-                        <q-separator />
-                      </q-virtual-scroll>
-                    </div>
+                              <q-btn
+                                dense
+                                style="
+                                  padding-left: 10px;
+                                  padding-right: 10px;
+                                  min-width: 110px;
+                                "
+                                unelevated
+                                class="q-mt-sm text-black"
+                                color="accent"
+                                icon="sym_o_checklist"
+                                label="EXAMS"
+                                @click.stop="showPxVisitInfo(item)"
+                              />
+                              <q-btn
+                                v-if="
+                                  item.exams?.some((e) =>
+                                    Boolean(e.dateTimeAccepted)
+                                  )
+                                "
+                                dense
+                                style="
+                                  padding-left: 10px;
+                                  padding-right: 10px;
+                                  min-width: 110px;
+                                "
+                                unelevated
+                                class="q-mt-sm text-black"
+                                color="accent"
+                                icon="sym_o_print"
+                                label="PRINT"
+                                @click.stop="showPxVisitPrintout(item)"
+                              />
+                            </q-item-section>
+                          </q-item>
+                          <q-separator />
+                        </q-virtual-scroll>
+                      </div>
+                      <div class="row items-center justify-between q-mt-md">
+                        <q-badge color="grey-3" class="text-black q-pa-sm">
+                          <span class="text-weight-bold">
+                            {{ visits.length }}
+                          </span>
+                          &nbsp;item(s)
+                        </q-badge>
+                        <div
+                          v-if="!visitsFilters?.patientFullName"
+                          class="text-caption text-primary text-italic"
+                        >
+                          Only latest 20 visits are shown when patient name is
+                          not supplied.
+                        </div>
+                      </div>
+                    </template>
+                    <NoResult v-else message="No visits found." />
                   </template>
-                  <NoResult v-else message="No visits found." />
-                </template>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <FetchingData v-else />
-    </div>
+        <FetchingData v-else />
+      </template>
+    </CardComponent>
     <MinimizedDialog
       v-if="statusHistoryVisible"
       title="DIAGNOSITC EXAMS"
@@ -546,6 +556,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+import { DateTime } from "luxon";
 
 import {
   delay,
@@ -568,6 +579,9 @@ import * as inputRules from "src/helpers/input-rules.js";
 export default defineComponent({
   name: "VisitsPage",
   components: {
+    CardComponent: defineAsyncComponent(() =>
+      import("src/components/core/Card.vue")
+    ),
     PageHeader: defineAsyncComponent(() =>
       import("src/components/core/PageHeader.vue")
     ),
@@ -607,7 +621,9 @@ export default defineComponent({
       yearLevels,
 
       showMessage,
-      formatDate,
+      formatDate: (v) => {
+        return DateTime.fromJSDate(v).toFormat("MMM d, yyyy h:mm a");
+      },
       formatName,
       requiredRule: inputRules.required,
       yearRule: inputRules.year,
@@ -784,9 +800,9 @@ export default defineComponent({
             patientId: row.patientId,
             physicianCode: row.physicianCode,
             createdBy: row.createdBy,
-            dateTimeCreated: row.dateTimeCreated,
+            dateTimeCreated: new Date(row.dateTimeCreated),
             completedBy: row.completedBy,
-            dateTimeCompleted: row.dateTimeCompleted,
+            dateTimeCompleted: new Date(row.dateTimeCompleted),
             remarks: row.remarks,
 
             patientCampusCode: row.patientCampusCode,
@@ -810,16 +826,20 @@ export default defineComponent({
             visitId: row.visitExamVisitId,
             examCode: row.visitExamExamCode,
             createdBy: row.visitExamCreatedBy,
-            dateTimeCreated: row.visitExamDateTimeCreated,
+            dateTimeCreated: new Date(row.visitExamDateTimeCreated),
             acceptedBy: row.visitExamAcceptedBy,
-            dateTimeAccepted: row.visitExamDateTimeAccepted,
+            dateTimeAccepted: new Date(row.visitExamDateTimeAccepted),
             completedBy: row.visitExamCompletedBy,
-            dateTimeCompleted: row.visitExamDateTimeCompleted,
+            dateTimeCompleted: new Date(row.visitExamDateTimeCompleted),
           });
         }
       }
 
-      return Object.values(map);
+      return Object.values(map).sort(
+        (a, b) =>
+          DateTime.fromJSDate(b.dateTimeCreated) -
+          DateTime.fromJSDate(a.dateTimeCreated)
+      );
     },
     async getVisits() {
       this.visitsLoading = true;

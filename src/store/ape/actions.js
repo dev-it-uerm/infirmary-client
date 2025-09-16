@@ -24,6 +24,9 @@ export const getExams = async (context) => {
             default: JSON.parse(f.defaultValue),
             options: JSON.parse(f.options),
           };
+        })
+        .sort((a, b) => {
+          return a.sequenceNumber - b.sequenceNumber;
         });
 
       return {

@@ -10,7 +10,8 @@
     <div
       class="full-width row justify-center"
       ref="container"
-      style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: auto"
+      :style="isScrolling ? { cursor: 'move' } : {}"
+      style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: hidden"
     ></div>
     <div class="row">
       <q-btn

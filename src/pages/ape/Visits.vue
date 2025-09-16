@@ -199,18 +199,18 @@
                                 <q-td v-else-if="column.name === 'action'">
                                   <div
                                     class="row justify-center"
-                                    style="gap: 8px; width: 146px"
+                                    style="gap: 8px; width: 100px"
                                   >
                                     <q-btn
                                       outline
                                       dense
-                                      class="text-primary"
+                                      color="primary"
                                       style="
                                         padding-left: 10px;
                                         padding-right: 10px;
                                       "
                                       unelevated
-                                      label="EXAMS"
+                                      icon="sym_o_checklist"
                                       @click.stop="showPxVisitInfo(props.row)"
                                     />
                                     <q-btn
@@ -221,7 +221,7 @@
                                         padding-right: 10px;
                                       "
                                       unelevated
-                                      label="PRINT"
+                                      icon="sym_o_print"
                                       @click.stop="
                                         showPxVisitPrintout(props.row)
                                       "
@@ -414,6 +414,7 @@
                               label="DIAG EXAMS"
                             /> -->
                               <q-btn
+                                outline
                                 dense
                                 style="
                                   padding-left: 10px;
@@ -421,8 +422,7 @@
                                   min-width: 110px;
                                 "
                                 unelevated
-                                class="q-mt-sm text-black"
-                                color="accent"
+                                class="q-mt-sm text-primary"
                                 icon="sym_o_checklist"
                                 label="EXAMS"
                                 @click.stop="showPxVisitInfo(item)"
@@ -440,8 +440,7 @@
                                   min-width: 110px;
                                 "
                                 unelevated
-                                class="q-mt-sm text-black"
-                                color="accent"
+                                class="q-mt-sm bg-accent text-black"
                                 icon="sym_o_print"
                                 label="PRINT"
                                 @click.stop="showPxVisitPrintout(item)"

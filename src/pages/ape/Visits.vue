@@ -174,25 +174,25 @@
                                     class="row items-center no-wrap"
                                     style="gap: 6px"
                                   >
+                                    <!-- :class="
+                                        e.dateTimeAccepted
+                                          ? 'text-positive'
+                                          : 'text-negative'
+                                      " -->
                                     <q-btn
-                                      v-for="(item, idx) in props.row.exams"
+                                      v-for="(e, idx) in props.row.exams"
                                       :key="idx"
                                       dense
                                       unelevated
-                                      class="q-px-sm"
+                                      class="q-px-sm text-grey-8"
                                       style="font-size: 9pt"
-                                      :class="
-                                        item.dateTimeAccepted
-                                          ? 'text-positive'
-                                          : 'text-negative'
-                                      "
                                       @click.stop="
                                         () => {
-                                          visitInfoTabCode = item.examCode;
+                                          visitInfoTabCode = e.examCode;
                                           showPxVisitInfo(props.row);
                                         }
                                       "
-                                      :label="examsMap[item.examCode].name"
+                                      :label="examsMap[e.examCode].name"
                                     />
                                   </div>
                                 </q-td>
@@ -852,6 +852,7 @@ export default defineComponent({
       }, {});
 
       const response = await this.$store.dispatch("ape/getVisits", payload);
+      await delay(1000);
 
       if (response.error) {
         this.showMessage(
@@ -862,10 +863,7 @@ export default defineComponent({
         return;
       }
 
-      await delay(1000);
-
-      const formattedResponse = this.formatResponse(response.body);
-      this.visits = formattedResponse;
+      this.visits = this.formatResponse(response.body);
       this.visitsLoading = false;
     },
   },

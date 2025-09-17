@@ -48,6 +48,10 @@ const _formatMap = (map) => {
 //     name: "Rad - X-Ray (Chest)",
 //     icon: "fa-solid fa-x-ray",
 //   },
+//   DENTAL: {
+//     name: "Dental Exam",
+//     icon: "fa-solid fa-tooth",
+//   },
 // };
 
 export const yearLevelsMap = {
@@ -75,6 +79,7 @@ export const userRolesMap = {
   LABTECH: "Laboratory Technologist",
   STAFF: "Staff",
   FAC: "Faculty",
+  DENTIST: "Dentist",
 };
 
 // _formatMap(examsMap);
@@ -593,6 +598,38 @@ export const userRoles = Object.values(userRolesMap);
 //       name: "Impression",
 //       type: "XRAYIMPRESSION",
 //       default: { value: null },
+//     },
+//     {
+//       code: "REMARKS",
+//       name: "Remarks",
+//       type: "EXAMTEXTAREA",
+//     },
+//   ],
+//   [examsMap.DENTIST.code]: [
+//     {
+//       code: "CHART",
+//       name: "Dental Chart",
+//       type: "EXAMDENTALCHART",
+//       default: null,
+//     },
+//     {
+//       code: "DNTLCOND",
+//       name: "Dental Condition",
+//       type: "EXAMDNTLCOND",
+//       default: null,
+//       options: [
+//         { value: 1, label: "Teeth tender to chew on" },
+//         { value: 2, label: "Bleeding areas in the mouth" },
+//         { value: 3, label: "Spaces developing between teeth" },
+//         { value: 4, label: "Change of the color of the teeth and gums" },
+//         { value: 5, label: "Teeth sensitive to hot, cold, sweets" },
+//         { value: 6, label: "Swelling or lumps in the mouth" },
+//         { value: 7, label: "Difficulty in speaking" },
+//         { value: 8, label: "Pain in jaw" },
+//         { value: 9, label: "Tongue thrusting" },
+//         { value: 10, label: "Bruxism/Night grinding" },
+//         { value: 11, label: "Mouth breathing" },
+//       ],
 //     },
 //     {
 //       code: "REMARKS",

@@ -380,8 +380,6 @@ import {
   affiliations,
   yearLevelsMap,
   yearLevels,
-  examsMap,
-  examFieldsMap,
   userRolesMap,
 } from "src/helpers/constants.js";
 

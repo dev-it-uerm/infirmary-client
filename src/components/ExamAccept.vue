@@ -135,12 +135,7 @@ import {
   formatName,
 } from "src/helpers/util.js";
 
-import {
-  examsMap,
-  exams,
-  affiliationsMap,
-  yearLevels,
-} from "src/helpers/constants.js";
+import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "ExamAccept",

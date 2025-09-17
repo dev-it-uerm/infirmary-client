@@ -608,9 +608,6 @@ export default defineComponent({
     PrintoutVisitDetails: defineAsyncComponent(() =>
       import("src/components/printouts/VisitDetails.vue")
     ),
-    AdvanceSearch: defineAsyncComponent(() =>
-      import("src/components/visit-page/AdvancedSearch.vue")
-    ),
   },
   setup() {
     return {

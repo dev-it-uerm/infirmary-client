@@ -141,7 +141,6 @@ import { mapGetters } from "vuex";
 import {
   affiliations,
   affiliationsMap,
-  exams,
   yearLevels,
 } from "src/helpers/constants.js";
 

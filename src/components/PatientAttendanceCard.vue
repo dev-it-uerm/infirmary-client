@@ -39,11 +39,10 @@
           <div class="row justify-end">
             <q-btn
               v-if="lastPatientAttended['Student Number']"
-              class="q-mt-md"
+              class="q-mt-md bg-accent text-black"
               unelevated
               icon="print"
               label="PRINT CHECKLIST"
-              color="primary"
               @click="checklistDialogVisible = true"
             />
           </div>

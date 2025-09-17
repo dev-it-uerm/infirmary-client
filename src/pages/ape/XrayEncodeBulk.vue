@@ -169,7 +169,7 @@
                 <div class="text-primary text-weight-medium q-mb-md row">
                   X-RAY (CHEST) RESULT:
                 </div>
-                <FormFieldXrayImpression
+                <FormFieldChestXrayImpression
                   :disable="saving"
                   label="Impression"
                   :required="true"
@@ -274,8 +274,8 @@ export default defineComponent({
     UserSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/UserSelect.vue")
     ),
-    FormFieldXrayImpression: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/XrayImpression.vue")
+    FormFieldChestXrayImpression: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ChestXrayImpression.vue")
     ),
   },
   setup() {

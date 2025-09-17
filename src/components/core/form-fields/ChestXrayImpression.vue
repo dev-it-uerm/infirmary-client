@@ -29,7 +29,7 @@
   </q-input>
   <MinimizedDialog
     v-if="templateVisible"
-    title="X-RAY IMPRESSION TEMPLATES"
+    title="CHEST X-RAY IMPRESSION TEMPLATES"
     widthOnDesktop="600px"
     @close="templateVisible = false"
   >
@@ -80,7 +80,7 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { delay } from "src/helpers/util.js";
 
 export default defineComponent({
-  name: "FormFieldXrayImpression",
+  name: "FormFieldChestXrayImpression",
   components: {
     MinimizedDialog: defineAsyncComponent(() =>
       import("src/components/core/MinimizedDialog.vue")

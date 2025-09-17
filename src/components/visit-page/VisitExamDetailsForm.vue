@@ -95,7 +95,7 @@
                   :initialValue="value[p.code]"
                   @valueChanged="(val) => (value[p.code] = val)"
                 />
-                <FormFieldXrayImpression
+                <FormFieldChestXrayImpression
                   v-if="p.fieldType === 'XRAYIMPRESSION'"
                   :disable="
                     p.disable || visitIsCompleted || examIsCompleted || loading
@@ -216,8 +216,8 @@ export default defineComponent({
     FormFieldExamSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/ExamSelect.vue")
     ),
-    FormFieldXrayImpression: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/XrayImpression.vue")
+    FormFieldChestXrayImpression: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ChestXrayImpression.vue")
     ),
     FormFieldExamMultiSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/ExamMultiSelect.vue")

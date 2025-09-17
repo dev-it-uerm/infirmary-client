@@ -93,12 +93,6 @@ export default defineComponent({
       import("src/components/core/FetchingData.vue")
     ),
   },
-  props: {
-    scannerId: {
-      type: String,
-      required: true,
-    },
-  },
   emits: ["busy", "ready"],
   setup() {
     return {

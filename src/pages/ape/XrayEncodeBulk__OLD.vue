@@ -306,7 +306,7 @@
                   X-RAY (CHEST) RESULT:
                 </div>
                 <q-form @submit="confirmationDialogVisible = true">
-                  <FormFieldXrayImpression
+                  <FormFieldChestXrayImpression
                     :disable="filtering || saving"
                     label="Impression"
                     :required="true"
@@ -414,8 +414,8 @@ export default defineComponent({
     UserSelect: defineAsyncComponent(() =>
       import("src/components/core/form-fields/UserSelect.vue")
     ),
-    FormFieldXrayImpression: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/XrayImpression.vue")
+    FormFieldChestXrayImpression: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ChestXrayImpression.vue")
     ),
   },
   setup() {

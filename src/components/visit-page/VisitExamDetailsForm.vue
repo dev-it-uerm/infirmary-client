@@ -149,6 +149,21 @@
                   :model-value="value[p.code]"
                   @update:model-value="(val) => (value[p.code] = val)"
                 />
+                <FormFieldExamDentalCondition
+                  v-if="p.fieldType === 'EXAMDNTLCOND'"
+                  :disable="
+                    p.disable || visitIsCompleted || examIsCompleted || loading
+                  "
+                  :options="p.options"
+                  :label="p.name"
+                  :required="p.required"
+                  :model-value="value[p.code]?.value || null"
+                  @update:model-value="
+                    (v) => {
+                      value[p.code] = { code: p.code, value: v };
+                    }
+                  "
+                />
               </div>
             </template>
           </div>
@@ -212,6 +227,9 @@ export default defineComponent({
     ),
     FormFieldExamIllnesses: defineAsyncComponent(() =>
       import("src/components/core/form-fields/ExamIllnesses.vue")
+    ),
+    FormFieldExamDentalCondition: defineAsyncComponent(() =>
+      import("src/components/core/form-fields/ExamDentalCondition.vue")
     ),
     FetchingData: defineAsyncComponent(() =>
       import("src/components/core/FetchingData.vue")

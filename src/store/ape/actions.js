@@ -21,8 +21,8 @@ export const getExams = async (context) => {
         .map((f) => {
           return {
             ...f,
-            default: JSON.parse(f.defaultValue),
-            options: JSON.parse(f.options),
+            default: f.defaultValue === "" ? "" : JSON.parse(f.defaultValue),
+            options: f.options ? JSON.parse(f.options) : null,
           };
         })
         .sort((a, b) => {

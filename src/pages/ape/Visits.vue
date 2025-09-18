@@ -6,7 +6,7 @@
         <PageHeader text="VISITS" icon="fa-solid fa-house-medical" />
       </template>
       <template v-slot:body>
-        <div v-if="initialized">
+        <div v-if="initialized && examsMap">
           <div class="column full-width" style="gap: 36px">
             <div
               class="full-width"
@@ -758,17 +758,7 @@ export default defineComponent({
           };
         }
 
-        if (this.examsMap === null) {
-          const examsResponse = await this.$store.dispatch("ape/getExams");
-
-          if (examsResponse?.error) {
-            this.showMessage(this.$q, false, "Error fetching exams.");
-            return;
-          }
-
-          this.examsMap = examsResponse[1];
-        }
-
+        this.examsMap = (await this.$store.dispatch("ape/getExams"))[1];
         this.getVisits();
       },
       immediate: true,

@@ -14,41 +14,41 @@ export const getExams = async (context) => {
     context
   );
 
-  if (!response.error) {
-    const exams = response.body[0].map((e) => {
-      const params = response.body[1]
-        .filter((f) => f.examId === e.id)
-        .map((f) => {
-          return {
-            ...f,
-            default: f.defaultValue === "" ? "" : JSON.parse(f.defaultValue),
-            options: f.options ? JSON.parse(f.options) : null,
-          };
-        })
-        .sort((a, b) => {
-          return a.sequenceNumber - b.sequenceNumber;
-        });
-
-      return {
-        ...e,
-        params,
-        paramsMap: params.reduce((a, p) => {
-          a[p.code] = p;
-          return a;
-        }, {}),
-      };
-    });
-
-    const examsMap = exams.reduce((a, e) => {
-      a[e.code] = e;
-      return a;
-    }, {});
-
-    context.commit("setExams", [exams, examsMap]);
-    return [context.rootState.ape.exams, context.rootState.ape.examsMap];
+  if (response.error) {
+    return [null, null];
   }
 
-  return response;
+  const exams = response.body[0].map((e) => {
+    const params = response.body[1]
+      .filter((f) => f.examId === e.id)
+      .map((f) => {
+        return {
+          ...f,
+          default: f.defaultValue === "" ? "" : JSON.parse(f.defaultValue),
+          options: f.options ? JSON.parse(f.options) : null,
+        };
+      })
+      .sort((a, b) => {
+        return a.sequenceNumber - b.sequenceNumber;
+      });
+
+    return {
+      ...e,
+      params,
+      paramsMap: params.reduce((a, p) => {
+        a[p.code] = p;
+        return a;
+      }, {}),
+    };
+  });
+
+  const examsMap = exams.reduce((a, e) => {
+    a[e.code] = e;
+    return a;
+  }, {});
+
+  context.commit("setExams", [exams, examsMap]);
+  return [context.rootState.ape.exams, context.rootState.ape.examsMap];
 };
 
 export const getVisits = async (context, urlQuery) => {

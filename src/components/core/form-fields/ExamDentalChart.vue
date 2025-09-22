@@ -188,7 +188,7 @@ export default defineComponent({
   },
   mounted() {
     if (this.modelValue) {
-      this.initialValue = JSON.parse(JSON.stringify(this.modelValue));
+      this.initialValue = this.modelValue;
     }
 
     const imgElement = new Image();

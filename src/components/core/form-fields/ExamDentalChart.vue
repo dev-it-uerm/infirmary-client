@@ -7,10 +7,9 @@
       margin-bottom: 20px;
     "
   >
-    <div class="full-width row justify-center">
+    <div class="full-width column items-center gap-sm">
       <div
         ref="container"
-        class="q-mb-sm"
         :style="isScrolling ? { cursor: 'move' } : {}"
         style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: hidden"
       ></div>

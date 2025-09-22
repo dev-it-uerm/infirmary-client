@@ -144,8 +144,8 @@ export default defineComponent({
       }
 
       const line = this.lines.pop();
-      line.hide();
-      this.drawingLayer.batchDraw();
+      this.drawingLayer.removeChildren();
+      this.drawingLayer.add(...this.lines);
       this.deletedLines.push(line);
     },
     redoLastDeletedLine() {
@@ -154,14 +154,17 @@ export default defineComponent({
       }
 
       const line = this.deletedLines.pop();
-      line.show();
-      this.drawingLayer.batchDraw();
+      this.drawingLayer.add(line);
       this.lines.push(line);
     },
     clearLines() {
+      if (this.lines.length === 0) {
+        return;
+      }
+
+      this.deletedLines = [...this.lines];
       this.lines = [];
-      this.deletedLines = [];
-      this.drawingLayer.destroyChildren();
+      this.drawingLayer.removeChildren();
     },
     resetLines() {
       this.clearLines();

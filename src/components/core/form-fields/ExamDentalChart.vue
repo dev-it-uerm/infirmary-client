@@ -1,81 +1,83 @@
 <template>
   <div
-    class="column full-width q-px-md q-pt-md q-pb-sm gap-sm"
+    class="column full-width q-pa-md gap-sm"
     style="
       border: 1px solid rgba(0, 0, 0, 0.25);
       border-radius: 4px;
       margin-bottom: 20px;
     "
   >
-    <div
-      class="full-width row justify-center"
-      ref="container"
-      :style="isScrolling ? { cursor: 'move' } : {}"
-      style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: hidden"
-    ></div>
-    <div class="row">
-      <q-btn
-        dense
-        unelevated
-        round
-        icon="sym_o_undo"
-        class="text-primary"
-        @click="undoLastAddedLine"
-      >
-        <q-tooltip>Undo Last Added Stroke</q-tooltip>
-      </q-btn>
-      <q-btn
-        dense
-        unelevated
-        round
-        icon="sym_o_redo"
-        class="text-primary"
-        @click="redoLastDeletedLine"
-      >
-        <q-tooltip>Redo Last Undone Stroke</q-tooltip>
-      </q-btn>
-      <q-btn
-        dense
-        unelevated
-        round
-        icon="sym_o_close"
-        class="text-primary"
-        @click="clearLines"
-      >
-        <q-tooltip>Clear Strokes</q-tooltip>
-      </q-btn>
-      <q-btn
-        dense
-        unelevated
-        round
-        icon="sym_o_replay"
-        class="text-primary"
-        @click="resetLines"
-      >
-        <q-tooltip>Reset Changes</q-tooltip>
-      </q-btn>
-      <q-separator vertical class="q-mx-sm" />
-      <q-btn
-        dense
-        unelevated
-        round
-        :class="isScrolling ? 'bg-primary text-white' : 'text-primary'"
-        icon="sym_o_pan_tool"
-        class="text-primary"
-        @click="isScrolling = !isScrolling"
-      >
-        <q-tooltip>Toggle Pan Mode On/Off</q-tooltip>
-      </q-btn>
-      <q-btn
-        dense
-        unelevated
-        round
-        icon="sym_o_view_compact_alt"
-        class="text-primary"
-        @click="resetViewport"
-      >
-        <q-tooltip>Reset Viewport</q-tooltip>
-      </q-btn>
+    <div class="full-width row justify-center">
+      <div
+        ref="container"
+        class="q-mb-sm"
+        :style="isScrolling ? { cursor: 'move' } : {}"
+        style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: hidden"
+      ></div>
+      <div class="row">
+        <q-btn
+          dense
+          unelevated
+          round
+          icon="sym_o_undo"
+          class="text-primary"
+          @click="undoLastAddedLine"
+        >
+          <q-tooltip>Undo Last Added Stroke</q-tooltip>
+        </q-btn>
+        <q-btn
+          dense
+          unelevated
+          round
+          icon="sym_o_redo"
+          class="text-primary"
+          @click="redoLastDeletedLine"
+        >
+          <q-tooltip>Redo Last Undone Stroke</q-tooltip>
+        </q-btn>
+        <q-btn
+          dense
+          unelevated
+          round
+          icon="sym_o_close"
+          class="text-primary"
+          @click="clearLines"
+        >
+          <q-tooltip>Clear Strokes</q-tooltip>
+        </q-btn>
+        <q-btn
+          dense
+          unelevated
+          round
+          icon="sym_o_replay"
+          class="text-primary"
+          @click="resetLines"
+        >
+          <q-tooltip>Reset Changes</q-tooltip>
+        </q-btn>
+        <q-separator vertical class="q-mx-sm" />
+        <q-btn
+          dense
+          unelevated
+          round
+          :class="isScrolling ? 'bg-primary text-white' : 'text-primary'"
+          icon="sym_o_pan_tool"
+          class="text-primary"
+          @click="isScrolling = !isScrolling"
+        >
+          <q-tooltip>Toggle Pan Mode On/Off</q-tooltip>
+        </q-btn>
+        <q-btn
+          dense
+          unelevated
+          round
+          icon="sym_o_view_compact_alt"
+          class="text-primary"
+          @click="resetViewport"
+        >
+          <q-tooltip>Reset Viewport</q-tooltip>
+        </q-btn>
+      </div>
     </div>
   </div>
 </template>

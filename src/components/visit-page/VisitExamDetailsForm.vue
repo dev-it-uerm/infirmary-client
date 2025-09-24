@@ -52,6 +52,7 @@
                   :disable="
                     p.disable || visitIsCompleted || examIsCompleted || loading
                   "
+                  :required="p.required"
                   :initialValue="value[p.code]"
                   @valueChanged="(val) => (value[p.code] = val)"
                 />
@@ -60,6 +61,7 @@
                   :disable="
                     p.disable || visitIsCompleted || examIsCompleted || loading
                   "
+                  :required="p.required"
                   :label="p.name"
                   :initialValue="value[p.code]"
                   @valueChanged="(val) => (value[p.code] = val)"

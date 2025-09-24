@@ -9,6 +9,13 @@
     :options="options"
     :disable="disable"
     :model-value="value"
+    :rules="[
+      (v) => {
+        return required && (v == null || v === '')
+          ? 'This field is required.'
+          : true;
+      },
+    ]"
     @input-value="
       (val) => (value = val == null || val === '' ? null : val.trim())
     "

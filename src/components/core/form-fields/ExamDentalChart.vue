@@ -1,84 +1,83 @@
 <template>
-  <div
-    class="column full-width q-pa-md gap-sm"
-    style="
-      border: 1px solid rgba(0, 0, 0, 0.25);
-      border-radius: 4px;
-      margin-bottom: 20px;
-    "
-  >
-    <div class="full-width column items-center gap-sm">
-      <div
-        ref="container"
-        :style="isScrolling ? { cursor: 'move' } : {}"
-        style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: hidden"
-      ></div>
-      <div class="row">
-        <q-btn
-          dense
-          unelevated
-          round
-          icon="sym_o_undo"
-          class="text-primary"
-          @click="undoLastAddedLine"
-        >
-          <q-tooltip>Undo Last Added Stroke</q-tooltip>
-        </q-btn>
-        <q-btn
-          dense
-          unelevated
-          round
-          icon="sym_o_redo"
-          class="text-primary"
-          @click="redoLastDeletedLine"
-        >
-          <q-tooltip>Redo Last Undone Stroke</q-tooltip>
-        </q-btn>
-        <q-btn
-          dense
-          unelevated
-          round
-          icon="sym_o_close"
-          class="text-primary"
-          @click="clearLines"
-        >
-          <q-tooltip>Clear Strokes</q-tooltip>
-        </q-btn>
-        <q-btn
-          dense
-          unelevated
-          round
-          icon="sym_o_replay"
-          class="text-primary"
-          @click="resetLines"
-        >
-          <q-tooltip>Reset Changes</q-tooltip>
-        </q-btn>
-        <q-separator vertical class="q-mx-sm" />
-        <q-btn
-          dense
-          unelevated
-          round
-          :class="isScrolling ? 'bg-primary text-white' : 'text-primary'"
-          icon="sym_o_pan_tool"
-          class="text-primary"
-          @click="isScrolling = !isScrolling"
-        >
-          <q-tooltip>Toggle Pan Mode On/Off</q-tooltip>
-        </q-btn>
-        <q-btn
-          dense
-          unelevated
-          round
-          icon="sym_o_view_compact_alt"
-          class="text-primary"
-          @click="resetViewport"
-        >
-          <q-tooltip>Reset Viewport</q-tooltip>
-        </q-btn>
+  <q-field outlined stack-label label-slot :label="label" :rules="[inputRule]">
+    <template v-slot:label>
+      {{ label }}
+      <span v-if="required" class="text-weight-bold text-red"> *</span>
+    </template>
+    <template v-slot:control>
+      <div class="full-width column items-center gap-sm q-mt-sm">
+        <div
+          ref="container"
+          :style="isScrolling ? { cursor: 'move' } : {}"
+          style="border: 1px solid rgba(0, 0, 0, 0.1); overflow: hidden"
+        ></div>
+        <div class="row">
+          <q-btn
+            dense
+            unelevated
+            round
+            icon="sym_o_undo"
+            class="text-primary"
+            @click="undoLastAddedLine"
+          >
+            <q-tooltip>Undo Last Added Stroke</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            unelevated
+            round
+            icon="sym_o_redo"
+            class="text-primary"
+            @click="redoLastDeletedLine"
+          >
+            <q-tooltip>Redo Last Undone Stroke</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            unelevated
+            round
+            icon="sym_o_close"
+            class="text-primary"
+            @click="clearLines"
+          >
+            <q-tooltip>Clear Strokes</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            unelevated
+            round
+            icon="sym_o_replay"
+            class="text-primary"
+            @click="resetLines"
+          >
+            <q-tooltip>Reset Changes</q-tooltip>
+          </q-btn>
+          <q-separator vertical class="q-mx-sm" />
+          <q-btn
+            dense
+            unelevated
+            round
+            :class="isScrolling ? 'bg-primary text-white' : 'text-primary'"
+            icon="sym_o_pan_tool"
+            class="text-primary"
+            @click="isScrolling = !isScrolling"
+          >
+            <q-tooltip>Toggle Pan Mode On/Off</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            unelevated
+            round
+            icon="sym_o_view_compact_alt"
+            class="text-primary"
+            @click="resetViewport"
+          >
+            <q-tooltip>Reset Viewport</q-tooltip>
+          </q-btn>
+        </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </q-field>
 </template>
 
 <script>
@@ -91,6 +90,10 @@ export default defineComponent({
     label: {
       type: String,
       required: true,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
     disable: {
       type: Boolean,
@@ -139,6 +142,17 @@ export default defineComponent({
     },
   },
   methods: {
+    inputRule() {
+      if (!this.required) {
+        return true;
+      }
+
+      if (this.lines.length > 0) {
+        return true;
+      }
+
+      return "This field is required.";
+    },
     undoLastAddedLine() {
       if (this.lines.length === 0) {
         return;

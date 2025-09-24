@@ -52,6 +52,7 @@
                 :disable="loading"
                 unelevated
                 class="text-black"
+                icon="edit"
                 color="accent"
                 label="CHANGE"
                 type="submit"

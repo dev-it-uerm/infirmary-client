@@ -6,8 +6,10 @@
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
       <AppLogo :inverted="true" size="md" />
-      <PageHeader text="RESET PASSWORD" icon="fa-solid fa-user" />
       <CardComponent>
+        <template v-slot:header>
+          <PageHeader text="RESET PASSWORD" icon="fa-solid fa-user" />
+        </template>
         <template v-slot:body>
           <div v-if="!$route.query.accessToken" class="q-pa-lg">
             <MessageBanner :success="false">
@@ -50,7 +52,9 @@
                 <q-btn
                   :disable="loading"
                   unelevated
-                  color="primary"
+                  class="text-black"
+                  color="accent"
+                  icon="edit"
                   label="CHANGE"
                   type="submit"
                 />

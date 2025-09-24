@@ -40,6 +40,7 @@
                 :disable="loading"
                 unelevated
                 color="accent"
+                icon="edit"
                 label="UPDATE"
                 class="text-black"
                 type="submit"

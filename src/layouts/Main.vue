@@ -391,17 +391,6 @@ export default defineComponent({
             }
 
             if (
-              menu.code === "APE_PATIENT_ATTENDANCE" &&
-              ![
-                userRolesMap.ADMIN.code,
-                userRolesMap.DR.code,
-                userRolesMap.STAFF.code,
-              ].includes(this.user.roleCode)
-            ) {
-              return false;
-            }
-
-            if (
               menu.code === "APE_XRAY_ENCODE_BULK" &&
               ![
                 userRolesMap.ADMIN.code,

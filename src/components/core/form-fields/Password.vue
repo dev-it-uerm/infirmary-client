@@ -1,6 +1,7 @@
 <template>
   <q-input
     debounce="500"
+    :disable="disable"
     clearable
     maxlength="255"
     :type="isPwdMasked ? 'password' : 'text'"
@@ -28,6 +29,10 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "FormFieldPassword",
   props: {
+    disable: {
+      type: Boolean,
+      default: false,
+    },
     showIcon: {
       type: Boolean,
       default: true,

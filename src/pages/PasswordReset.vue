@@ -20,7 +20,7 @@
           </div>
           <template v-else>
             <FetchingData v-if="loading" />
-            <q-form ref="qForm" @submit="submit" @reset="reset">
+            <q-form v-else ref="qForm" @submit="submit" @reset="reset">
               <q-banner
                 v-if="messageText"
                 class="q-pa-md"
@@ -39,11 +39,13 @@
                 </div>
               </q-banner>
               <FormFieldPassword
+                :disable="loading"
                 outlined
                 label="New Password"
                 v-model="newPassword1"
               />
               <FormFieldPassword
+                :disable="loading"
                 outlined
                 label="New Password Confirmation"
                 v-model="newPassword2"

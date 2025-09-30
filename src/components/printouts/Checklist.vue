@@ -46,7 +46,7 @@ export default {
         },
         // pageSize: "LETTER",
         // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
-        pageMargins: [15, 80, 15, 45], // Body margins. Change top or bottom to resize the header or footer respectively.
+        pageMargins: [20, 80, 20, 45], // Body margins. Change top or bottom to resize the header or footer respectively.
         header: [
           {
             stack: [
@@ -106,7 +106,7 @@ export default {
                   ],
                 },
                 style: "noBorders",
-                margin: [0, 0, 0, 5],
+                margin: [10, 0, 10, 5],
               },
             ],
             style: ["fontNormal"],

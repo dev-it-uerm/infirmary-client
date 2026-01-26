@@ -15,159 +15,155 @@
             class="q-pa-lg scroll"
             style="height: auto; max-height: 65vh; min-height: 100px"
           >
-            <template
-              v-for="p in examsMap[examCode]?.params || []"
-              :key="p.code"
-            >
-              <div>
-                <q-input
-                  v-if="p.fieldType === 'TEXT'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  stack-label
-                  outlined
-                  :rules="generateRules(p.required)"
-                  :label="p.name"
-                  v-model.trim="value[p.code]"
-                  hint=""
-                />
-                <q-input
-                  v-if="p.fieldType === 'TEXTAREA'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  type="textarea"
-                  stack-label
-                  outlined
-                  :rules="generateRules(p.required)"
-                  :label="p.name"
-                  v-model.trim="value[p.code]"
-                  hint=""
-                />
-                <UserSelect
-                  v-if="p.fieldType === 'PHYSICIANSELECT'"
-                  label="Physician"
-                  roleCode="DR"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :required="p.required"
-                  :initialValue="value[p.code]"
-                  @valueChanged="(val) => (value[p.code] = val)"
-                />
-                <FormFieldExam
-                  v-if="p.fieldType === 'EXAM'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :required="p.required"
-                  :label="p.name"
-                  :initialValue="value[p.code]"
-                  @valueChanged="(val) => (value[p.code] = val)"
-                />
-                <FormFieldExamText
-                  v-if="p.fieldType === 'EXAMTEXT'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :required="p.required"
-                  :label="p.name"
-                  :initialValue="value[p.code]"
-                  @valueChanged="(val) => (value[p.code] = val)"
-                />
-                <FormFieldExamTextArea
-                  v-if="p.fieldType === 'EXAMTEXTAREA'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :required="p.required"
-                  :label="p.name"
-                  :initialValue="value[p.code]"
-                  @valueChanged="(val) => (value[p.code] = val)"
-                />
-                <FormFieldExamSelect
-                  v-if="p.fieldType === 'EXAMSELECT'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :options="p.options"
-                  :required="p.required"
-                  :label="p.name"
-                  :initialValue="value[p.code]"
-                  @valueChanged="(val) => (value[p.code] = val)"
-                />
-                <FormFieldChestXrayImpression
-                  v-if="p.fieldType === 'XRAYIMPRESSION'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :label="p.name"
-                  :required="p.required"
-                  :initialValue="value[p.code]?.value || null"
-                  @valueChanged="
-                    (val) => {
-                      value[p.code] = { code: p.code, value: val };
-                    }
-                  "
-                />
-                <FormFieldExamMultiSelect
-                  v-if="p.fieldType === 'EXAMMULTISELECT'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :options="p.options"
-                  :label="p.name"
-                  :required="p.required"
-                  :model-value="value[p.code]?.value || null"
-                  @update:model-value="
-                    (v) => {
-                      value[p.code] = { code: p.code, value: v };
-                    }
-                  "
-                />
-                <FormFieldExamDentalChart
-                  v-if="p.fieldType === 'EXAMDENTALCHART'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :options="p.options"
-                  :label="p.name"
-                  :required="p.required"
-                  :model-value="value[p.code]?.value || null"
-                  @update:model-value="
-                    (v) => {
-                      value[p.code] = { code: p.code, value: v };
-                    }
-                  "
-                />
-                <FormFieldExamIllnesses
-                  v-if="p.fieldType === 'EXAMILLNESSES'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :required="p.required"
-                  :label="p.name"
-                  :model-value="value[p.code]"
-                  @update:model-value="(val) => (value[p.code] = val)"
-                />
-                <FormFieldExamDentalCondition
-                  v-if="p.fieldType === 'EXAMDNTLCOND'"
-                  :disable="
-                    p.disable || visitIsCompleted || examIsCompleted || loading
-                  "
-                  :options="p.options"
-                  :label="p.name"
-                  :required="p.required"
-                  :model-value="value[p.code]?.value || null"
-                  @update:model-value="
-                    (v) => {
-                      value[p.code] = { code: p.code, value: v };
-                    }
-                  "
-                />
-              </div>
-            </template>
+            {{ this.headPathologist }}
+            <div v-for="p in examsMap[examCode]?.params || []" :key="p.code">
+              <q-input
+                v-if="p.fieldType === 'TEXT'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                stack-label
+                outlined
+                :rules="generateRules(p.required)"
+                :label="p.name"
+                v-model.trim="value[p.code]"
+                hint=""
+              />
+              <q-input
+                v-if="p.fieldType === 'TEXTAREA'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                type="textarea"
+                stack-label
+                outlined
+                :rules="generateRules(p.required)"
+                :label="p.name"
+                v-model.trim="value[p.code]"
+                hint=""
+              />
+              <UserSelect
+                v-if="p.fieldType === 'PHYSICIANSELECT'"
+                label="Physician"
+                roleCode="DR"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :required="p.required"
+                :initialValue="value[p.code]"
+                @valueChanged="(val) => (value[p.code] = val)"
+              />
+              <FormFieldExam
+                v-if="p.fieldType === 'EXAM'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :required="p.required"
+                :label="p.name"
+                :initialValue="value[p.code]"
+                @valueChanged="(val) => (value[p.code] = val)"
+              />
+              <FormFieldExamText
+                v-if="p.fieldType === 'EXAMTEXT'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :required="p.required"
+                :label="p.name"
+                :initialValue="value[p.code]"
+                @valueChanged="(val) => (value[p.code] = val)"
+              />
+              <FormFieldExamTextArea
+                v-if="p.fieldType === 'EXAMTEXTAREA'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :required="p.required"
+                :label="p.name"
+                :initialValue="value[p.code]"
+                @valueChanged="(val) => (value[p.code] = val)"
+              />
+              <FormFieldExamSelect
+                v-if="p.fieldType === 'EXAMSELECT'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :options="p.options"
+                :required="p.required"
+                :label="p.name"
+                :initialValue="value[p.code]"
+                @valueChanged="(val) => (value[p.code] = val)"
+              />
+              <FormFieldChestXrayImpression
+                v-if="p.fieldType === 'XRAYIMPRESSION'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :label="p.name"
+                :required="p.required"
+                :initialValue="value[p.code]?.value || null"
+                @valueChanged="
+                  (val) => {
+                    value[p.code] = { code: p.code, value: val };
+                  }
+                "
+              />
+              <FormFieldExamMultiSelect
+                v-if="p.fieldType === 'EXAMMULTISELECT'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :options="p.options"
+                :label="p.name"
+                :required="p.required"
+                :model-value="value[p.code]?.value || null"
+                @update:model-value="
+                  (v) => {
+                    value[p.code] = { code: p.code, value: v };
+                  }
+                "
+              />
+              <FormFieldExamDentalChart
+                v-if="p.fieldType === 'EXAMDENTALCHART'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :options="p.options"
+                :label="p.name"
+                :required="p.required"
+                :model-value="value[p.code]?.value || null"
+                @update:model-value="
+                  (v) => {
+                    value[p.code] = { code: p.code, value: v };
+                  }
+                "
+              />
+              <FormFieldExamIllnesses
+                v-if="p.fieldType === 'EXAMILLNESSES'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :required="p.required"
+                :label="p.name"
+                :model-value="value[p.code]"
+                @update:model-value="(val) => (value[p.code] = val)"
+              />
+              <FormFieldExamDentalCondition
+                v-if="p.fieldType === 'EXAMDNTLCOND'"
+                :disable="
+                  p.disable || visitIsCompleted || examIsCompleted || loading
+                "
+                :options="p.options"
+                :label="p.name"
+                :required="p.required"
+                :model-value="value[p.code]?.value || null"
+                @update:model-value="
+                  (v) => {
+                    value[p.code] = { code: p.code, value: v };
+                  }
+                "
+              />
+            </div>
           </div>
           <q-separator />
           <div class="row q-pa-lg justify-end" style="gap: 12px">
@@ -203,41 +199,41 @@ import { mapGetters } from "vuex";
 export default defineComponent({
   name: "VisitExamDetailsForm",
   components: {
-    ConfirmationDialog: defineAsyncComponent(() =>
-      import("src/components/core/ConfirmationDialog.vue")
+    ConfirmationDialog: defineAsyncComponent(
+      () => import("src/components/core/ConfirmationDialog.vue"),
     ),
-    FormFieldExam: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/Exam.vue")
+    FormFieldExam: defineAsyncComponent(
+      () => import("src/components/core/form-fields/Exam.vue"),
     ),
-    FormFieldExamText: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamText.vue")
+    FormFieldExamText: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamText.vue"),
     ),
-    FormFieldExamTextArea: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamTextArea.vue")
+    FormFieldExamTextArea: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamTextArea.vue"),
     ),
-    FormFieldExamSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamSelect.vue")
+    FormFieldExamSelect: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamSelect.vue"),
     ),
-    FormFieldChestXrayImpression: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ChestXrayImpression.vue")
+    FormFieldChestXrayImpression: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ChestXrayImpression.vue"),
     ),
-    FormFieldExamMultiSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamMultiSelect.vue")
+    FormFieldExamMultiSelect: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamMultiSelect.vue"),
     ),
-    FormFieldExamDentalChart: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamDentalChart.vue")
+    FormFieldExamDentalChart: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamDentalChart.vue"),
     ),
-    FormFieldExamIllnesses: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamIllnesses.vue")
+    FormFieldExamIllnesses: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamIllnesses.vue"),
     ),
-    FormFieldExamDentalCondition: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ExamDentalCondition.vue")
+    FormFieldExamDentalCondition: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ExamDentalCondition.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    UserSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/UserSelect.vue")
+    UserSelect: defineAsyncComponent(
+      () => import("src/components/core/form-fields/UserSelect.vue"),
     ),
   },
   props: {
@@ -278,6 +274,7 @@ export default defineComponent({
 
       visitIsCompleted: false,
       examIsCompleted: false,
+      headPathologist: null,
     };
   },
   computed: {
@@ -329,10 +326,13 @@ export default defineComponent({
     async getInitialValue() {
       this.loading = true;
 
+      // RESET HEAD PATHOLOGIST
+      this.headPathologist = null;
+
       // SUPPLY DEFAULT VALUE
       this.value = this.getMergedExamFieldsAndDetails(
         this.examsMap[this.examCode]?.params || [],
-        this.getVisitExamDetailsMap([])
+        this.getVisitExamDetailsMap([]),
       );
 
       const response = await this.$store.dispatch("ape/getVisitExamDetails", {
@@ -340,9 +340,26 @@ export default defineComponent({
         examCode: this.examCode,
       });
 
+      if (
+        ["LAB_CBC", "LAB_URI", "LAB_FCL"].includes(this.examCode) &&
+        this.user?.roleCode !== "LAB"
+      ) {
+        const response2 = await this.$store.dispatch("ape/getHeadDoctor", {
+          specialtyCode: "LAB",
+        });
+
+        if (response2?.error) {
+          this.loading = false;
+          this.$emit("error");
+          return;
+        }
+
+        this.headPathologist = response2.body;
+      }
+
       await delay(1000);
 
-      if (response.error) {
+      if (response?.error) {
         this.loading = false;
         this.$emit("error");
         return;
@@ -358,7 +375,7 @@ export default defineComponent({
 
       this.value = this.getMergedExamFieldsAndDetails(
         this.examsMap[this.examCode]?.params || [],
-        this.getVisitExamDetailsMap(response.body.details)
+        this.getVisitExamDetailsMap(response.body.details),
       );
 
       this.loading = false;
@@ -377,21 +394,17 @@ export default defineComponent({
       this.confDialogVisible = false;
       this.loading = true;
 
-      // MAKE SURE EVERY `detail` HAS A `code` PROP
-      const payload = {
+      const response = await this.$store.dispatch("ape/saveExamDetails", {
+        creator: this.headPathologist,
         visitId: this.visitId,
         examCode: this.examCode,
         markAsCompletedOnSave: false,
+        // MAKE SURE EVERY `detail` HAS A `code` PROP
         details: Object.entries(this.value).map((e) => ({
           code: e[0],
           ...e[1],
         })),
-      };
-
-      const response = await this.$store.dispatch(
-        "ape/saveExamDetails",
-        payload
-      );
+      });
 
       await delay(2000);
 
@@ -408,7 +421,7 @@ export default defineComponent({
       showMessage(
         this.$q,
         true,
-        "Visit exam details have been saved successfully."
+        "Visit exam details have been saved successfully.",
       );
 
       this.loading = false;

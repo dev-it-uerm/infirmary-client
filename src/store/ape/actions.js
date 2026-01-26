@@ -11,7 +11,7 @@ export const getExams = async (context) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 
   if (response.error) {
@@ -58,7 +58,7 @@ export const getVisits = async (context, urlQuery) => {
     urlQuery,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -68,7 +68,7 @@ export const sendVisitAppointmentLink = async (context, payload) => {
     `${context.rootState.app.apiHost}/ape/visit/send-appointment-link`,
     null,
     null,
-    payload
+    payload,
   );
 };
 
@@ -76,7 +76,7 @@ export const scheduleSelf = async (context, accessToken) => {
   return await request(
     "post",
     `${context.rootState.app.apiHost}/ape/visit/self-schedule`,
-    { accessToken }
+    { accessToken },
   );
 };
 
@@ -87,7 +87,7 @@ export const schedule = async (context, patientCode) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -98,7 +98,7 @@ export const acceptExam = async (context, payload) => {
     null,
     context.rootState.app?.user?.accessToken,
     payload,
-    context
+    context,
   );
 };
 
@@ -109,7 +109,7 @@ export const completeExam = async (context, payload) => {
     null,
     context.rootState.app?.user?.accessToken,
     payload,
-    context
+    context,
   );
 };
 
@@ -120,7 +120,7 @@ export const track = async (context, patientCode) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -131,7 +131,7 @@ export const getVisitExamDetails = async (context, urlQuery) => {
     urlQuery,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -142,7 +142,7 @@ export const getVisit = async (context, visitId) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -153,7 +153,7 @@ export const updateVisit = async (context, payload) => {
     null,
     context.rootState.app?.user?.accessToken,
     payload,
-    context
+    context,
   );
 };
 
@@ -175,7 +175,7 @@ export const getVisitPdfJson = async (context, visitId) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -186,7 +186,7 @@ export const saveExamDetails = async (context, payload) => {
     null,
     context.rootState.app?.user?.accessToken,
     payload,
-    context
+    context,
   );
 };
 
@@ -197,7 +197,7 @@ export const getPatients = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -208,7 +208,7 @@ export const addPatient = async (context, payload) => {
     null,
     context.rootState.app?.user?.accessToken,
     payload,
-    context
+    context,
   );
 };
 
@@ -219,7 +219,7 @@ export const getVisitExams = async (context, visitId) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -230,7 +230,7 @@ export const getVisitsWithXray = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -241,7 +241,7 @@ export const getAnalyticsCompletedVisitsPerDay = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -252,7 +252,7 @@ export const timeInOut = async (context, employeeCode) => {
     null,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -263,7 +263,7 @@ export const getXrayChestResultTemplates = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -274,7 +274,7 @@ export const getAnalyticsSeenPatientCount = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -285,7 +285,7 @@ export const getAnalyticsDrXraysReadCount = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -296,7 +296,7 @@ export const getAnalyticsRegisteredPatientCount = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -307,7 +307,7 @@ export const getAnalyticsDoctorPatientCount = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -318,7 +318,7 @@ export const getAnalyticsPatientVisitProgress = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -329,7 +329,7 @@ export const getNotSeenPatients = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context
+    context,
   );
 };
 
@@ -345,7 +345,7 @@ export const getAppData = async (context) => {
       null,
       context.rootState.app?.user?.accessToken,
       null,
-      context
+      context,
     );
 
     if (response.error) {
@@ -361,4 +361,15 @@ export const getAppData = async (context) => {
         : {}),
     });
   }
+};
+
+export const getHeadDoctor = async (context, payload) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/user/head-doctor`,
+    payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context,
+  );
 };

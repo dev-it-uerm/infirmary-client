@@ -113,7 +113,7 @@
                                 ? 'At least 3 letters is required.'
                                 : undefined,
                           ]"
-                          v-model.trim="visitsFilters.patientFullName"
+                          v-model="visitsFilters.patientFullName"
                         >
                           <template v-slot:append>
                             <q-icon
@@ -270,7 +270,7 @@
                                       props.row.patientFirstName,
                                       props.row.patientMiddleName,
                                       props.row.patientLastName,
-                                      props.row.patientExtName
+                                      props.row.patientExtName,
                                     )
                                   }}
                                 </q-td>
@@ -294,7 +294,7 @@
                                       ? Object.values(yearLevelsMap).find(
                                           (y) =>
                                             y.code ===
-                                            Number(props.row[column.name])
+                                            Number(props.row[column.name]),
                                         ).name
                                       : ""
                                   }}
@@ -352,7 +352,7 @@
                                     item.patientFirstName,
                                     item.patientMiddleName,
                                     item.patientLastName,
-                                    item.patientExtName
+                                    item.patientExtName,
                                   )
                                 }}
                               </q-item-label>
@@ -386,7 +386,7 @@
                                       yearLevels.find(
                                         (l) =>
                                           l.code ===
-                                          Number(item.patientYearLevel)
+                                          Number(item.patientYearLevel),
                                       )?.name
                                     }}</q-badge
                                   >
@@ -430,7 +430,7 @@
                               <q-btn
                                 v-if="
                                   item.exams?.some((e) =>
-                                    Boolean(e.dateTimeAccepted)
+                                    Boolean(e.dateTimeAccepted),
                                   )
                                 "
                                 dense
@@ -578,35 +578,35 @@ import * as inputRules from "src/helpers/input-rules.js";
 export default defineComponent({
   name: "VisitsPage",
   components: {
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
+    DateRange: defineAsyncComponent(
+      () => import("src/components/core/form-fields/DateRange.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    MinimizedDialog: defineAsyncComponent(() =>
-      import("src/components/core/MinimizedDialog.vue")
+    MinimizedDialog: defineAsyncComponent(
+      () => import("src/components/core/MinimizedDialog.vue"),
     ),
-    MaximizedDialog: defineAsyncComponent(() =>
-      import("src/components/core/MaximizedDialog.vue")
+    MaximizedDialog: defineAsyncComponent(
+      () => import("src/components/core/MaximizedDialog.vue"),
     ),
-    VisitDetails: defineAsyncComponent(() =>
-      import("src/components/visit-page/VisitDetails.vue")
+    VisitDetails: defineAsyncComponent(
+      () => import("src/components/visit-page/VisitDetails.vue"),
     ),
-    NoResult: defineAsyncComponent(() =>
-      import("src/components/core/NoResult.vue")
+    NoResult: defineAsyncComponent(
+      () => import("src/components/core/NoResult.vue"),
     ),
-    PrintoutVisitDetails: defineAsyncComponent(() =>
-      import("src/components/printouts/VisitDetails.vue")
+    PrintoutVisitDetails: defineAsyncComponent(
+      () => import("src/components/printouts/VisitDetails.vue"),
     ),
   },
   setup() {
@@ -824,7 +824,7 @@ export default defineComponent({
       return Object.values(map).sort(
         (a, b) =>
           DateTime.fromJSDate(b.dateTimeCreated) -
-          DateTime.fromJSDate(a.dateTimeCreated)
+          DateTime.fromJSDate(a.dateTimeCreated),
       );
     },
     async getVisits() {
@@ -832,7 +832,7 @@ export default defineComponent({
 
       const payload = Object.entries(this.visitsFilters).reduce((acc, e) => {
         if (e[1] != null && e[1] !== "") {
-          acc[e[0]] = e[1];
+          acc[e[0]] = typeof e[1] === "string" ? e[1].trim() : e[1];
         }
 
         return acc;
@@ -845,7 +845,7 @@ export default defineComponent({
         this.showMessage(
           this.$q,
           false,
-          "Unable to fetch visits. Please try again"
+          "Unable to fetch visits. Please try again",
         );
         return;
       }

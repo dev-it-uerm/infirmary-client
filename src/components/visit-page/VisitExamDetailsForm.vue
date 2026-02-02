@@ -15,7 +15,6 @@
             class="q-pa-lg scroll"
             style="height: auto; max-height: 65vh; min-height: 100px"
           >
-            {{ this.headPathologist }}
             <div v-for="p in examsMap[examCode]?.params || []" :key="p.code">
               <q-input
                 v-if="p.fieldType === 'TEXT'"

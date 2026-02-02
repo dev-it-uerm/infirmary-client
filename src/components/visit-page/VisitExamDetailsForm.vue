@@ -18,9 +18,7 @@
             <div v-for="p in examsMap[examCode]?.params || []" :key="p.code">
               <q-input
                 v-if="p.fieldType === 'TEXT'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 stack-label
                 outlined
                 :rules="generateRules(p.required)"
@@ -30,9 +28,7 @@
               />
               <q-input
                 v-if="p.fieldType === 'TEXTAREA'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 type="textarea"
                 stack-label
                 outlined
@@ -45,18 +41,14 @@
                 v-if="p.fieldType === 'PHYSICIANSELECT'"
                 label="Physician"
                 roleCode="DR"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :required="p.required"
                 :initialValue="value[p.code]"
                 @valueChanged="(val) => (value[p.code] = val)"
               />
               <FormFieldExam
                 v-if="p.fieldType === 'EXAM'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :required="p.required"
                 :label="p.name"
                 :initialValue="value[p.code]"
@@ -64,9 +56,7 @@
               />
               <FormFieldExamText
                 v-if="p.fieldType === 'EXAMTEXT'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :required="p.required"
                 :label="p.name"
                 :initialValue="value[p.code]"
@@ -74,9 +64,7 @@
               />
               <FormFieldExamTextArea
                 v-if="p.fieldType === 'EXAMTEXTAREA'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :required="p.required"
                 :label="p.name"
                 :initialValue="value[p.code]"
@@ -84,9 +72,7 @@
               />
               <FormFieldExamSelect
                 v-if="p.fieldType === 'EXAMSELECT'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :options="p.options"
                 :required="p.required"
                 :label="p.name"
@@ -95,9 +81,7 @@
               />
               <FormFieldChestXrayImpression
                 v-if="p.fieldType === 'XRAYIMPRESSION'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :label="p.name"
                 :required="p.required"
                 :initialValue="value[p.code]?.value || null"
@@ -109,9 +93,7 @@
               />
               <FormFieldExamMultiSelect
                 v-if="p.fieldType === 'EXAMMULTISELECT'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :options="p.options"
                 :label="p.name"
                 :required="p.required"
@@ -124,9 +106,7 @@
               />
               <FormFieldExamDentalChart
                 v-if="p.fieldType === 'EXAMDENTALCHART'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :options="p.options"
                 :label="p.name"
                 :required="p.required"
@@ -139,9 +119,7 @@
               />
               <FormFieldExamIllnesses
                 v-if="p.fieldType === 'EXAMILLNESSES'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :required="p.required"
                 :label="p.name"
                 :model-value="value[p.code]"
@@ -149,9 +127,7 @@
               />
               <FormFieldExamDentalCondition
                 v-if="p.fieldType === 'EXAMDNTLCOND'"
-                :disable="
-                  p.disable || visitIsCompleted || examIsCompleted || loading
-                "
+                :disable="p.disable || loading"
                 :options="p.options"
                 :label="p.name"
                 :required="p.required"
@@ -169,12 +145,9 @@
             <q-btn
               unelevated
               icon="save"
-              :disable="visitIsCompleted || examIsCompleted"
               class="text-white bg-primary"
               :loading="loading"
-              :label="
-                visitIsCompleted || examIsCompleted ? 'COMPLETED' : 'SAVE'
-              "
+              label="SAVE"
               type="submit"
             />
           </div>

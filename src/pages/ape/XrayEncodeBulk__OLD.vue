@@ -202,7 +202,7 @@
                                   item.patientFirstName,
                                   item.patientMiddleName,
                                   item.patientLastName,
-                                  item.patientExtName
+                                  item.patientExtName,
                                 )
                               }}
                             </div>
@@ -388,32 +388,32 @@ import * as inputRules from "src/helpers/input-rules.js";
 export default defineComponent({
   name: "XrayEncodeBulk",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
+    DateRange: defineAsyncComponent(
+      () => import("src/components/core/form-fields/DateRange.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    NoResult: defineAsyncComponent(() =>
-      import("src/components/core/NoResult.vue")
+    NoResult: defineAsyncComponent(
+      () => import("src/components/core/NoResult.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    ConfirmationDialog: defineAsyncComponent(() =>
-      import("src/components/core/ConfirmationDialog.vue")
+    ConfirmationDialog: defineAsyncComponent(
+      () => import("src/components/core/ConfirmationDialog.vue"),
     ),
-    UserSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/UserSelect.vue")
+    UserSelect: defineAsyncComponent(
+      () => import("src/components/core/form-fields/UserSelect.vue"),
     ),
-    FormFieldChestXrayImpression: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ChestXrayImpression.vue")
+    FormFieldChestXrayImpression: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ChestXrayImpression.vue"),
     ),
   },
   setup() {
@@ -495,14 +495,14 @@ export default defineComponent({
 
       const response = await this.$store.dispatch(
         "ape/getVisitsWithXray",
-        sanitizedFilters
+        sanitizedFilters,
       );
 
       if (response.error) {
         showMessage(
           this.$q,
           false,
-          "Unable to fetch visits. Please try again."
+          "Unable to fetch visits. Please try again.",
         );
 
         this.filtering = false;
@@ -535,14 +535,13 @@ export default defineComponent({
         const response = await this.$store.dispatch("ape/saveExamDetails", {
           visitId: row.id,
           examCode: examsMap.RAD_XR_CHST.code,
+          doctor: this.radiologist,
           details: [
             {
               code: examFieldsMap[examsMap.RAD_XR_CHST.code][0].code,
               value: this.xrayImpression,
             },
           ],
-          markAsCompletedOnSave: true,
-          creator: this.radiologist,
         });
 
         await delay(1000);

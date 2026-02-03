@@ -141,9 +141,9 @@
                               studempNumbersStr = studempNumbersStr
                                 .replace(
                                   new RegExp(
-                                    `[\s\n\r]*${item.identificationCode}`
+                                    `[\s\n\r]*${item.identificationCode}`,
                                   ),
-                                  ''
+                                  '',
                                 )
                                 .trim()
                             "
@@ -250,8 +250,8 @@ import * as inputRules from "src/helpers/input-rules.js";
 export default defineComponent({
   name: "XrayEncodeBulk",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
@@ -259,23 +259,23 @@ export default defineComponent({
     // FetchingData: defineAsyncComponent(() =>
     //   import("src/components/core/FetchingData.vue")
     // ),
-    DateRange: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/DateRange.vue")
+    DateRange: defineAsyncComponent(
+      () => import("src/components/core/form-fields/DateRange.vue"),
     ),
-    NoResult: defineAsyncComponent(() =>
-      import("src/components/core/NoResult.vue")
+    NoResult: defineAsyncComponent(
+      () => import("src/components/core/NoResult.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    ConfirmationDialog: defineAsyncComponent(() =>
-      import("src/components/core/ConfirmationDialog.vue")
+    ConfirmationDialog: defineAsyncComponent(
+      () => import("src/components/core/ConfirmationDialog.vue"),
     ),
-    UserSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/UserSelect.vue")
+    UserSelect: defineAsyncComponent(
+      () => import("src/components/core/form-fields/UserSelect.vue"),
     ),
-    FormFieldChestXrayImpression: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/ChestXrayImpression.vue")
+    FormFieldChestXrayImpression: defineAsyncComponent(
+      () => import("src/components/core/form-fields/ChestXrayImpression.vue"),
     ),
   },
   setup() {
@@ -353,15 +353,13 @@ export default defineComponent({
           identificationCode: patient.identificationCode,
           year: this.year,
           examCode: "RAD_XR_CHST",
+          doctor: this.radiologist,
           details: [
             {
               code: "IMPRN",
               value: this.xrayImpression,
             },
           ],
-
-          markAsCompletedOnSave: true,
-          creator: this.radiologist,
         });
 
         await delay(1000);
@@ -382,7 +380,7 @@ export default defineComponent({
         showMessage(
           this.$q,
           false,
-          "Saving done but there are errors encountered."
+          "Saving done but there are errors encountered.",
         );
       } else {
         showMessage(this.$q, true, "Saving done. No errors.");

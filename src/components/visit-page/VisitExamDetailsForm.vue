@@ -367,10 +367,9 @@ export default defineComponent({
       this.loading = true;
 
       const response = await this.$store.dispatch("ape/saveExamDetails", {
-        creator: this.headPathologist,
         visitId: this.visitId,
         examCode: this.examCode,
-        markAsCompletedOnSave: false,
+        doctor: this.headPathologist,
         // MAKE SURE EVERY `detail` HAS A `code` PROP
         details: Object.entries(this.value).map((e) => ({
           code: e[0],

@@ -80,11 +80,11 @@ export const scheduleSelf = async (context, accessToken) => {
   );
 };
 
-export const schedule = async (context, patientCode) => {
+export const schedule = async (context, urlQuery) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/visit/schedule/${patientCode}`,
-    null,
+    `${context.rootState.app.apiHost}/ape/visit/schedule`,
+    urlQuery,
     context.rootState.app?.user?.accessToken,
     null,
     context,

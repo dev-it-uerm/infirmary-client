@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row items-center q-mb-sm">
+    <!-- <div class="row items-center q-mb-sm">
       <div class="text-overline">
         {{ inputMode === "QR" ? "SCAN QR" : "MANUAL ENTRY" }}
       </div>
@@ -12,7 +12,7 @@
         color="primary"
         v-model="inputMode"
       />
-    </div>
+    </div> -->
     <div
       v-if="inputMode === 'QR' && loading"
       class="full-width flex flex-center"
@@ -27,7 +27,21 @@
       width="600px"
     ></div>
     <div v-if="inputMode === 'MANUAL'">
-      <q-form @submit="submit">
+      <q-form ref="qForm" @reset="reset" @submit="submit">
+        <q-input
+          :disable="loading"
+          stack-label
+          outlined
+          type="number"
+          label="School Year"
+          hint=""
+          :rules="[
+            (v) => {
+              return v && String(v).length === 4 ? true : 'Invalid year';
+            },
+          ]"
+          v-model="schoolYear"
+        />
         <q-input
           :loading="loading"
           :disable="loading"
@@ -36,11 +50,18 @@
           stack-label
           autofocus
           :label="inputLabel"
+          :rules="[
+            (v) => {
+              return v && v.length > 2
+                ? true
+                : 'At least 3 characters are required';
+            },
+          ]"
           v-model.trim="patientCode"
         />
         <div class="q-mt-md row justify-end">
           <q-btn
-            :disable="loading || !patientCode"
+            :disable="loading"
             unelevated
             color="accent"
             class="text-black"
@@ -82,10 +103,11 @@ export default defineComponent({
       default: "SUBMIT",
     },
   },
-  emits: ["patientCodeChanged", "inputModeChanged"],
+  emits: ["valueChanged", "inputModeChanged"],
   data() {
     return {
       inputMode: "MANUAL",
+      schoolYear: null,
       patientCode: null,
       scanner: null,
     };
@@ -118,27 +140,6 @@ export default defineComponent({
       immediate: true,
     },
   },
-  mounted() {
-    // Initialize QR Code Scanner
-    this.scanner = new Html5QrcodeScanner(
-      this.scannerId,
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      false
-    );
-
-    const me = this;
-
-    this.scanner.render(
-      (decodedText, decodedResult) => {
-        // me.patientCode = decodedText;
-        me.$emit("patientCodeChanged", decodedText);
-      },
-      (error) => {
-        // handle scan failure, usually better to ignore and keep scanning.
-        // console.warn("Code scan error:", error);
-      }
-    );
-  },
   methods: {
     pauseScanner() {
       // UNKNOWN = 0, NOT_STARTED = 1, SCANNING = 2, PAUSED = 3
@@ -157,15 +158,50 @@ export default defineComponent({
     reset() {
       // this.scanner.clear();
       this.patientCode = null;
-      this.$emit("patientCodeChanged", null);
+      this.schoolYear = Number(new Date().getFullYear());
+      this.$emit("valueChanged", null);
+    },
+    resetForm() {
+      this.$refs.qForm.reset();
     },
     submit() {
-      const v = this.patientCode
+      const patientCode = this.patientCode
         ? this.patientCode.replace(/[^\w]/g, "").replace(/ /g, "")
         : null;
 
-      this.$emit("patientCodeChanged", v && v.length > 2 ? v : null);
+      this.$emit(
+        "valueChanged",
+        this.schoolYear && patientCode
+          ? {
+              schoolYear: this.schoolYear,
+              patientCode,
+            }
+          : null,
+      );
     },
+  },
+  mounted() {
+    // Initialize QR Code Scanner
+    this.scanner = new Html5QrcodeScanner(
+      this.scannerId,
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      false,
+    );
+
+    const me = this;
+
+    this.scanner.render(
+      (decodedText, decodedResult) => {
+        // me.patientCode = decodedText;
+        me.$emit("valueChanged", decodedText);
+      },
+      (error) => {
+        // handle scan failure, usually better to ignore and keep scanning.
+        // console.warn("Code scan error:", error);
+      },
+    );
+
+    this.resetForm();
   },
 });
 </script>

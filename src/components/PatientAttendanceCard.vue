@@ -14,7 +14,7 @@
           submitBtnLabel="REGISTER"
           :scannerId="scannerId"
           :loading="loading"
-          @patientCodeChanged="(v) => register(v)"
+          @valueChanged="(v) => register(v?.schoolYear, v?.patientCode)"
           @inputModeChanged="(val) => (inputMode = val)"
         />
         <div v-if="lastPatientAttended">
@@ -76,26 +76,26 @@ import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 export default defineComponent({
   name: "PatientAttendanceCard",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
-    MessageBanner: defineAsyncComponent(() =>
-      import("src/components/core/MessageBanner.vue")
+    MessageBanner: defineAsyncComponent(
+      () => import("src/components/core/MessageBanner.vue"),
     ),
-    QRCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/QRCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(
+      () => import("src/components/core/QRCodeScanner.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    PrintoutChecklist: defineAsyncComponent(() =>
-      import("src/components/printouts/Checklist.vue")
+    PrintoutChecklist: defineAsyncComponent(
+      () => import("src/components/printouts/Checklist.vue"),
     ),
   },
   props: {
@@ -161,15 +161,15 @@ export default defineComponent({
           patient.firstName,
           patient.middleName,
           patient.lastName,
-          patient.extName
+          patient.extName,
         ),
         Campus: this.campusesMap[patient.campusCode]?.name || "Unknown",
         Affiliation: affiliationsMap[patient.affiliationCode].name,
         Department: this.departmentsMap[patient.deptCode].name,
       };
     },
-    async register(patientCode) {
-      if (!patientCode) {
+    async register(schoolYear, patientCode) {
+      if (!schoolYear || !patientCode) {
         return;
       }
 
@@ -179,7 +179,11 @@ export default defineComponent({
       let success = true;
       let message = "Patient attendance has been recorded.";
 
-      const response = await this.$store.dispatch("ape/schedule", patientCode);
+      const response = await this.$store.dispatch("ape/schedule", {
+        schoolYear: schoolYear,
+        identificationCode: patientCode,
+      });
+
       await delay(1000);
 
       if (response.error) {
@@ -192,11 +196,11 @@ export default defineComponent({
         (response.body.attendance && response.body.employee)
       ) {
         this.lastPatientAttended = this.formatLastPatientRegistered(
-          response.body
+          response.body,
         );
       }
 
-      this.$refs.PATIENT_ATTENDANCE_PAGE__qrCodeScanner.reset();
+      this.$refs.PATIENT_ATTENDANCE_PAGE__qrCodeScanner.resetForm();
       showMessage(this.$q, success, message);
       this.loading = false;
       this.$emit("ready");

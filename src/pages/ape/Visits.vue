@@ -174,11 +174,6 @@
                                     class="row items-center no-wrap"
                                     style="gap: 6px"
                                   >
-                                    <!-- :class="
-                                        e.dateTimeAccepted
-                                          ? 'text-positive'
-                                          : 'text-negative'
-                                      " -->
                                     <q-btn
                                       v-for="(e, idx) in props.row.exams"
                                       :key="idx"
@@ -188,11 +183,11 @@
                                       style="font-size: 9pt"
                                       @click.stop="
                                         () => {
-                                          visitInfoTabCode = e.examCode;
+                                          visitInfoTabCode = e.code;
                                           showPxVisitInfo(props.row);
                                         }
                                       "
-                                      :label="examsMap[e.examCode].name"
+                                      :label="e.name"
                                     />
                                   </div>
                                 </q-td>
@@ -394,25 +389,6 @@
                               </q-item-label>
                             </q-item-section>
                             <q-item-section v-if="examsMap" side>
-                              <!-- <q-btn
-                              dense
-                              style="padding-left: 10px; padding-right: 10px"
-                              class="bg-white"
-                              unelevated
-                              outline
-                              :color="
-                                item.dateTimeCompleted
-                                  ? 'positive'
-                                  : 'text-grey-8'
-                              "
-                              @click.stop="
-                                () => {
-                                  currentVisit = item;
-                                  statusHistoryVisible = true;
-                                }
-                              "
-                              label="DIAG EXAMS"
-                            /> -->
                               <q-btn
                                 outline
                                 dense
@@ -428,11 +404,6 @@
                                 @click.stop="showPxVisitInfo(item)"
                               />
                               <q-btn
-                                v-if="
-                                  item.exams?.some((e) =>
-                                    Boolean(e.dateTimeAccepted),
-                                  )
-                                "
                                 dense
                                 style="
                                   padding-left: 10px;
@@ -476,54 +447,6 @@
         <FetchingData v-else />
       </template>
     </CardComponent>
-    <MinimizedDialog
-      v-if="statusHistoryVisible"
-      title="DIAGNOSITC EXAMS"
-      widthOnDesktop="500px"
-      @close="statusHistoryVisible = false"
-    >
-      <template v-slot:body>
-        <div class="q-pa-lg">
-          <q-table
-            class="fit"
-            hide-bottom
-            flat
-            bordered
-            separator="cell"
-            :rows-per-page-options="[0]"
-            :rows="currentVisit.exams"
-            :columns="[
-              {
-                name: 'examCode',
-                label: 'Exam Name',
-                field: 'examCode',
-                align: 'left',
-                format: getExamName,
-              },
-              {
-                name: 'createdBy',
-                label: 'Added By',
-                field: 'createdBy',
-                align: 'left',
-              },
-              {
-                name: 'dateTimeAccepted',
-                label: 'Date & Time Added',
-                field: 'dateTimeAccepted',
-                format: (v) => {
-                  if (!v) {
-                    return '-';
-                  }
-
-                  return formatDate(v);
-                },
-                align: 'left',
-              },
-            ]"
-          />
-        </div>
-      </template>
-    </MinimizedDialog>
     <VisitDetails
       v-if="visitInfoVisible"
       :visit="currentVisit"
@@ -707,7 +630,6 @@ export default defineComponent({
       visitsLoading: false,
       visits: [],
 
-      statusHistoryVisible: false,
       visitPrintoutVisible: false,
 
       visitInfoTabCode: null,
@@ -787,8 +709,6 @@ export default defineComponent({
             physicianCode: row.physicianCode,
             createdBy: row.createdBy,
             dateTimeCreated: new Date(row.dateTimeCreated),
-            completedBy: row.completedBy,
-            dateTimeCompleted: new Date(row.dateTimeCompleted),
             remarks: row.remarks,
 
             patientCampusCode: row.patientCampusCode,
@@ -806,19 +726,20 @@ export default defineComponent({
           };
         }
 
-        if (row.visitExamId) {
-          map[row.id].exams.push({
-            id: row.visitExamId,
-            visitId: row.visitExamVisitId,
-            examCode: row.visitExamExamCode,
-            createdBy: row.visitExamCreatedBy,
-            dateTimeCreated: new Date(row.visitExamDateTimeCreated),
-            acceptedBy: row.visitExamAcceptedBy,
-            dateTimeAccepted: new Date(row.visitExamDateTimeAccepted),
-            completedBy: row.visitExamCompletedBy,
-            dateTimeCompleted: new Date(row.visitExamDateTimeCompleted),
-          });
-        }
+        map[row.id].exams.push({
+          visitId: row.id,
+          id: row.visitExamId,
+          code: row.visitExamCode,
+          name: row.visitExamName,
+          createdBy: row.visitExamCreatedBy,
+          dateTimeCreated: row.visitExamDateTimeCreated
+            ? new Date(row.visitExamDateTimeCreated)
+            : null,
+          completedBy: row.visitExamCompletedBy,
+          dateTimeCompleted: row.visitExamDateTimeCompleted
+            ? new Date(row.visitExamDateTimeCompleted)
+            : null,
+        });
       }
 
       return Object.values(map).sort(

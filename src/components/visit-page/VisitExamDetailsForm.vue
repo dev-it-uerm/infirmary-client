@@ -244,8 +244,6 @@ export default defineComponent({
       value: {},
       confDialogVisible: false,
 
-      visitIsCompleted: false,
-      examIsCompleted: false,
       headPathologist: null,
     };
   },
@@ -342,9 +340,6 @@ export default defineComponent({
         return;
       }
 
-      this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
-      this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
-
       this.value = this.getMergedExamFieldsAndDetails(
         this.examsMap[this.examCode]?.params || [],
         this.getVisitExamDetailsMap(response.body.details),
@@ -354,11 +349,12 @@ export default defineComponent({
     },
     async save() {
       // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [START]
-      if (
-        this.user?.roleCode === "RADTECH" &&
-        this.examCode === "RAD_XR_CHST"
-      ) {
-        showMessage(this.$q, false, "Please use the X-RAY BATCH ENCODE page.");
+      if (this.examCode === "RAD_XR_CHST") {
+        showMessage(
+          this.$q,
+          false,
+          "Please use the X-RAY BATCH ENCODE page to encode X-Ray results.",
+        );
         return;
       }
       // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [END]
@@ -385,9 +381,6 @@ export default defineComponent({
         this.$emit("error");
         return;
       }
-
-      this.visitIsCompleted = Boolean(response.body.visit.dateTimeCompleted);
-      this.examIsCompleted = Boolean(response.body.exam.dateTimeCompleted);
 
       showMessage(
         this.$q,

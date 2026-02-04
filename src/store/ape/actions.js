@@ -212,32 +212,10 @@ export const addPatient = async (context, payload) => {
   );
 };
 
-export const getVisitExams = async (context, visitId) => {
-  return await request(
-    "get",
-    `${context.rootState.app.apiHost}/ape/visit/exams/${visitId}`,
-    null,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context,
-  );
-};
-
 export const getVisitsWithXray = async (context, payload) => {
   return await request(
     "get",
     `${context.rootState.app.apiHost}/ape/visit/w-xray`,
-    payload,
-    context.rootState.app?.user?.accessToken,
-    null,
-    context,
-  );
-};
-
-export const getAnalyticsCompletedVisitsPerDay = async (context, payload) => {
-  return await request(
-    "get",
-    `${context.rootState.app.apiHost}/ape/analytics/completed-visits-per-day`,
     payload,
     context.rootState.app?.user?.accessToken,
     null,
@@ -368,6 +346,17 @@ export const getHeadDoctor = async (context, payload) => {
     "get",
     `${context.rootState.app.apiHost}/user/head-doctor`,
     payload,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context,
+  );
+};
+
+export const getAllowedExams = async (context, patientId) => {
+  return await request(
+    "get",
+    `${context.rootState.app.apiHost}/ape/visit/allowed-exams/${patientId}`,
+    null,
     context.rootState.app?.user?.accessToken,
     null,
     context,

@@ -17,7 +17,7 @@
             <div>
               <q-input
                 v-if="field.type === 'TEXT'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="field.disable || loading"
                 stack-label
                 outlined
                 :rules="generateRules(field.required)"
@@ -27,7 +27,7 @@
               />
               <q-input
                 v-if="field.type === 'TEXTAREA'"
-                :disable="visitIsCompleted || field.disable || loading"
+                :disable="field.disable || loading"
                 type="textarea"
                 stack-label
                 outlined
@@ -40,8 +40,13 @@
                 v-if="field.type === 'PHYSICIANSELECT'"
                 label="Physician"
                 :roleCode="userRolesMap.DR.code"
-                :disable="visitIsCompleted || field.disable || loading"
-                :initialValue="value[field.code]"
+                :disable="field.disable || loading"
+                :initialValue="
+                  value[field.code] || {
+                    code: null,
+                    name: 'No physician assigned yet.',
+                  }
+                "
                 @valueChanged="(val) => (value[field.code] = val)"
               />
             </div>
@@ -52,10 +57,9 @@
           <q-btn
             unelevated
             icon="save"
-            :disable="visitIsCompleted"
             class="text-white bg-primary"
             :loading="loading"
-            :label="visitIsCompleted ? 'COMPLETED' : 'SAVE'"
+            label="Save"
             @click="submitForm"
           />
         </div>
@@ -78,14 +82,14 @@ import { userRolesMap } from "src/helpers/constants.js";
 export default defineComponent({
   name: "VisitInfoForm",
   components: {
-    ConfirmationDialog: defineAsyncComponent(() =>
-      import("src/components/core/ConfirmationDialog.vue")
+    ConfirmationDialog: defineAsyncComponent(
+      () => import("src/components/core/ConfirmationDialog.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    UserSelect: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/UserSelect.vue")
+    UserSelect: defineAsyncComponent(
+      () => import("src/components/core/form-fields/UserSelect.vue"),
     ),
   },
   props: {
@@ -130,21 +134,6 @@ export default defineComponent({
           disable: true,
         },
         {
-          code: "completedBy",
-          name: "Completed By",
-          type: "TEXT",
-          default: "NOT YET COMPLETED",
-          disable: true,
-        },
-        {
-          code: "dateTimeCompleted",
-          name: "Date & Time Completed",
-          type: "TEXT",
-          format: formatDate,
-          default: "NOT YET COMPLETED",
-          disable: true,
-        },
-        {
           code: "physician",
           name: "Physician",
           type: "PHYSICIANSELECT",
@@ -165,7 +154,6 @@ export default defineComponent({
       loading: false,
       value: {},
       confDialogVisible: false,
-      visitIsCompleted: false,
     };
   },
   watch: {
@@ -214,7 +202,6 @@ export default defineComponent({
         return;
       }
 
-      this.visitIsCompleted = Boolean(response.body.dateTimeCompleted);
       this.value = this.mergeFieldsAndVal(this.fields, response.body);
       this.loading = false;
     },

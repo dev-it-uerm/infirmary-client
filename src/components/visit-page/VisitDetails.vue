@@ -13,7 +13,7 @@
               visit.patientFirstName,
               visit.patientMiddleName,
               visit.patientLastName,
-              visit.patientExtName
+              visit.patientExtName,
             )
           }}
         </div>
@@ -79,17 +79,17 @@ import { formatName } from "src/helpers/util.js";
 export default defineComponent({
   name: "VisitDetails",
   components: {
-    ReminderCard: defineAsyncComponent(() =>
-      import("src/components/core/ReminderCard.vue")
+    ReminderCard: defineAsyncComponent(
+      () => import("src/components/core/ReminderCard.vue"),
     ),
-    MinimizedDialog: defineAsyncComponent(() =>
-      import("src/components/core/MinimizedDialog.vue")
+    MinimizedDialog: defineAsyncComponent(
+      () => import("src/components/core/MinimizedDialog.vue"),
     ),
-    VisitInfoForm: defineAsyncComponent(() =>
-      import("src/components/visit-page/VisitInfoForm.vue")
+    VisitInfoForm: defineAsyncComponent(
+      () => import("src/components/visit-page/VisitInfoForm.vue"),
     ),
-    VisitExamDetailsForm: defineAsyncComponent(() =>
-      import("src/components/visit-page/VisitExamDetailsForm.vue")
+    VisitExamDetailsForm: defineAsyncComponent(
+      () => import("src/components/visit-page/VisitExamDetailsForm.vue"),
     ),
   },
   props: {
@@ -139,27 +139,23 @@ export default defineComponent({
 
     if (this.user.examsHandled) {
       const response = await this.$store.dispatch(
-        "ape/getVisitExams",
-        this.visit.id
+        "ape/getAllowedExams",
+        this.visit.patientId,
       );
 
       if (!response.error && response.body?.length > 0) {
-        const examsAllowedForPx = response.body.map((e) => {
-          return this.examsMap[e.examCode];
-        });
-
-        const examsToShow = examsAllowedForPx.filter((e) => {
-          return this.user.examsHandled.includes(e.code);
-        });
-
-        tabs.push(...examsToShow);
+        tabs.push(
+          ...response.body
+            .sort((a, b) => b.sequenceNumber - a.sequenceNumber)
+            .filter((e) => this.user.examsHandled.includes(e.code)),
+        );
       }
     }
 
     this.tabs = tabs;
 
     this.tab = this.tabCode
-      ? this.tabs.find((t) => t.code === this.tabCode) ?? this.tabs[0]
+      ? (this.tabs.find((t) => t.code === this.tabCode) ?? this.tabs[0])
       : this.tabs[0];
   },
 });

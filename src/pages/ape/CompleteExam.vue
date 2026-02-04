@@ -70,7 +70,7 @@
                             patient.firstName,
                             patient.middleName,
                             patient.lastName,
-                            patient.extName
+                            patient.extName,
                           )
                         }}</span>
                       </div>
@@ -96,7 +96,7 @@
                         <span class="text-grey-7">Patient Year Level:</span>
                         <span class="q-ml-sm">{{
                           yearLevels.find(
-                            (l) => l.code === Number(patient.yearLevel)
+                            (l) => l.code === Number(patient.yearLevel),
                           ).name ?? ""
                         }}</span>
                       </div>
@@ -108,9 +108,9 @@
                           }}</span>
                         </div>
                         <div>
-                          <span class="text-grey-7"
-                            >Date & Time Exam Completed:</span
-                          >
+                          <span class="text-grey-7">
+                            Date & Time Exam Completed:
+                          </span>
                           <span class="q-ml-sm">{{
                             formatDate(phase.dateTimeCreated)
                           }}</span>
@@ -216,23 +216,23 @@ import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 export default defineComponent({
   name: "CompleteExam",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
-    MessageBanner: defineAsyncComponent(() =>
-      import("src/components/core/MessageBanner.vue")
+    MessageBanner: defineAsyncComponent(
+      () => import("src/components/core/MessageBanner.vue"),
     ),
-    QRCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/QRCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(
+      () => import("src/components/core/QRCodeScanner.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    ReminderCard: defineAsyncComponent(() =>
-      import("src/components/core/ReminderCard.vue")
+    ReminderCard: defineAsyncComponent(
+      () => import("src/components/core/ReminderCard.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
   },
   props: {
@@ -311,7 +311,7 @@ export default defineComponent({
         if (!v) return;
 
         const examsHandled = exams.filter((e) =>
-          this.user.examsHandled.includes(e.code)
+          this.user.examsHandled.includes(e.code),
         );
 
         this.exams = examsHandled;

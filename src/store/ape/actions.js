@@ -72,21 +72,35 @@ export const sendVisitAppointmentLink = async (context, payload) => {
   );
 };
 
-export const scheduleSelf = async (context, accessToken) => {
+export const registerVisit__OLD = async (context, urlQuery) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/visit/self-schedule`,
-    { accessToken },
-  );
-};
-
-export const schedule = async (context, urlQuery) => {
-  return await request(
-    "post",
-    `${context.rootState.app.apiHost}/ape/visit/schedule`,
+    `${context.rootState.app.apiHost}/ape/visit`,
     urlQuery,
     context.rootState.app?.user?.accessToken,
     null,
+    context,
+  );
+};
+
+export const registerVisit = async (context, urlQuery) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/visit/from-ue-db`,
+    urlQuery,
+    context.rootState.app?.user?.accessToken,
+    null,
+    context,
+  );
+};
+
+export const registerVisitManually = async (context, payload) => {
+  return await request(
+    "post",
+    `${context.rootState.app.apiHost}/ape/visit/from-user`,
+    null,
+    context.rootState.app?.user?.accessToken,
+    payload,
     context,
   );
 };
@@ -197,17 +211,6 @@ export const getPatients = async (context, payload) => {
     payload,
     context.rootState.app?.user?.accessToken,
     null,
-    context,
-  );
-};
-
-export const addPatient = async (context, payload) => {
-  return await request(
-    "post",
-    `${context.rootState.app.apiHost}/ape/patient`,
-    null,
-    context.rootState.app?.user?.accessToken,
-    payload,
     context,
   );
 };

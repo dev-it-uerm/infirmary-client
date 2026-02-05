@@ -22,19 +22,19 @@ import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
 
 export default defineComponent({
-  name: "PatientAttendancePage",
+  name: "VisitRegistrationPage",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    PatientAttendanceCard: defineAsyncComponent(() =>
-      import("src/components/PatientAttendanceCard.vue")
+    PatientAttendanceCard: defineAsyncComponent(
+      () => import("src/components/PatientAttendanceCard.vue"),
     ),
   },
   data() {

@@ -47,14 +47,14 @@ const routes = [
       },
       // UE ANNUAL DIAGNOSTIC EXAM
       {
-        name: "APE_PATIENT_ATTENDANCE",
-        path: "/ape/patient-attendance",
-        component: () => import("pages/ape/PatientAttendance.vue"),
+        name: "APE_VISIT_REGISTRATION",
+        path: "/ape/visit-registration",
+        component: () => import("pages/ape/VisitRegistration.vue"),
       },
       {
-        name: "APE_PATIENT_REGISTRATION",
-        path: "/ape/patient-registration",
-        component: () => import("pages/ape/PatientRegistration.vue"),
+        name: "APE_MANUAL_VISIT_REGISTRATION",
+        path: "/ape/manual-visit-registration",
+        component: () => import("pages/ape/ManualVisitRegistration.vue"),
       },
       {
         name: "APE_EMPLOYEE_ATTENDANCE",

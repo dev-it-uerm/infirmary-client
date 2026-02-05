@@ -645,13 +645,6 @@ export const app = {
   url: "https://uermhospital.com.ph/apps/infirmary",
 };
 
-const navMenuAPEPxRegistration = {
-  code: "APE_PATIENT_REGISTRATION",
-  name: "Add Patient",
-  url: "/ape/patient-registration",
-  icon: "fa-solid fa-person-circle-plus",
-};
-
 const navMenuAPEEmployeeAttendance = {
   code: "APE_EMPLOYEE_ATTENDANCE",
   name: "Employee Attendance",
@@ -659,11 +652,18 @@ const navMenuAPEEmployeeAttendance = {
   icon: "fa-solid fa-calendar-days",
 };
 
-const navMenuRegistration = {
-  code: "APE_PATIENT_ATTENDANCE",
+const navMenuAPEVisitRegistration = {
+  code: "APE_VISIT_REGISTRATION",
   name: "Triage",
-  url: "/ape/patient-attendance",
+  url: "/ape/visit-registration",
   icon: "fa-solid fa-list-check",
+};
+
+const navMenuAPEManualVisitRegistration = {
+  code: "APE_MANUAL_VISIT_REGISTRATION",
+  name: "Manual Visit Registration",
+  url: "/ape/manual-visit-registration",
+  icon: "fa-solid fa-person-circle-plus",
 };
 
 // const navMenuAPEVisitAppointmentBulk = {
@@ -724,8 +724,8 @@ const navMenuPxRegistration = {
 };
 
 export const apeNavMenus = [
-  navMenuRegistration,
-  navMenuAPEPxRegistration,
+  navMenuAPEVisitRegistration,
+  navMenuAPEManualVisitRegistration,
   navMenuAPEEmployeeAttendance,
   // {
   //   code: "VISIT_APPOINTMENT_LINK",

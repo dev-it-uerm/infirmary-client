@@ -3,7 +3,10 @@
     <div :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }">
       <CardComponent>
         <template v-slot:header>
-          <PageHeader text="ADD PATIENT" icon="fa-solid fa-user" />
+          <PageHeader
+            text="MANUAL VISIT REGISTRATION"
+            icon="fa-solid fa-user"
+          />
         </template>
         <template v-slot:body>
           <div v-if="initialized">
@@ -13,6 +16,17 @@
               @reset="reset"
             >
               <div class="column items-center">
+                <q-input
+                  class="full-width"
+                  :disable="loading"
+                  stack-label
+                  outlined
+                  type="number"
+                  label="School Year"
+                  :rules="[requiredRule]"
+                  v-model.trim="schoolYear"
+                  hint=""
+                />
                 <q-input
                   class="full-width"
                   :disable="loading"
@@ -251,19 +265,19 @@ import {
 import * as inputRules from "src/helpers/input-rules.js";
 
 export default defineComponent({
-  name: "PatientRegistration",
+  name: "ManualVisitRegistrationPage",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    ConfirmationDialog: defineAsyncComponent(() =>
-      import("src/components/core/ConfirmationDialog.vue")
+    ConfirmationDialog: defineAsyncComponent(
+      () => import("src/components/core/ConfirmationDialog.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
   },
   setup() {
@@ -280,6 +294,8 @@ export default defineComponent({
     return {
       loading: false,
       yesNoDialogVisible: false,
+
+      schoolYear: null,
 
       campusCode: null,
       affiliationCode: null,
@@ -332,6 +348,7 @@ export default defineComponent({
   },
   methods: {
     reset() {
+      this.schoolYear = null;
       this.campusCode = null;
       this.affiliationCode = null;
       this.code = null;
@@ -354,7 +371,9 @@ export default defineComponent({
       this.loading = true;
       await delay(2000);
 
-      const response = await this.$store.dispatch("ape/addPatient", {
+      const response = await this.$store.dispatch("ape/registerVisitManually", {
+        schoolYear: this.schoolYear,
+
         campusCode: this.campusCode,
         affiliationCode: this.affiliationCode,
         identificationCode: this.code,
@@ -377,7 +396,7 @@ export default defineComponent({
         showMessage(
           this.$q,
           false,
-          response.body ?? "Unable to register patient. Please try again."
+          response.body ?? "Unable to register patient. Please try again.",
         );
 
         this.loading = false;

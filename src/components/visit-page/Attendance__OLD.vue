@@ -100,26 +100,26 @@ import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 export default defineComponent({
   name: "VisitPageAttendance",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
-    MessageBanner: defineAsyncComponent(() =>
-      import("src/components/core/MessageBanner.vue")
+    MessageBanner: defineAsyncComponent(
+      () => import("src/components/core/MessageBanner.vue"),
     ),
-    QRCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/QRCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(
+      () => import("src/components/core/QRCodeScanner.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    Checklist: defineAsyncComponent(() =>
-      import("src/components/printouts/Checklist.vue")
+    Checklist: defineAsyncComponent(
+      () => import("src/components/printouts/Checklist.vue"),
     ),
   },
   props: {
@@ -211,7 +211,7 @@ export default defineComponent({
           patient.firstName,
           patient.middleName,
           patient.lastName,
-          patient.extName
+          patient.extName,
         ),
         Campus: this.campusesMap[patient.campusCode]?.name || "Unknown",
         Affiliation: affiliationsMap[patient.affiliationCode].name,
@@ -229,7 +229,7 @@ export default defineComponent({
           : "Employee attendance has been saved.";
 
       const vuexAction =
-        registrationMode === "REG" ? "ape/schedule" : "ape/timeInOut";
+        registrationMode === "REG" ? "ape/registerVisit" : "ape/timeInOut";
 
       const response = await this.$store.dispatch(vuexAction, patientCode);
 
@@ -244,7 +244,7 @@ export default defineComponent({
         (response.body.attendance && response.body.employee)
       ) {
         this.lastPatientRegistered = this.formatLastPatientRegistered(
-          response.body
+          response.body,
         );
       }
 

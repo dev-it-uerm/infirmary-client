@@ -164,8 +164,9 @@ export default defineComponent({
           patient.extName,
         ),
         Campus: this.campusesMap[patient.campusCode]?.name || "Unknown",
-        Affiliation: affiliationsMap[patient.affiliationCode].name,
-        Department: this.departmentsMap[patient.deptCode].name,
+        Affiliation:
+          affiliationsMap[patient.affiliationCode]?.name || "Unknown",
+        Department: this.departmentsMap[patient.deptCode]?.name || "Unknown",
       };
     },
     async register(schoolYear, patientCode) {
@@ -179,7 +180,7 @@ export default defineComponent({
       let success = true;
       let message = "Patient attendance has been recorded.";
 
-      const response = await this.$store.dispatch("ape/schedule", {
+      const response = await this.$store.dispatch("ape/registerVisit", {
         schoolYear: schoolYear,
         identificationCode: patientCode,
       });

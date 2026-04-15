@@ -640,7 +640,7 @@ export const userRoles = Object.values(userRolesMap);
 // };
 
 export const app = {
-  name: "UE Infirmary",
+  name: "UE Infirmary (APE)",
   version: "1.0.0",
   url: "https://uermhospital.com.ph/apps/infirmary",
 };

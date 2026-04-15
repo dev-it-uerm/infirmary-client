@@ -1,16 +1,14 @@
 <template>
-  <div
-    class="column items-center text-weight-medium q-px-md cursor-pointer"
-    style="padding-top: 16px; padding-bottom: 12px"
-    @click="$router.push('/')"
-  >
+  <div class="column items-center cursor-pointer" @click="$router.push('/')">
     <div
       class="column"
       :class="inverted ? 'bg-primary' : 'bg-white'"
+      style="padding-top: 16px; padding-bottom: 12px"
       :style="{
-        borderRadius: dimension.borderRadius,
-        padding: dimension.outerPadding,
         gap: dimension.innerPadding,
+        borderRadius: dimension.borderRadius,
+        border: borderedWhite ? '2px solid white' : undefined,
+        padding: dimension.outerPadding,
       }"
     >
       <div class="row" :style="{ gap: dimension.innerPadding }">
@@ -38,8 +36,9 @@
         />
       </div>
     </div>
-    <span
+    <div
       v-if="showTitle"
+      class="text-weight-medium"
       :class="
         inverted
           ? 'text-primary ' + 'q-mt-'.concat(size)
@@ -48,8 +47,8 @@
       style="line-height: 1em"
       :style="titleStyle"
     >
-      {{ app.name }}
-    </span>
+      {{ app.name?.toUpperCase?.() }}
+    </div>
   </div>
 </template>
 
@@ -72,6 +71,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    borderedWhite: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup() {
     return { app };
@@ -89,7 +92,7 @@ export default defineComponent({
         borderRadius: "2px",
         outerPadding: "4px 6px",
         innerPadding: "4px",
-        iconSize: "14px",
+        iconSize: "12px",
       },
       sm: {
         borderRadius: "4px",

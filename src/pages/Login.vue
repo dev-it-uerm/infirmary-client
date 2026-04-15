@@ -1,22 +1,17 @@
 <template>
   <q-page class="flex flex-center q-pa-lg">
-    <div
-      class="absolute"
+    <img
+      src="bg-uerm.jpg"
+      alt="UERM Hospital"
       style="
+        opacity: 0.5;
+        object-fit: cover;
         width: 100vw;
         height: 100vh;
-        background-image: url('bg-uerm.jpg');
-        background-repeat: no-repeat;
-        background-size: cover;
-        filter: blur(3px);
-      "
-    />
-    <div
-      class="absolute"
-      style="
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.5);
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
       "
     />
     <div
@@ -24,15 +19,22 @@
       style="gap: 16px; z-index: 999"
       :style="{ width: $q.screen.gt.sm ? '420px' : '300px' }"
     >
-      <AppLogo size="md" :inverted="true" :showTitle="false" />
       <CardComponent>
         <template v-slot:header>
-          <div class="bg-primary q-pa-md column items-center justify-center">
+          <div
+            class="bg-primary q-pa-md column items-center justify-center gap-sm"
+          >
+            <AppLogo
+              size="sm"
+              :inverted="true"
+              :showTitle="false"
+              :borderedWhite="true"
+            />
             <div
               class="text-white text-weight-bold text-h6 text-center text-uppercase"
               style="letter-spacing: 1pt"
             >
-              UE INFIRMARY
+              UE INFIRMARY (APE)
             </div>
           </div>
         </template>
@@ -179,23 +181,23 @@ import { delay, decodeUserJWT, showMessage } from "src/helpers/util.js";
 export default defineComponent({
   name: "LoginPage",
   components: {
-    FormFieldPassword: defineAsyncComponent(() =>
-      import("src/components/core/form-fields/Password.vue")
+    FormFieldPassword: defineAsyncComponent(
+      () => import("src/components/core/form-fields/Password.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
-    MinimizedDialog: defineAsyncComponent(() =>
-      import("src/components/core/MinimizedDialog.vue")
+    MinimizedDialog: defineAsyncComponent(
+      () => import("src/components/core/MinimizedDialog.vue"),
     ),
-    AppLogo: defineAsyncComponent(() =>
-      import("src/components/core/AppLogo.vue")
+    AppLogo: defineAsyncComponent(
+      () => import("src/components/core/AppLogo.vue"),
     ),
-    UermCopyright: defineAsyncComponent(() =>
-      import("src/components/UermCopyright.vue")
+    UermCopyright: defineAsyncComponent(
+      () => import("src/components/UermCopyright.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
   },
   data() {
@@ -271,7 +273,7 @@ export default defineComponent({
         showMessage(
           this.$q,
           true,
-          "Password reset link has been sent to your email."
+          "Password reset link has been sent to your email.",
         );
       }
 

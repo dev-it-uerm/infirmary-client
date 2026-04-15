@@ -23,8 +23,13 @@
               />
             </q-avatar>
           </q-toolbar-title> -->
-          <AppLogo :inverted="true" size="xs" :showTitle="false" />
-          <div><b>UE</b> INFIRMARY</div>
+          <AppLogo
+            :inverted="true"
+            size="xs"
+            :showTitle="false"
+            class="q-ml-sm"
+          />
+          <div class="q-ml-sm"><b>UE</b> INFIRMARY (APE)</div>
         </div>
         <div
           v-if="user && $route.name === 'APE_VISITS'"
@@ -312,20 +317,20 @@ import {
 export default defineComponent({
   name: "MainLayout",
   components: {
-    ConfirmationDialog: defineAsyncComponent(() =>
-      import("src/components/core/ConfirmationDialog.vue")
+    ConfirmationDialog: defineAsyncComponent(
+      () => import("src/components/core/ConfirmationDialog.vue"),
     ),
-    AppLogo: defineAsyncComponent(() =>
-      import("src/components/core/AppLogo.vue")
+    AppLogo: defineAsyncComponent(
+      () => import("src/components/core/AppLogo.vue"),
     ),
-    PatientAttendanceCard: defineAsyncComponent(() =>
-      import("src/components/PatientAttendanceCard.vue")
+    PatientAttendanceCard: defineAsyncComponent(
+      () => import("src/components/PatientAttendanceCard.vue"),
     ),
     // ExamAccept: defineAsyncComponent(() =>
     //   import("src/components/ExamAccept.vue")
     // ),
-    VisitTracker: defineAsyncComponent(() =>
-      import("src/components/VisitTracker.vue")
+    VisitTracker: defineAsyncComponent(
+      () => import("src/components/VisitTracker.vue"),
     ),
     // UermCopyright: defineAsyncComponent(() =>
     //   import("src/components/UermCopyright.vue")

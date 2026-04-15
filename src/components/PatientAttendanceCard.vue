@@ -17,13 +17,13 @@
           @valueChanged="(v) => register(v?.schoolYear, v?.patientCode)"
           @inputModeChanged="(val) => (inputMode = val)"
         />
-        <div v-if="lastPatientAttended">
+        <div v-if="lastPatientRegisteredInfo">
           <q-separator class="q-my-lg" />
           <div class="text-primary text-weight-medium q-mb-md">
             <div>PATIENT/EMPLOYEE REGISTERED:</div>
           </div>
           <table class="full-width" style="border-collapse: collapse">
-            <tr v-for="(val, key) in lastPatientAttended" :key="key">
+            <tr v-for="(val, key) in lastPatientRegisteredInfo" :key="key">
               <td
                 v-for="(v, idx) in [key, val]"
                 :key="idx"
@@ -38,12 +38,12 @@
           </table>
           <div class="row justify-end">
             <q-btn
-              v-if="lastPatientAttended['Student Number']"
+              v-if="lastPatientRegistered"
               class="q-mt-md bg-accent text-black"
               unelevated
               icon="print"
               label="PRINT CHECKLIST"
-              @click="checklistDialogVisible = true"
+              @click="showExamsCheckList"
             />
           </div>
         </div>
@@ -53,7 +53,10 @@
     <q-dialog v-model="checklistDialogVisible">
       <q-card class="fit">
         <q-card-section class="fit">
-          <PrintoutChecklist :patient="lastPatientAttended" />
+          <ExamsCheckList
+            :patient="lastPatientRegisteredInfo"
+            :allowedExamsForPatient="allowedExamsForPatient"
+          />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -94,8 +97,8 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(
       () => import("src/components/core/FetchingData.vue"),
     ),
-    PrintoutChecklist: defineAsyncComponent(
-      () => import("src/components/printouts/Checklist.vue"),
+    ExamsCheckList: defineAsyncComponent(
+      () => import("src/components/printouts/ExamsCheckList.vue"),
     ),
   },
   props: {
@@ -118,9 +121,12 @@ export default defineComponent({
       checklistDialogVisible: false,
       forbidden: false,
       loading: false,
-
       inputMode: null,
-      lastPatientAttended: null,
+
+      lastPatientRegistered: null,
+      lastPatientRegisteredInfo: null,
+
+      allowedExamsForPatient: [],
     };
   },
   computed: {
@@ -152,11 +158,11 @@ export default defineComponent({
   methods: {
     formatLastPatientRegistered(row) {
       const patient = row.patient || row.employee;
-      const registration = row.visit || row.attendance;
+      const visit = row.visit || row.attendance;
 
       return {
-        ["Date & Time Registered"]: formatDate(registration.dateTimeCreated),
-        ["Student Number"]: patient.code || patient.identificationCode,
+        ["Date & Time Registered"]: formatDate(visit.dateTimeCreated),
+        ["Student/Employee Number"]: patient.code || patient.identificationCode,
         Fullname: formatName(
           patient.firstName,
           patient.middleName,
@@ -167,6 +173,7 @@ export default defineComponent({
         Affiliation:
           affiliationsMap[patient.affiliationCode]?.name || "Unknown",
         Department: this.departmentsMap[patient.deptCode]?.name || "Unknown",
+        ...(patient.yearLevel ? { ["Year Level"]: patient.yearLevel } : {}),
       };
     },
     async register(schoolYear, patientCode) {
@@ -196,15 +203,40 @@ export default defineComponent({
         (response.body.visit && response.body.patient) ||
         (response.body.attendance && response.body.employee)
       ) {
-        this.lastPatientAttended = this.formatLastPatientRegistered(
+        this.lastPatientRegisteredInfo = this.formatLastPatientRegistered(
           response.body,
         );
+
+        this.lastPatientRegistered = response.body.patient;
       }
 
       this.$refs.PATIENT_ATTENDANCE_PAGE__qrCodeScanner.resetForm();
       showMessage(this.$q, success, message);
       this.loading = false;
       this.$emit("ready");
+    },
+    async showExamsCheckList() {
+      this.allowedExamsForPatient = [];
+
+      const response = await this.$store.dispatch(
+        "ape/getAllowedExams",
+        this.lastPatientRegistered.id,
+      );
+
+      if (response?.error) {
+        showMessage(
+          this.$q,
+          false,
+          "Unable to get patient exams. Please try again",
+        );
+        return;
+      }
+
+      this.allowedExamsForPatient = response.body.sort(
+        (a, b) => b.sequenceNumber - a.sequenceNumber,
+      );
+
+      this.checklistDialogVisible = true;
     },
   },
 });

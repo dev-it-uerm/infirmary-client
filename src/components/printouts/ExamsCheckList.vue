@@ -20,6 +20,10 @@ export default {
       type: Object,
       required: true,
     },
+    allowedExamsForPatient: {
+      type: Array,
+      required: true,
+    },
   },
   computed: {
     ...mapGetters({
@@ -35,7 +39,7 @@ export default {
         // by default we use portrait, you can change it to landscape if you wish
         // pageOrientation: "landscape",
         info: {
-          title: `UERMMMCI INFIRMARY APE`,
+          title: `UE INFIRMARY (APE)`,
           // author: "",
           // subject: "",
           // keywords: "",
@@ -56,7 +60,7 @@ export default {
                   {
                     stack: [
                       {
-                        text: "UERMMMCI INFIRMARY APE",
+                        text: "UE INFIRMARY (APE)",
                         alignment: "center",
                         fontSize: 10,
                         bold: true,
@@ -77,9 +81,7 @@ export default {
                     [
                       { text: "ID:", border: [] },
                       {
-                        text:
-                          this.patient["Student Number"] ??
-                          this.patient["Employee Number"],
+                        text: this.patient["Student/Employee Number"],
                         bold: true,
                         border: [],
                       },
@@ -146,59 +148,83 @@ export default {
       });
     },
     createContentBody() {
-      const body = [
-        [
-          {
-            text: "PE",
-            alignment: "center",
-          },
-          { text: "     " },
-        ],
-        [
-          {
-            text: "X-RAY",
-            alignment: "center",
-          },
-          { text: "     " },
-        ],
-        [
-          {
-            text: "CBC",
-            alignment: "center",
-          },
-          { text: "     " },
-        ],
-        [
-          {
-            text: "URINE",
-            alignment: "center",
-          },
-          { text: "     " },
-        ],
-      ];
+      const examNamesMap = {
+        DENTAL: "DENTAL",
+        RAD_XR_CHST: "X-RAY",
+        LAB_FCL: "STOOL",
+        LAB_URI: "URINE",
+        LAB_CBC: "CBC",
+        PE: "PE",
+        MED_HIST: "MED_HIST",
+      };
 
-      if (
-        this.patient.Affiliation === "Employee/Faculty" &&
-        this.patient.Campus === "UE Caloocan"
-      ) {
-        body.push([
-          {
-            text: "STOOL",
-            alignment: "center",
-          },
-          { text: "     " },
-        ]);
-      }
+      const body = this.allowedExamsForPatient
+        .filter((e) => {
+          return e.code !== "MED_HIST";
+        })
+        .map((e) => {
+          return [
+            {
+              text: examNamesMap[e.code] || "",
+              alignment: "center",
+            },
+            { text: "     " },
+          ];
+        });
 
-      if (this.patient.Campus === "UE Caloocan") {
-        body.push([
-          {
-            text: "DENTAL",
-            alignment: "center",
-          },
-          { text: "     " },
-        ]);
-      }
+      // const body = [
+      //   [
+      //     {
+      //       text: "PE",
+      //       alignment: "center",
+      //     },
+      //     { text: "     " },
+      //   ],
+      //   [
+      //     {
+      //       text: "X-RAY",
+      //       alignment: "center",
+      //     },
+      //     { text: "     " },
+      //   ],
+      //   [
+      //     {
+      //       text: "CBC",
+      //       alignment: "center",
+      //     },
+      //     { text: "     " },
+      //   ],
+      //   [
+      //     {
+      //       text: "URINE",
+      //       alignment: "center",
+      //     },
+      //     { text: "     " },
+      //   ],
+      // ];
+
+      // if (
+      //   this.patient.Affiliation === "Employee/Faculty" &&
+      //   this.patient.Campus === "UE Caloocan"
+      // ) {
+      //   body.push([
+      //     {
+      //       text: "STOOL",
+      //       alignment: "center",
+      //     },
+      //     { text: "     " },
+      //   ]);
+      // }
+
+      // if (this.patient.Campus === "UE Caloocan") {
+      //   body.push([
+      //     {
+      //       text: "DENTAL",
+      //       alignment: "center",
+      //     },
+      //     { text: "     " },
+      //   ]);
+      // }
 
       return body;
     },

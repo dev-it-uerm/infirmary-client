@@ -77,7 +77,7 @@
     <q-dialog v-model="checklistDialogVisible">
       <q-card class="fit">
         <q-card-section class="fit">
-          <Checklist :patientInfo="lastPatientRegistered" />
+          <ExamsCheckList :patientInfo="lastPatientRegistered" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -118,8 +118,8 @@ export default defineComponent({
     FetchingData: defineAsyncComponent(
       () => import("src/components/core/FetchingData.vue"),
     ),
-    Checklist: defineAsyncComponent(
-      () => import("src/components/printouts/Checklist.vue"),
+    ExamsCheckList: defineAsyncComponent(
+      () => import("src/components/printouts/ExamsCheckList.vue"),
     ),
   },
   props: {

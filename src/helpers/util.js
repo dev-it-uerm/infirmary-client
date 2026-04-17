@@ -169,8 +169,8 @@ export const sortStringArr = (arr, key = null, descending = false) => {
     (a[key] ?? a) > (b[key] ?? b)
       ? ret1
       : (a[key] ?? a) < (b[key] ?? b)
-      ? ret2
-      : 0
+        ? ret2
+        : 0,
   );
 };
 
@@ -209,7 +209,7 @@ export const request = async (
   urlQuery,
   accessToken,
   payload,
-  vuexContext
+  vuexContext,
 ) => {
   if (!method) {
     method = "get";
@@ -450,7 +450,7 @@ export const downloadExcel = async (fileNamePrefix, rows, columns) => {
       columns.reduce((acc, c) => {
         acc[c.field] = c.format ? c.format(row[c.field]) : row[c.field];
         return acc;
-      }, {})
+      }, {}),
     );
   }
 
@@ -465,7 +465,7 @@ export const downloadExcel = async (fileNamePrefix, rows, columns) => {
 
 export const downloadExcelAsync = (fileName, rows, columns, cb) => {
   const excelGenerator = new Worker(
-    `${window.location.origin}/infirmary/js/excel-gen.js`
+    `${window.location.origin}/infirmary/js/excel-gen.js`,
   );
 
   excelGenerator.postMessage([
@@ -479,5 +479,28 @@ export const downloadExcelAsync = (fileName, rows, columns, cb) => {
     a.download = fileName;
     a.click();
     cb();
+  };
+};
+
+export const extractPatientFromVisit = (visit) => {
+  return {
+    id: visit.patientId,
+    campusCode: visit.patientCampusCode,
+    affiliationCode: visit.patientAffiliationCode,
+    identificationCode: visit.patientIdentificationCode,
+    firstName: visit.patientFirstName,
+    middleName: visit.patientMiddleName,
+    lastName: visit.patientLastName,
+    extName: visit.patientExtName,
+    birthDate: visit.patientBirthDate,
+    gender: visit.patientGender,
+    emailAddress: visit.patientEmailAddress,
+    mobileNumber: visit.patientMobileNumber,
+    address: visit.patientAddress,
+    deptCode: visit.patientDeptCode,
+    yearLevel: visit.patientYearLevel,
+    withdrawnOrResigned: visit.patientWithdrawnOrResigned,
+    createdBy: visit.patientCreatedBy,
+    dateTimeCreated: visit.patientDateTimeCreated,
   };
 };

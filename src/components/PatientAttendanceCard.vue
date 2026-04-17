@@ -17,13 +17,13 @@
           @valueChanged="(v) => register(v?.schoolYear, v?.patientCode)"
           @inputModeChanged="(val) => (inputMode = val)"
         />
-        <div v-if="lastPatientRegisteredInfo">
+        <div v-if="lastPatientVisitInfo">
           <q-separator class="q-my-lg" />
           <div class="text-primary text-weight-medium q-mb-md">
             <div>PATIENT/EMPLOYEE REGISTERED:</div>
           </div>
           <table class="full-width" style="border-collapse: collapse">
-            <tr v-for="(val, key) in lastPatientRegisteredInfo" :key="key">
+            <tr v-for="(val, key) in lastPatientVisitInfo" :key="key">
               <td
                 v-for="(v, idx) in [key, val]"
                 :key="idx"
@@ -38,7 +38,7 @@
           </table>
           <div class="row justify-end">
             <q-btn
-              v-if="lastPatientRegistered"
+              v-if="lastPatientVisit"
               class="q-mt-md bg-accent text-black"
               unelevated
               icon="print"
@@ -54,7 +54,7 @@
       <q-card class="fit">
         <q-card-section class="fit">
           <ExamsCheckList
-            :patient="lastPatientRegisteredInfo"
+            :patient="lastPatientVisitInfo"
             :allowedExamsForPatient="allowedExamsForPatient"
           />
         </q-card-section>
@@ -123,8 +123,8 @@ export default defineComponent({
       loading: false,
       inputMode: null,
 
-      lastPatientRegistered: null,
-      lastPatientRegisteredInfo: null,
+      lastPatientVisit: null,
+      lastPatientVisitInfo: null,
 
       allowedExamsForPatient: [],
     };
@@ -156,24 +156,24 @@ export default defineComponent({
     this.$store.dispatch("ape/getAppData");
   },
   methods: {
-    formatLastPatientRegistered(row) {
-      const patient = row.patient || row.employee;
-      const visit = row.visit || row.attendance;
-
+    formatLastPatientRegistered(visit) {
       return {
         ["Date & Time Registered"]: formatDate(visit.dateTimeCreated),
-        ["Student/Employee Number"]: patient.code || patient.identificationCode,
+        ["Student/Employee Number"]: visit.patientIdentificationCode,
         Fullname: formatName(
-          patient.firstName,
-          patient.middleName,
-          patient.lastName,
-          patient.extName,
+          visit.patientFirstName,
+          visit.patientMiddleName,
+          visit.patientLastName,
+          visit.patientExtName,
         ),
-        Campus: this.campusesMap[patient.campusCode]?.name || "Unknown",
+        Campus: this.campusesMap[visit.patientCampusCode]?.name || "Unknown",
         Affiliation:
-          affiliationsMap[patient.affiliationCode]?.name || "Unknown",
-        Department: this.departmentsMap[patient.deptCode]?.name || "Unknown",
-        ...(patient.yearLevel ? { ["Year Level"]: patient.yearLevel } : {}),
+          affiliationsMap[visit.patientAffiliationCode]?.name || "Unknown",
+        Department:
+          this.departmentsMap[visit.patientDeptCode]?.name || "Unknown",
+        ...(visit.patientYearLevel
+          ? { ["Year Level"]: visit.patientYearLevel }
+          : {}),
       };
     },
     async register(schoolYear, patientCode) {
@@ -185,7 +185,7 @@ export default defineComponent({
       this.$emit("busy");
 
       let success = true;
-      let message = "Patient attendance has been recorded.";
+      let message = "Student/Employee has been registered.";
 
       const response = await this.$store.dispatch("ape/registerVisit", {
         schoolYear: schoolYear,
@@ -194,20 +194,17 @@ export default defineComponent({
 
       await delay(1000);
 
-      if (response.error) {
+      if (!response || response.error) {
         success = false;
-        message = response.body.errorMessage || response.body;
+        message = response.body.errorMessage || response.body || "Error";
       }
 
-      if (
-        (response.body.visit && response.body.patient) ||
-        (response.body.attendance && response.body.employee)
-      ) {
-        this.lastPatientRegisteredInfo = this.formatLastPatientRegistered(
+      if (response.body?.id) {
+        this.lastPatientVisitInfo = this.formatLastPatientRegistered(
           response.body,
         );
 
-        this.lastPatientRegistered = response.body.patient;
+        this.lastPatientVisit = response.body;
       }
 
       this.$refs.PATIENT_ATTENDANCE_PAGE__qrCodeScanner.resetForm();
@@ -220,7 +217,7 @@ export default defineComponent({
 
       const response = await this.$store.dispatch(
         "ape/getAllowedExams",
-        this.lastPatientRegistered.id,
+        this.lastPatientVisit.patientId,
       );
 
       if (response?.error) {

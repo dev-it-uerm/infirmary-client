@@ -2,17 +2,35 @@
   <div>
     <div>
       <div v-if="initialized && examsMap" class="column" style="gap: 16px">
-        <QRCodeScanner
-          ref="visitCodeScanner"
-          submitBtnIcon="sym_o_track_changes"
-          submitBtnLabel="TRACK"
-          class="full-width"
-          :scannerId="scannerId"
-          :loading="loading"
-          @patientCodeChanged="(val) => (patientCode = val)"
-          @inputModeChanged="(val) => (inputMode = val)"
-        />
-        <div class="q-mt-md">
+        <div>
+          <ReminderCard
+            v-if="!loading && (!lastVisitExams || lastVisitExams.length === 0)"
+            class="q-mb-md"
+            bordered
+          >
+            <template v-slot:body>
+              <div class="text-center">
+                Scan or enter patient code to see patient's exam status.
+              </div>
+            </template>
+          </ReminderCard>
+          <QRCodeScanner
+            ref="visitCodeScanner"
+            submitBtnIcon="sym_o_track_changes"
+            submitBtnLabel="TRACK"
+            class="full-width"
+            :scannerId="scannerId"
+            :loading="loading"
+            @inputModeChanged="(val) => (inputMode = val)"
+            @valueChanged="
+              (v) => {
+                patientCode = v?.patientCode;
+                schoolYear = v?.schoolYear;
+              }
+            "
+          />
+        </div>
+        <div>
           <div
             v-if="loading"
             class="full-width flex flex-center"
@@ -43,7 +61,7 @@
                     patient.firstName,
                     patient.middleName,
                     patient.lastName,
-                    patient.extName
+                    patient.extName,
                   )
                 }}</span>
               </div>
@@ -91,8 +109,8 @@
                     <div>
                       <q-item-label caption>
                         {{
-                          ve.dateTimeAccepted
-                            ? formatDate(ve.dateTimeAccepted)
+                          ve.dateTimeCompleted
+                            ? formatDate(ve.dateTimeCompleted)
                             : "NO RESULT YET"
                         }}
                       </q-item-label>
@@ -104,18 +122,18 @@
                   <q-item-section side>
                     <q-icon
                       :name="
-                        ve.dateTimeAccepted
+                        ve.dateTimeCompleted
                           ? 'fa-solid fa-circle-check'
                           : 'fa-solid fa-circle-xmark'
                       "
-                      :color="ve.dateTimeAccepted ? 'positive' : 'negative'"
+                      :color="ve.dateTimeCompleted ? 'positive' : 'negative'"
                       size="xs"
                     />
                   </q-item-section>
                 </q-item>
               </template>
               <div
-                v-if="user && lastVisit?.dateTimeAccepted"
+                v-if="user && lastVisit?.dateTimeCompleted"
                 class="row justify-center q-mt-lg"
               >
                 <q-btn
@@ -127,13 +145,6 @@
                 />
               </div>
             </q-list>
-            <ReminderCard v-else bordered>
-              <template v-slot:body>
-                <div class="text-center">
-                  Scan or enter patient code to see patient's exam status.
-                </div>
-              </template>
-            </ReminderCard>
           </div>
         </div>
       </div>
@@ -164,6 +175,7 @@ import {
   sortStringArr,
   formatDate,
   formatName,
+  extractPatientFromVisit,
 } from "src/helpers/util.js";
 
 import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
@@ -171,20 +183,20 @@ import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 export default defineComponent({
   name: "VisitTracker",
   components: {
-    QRCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/QRCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(
+      () => import("src/components/core/QRCodeScanner.vue"),
     ),
-    MaximizedDialog: defineAsyncComponent(() =>
-      import("src/components/core/MaximizedDialog.vue")
+    MaximizedDialog: defineAsyncComponent(
+      () => import("src/components/core/MaximizedDialog.vue"),
     ),
-    PrintoutVisitDetails: defineAsyncComponent(() =>
-      import("src/components/printouts/VisitDetails.vue")
+    PrintoutVisitDetails: defineAsyncComponent(
+      () => import("src/components/printouts/VisitDetails.vue"),
     ),
-    ReminderCard: defineAsyncComponent(() =>
-      import("src/components/core/ReminderCard.vue")
+    ReminderCard: defineAsyncComponent(
+      () => import("src/components/core/ReminderCard.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
   },
   props: {
@@ -209,6 +221,8 @@ export default defineComponent({
       examsMap: null,
       loading: false,
       inputMode: null,
+
+      schoolYear: null,
       patientCode: null,
 
       patient: null,
@@ -264,11 +278,11 @@ export default defineComponent({
         return;
       }
 
-      this.patient = response.body.patient;
+      this.patient = extractPatientFromVisit(response.body.visit);
       this.lastVisit = response.body.visit;
 
       const lastVisitExams = response.body.exams;
-      sortStringArr(lastVisitExams, "dateTimeAccepted");
+      sortStringArr(lastVisitExams, "dateTimeCompleted");
 
       this.lastVisitExams = lastVisitExams;
 

@@ -27,7 +27,7 @@
       width="600px"
     ></div>
     <div v-if="inputMode === 'MANUAL'">
-      <q-form ref="qForm" @reset="reset" @submit="submit">
+      <q-form ref="qForm" @reset="clearFields" @submit="submit">
         <q-input
           :disable="loading"
           stack-label
@@ -155,13 +155,13 @@ export default defineComponent({
         this.scanner.resume();
       }
     },
-    reset() {
+    clearFields() {
       // this.scanner.clear();
       this.patientCode = null;
       this.schoolYear = Number(new Date().getFullYear());
       this.$emit("valueChanged", null);
     },
-    resetForm() {
+    reset() {
       this.$refs.qForm.reset();
     },
     submit() {
@@ -201,7 +201,7 @@ export default defineComponent({
       },
     );
 
-    this.resetForm();
+    this.reset();
   },
 });
 </script>

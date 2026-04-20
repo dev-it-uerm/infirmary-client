@@ -207,7 +207,7 @@ export default defineComponent({
         this.lastPatientVisit = response.body;
       }
 
-      this.$refs.PATIENT_ATTENDANCE_PAGE__qrCodeScanner.resetForm();
+      this.$refs.PATIENT_ATTENDANCE_PAGE__qrCodeScanner.reset();
       showMessage(this.$q, success, message);
       this.loading = false;
       this.$emit("ready");

@@ -226,13 +226,13 @@ export const getVisitsWithXray = async (context, payload) => {
   );
 };
 
-export const timeInOut = async (context, employeeCode) => {
+export const timeInOut = async (context, payload) => {
   return await request(
     "post",
-    `${context.rootState.app.apiHost}/ape/misc/time-in-out/${employeeCode}`,
+    `${context.rootState.app.apiHost}/ape/misc/time-in-out`,
     null,
     context.rootState.app?.user?.accessToken,
-    null,
+    payload,
     context,
   );
 };

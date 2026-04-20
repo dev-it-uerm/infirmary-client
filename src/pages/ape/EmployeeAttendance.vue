@@ -25,7 +25,11 @@
                   submitBtnIcon="sym_o_alarm_add"
                   submitBtnLabel="TIME IN/OUT"
                   :loading="loading"
-                  @patientCodeChanged="(v) => (patientCode = v)"
+                  @valueChanged="
+                    (v) => {
+                      timeInOrOut(v?.schoolYear, v?.patientCode);
+                    }
+                  "
                   @inputModeChanged="(v) => (inputMode = v)"
                 />
               </div>
@@ -74,23 +78,23 @@ import { affiliationsMap, yearLevels } from "src/helpers/constants.js";
 export default defineComponent({
   name: "EmployeeAttendancePage",
   components: {
-    PageHeader: defineAsyncComponent(() =>
-      import("src/components/core/PageHeader.vue")
+    PageHeader: defineAsyncComponent(
+      () => import("src/components/core/PageHeader.vue"),
     ),
     // ReminderCard: defineAsyncComponent(() =>
     //   import("src/components/core/ReminderCard.vue")
     // ),
-    MessageBanner: defineAsyncComponent(() =>
-      import("src/components/core/MessageBanner.vue")
+    MessageBanner: defineAsyncComponent(
+      () => import("src/components/core/MessageBanner.vue"),
     ),
-    QRCodeScanner: defineAsyncComponent(() =>
-      import("src/components/core/QRCodeScanner.vue")
+    QRCodeScanner: defineAsyncComponent(
+      () => import("src/components/core/QRCodeScanner.vue"),
     ),
-    CardComponent: defineAsyncComponent(() =>
-      import("src/components/core/Card.vue")
+    CardComponent: defineAsyncComponent(
+      () => import("src/components/core/Card.vue"),
     ),
-    FetchingData: defineAsyncComponent(() =>
-      import("src/components/core/FetchingData.vue")
+    FetchingData: defineAsyncComponent(
+      () => import("src/components/core/FetchingData.vue"),
     ),
   },
   emits: ["busy", "ready"],
@@ -107,10 +111,7 @@ export default defineComponent({
     return {
       forbidden: false,
       inputMode: null,
-
       loading: false,
-      patientCode: null,
-
       lastEmployeeTimedInOrOut: null,
     };
   },
@@ -136,25 +137,6 @@ export default defineComponent({
     qrCodeMode() {
       return this.inputMode === "QR";
     },
-    value() {
-      if (this.patientCode) {
-        return this.patientCode;
-      }
-
-      return null;
-    },
-  },
-  watch: {
-    value(v) {
-      if (!v) {
-        return;
-      }
-
-      this.timeInOrOut(v);
-    },
-  },
-  mounted() {
-    this.$store.dispatch("ape/getAppData");
   },
   methods: {
     formatLastEmployeeTimedInOrOut(row) {
@@ -168,20 +150,28 @@ export default defineComponent({
           patient.firstName,
           patient.middleName,
           patient.lastName,
-          patient.extName
+          patient.extName,
         ),
         Campus: this.campusesMap[patient.campusCode].name,
         Department: this.departmentsMap[patient.deptCode].name,
       };
     },
-    async timeInOrOut(patientCode) {
+    async timeInOrOut(schoolYear, employeeCode) {
+      if (!schoolYear || !employeeCode) {
+        return;
+      }
+
       this.loading = true;
       this.$emit("busy");
 
       let success = true;
       let message = "Employee attendance has been saved.";
 
-      const response = await this.$store.dispatch("ape/timeInOut", patientCode);
+      const response = await this.$store.dispatch("ape/timeInOut", {
+        employeeCode,
+        schoolYear,
+      });
+
       await delay(2000);
 
       if (response.error) {
@@ -194,7 +184,7 @@ export default defineComponent({
         (response.body.attendance && response.body.employee)
       ) {
         this.lastEmployeeTimedInOrOut = this.formatLastEmployeeTimedInOrOut(
-          response.body
+          response.body,
         );
       }
 
@@ -203,6 +193,9 @@ export default defineComponent({
       this.loading = false;
       this.$emit("ready");
     },
+  },
+  mounted() {
+    this.$store.dispatch("ape/getAppData");
   },
 });
 </script>

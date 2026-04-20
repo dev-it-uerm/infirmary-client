@@ -15,15 +15,17 @@ const BAD_REQUEST = {
   code: 400,
   name: "Invalid/Malformed request parameters.",
 };
+
 // FOR UNAUTHORIZED ACCESS
 const UNAUTHORIZED = {
   code: 401,
-  name: "You are not allowed to access this data.",
+  name: "Access token is invalid or you've been logged into another device.",
 };
+
 // FOR UNAUTHENTICATED ACCESS
 const FORBIDDEN = {
   code: 403,
-  name: "Token is invalid/expired or you've been logged into another device.",
+  name: "You are not allowed to access this data.",
 };
 
 const NOT_FOUND = { code: 404, name: "Resource not found." };

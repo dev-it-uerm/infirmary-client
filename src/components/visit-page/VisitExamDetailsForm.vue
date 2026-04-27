@@ -131,9 +131,9 @@
               />
             </div>
             <UserSelect
-              v-if="!isUserADoctorForThisExam"
-              :label="doctorRole?.name"
-              :roleCode="doctorRole?.code"
+              v-if="!isUserADoctorForThisExam && doctorRole"
+              :label="doctorRole.name"
+              :roleCode="doctorRole.code"
               :disable="loading"
               :required="true"
               v-model="doctor"
@@ -248,7 +248,6 @@ export default defineComponent({
       value: {},
       confDialogVisible: false,
 
-      doctorRole: null,
       doctor: null,
     };
   },
@@ -293,12 +292,30 @@ export default defineComponent({
 
       return false;
     },
+    doctorRole() {
+      if (
+        [this.EXAMS.LAB_CBC, this.EXAMS.LAB_URI, this.EXAMS.LAB_FCL].includes(
+          this.examCode,
+        )
+      ) {
+        return userRolesMap[USER_ROLES.LAB];
+      }
+
+      if ([this.EXAMS.MED_HIST, this.EXAMS.PE].includes(this.examCode)) {
+        return userRolesMap[USER_ROLES.DR];
+      }
+
+      if (this.examCode === this.EXAMS.RAD_XR_CHST) {
+        return userRolesMap[USER_ROLES.RAD];
+      }
+
+      return null;
+    },
   },
   watch: {
     examCode: {
       handler() {
         this.setInitialValue();
-        this.setDoctorRole();
       },
       immediate: true,
     },
@@ -335,26 +352,6 @@ export default defineComponent({
         a[e.code] = e.format ? e.format(obj[e.code]) : obj[e.code];
         return a;
       }, {});
-    },
-    setDoctorRole() {
-      if (
-        [this.EXAMS.LAB_CBC, this.EXAMS.LAB_URI, this.EXAMS.LAB_FCL].includes(
-          this.examCode,
-        )
-      ) {
-        this.doctorRole = userRolesMap[USER_ROLES.LAB];
-        return;
-      }
-
-      if ([this.EXAMS.MED_HIST, this.EXAMS.PE].includes(this.examCode)) {
-        this.doctorRole = userRolesMap[USER_ROLES.DR];
-        return;
-      }
-
-      if (this.examCode === this.EXAMS.RAD_XR_CHST) {
-        this.doctorRole = userRolesMap[USER_ROLES.RAD];
-        return;
-      }
     },
     async setInitialValue() {
       this.loading = true;

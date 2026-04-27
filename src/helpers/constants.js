@@ -1,26 +1,8 @@
-// THIS IS TO LET THE LINTER HELP SUGGEST `map` PROPS WHILE BEING "DRY" AT THE SAME TIME
-const _formatMap = (map) => {
-  for (const key in map) {
-    if (!map[key]) {
-      map[key] = { name: key, code: key };
-      continue;
-    }
-
-    if (map[key].constructor.name === "Object") {
-      // 0 AND null ARE VALID CODES
-      map[key] = {
-        ...map[key],
-        code:
-          map[key].code === undefined || map[key].code === ""
-            ? key
-            : map[key].code,
-      };
-
-      continue;
-    }
-
-    map[key] = { name: map[key], code: key };
-  }
+const generateMap = (arr) => {
+  return arr.reduce((a, e) => {
+    a[e.code] = e;
+    return a;
+  }, {});
 };
 
 // export const examsMap = {
@@ -54,43 +36,69 @@ const _formatMap = (map) => {
 //   },
 // };
 
-export const yearLevelsMap = {
-  NA: { code: null, name: "N/A" },
-  FIRST: { code: 1, name: "First Year" },
-  SECOND: { code: 2, name: "Second Year" },
-  THIRD: { code: 3, name: "Third Year" },
-  FOURTH: { code: 4, name: "Fourth Year" },
-  FIFTH: { code: 5, name: "Fifth Year" },
-  SIXTH: { code: 6, name: "Sixth Year" },
+export const YEAR_LEVELS = {
+  NA: null,
+  FIRST: 1,
+  SECOND: 2,
+  THIRD: 3,
+  FOURTH: 4,
+  FIFTH: 5,
+  SIXTH: 6,
 };
 
-export const affiliationsMap = {
-  EMP: "Employee/Faculty",
-  STU: "Student",
+export const yearLevels = [
+  { code: YEAR_LEVELS.NA, name: "N/A" },
+  { code: YEAR_LEVELS.FIRST, name: "First Year" },
+  { code: YEAR_LEVELS.SECOND, name: "Second Year" },
+  { code: YEAR_LEVELS.THIRD, name: "Third Year" },
+  { code: YEAR_LEVELS.FOURTH, name: "Fourth Year" },
+  { code: YEAR_LEVELS.FIFTH, name: "Fifth Year" },
+  { code: YEAR_LEVELS.SIXTH, name: "Sixth Year" },
+];
+
+export const AFFILIATIONS = {
+  EMP: "EMP",
+  STU: "STU",
 };
 
-export const userRolesMap = {
-  ADMIN: "Administrator",
-  DR: "Physician",
-  NURSE: "Nurse",
-  RAD: "Radiologist",
-  LAB: "Pathologist",
-  RADTECH: "Radiologic Technologist",
-  LABTECH: "Laboratory Technologist",
-  STAFF: "Staff",
-  FAC: "Faculty",
-  DENTIST: "Dentist",
+export const affiliations = [
+  { code: AFFILIATIONS.EMP, name: "Employee/Faculty" },
+  { code: AFFILIATIONS.STU, name: "Student" },
+];
+
+export const USER_ROLES = {
+  ADMIN: "ADMIN",
+  DR: "DR",
+  NURSE: "NURSE",
+  RAD: "RAD",
+  LAB: "LAB",
+  RADTECH: "RADTECH",
+  LABTECH: "LABTECH",
+  STAFF: "STAFF",
+  FAC: "FAC",
+  DENTIST: "DENTIST",
 };
+
+export const userRoles = [
+  { code: USER_ROLES.ADMIN, name: "Administrator" },
+  { code: USER_ROLES.DR, name: "Physician" },
+  { code: USER_ROLES.NURSE, name: "Nurse" },
+  { code: USER_ROLES.RAD, name: "Radiologist" },
+  { code: USER_ROLES.LAB, name: "Pathologist" },
+  { code: USER_ROLES.RADTECH, name: "Radiologic Technologist" },
+  { code: USER_ROLES.LABTECH, name: "Laboratory Technologist" },
+  { code: USER_ROLES.STAFF, name: "Infirmary Staff" },
+  { code: USER_ROLES.FAC, name: "Faculty" },
+  { code: USER_ROLES.DENTIST, name: "Dentist" },
+];
+
+export const userRolesMap = generateMap(userRoles);
+export const affiliationsMap = generateMap(affiliations);
+export const yearLevelsMap = generateMap(yearLevels);
 
 // _formatMap(examsMap);
-_formatMap(yearLevelsMap);
-_formatMap(affiliationsMap);
-_formatMap(userRolesMap);
 
 // export const exams = Object.values(examsMap);
-export const yearLevels = Object.values(yearLevelsMap);
-export const affiliations = Object.values(affiliationsMap);
-export const userRoles = Object.values(userRolesMap);
 
 // export const examFieldsMap = {
 //   [examsMap.MED_HIST.code]: [

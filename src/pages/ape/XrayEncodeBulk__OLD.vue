@@ -313,8 +313,8 @@
                     @value-changed="(val) => (xrayImpression = val)"
                   />
                   <UserSelect
-                    label="Radiologist"
-                    :roleCode="userRolesMap.RAD.code"
+                    :label="userRolesMap[USER_ROLES.RAD].name"
+                    :roleCode="USER_ROLES.RAD"
                     :disable="filtering || saving"
                     @valueChanged="
                       (val) => {
@@ -381,6 +381,7 @@ import {
   yearLevelsMap,
   yearLevels,
   userRolesMap,
+  USER_ROLES,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -423,6 +424,7 @@ export default defineComponent({
       yearLevelsMap,
       yearLevels,
       userRolesMap,
+      USER_ROLES,
       showMessage,
       formatDate,
       formatName,

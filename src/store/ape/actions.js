@@ -2,7 +2,11 @@ import { request, camelToKebab, createMap } from "src/helpers/util";
 
 export const getExams = async (context) => {
   if (context.rootState.ape.exams?.length > 0) {
-    return [context.rootState.ape.exams, context.rootState.ape.examsMap];
+    return [
+      context.rootState.ape.exams,
+      context.rootState.ape.examsMap,
+      context.rootState.ape.EXAMS,
+    ];
   }
 
   const response = await request(
@@ -42,13 +46,22 @@ export const getExams = async (context) => {
     };
   });
 
-  const examsMap = exams.reduce((a, e) => {
-    a[e.code] = e;
-    return a;
-  }, {});
+  const examsMapAndEnum = exams.reduce(
+    (a, e) => {
+      a[0][e.code] = e;
+      a[1][e.code] = e.code;
+      return a;
+    },
+    [{}, {}],
+  );
 
-  context.commit("setExams", [exams, examsMap]);
-  return [context.rootState.ape.exams, context.rootState.ape.examsMap];
+  context.commit("setExams", [exams, examsMapAndEnum[0], examsMapAndEnum[1]]);
+
+  return [
+    context.rootState.ape.exams,
+    context.rootState.ape.examsMap,
+    context.rootState.ape.EXAMS,
+  ];
 };
 
 export const getVisits = async (context, urlQuery) => {
@@ -336,9 +349,18 @@ export const getAppData = async (context) => {
 
     context.commit("setAppData", {
       [dataName]: response.body,
-      // ADD MAP VERSION OF AN APP DATA IF IT IS AN ARRAY
+      // ADD MAP AND ENUM VERSIONS OF AN APP DATA IF IT IS AN ARRAY
       ...(Array.isArray(response.body)
-        ? { [`${dataName}Map`]: createMap(response.body, "code") }
+        ? {
+            [`${dataName}Map`]: response.body.reduce((a, e) => {
+              a[e.code] = e;
+              return a;
+            }, {}),
+            [dataName.toUpperCase()]: response.body.reduce((a, e) => {
+              a[e.code] = e.code;
+              return a;
+            }, {}),
+          }
         : {}),
     });
   }

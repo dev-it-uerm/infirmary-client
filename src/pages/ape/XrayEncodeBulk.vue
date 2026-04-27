@@ -55,7 +55,7 @@
                   v-model="year"
                 >
                   <template v-slot:label>
-                    Year
+                    APE Year
                     <span class="text-weight-bold text-red"> *</span>
                   </template>
                 </q-select>
@@ -176,8 +176,8 @@
                   @value-changed="(val) => (xrayImpression = val)"
                 />
                 <UserSelect
-                  label="Radiologist"
-                  :roleCode="userRolesMap.RAD.code"
+                  :label="userRolesMap[USER_ROLES.RAD].name"
+                  :roleCode="USER_ROLES.RAD"
                   :disable="saving"
                   :required="true"
                   v-model="radiologist"
@@ -225,11 +225,11 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { mapGetters } from "vuex";
+
 import {
   delay,
   formatDate,
   showMessage,
-  sliceObj,
   formatName,
 } from "src/helpers/util.js";
 
@@ -239,6 +239,7 @@ import {
   yearLevelsMap,
   yearLevels,
   userRolesMap,
+  USER_ROLES,
 } from "src/helpers/constants.js";
 
 import * as inputRules from "src/helpers/input-rules.js";
@@ -281,6 +282,7 @@ export default defineComponent({
       yearLevelsMap,
       yearLevels,
       userRolesMap,
+      USER_ROLES,
       showMessage,
       formatDate,
       formatName,

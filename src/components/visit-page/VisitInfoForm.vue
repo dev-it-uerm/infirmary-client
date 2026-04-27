@@ -39,7 +39,7 @@
               <UserSelect
                 v-if="field.type === 'PHYSICIANSELECT'"
                 label="Physician"
-                :roleCode="userRolesMap.DR.code"
+                :roleCode="USER_ROLES.DR"
                 :disable="field.disable || loading"
                 :model-value="
                   value[field.code] || {
@@ -77,7 +77,7 @@
 <script>
 import { defineComponent, defineAsyncComponent } from "vue";
 import { delay, formatDate, showMessage } from "src/helpers/util.js";
-import { userRolesMap } from "src/helpers/constants.js";
+import { USER_ROLES } from "src/helpers/constants.js";
 
 export default defineComponent({
   name: "VisitInfoForm",
@@ -101,7 +101,7 @@ export default defineComponent({
   emits: ["busy", "ready", "saved", "error"],
   setup() {
     return {
-      userRolesMap,
+      USER_ROLES,
       generateRules(required) {
         return required
           ? [

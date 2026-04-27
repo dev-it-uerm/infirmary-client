@@ -4,11 +4,14 @@ export default function () {
 
     campuses: null,
     campusesMap: null,
+    CAMPUSES: null,
 
     departments: null,
     departmentsMap: null,
+    DEPARTMENTS: null,
 
     exams: null,
     examsMap: null,
+    EXAMS: null,
   };
 }

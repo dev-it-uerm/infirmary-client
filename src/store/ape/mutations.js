@@ -7,4 +7,5 @@ export function setAppData(state, payload) {
 export function setExams(state, payload) {
   state.exams = payload[0];
   state.examsMap = payload[1];
+  state.EXAMS = payload[2];
 }

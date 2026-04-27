@@ -41,13 +41,13 @@
                 label="Physician"
                 :roleCode="userRolesMap.DR.code"
                 :disable="field.disable || loading"
-                :initialValue="
+                :model-value="
                   value[field.code] || {
                     code: null,
                     name: 'No physician assigned yet.',
                   }
                 "
-                @valueChanged="(val) => (value[field.code] = val)"
+                @update:model-value="(val) => (value[field.code] = val)"
               />
             </div>
           </template>
@@ -89,7 +89,7 @@ export default defineComponent({
       () => import("src/components/core/FetchingData.vue"),
     ),
     UserSelect: defineAsyncComponent(
-      () => import("src/components/core/form-fields/UserSelect.vue"),
+      () => import("src/components/core/form-fields/UserSelectV2.vue"),
     ),
   },
   props: {

@@ -180,11 +180,7 @@
                   :roleCode="userRolesMap.RAD.code"
                   :disable="saving"
                   :required="true"
-                  @valueChanged="
-                    (val) => {
-                      radiologist = val;
-                    }
-                  "
+                  v-model="radiologist"
                 />
                 <div class="row items-center justify-between q-mt-md">
                   <div class="text-negative text-caption">
@@ -272,7 +268,7 @@ export default defineComponent({
       () => import("src/components/core/ConfirmationDialog.vue"),
     ),
     UserSelect: defineAsyncComponent(
-      () => import("src/components/core/form-fields/UserSelect.vue"),
+      () => import("src/components/core/form-fields/UserSelectV2.vue"),
     ),
     FormFieldChestXrayImpression: defineAsyncComponent(
       () => import("src/components/core/form-fields/ChestXrayImpression.vue"),

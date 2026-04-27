@@ -43,8 +43,8 @@
                 roleCode="DR"
                 :disable="p.disable || loading"
                 :required="p.required"
-                :initialValue="value[p.code]"
-                @valueChanged="(val) => (value[p.code] = val)"
+                :model-value="value[p.code]"
+                @update:model-value="(val) => (value[p.code] = val)"
               />
               <FormFieldExam
                 v-if="p.fieldType === 'EXAM'"
@@ -205,7 +205,7 @@ export default defineComponent({
       () => import("src/components/core/FetchingData.vue"),
     ),
     UserSelect: defineAsyncComponent(
-      () => import("src/components/core/form-fields/UserSelect.vue"),
+      () => import("src/components/core/form-fields/UserSelectV2.vue"),
     ),
   },
   props: {

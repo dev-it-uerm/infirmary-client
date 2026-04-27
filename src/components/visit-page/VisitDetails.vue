@@ -62,6 +62,7 @@
           :visitId="visit.id"
           :examCode="tab.code"
           :examsMap="examsMap"
+          :EXAMS="EXAMS"
           @busy="loading = true"
           @ready="loading = false"
           @saved="$emit('saved')"
@@ -103,7 +104,11 @@ export default defineComponent({
     },
     examsMap: {
       type: Object,
-      default: null,
+      required: true,
+    },
+    EXAMS: {
+      type: Object,
+      required: true,
     },
   },
   emits: ["close", "saved"],

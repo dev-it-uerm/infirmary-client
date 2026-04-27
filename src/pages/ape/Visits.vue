@@ -452,6 +452,7 @@
       :visit="currentVisit"
       :tabCode="visitInfoTabCode"
       :examsMap="examsMap"
+      :EXAMS="EXAMS"
       @close="
         () => {
           visitInfoTabCode = null;
@@ -611,6 +612,7 @@ export default defineComponent({
   data() {
     return {
       examsMap: null,
+      EXAMS: null,
       visitsFilters: {
         year: new Date().getFullYear(),
         // visitDateRange: {
@@ -680,7 +682,10 @@ export default defineComponent({
           };
         }
 
-        this.examsMap = (await this.$store.dispatch("ape/getExams"))[1];
+        const examsArrMapEnum = await this.$store.dispatch("ape/getExams");
+        this.examsMap = examsArrMapEnum[1];
+        this.EXAMS = examsArrMapEnum[2];
+
         this.getVisits();
       },
       immediate: true,

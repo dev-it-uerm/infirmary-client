@@ -37,15 +37,6 @@
                 v-model.trim="value[p.code]"
                 hint=""
               />
-              <UserSelect
-                v-if="p.fieldType === 'PHYSICIANSELECT'"
-                label="Physician"
-                roleCode="DR"
-                :disable="p.disable || loading"
-                :required="p.required"
-                :model-value="value[p.code]"
-                @update:model-value="(val) => (value[p.code] = val)"
-              />
               <FormFieldExam
                 v-if="p.fieldType === 'EXAM'"
                 :disable="p.disable || loading"
@@ -139,6 +130,14 @@
                 "
               />
             </div>
+            <UserSelect
+              v-if="!isUserADoctorForThisExam"
+              :label="doctorRole?.name"
+              :roleCode="doctorRole?.code"
+              :disable="loading"
+              :required="true"
+              v-model="doctor"
+            />
           </div>
           <q-separator />
           <div class="row q-pa-lg justify-end" style="gap: 12px">
@@ -164,9 +163,10 @@
 </template>
 
 <script>
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent, defineAsyncComponent, ref, onMounted } from "vue";
 import { delay, formatDate, showMessage } from "src/helpers/util.js";
 import { mapGetters } from "vuex";
+import { USER_ROLES, userRolesMap } from "src/helpers/constants";
 
 export default defineComponent({
   name: "VisitExamDetailsForm",
@@ -217,6 +217,10 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    EXAMS: {
+      type: Object,
+      required: true,
+    },
     examCode: {
       type: String,
       required: true,
@@ -244,18 +248,57 @@ export default defineComponent({
       value: {},
       confDialogVisible: false,
 
-      headPathologist: null,
+      doctorRole: null,
+      doctor: null,
     };
   },
   computed: {
     ...mapGetters({
       user: "app/user",
     }),
+    isUserADoctorForThisExam() {
+      if (!this.user || !this.examCode) {
+        return false;
+      }
+
+      if (
+        this.user.roleCode === USER_ROLES.DR &&
+        [this.EXAMS.PE, this.EXAMS.MED_HIST].includes(this.examCode)
+      ) {
+        return true;
+      }
+
+      if (
+        this.user.roleCode === USER_ROLES.LAB &&
+        [this.EXAMS.LAB_CBC, this.EXAMS.LAB_URI, this.EXAMS.LAB_FCL].includes(
+          this.examCode,
+        )
+      ) {
+        return true;
+      }
+
+      if (
+        this.user.roleCode === USER_ROLES.RAD &&
+        this.examCode === this.EXAMS.RAD_XR_CHST
+      ) {
+        return true;
+      }
+
+      if (
+        this.user.roleCode === USER_ROLES.DENTIST &&
+        this.examCode === this.EXAMS.DENTAL
+      ) {
+        return true;
+      }
+
+      return false;
+    },
   },
   watch: {
     examCode: {
       handler() {
-        this.getInitialValue();
+        this.setInitialValue();
+        this.setDoctorRole();
       },
       immediate: true,
     },
@@ -293,11 +336,31 @@ export default defineComponent({
         return a;
       }, {});
     },
-    async getInitialValue() {
+    setDoctorRole() {
+      if (
+        [this.EXAMS.LAB_CBC, this.EXAMS.LAB_URI, this.EXAMS.LAB_FCL].includes(
+          this.examCode,
+        )
+      ) {
+        this.doctorRole = userRolesMap[USER_ROLES.LAB];
+        return;
+      }
+
+      if ([this.EXAMS.MED_HIST, this.EXAMS.PE].includes(this.examCode)) {
+        this.doctorRole = userRolesMap[USER_ROLES.DR];
+        return;
+      }
+
+      if (this.examCode === this.EXAMS.RAD_XR_CHST) {
+        this.doctorRole = userRolesMap[USER_ROLES.RAD];
+        return;
+      }
+    },
+    async setInitialValue() {
       this.loading = true;
 
-      // RESET HEAD PATHOLOGIST
-      this.headPathologist = null;
+      // RESET DOCTOR
+      this.doctor = null;
 
       // SUPPLY DEFAULT VALUE
       this.value = this.getMergedExamFieldsAndDetails(
@@ -310,22 +373,22 @@ export default defineComponent({
         examCode: this.examCode,
       });
 
-      if (
-        ["LAB_CBC", "LAB_URI", "LAB_FCL"].includes(this.examCode) &&
-        this.user?.roleCode !== "LAB"
-      ) {
-        const response2 = await this.$store.dispatch("ape/getHeadDoctor", {
-          specialtyCode: "LAB",
-        });
+      // if (
+      //   ["LAB_CBC", "LAB_URI", "LAB_FCL"].includes(this.examCode) &&
+      //   this.user?.roleCode !== "LAB"
+      // ) {
+      //   const response2 = await this.$store.dispatch("ape/getHeadDoctor", {
+      //     specialtyCode: "LAB",
+      //   });
 
-        if (response2?.error) {
-          this.loading = false;
-          this.$emit("error");
-          return;
-        }
+      //   if (response2?.error) {
+      //     this.loading = false;
+      //     this.$emit("error");
+      //     return;
+      //   }
 
-        this.headPathologist = response2.body;
-      }
+      //   this.doctor = response2.body;
+      // }
 
       await delay(1000);
 
@@ -340,6 +403,18 @@ export default defineComponent({
         return;
       }
 
+      if (
+        !this.isUserADoctorForThisExam &&
+        response.body.exam?.completedBy &&
+        response.body.exam?.completedByName &&
+        response.body.exam?.dateTimeCompleted
+      ) {
+        this.doctor = {
+          code: response.body.exam.completedBy,
+          name: response.body.exam.completedByName,
+        };
+      }
+
       this.value = this.getMergedExamFieldsAndDetails(
         this.examsMap[this.examCode]?.params || [],
         this.getVisitExamDetailsMap(response.body.details),
@@ -348,24 +423,13 @@ export default defineComponent({
       this.loading = false;
     },
     async save() {
-      // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [START]
-      if (this.examCode === "RAD_XR_CHST") {
-        showMessage(
-          this.$q,
-          false,
-          "Please use the X-RAY BATCH ENCODE page to encode X-Ray results.",
-        );
-        return;
-      }
-      // TEMPORARY CODE. REMOVE AFTER FEATURE IS ADDED. [END]
-
       this.confDialogVisible = false;
       this.loading = true;
 
       const response = await this.$store.dispatch("ape/saveExamDetails", {
         visitId: this.visitId,
         examCode: this.examCode,
-        doctor: this.headPathologist,
+        doctor: this.doctor,
         // MAKE SURE EVERY `detail` HAS A `code` PROP
         details: Object.entries(this.value).map((e) => ({
           code: e[0],

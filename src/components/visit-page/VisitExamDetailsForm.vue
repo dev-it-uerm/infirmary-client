@@ -75,10 +75,14 @@
                 :disable="p.disable || loading"
                 :label="p.name"
                 :required="p.required"
-                :initialValue="value[p.code]?.value || null"
-                @valueChanged="
-                  (val) => {
-                    value[p.code] = { code: p.code, value: val };
+                :model-value="value[p.code] || null"
+                @update:model-value="
+                  (v) => {
+                    value[p.code] = {
+                      code: p.code,
+                      value: v?.value || null,
+                      flag: v?.flag || null,
+                    };
                   }
                 "
               />
@@ -337,6 +341,7 @@ export default defineComponent({
           value: row.value,
           ...(row.unit == null ? {} : { unit: row.unit }),
           ...(row.normalRange == null ? {} : { normalRange: row.normalRange }),
+          ...(row.flag == null ? {} : { flag: row.flag }),
         };
 
         return acc;

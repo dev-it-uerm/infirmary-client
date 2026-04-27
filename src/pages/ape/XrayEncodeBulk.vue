@@ -173,7 +173,7 @@
                   :disable="saving"
                   label="Impression"
                   :required="true"
-                  @value-changed="(val) => (xrayImpression = val)"
+                  v-model="xrayImpression"
                 />
                 <UserSelect
                   :label="userRolesMap[USER_ROLES.RAD].name"
@@ -301,7 +301,7 @@ export default defineComponent({
       studempNumbersStr: "",
       patients: [],
 
-      xrayImpression: "",
+      xrayImpression: null,
       radiologist: null,
 
       confirmationDialogVisible: false,
@@ -355,7 +355,8 @@ export default defineComponent({
           details: [
             {
               code: "IMPRN",
-              value: this.xrayImpression,
+              value: this.xrayImpression.value,
+              flag: this.xrayImpression.flag,
             },
           ],
         });

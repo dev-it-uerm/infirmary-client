@@ -51,6 +51,19 @@
         v-model.trim="value.normalRange"
         hint=""
       />
+      <q-input
+        :disable="disable"
+        filled
+        borderless
+        square
+        :class="$q.screen.lt.md ? 'col-12' : 'col'"
+        dense
+        stack-label
+        :rules="rules"
+        label="Result Flag"
+        v-model.trim="value.flag"
+        hint=""
+      />
     </div>
   </div>
 </template>
@@ -84,16 +97,13 @@ export default defineComponent({
     rules() {
       return this.value.value == null || this.value.value === ""
         ? []
-        : [
-            (val) =>
-              val == null || val === "" ? "This field is required." : undefined,
-          ];
+        : [(v) => (v == null || v === "" ? "This field is required." : true)];
     },
   },
   watch: {
     value: {
-      handler(val) {
-        this.$emit("valueChanged", val);
+      handler(v) {
+        this.$emit("valueChanged", v);
       },
       immediate: false,
     },
@@ -108,6 +118,7 @@ export default defineComponent({
       value: null,
       unit: null,
       normalRange: null,
+      flag: null,
     };
   },
 });

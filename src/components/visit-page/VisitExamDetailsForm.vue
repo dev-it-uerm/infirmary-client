@@ -350,7 +350,8 @@ export default defineComponent({
     getMergedExamFieldsAndDetails(fields, obj) {
       return fields.reduce((a, e) => {
         if (obj[e.code] == null || obj[e.code] === "") {
-          a[e.code] = e.default ?? null;
+          // CLONE default VALUE TO AVOID STATE MUTATION
+          a[e.code] = e.default ? Object.assign({}, e.default) : null;
           return a;
         }
 
